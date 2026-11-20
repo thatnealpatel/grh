@@ -1,0 +1,17 @@
+name = "grh"
+version = "0.1.0"
+keywords = ["math"]
+defaultTargets = ["Proofs"]
+
+[leanOptions]
+pp.unicode.fun = true # pretty-prints `fun a ↦ b`
+
+[[require]]
+name = "mathlib"
+scope = "leanprover-community"
+rev = "v4.36.0"
+
+[[lean_lib]]
+srcDir = "Proofs"
+name = "Proofs"
+globs = ["Props.+", "Theorems.+", "Lemmas.+"]
