@@ -17,6 +17,7 @@ import (
 	"time"
 
 	"patel.codes/godel"
+	"patel.codes/grh/internal/worker"
 )
 
 //go:embed mission.md
@@ -58,6 +59,9 @@ func run(ctx context.Context) error {
 		}
 		fmt.Print(result.Text)
 		return nil
+	}
+	if len(os.Args) > 1 && os.Args[1] == "check" {
+		return checkProof(ctx, os.Stdout, os.Args[2:])
 	}
 	if len(os.Args) > 1 && os.Args[1] == "_assess" {
 		return assess(os.Stdin, os.Stdout, os.Args[2:])
@@ -158,6 +162,21 @@ func run(ctx context.Context) error {
 	}
 	fmt.Print(result.Text)
 	return nil
+}
+
+func checkProof(ctx context.Context, out io.Writer, args []string) error {
+	if len(args) < 2 {
+		return errors.New("from the repository root: go run ./cmd/godel check <full-commit-id> <declaration> [<declaration> ...]")
+	}
+	root, err := os.Getwd()
+	if err != nil {
+		return err
+	}
+	if err := worker.Check(ctx, root, args[0], args[1:]); err != nil {
+		return err
+	}
+	_, err = fmt.Fprintf(out, "Designated worker built and audited %s for: %s\n", args[0], strings.Join(args[1:], ", "))
+	return err
 }
 
 func runTree(ctx context.Context, n, improve *godel.Node) (*godel.Result, error) {

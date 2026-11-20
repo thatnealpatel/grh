@@ -17,4 +17,16 @@ The Gödel runner changes to the launch workspace's stable `cmd/godel` directory
 
 Work reports an observable result or stall; improvement can test and change any part of the program, including itself. Inspect the campaign’s **accepted revision** and Gödel run history, not the files at the registered source path, to see what changed. Start edits in `tool_campaign new` or a campaign writer workspace based on accepted source. Integrate, check, and adopt through the owning campaign; there is no routine parent/operator handoff. If campaign tools are unavailable, report the blocker. Do not manage the graph directly or publish changes. Gödel v0.0.5 records work failures and can run improvement, but does not automatically relaunch after process failure. Neither adoption nor model output certifies a mathematical result: Lean builds and audits require the designated proof worker. Program-only changes need relevant ordinary tests.
 
+## Checking a proof candidate
+
+From the root of an isolated workspace whose program includes the `check` command, run:
+
+```sh
+go run ./cmd/godel check "$candidate" Masullo.Example.checkedLemma
+```
+
+Use the full immutable campaign candidate ID and list all reviewed endpoint declarations by qualified name. The command uses the operator-provisioned `GRH_PROOF_WORKER` executable to build and audit the exact revision, not the current working files. It neither opens a Gödel run nor adopts anything, and it does not use the pilot's campaign adapter. With no designated transport, it fails without a local Lean fallback. Do not adopt a Lean candidate without the successful check and independent review of its statement.
+
+## Bounded pilot
+
 From `cmd/godel`, explicit pilot flags bypass the accepted-source bootstrap and select the earlier passage workflow documented in [the pilot handoff](../../.godel/README.md). Its scheduler is an available tool, not the outer control loop. Its `GRH_CAMPAIGN_ADAPTER` is a transport for authorized operations, not a separate grant of authority.
