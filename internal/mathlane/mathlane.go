@@ -1,7 +1,7 @@
 // Package mathlane generates and reviews Lean candidates for the bounded
 // two-identity algebra assembly in Masullo's trace formula. It does not run
-// Lean, certify source evidence, or publish files. Agent stages use fresh
-// tool-free Pi runs. GRH_MATH_MODEL overrides the default Pi provider/model;
+// Lean, certify source evidence, or publish files. Each agent stage runs a
+// fresh headless Yah session in scratch, not in the proofs worktree.
 // GRH_MATHLIB may point to an absolute checkout of the pinned Mathlib sources.
 package mathlane
 
@@ -50,26 +50,26 @@ var (
 // packet is the caller's independently verified source packet, serialized as
 // JSON.
 func Translate(ctx context.Context, root, mission, obligation, packet, critique string) (Draft, error) {
-	return agent(runPi).translate(ctx, root, request{Mission: mission, Obligation: obligation, Packet: packet, Critique: critique})
+	return agent(runYah).translate(ctx, root, request{Mission: mission, Obligation: obligation, Packet: packet, Critique: critique})
 }
 
 // Fidelity independently reviews the supplied candidate and frozen header.
 func Fidelity(ctx context.Context, root, mission, obligation, packet string, d Draft) (Verdict, error) {
-	return agent(runPi).review(ctx, root, request{Mission: mission, Obligation: obligation, Packet: packet, Draft: &d}, false)
+	return agent(runYah).review(ctx, root, request{Mission: mission, Obligation: obligation, Packet: packet, Draft: &d}, false)
 }
 
 // Challenge independently reviews the exact landed files. The caller must
 // supply root as a stable snapshot of the intended landed revision, not a
 // mutable checkout. This function matches bytes, not revision identities.
 func Challenge(ctx context.Context, root, mission, obligation, packet string, d Draft) (Verdict, error) {
-	return agent(runPi).review(ctx, root, request{Mission: mission, Obligation: obligation, Packet: packet, Draft: &d}, true)
+	return agent(runYah).review(ctx, root, request{Mission: mission, Obligation: obligation, Packet: packet, Draft: &d}, true)
 }
 
 // Prove asks for a proof of the fixed leaf, not for a replacement statement.
 // A successful candidate adds the assembly theorem and preserves the analytic
 // premises and every former file. No file is written by this function.
 func Prove(ctx context.Context, root, mission, obligation, packet string, d Draft) (Draft, error) {
-	return agent(runPi).prove(ctx, root, request{Mission: mission, Obligation: obligation, Packet: packet, Draft: &d})
+	return agent(runYah).prove(ctx, root, request{Mission: mission, Obligation: obligation, Packet: packet, Draft: &d})
 }
 
 type request struct {
