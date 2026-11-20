@@ -1,4 +1,4 @@
-// Command godel advances the manuscript formalization within a persistent allowance.
+// Command godel pursues the manuscript mission from its live source.
 package main
 
 import (
@@ -35,6 +35,15 @@ func main() {
 func run(ctx context.Context) error {
 	selection = strings.TrimSpace(selection)
 	mission = strings.TrimSpace(mission)
+	if len(os.Args) == 1 {
+		work, improve := missionNodes(mission)
+		result, err := runTree(ctx, work, improve)
+		if err != nil {
+			return err
+		}
+		fmt.Print(result.Text)
+		return nil
+	}
 	if len(os.Args) > 1 && os.Args[1] == "_assess" {
 		return assess(os.Stdin, os.Stdout, os.Args[2:])
 	}
