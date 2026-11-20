@@ -10,10 +10,9 @@ import (
 // must implement.
 func missionNodes(goal string) (work, improve *godel.Node) {
 	codingNode := func(role string) *godel.Node {
-		return &godel.Node{Exec: "pi", Args: []string{
-			"--print", "--mode", "text", "--no-session", "--no-context-files",
-			"--provider", "exe-dev-openai", "--model", "gpt-6.2-sol@llm",
-			"--append-system-prompt", goal + "\n\n" + practice + "\n\n" + role,
+		// Yah attaches to the campaign at its cwd, not an ancestor.
+		return &godel.Node{Exec: "yah", Directory: "../..", Args: []string{
+			"-yolo", "-effort", "high", "-append", goal + "\n\n" + practice + "\n\n" + role,
 		}}
 	}
 	work = codingNode(`Act on the operator's objective or the preceding handoff on stdin. Choose useful work yourself and carry it out with your tools. Take one meaningful step, then yield to improvement. Keep the operator objective in your handoff. Report what observably changed relative to the starting point, what check supports that, and any wall you encountered. A failed experiment is useful data. If progress stalled, say what you tried and what observation would distinguish causes. A wall in the current method is not a reason to end the loop. End with a line MISSION_STOP only on achieving the objective or a genuine external stop condition; explain which it was.`)
@@ -28,4 +27,8 @@ func missionNodes(goal string) (work, improve *godel.Node) {
 	return work, improve
 }
 
-const practice = `This is a live, disposable campaign workspace. Work from this checkout; the repository root is ../.. from cmd/godel. The earlier pilot, code, and handoffs under .godel at the root are resources and suggestions, not a required route or a limit on the mission. Keep findings and open obligations understandable on disk; the loop carries work stdout, not improver stdout. Keep the mission and standards of evidence distinct from mutable procedure. Use the pinned manuscript and Mathlib. Distinguish navigation from checked readings, conditional claims from proofs, and infrastructure gaps from mathematical gaps. Use the designated worker for Lean builds and audits, never elaborate RH/GRH locally. Do not fabricate evidence, substitute a weaker target, or declare an unchecked revision accepted. Leave main and publication to the operator. Edit this working copy directly; do not manage version control, invoke yah, or modify runtime bookkeeping. Keep mathematical results separate from workflow experiments. Do not add top-level directories under Proofs. Format changed Go with gocmt and gofmt.`
+const practice = `You are running at the root of the live project checkout. The program source is cmd/godel in this checkout. The earlier pilot, code, and handoffs under .godel at the root are resources and suggestions, not a required route or a limit on the mission. Keep findings and open obligations understandable on disk; the loop carries work stdout, not improver stdout.
+
+Adopt ready work through the owning project's campaign using an authorized campaign capability when available; no separate operator approval is needed. Otherwise, leave reviewable changes in this working copy and record a handoff for the owning harness to adopt at its next checkpoint. Say what to adopt, why, the proposed commit subject, checks run and their results, and any open gates. Report work as accepted only when the campaign confirms adoption. Do not manage the jj/git graph directly, publish, or modify runtime bookkeeping.
+
+Keep the mission and standards of evidence distinct from mutable procedure. Use the pinned manuscript and Mathlib. Distinguish navigation from checked readings, conditional claims from proofs, and infrastructure gaps from mathematical gaps. Use the designated worker for Lean builds and audits, never elaborate RH/GRH locally. Use ordinary relevant tests for program-only changes; they do not require a Lean proof-worker pass. Do not fabricate evidence, substitute a weaker target, or declare an unchecked revision accepted. Keep mathematical results separate from workflow experiments. Do not add top-level directories under Proofs. Format changed Go with gocmt and gofmt.`
