@@ -13,7 +13,7 @@ The [final scalar comparison](obligations/trace-assembly.json) has a visual read
 
 ## From trace to zeros (Chapters 1, 13, and 14)
 
-Neither a trace on a restricted test class nor the empty [divisor heading](obligations/divisor-heading.json) supplies a divisor theorem. The [trace-to-zeros handoff](obligations/trace-to-zeros.md) distinguishes the two trace statements and two proposed routes. An independent task is to check if differencing the §1.4 holomorphic test family at a fixed parameter permits uniform Archimedean bounds **without** changing what one can recover about the logarithmic derivative. Alternatively, specify the inputs a positivity route would need and test them on the Chapter 13 test class. Neither task needs to assume that the trace has been proved.
+Neither a trace on a restricted test class nor the empty [divisor heading](obligations/divisor-heading.json) supplies a divisor theorem. The [trace-to-zeros handoff](obligations/trace-to-zeros.md) distinguishes the two trace statements and two proposed routes. The [fixed-parameter subtraction](obligations/trace-to-zeros.md#fixed-parameter-subtraction-over-the-rationals) repairs the rational one-sided Archimedean and spectral bounds and recovers the shifted logarithmic derivative up to a constant, **conditional** on the rational narrow-strip trace. The conditional conclusion at width $a$ excludes zeros strictly outside that strip; exclusion down to the critical line needs widths tending to zero. This does not supply a multiplicity bound. An independent next task is to specify a positivity criterion on the Chapter 13 test class and test whether its moment conditions leave enough tests to detect off-line zeros or recover orders.
 
 ## External gates
 
