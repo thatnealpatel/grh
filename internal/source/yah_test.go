@@ -181,7 +181,7 @@ func fakeYah(dir string) error {
 	if filepath.Dir(filepath.Dir(cwd)) != "/tmp" || os.Getenv("TMPDIR") != cwd || os.Getenv("YAH_DEFAULT_TOOLS") != "subagent" || os.Getenv("YAH_CAMPAIGN_TARGET") != "main" {
 		return errors.New("wrong scratch or capability setup")
 	}
-	if len(os.Args) != 5 || !slices.Equal(os.Args[1:4], []string{"-jj", "-yolo", "-replace"}) || !strings.Contains(os.Args[4], "native image-capable reviewer") {
+	if len(os.Args) != 5 || !slices.Equal(os.Args[1:4], []string{"-jj", "-yolo", "-replace"}) || !strings.Contains(os.Args[4], "require a non-Claude Yah reviewer with native image input") {
 		return errors.New("wrong fresh headless flags or missing native visual instruction")
 	}
 	input, err := io.ReadAll(os.Stdin)
@@ -189,7 +189,7 @@ func fakeYah(dir string) error {
 		return err
 	}
 	prompt := string(input)
-	if !strings.Contains(prompt, "native image-capable Read tool") || !strings.Contains(prompt, "Use no OCR") || !strings.Contains(prompt, "Locator: Fixture (1)\nQuestion: Is there a formula?") {
+	if !strings.Contains(prompt, "Open each supplied PNG using native image input") || !strings.Contains(prompt, "Use no OCR") || !strings.Contains(prompt, "Locator: Fixture (1)\nQuestion: Is there a formula?") {
 		return errors.New("missing visual inspection contract or passage scope")
 	}
 	if candidates := strings.Contains(prompt, "Untrusted candidate readings (JSON):"); candidates != (turn == 2) {
