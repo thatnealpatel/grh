@@ -1,4 +1,4 @@
-// Command godel pursues the manuscript mission from its live source.
+// Command godel pursues the manuscript mission from its accepted source.
 package main
 
 import (
@@ -11,6 +11,7 @@ import (
 	"os"
 	"os/signal"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"syscall"
 	"time"
@@ -36,6 +37,20 @@ func run(ctx context.Context) error {
 	selection = strings.TrimSpace(selection)
 	mission = strings.TrimSpace(mission)
 	if len(os.Args) == 1 {
+		source, built := strings.CutPrefix(os.Getenv(builtEntry), strconv.Itoa(os.Getpid())+":")
+		if !built {
+			return launchAccepted(ctx)
+		}
+		if err := os.Unsetenv(builtEntry); err != nil {
+			return err
+		}
+		// Gödel registers cwd and relaunches
+		// go run . there. The root is the
+		// operator's entry directory, not the
+		// command's package.
+		if err := os.Chdir(source); err != nil {
+			return err
+		}
 		work, improve := missionNodes(mission)
 		result, err := runTree(ctx, work, improve)
 		if err != nil {
