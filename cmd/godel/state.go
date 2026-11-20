@@ -166,13 +166,13 @@ func capability(stage string) string {
 	var keys []string
 	switch stage {
 	case "source":
-		keys = []string{"GRH_SOURCE_MODELS", "GRH_PDF"}
+		keys = []string{"GRH_PDF"}
 	case "land":
 		keys = []string{"GRH_PROOF_WORKER", "GRH_CAMPAIGN_ADAPTER"}
 	case "challenge", "prove":
-		keys = []string{"GRH_MATH_MODEL", "GRH_MATHLIB", "GRH_CAMPAIGN_ADAPTER"}
+		keys = []string{"GRH_MATHLIB", "GRH_CAMPAIGN_ADAPTER"}
 	default:
-		keys = []string{"GRH_MATH_MODEL", "GRH_MATHLIB"}
+		keys = []string{"GRH_MATHLIB"}
 	}
 	v := []string{stage, os.Getenv("GRH_CAPABILITY_EPOCH")}
 	for _, k := range keys {
