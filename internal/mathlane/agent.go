@@ -14,6 +14,8 @@ import (
 	"strings"
 	"syscall"
 	"time"
+
+	"patel.codes/grh/internal/pimodel"
 )
 
 const agentTimeout = 3 * time.Minute
@@ -194,7 +196,7 @@ func readPi(output, input []byte, provider, id string) ([]byte, error) {
 	if user.Role != "user" || len(user.Content) != 1 || user.Content[0].Type != "text" || user.Content[0].Text != string(input) {
 		return nil, errors.New("Pi did not retain the exact supplied request")
 	}
-	if assistant.Role != "assistant" || assistant.Provider != provider || assistant.Model != id || assistant.ErrorMessage != "" || assistant.StopReason != "stop" {
+	if assistant.Role != "assistant" || !pimodel.Matches(provider, id, assistant.Provider, assistant.Model) || assistant.ErrorMessage != "" || assistant.StopReason != "stop" {
 		return nil, errors.New("Pi did not complete normally with the requested model")
 	}
 	switch assistant.RawStopReason {

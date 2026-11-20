@@ -16,6 +16,8 @@ import (
 	"slices"
 	"strings"
 	"time"
+
+	"patel.codes/grh/internal/pimodel"
 )
 
 var modelID = regexp.MustCompile(`^[A-Za-z0-9][A-Za-z0-9_.-]*/[A-Za-z0-9][A-Za-z0-9_.@/-]*$`)
@@ -29,7 +31,9 @@ func readerModels(setting string) ([2]string, error) {
 		return [2]string{}, errors.New("source: GRH_SOURCE_MODELS must contain two distinct Pi provider/model IDs separated by a comma")
 	}
 	a, b := strings.TrimSpace(models[0]), strings.TrimSpace(models[1])
-	if !modelID.MatchString(a) || !modelID.MatchString(b) || strings.EqualFold(a, b) {
+	ap, ai, _ := strings.Cut(a, "/")
+	bp, bi, _ := strings.Cut(b, "/")
+	if !modelID.MatchString(a) || !modelID.MatchString(b) || (strings.EqualFold(ap, bp) && strings.EqualFold(pimodel.Native(ap, ai), pimodel.Native(bp, bi))) {
 		return [2]string{}, errors.New("source: GRH_SOURCE_MODELS must contain two distinct Pi provider/model IDs separated by a comma")
 	}
 	return [2]string{a, b}, nil
@@ -194,7 +198,7 @@ func readPi(output []byte, provider, model string, pages []pageImage) (string, e
 		return "", errors.New("Pi user message did not include all rendered page images")
 	}
 	m := messages[1]
-	if m.Provider != provider || m.Model != model {
+	if !pimodel.Matches(provider, model, m.Provider, m.Model) {
 		return "", errors.New("Pi answered with a different model")
 	}
 	if m.ErrorMessage != "" || m.StopReason != "stop" {
