@@ -41,9 +41,9 @@ const (
 )
 
 // ReadPassage renders the requested pages and compares two fresh
-// visual readings. It uses GRH_PDF (if set) or the digest-verified
-// download, and accepts an optional GRH_SOURCE_MODELS override with
-// two comma-separated Pi provider/model IDs.
+// visual readings through headless Yah. It uses GRH_PDF (if set) or
+// the digest-verified download. If Yah cannot establish visual access
+// to every rendered page, it returns an error and no disposition.
 func ReadPassage(ctx context.Context, target Passage) (Packet, error) {
 	return manuscript.readPassage(ctx, target)
 }
@@ -57,22 +57,11 @@ func (e edition) readPassage(ctx context.Context, target Passage) (Packet, error
 	if target.First < 1 || target.Last < target.First || target.Last > editionPages || target.Last-target.First > 1 || target.Heading == "" || target.Question == "" {
 		return Packet{}, fmt.Errorf("source: passage needs one or two consecutive printed pages (1–%d), a heading, and a question", editionPages)
 	}
-	models, err := readerModels(os.Getenv("GRH_SOURCE_MODELS"))
-	if err != nil {
-		return Packet{}, err
-	}
-	dir, err := os.MkdirTemp("", "grh-source-")
+	dir, err := os.MkdirTemp("/tmp", "grh-source-")
 	if err != nil {
 		return Packet{}, fmt.Errorf("source: create render directory: %w", err)
 	}
 	defer os.RemoveAll(dir)
-	pi, err := newPi(models)
-	if err != nil {
-		return Packet{}, err
-	}
-	if err := pi.checkModels(ctx, dir, models); err != nil {
-		return Packet{}, err
-	}
 	pdf, err := e.load(ctx, os.Getenv("GRH_PDF"))
 	if err != nil {
 		return Packet{}, err
@@ -82,25 +71,25 @@ func (e edition) readPassage(ctx context.Context, target Passage) (Packet, error
 		return Packet{}, err
 	}
 	var reads [2]reading
-	for i, model := range models {
-		r, err := pi.read(ctx, dir, model, target, pages)
+	for i := range reads {
+		r, err := read(ctx, dir, target, pages)
 		if err != nil {
-			return Packet{}, fmt.Errorf("source: reader %s: %w", model, err)
+			return Packet{}, fmt.Errorf("source: %s: %w", readerLabel(i), err)
 		}
 		reads[i] = r
 	}
 	var review *comparison
 	if needsComparison(reads) {
-		c, err := pi.compare(ctx, dir, models[1], target, pages, reads)
+		c, err := adjudicate(ctx, dir, target, pages, reads)
 		if err != nil {
-			return Packet{}, fmt.Errorf("source: adjudicator %s: %w", models[1], err)
+			return Packet{}, fmt.Errorf("source: Yah adjudicator: %w", err)
 		}
 		review = &c
 	}
 	if err := ctx.Err(); err != nil {
 		return Packet{}, err
 	}
-	return e.assemble(target, models, reads, review), nil
+	return e.assemble(target, reads, review), nil
 }
 
 type reading struct {
@@ -122,18 +111,22 @@ func sameReading(a, b reading) bool {
 	return sameText(a.Reading, b.Reading) && sameText(a.Attribution, b.Attribution) && sameText(a.Boundary, b.Boundary)
 }
 
-func (e edition) assemble(target Passage, models [2]string, reads [2]reading, review *comparison) Packet {
+func readerLabel(i int) string {
+	return fmt.Sprintf("Yah reader %d", i+1)
+}
+
+func (e edition) assemble(target Passage, reads [2]reading, review *comparison) Packet {
 	p := Packet{
 		Anchor: fmt.Sprintf("Alessandro Maria Masullo, The Music of the Primes, %s (SHA-256 %s), printed pp. %d–%d = PDF ordinals %d–%d: %s",
 			e.url, e.sha256, target.First, target.Last, target.First, target.Last, target.Heading),
 	}
 	for i, r := range reads {
-		p.Evidence[i] = fmt.Sprintf("%s (%s): %s", models[i], r.Disposition, r.Evidence)
+		p.Evidence[i] = fmt.Sprintf("%s (%s): %s", readerLabel(i), r.Disposition, r.Evidence)
 	}
 	a, b := reads[0], reads[1]
 	approved := review != nil && review.agree()
 	if review != nil {
-		p.Comparison = fmt.Sprintf("%s (adjudicator): %s", models[1], review.Evidence)
+		p.Comparison = "Yah adjudicator: " + review.Evidence
 	}
 	switch {
 	case a.Disposition == verified && b.Disposition == verified && (sameReading(a, b) || approved):
@@ -144,9 +137,9 @@ func (e edition) assemble(target Passage, models [2]string, reads [2]reading, re
 		p.Attribution = "No attributable statement for this question was established."
 	default:
 		p.Disposition = ambiguous
-		p.Reading = fmt.Sprintf("No verified agreement. %s (%s): %s\n%s (%s): %s", models[0], a.Disposition, a.Reading, models[1], b.Disposition, b.Reading)
+		p.Reading = fmt.Sprintf("No verified agreement. %s (%s): %s\n%s (%s): %s", readerLabel(0), a.Disposition, a.Reading, readerLabel(1), b.Disposition, b.Reading)
 		p.Attribution = "No attribution established for a verified reading."
-		p.Boundary = fmt.Sprintf("Reported boundaries (not verified): %s: %s; %s: %s", models[0], a.Boundary, models[1], b.Boundary)
+		p.Boundary = fmt.Sprintf("Reported boundaries (not verified): %s: %s; %s: %s", readerLabel(0), a.Boundary, readerLabel(1), b.Boundary)
 	}
 	if approved {
 		p.Boundary = review.Boundary

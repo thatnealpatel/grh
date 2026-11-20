@@ -11,6 +11,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"time"
 )
@@ -116,12 +117,7 @@ func (e edition) matches(pdf []byte) bool {
 	return bytes.HasPrefix(pdf, []byte("%PDF-")) && hex.EncodeToString(digest[:]) == e.sha256
 }
 
-type pageImage struct {
-	path   string
-	digest [32]byte
-}
-
-func render(ctx context.Context, dir string, pdf []byte, target Passage) ([]pageImage, error) {
+func render(ctx context.Context, dir string, pdf []byte, target Passage) ([]*image.RGBA, error) {
 	// Render a private copy of the actual verified
 	// bytes, not a mutable override or cache path
 	// whose contents could have changed since
@@ -130,11 +126,16 @@ func render(ctx context.Context, dir string, pdf []byte, target Passage) ([]page
 	if err := os.WriteFile(filename, pdf, 0o600); err != nil {
 		return nil, fmt.Errorf("source: stage verified PDF for rendering: %w", err)
 	}
-	var pages []pageImage
+	var pages []*image.RGBA
 	for printed := target.First; printed <= target.Last; printed++ {
 		ordinal := fmt.Sprint(printed)
 		prefix := fmt.Sprintf("image-%d", printed-target.First+1)
-		_, err := run(ctx, 20*time.Second, dir, 64<<10, "pdftoppm", "-png", "-r", "175", "-singlefile", "-f", ordinal, "-l", ordinal, filename, prefix)
+		pageCtx, cancel := context.WithTimeout(ctx, 20*time.Second)
+		cmd := exec.CommandContext(pageCtx, "pdftoppm", "-png", "-r", "175", "-singlefile", "-f", ordinal, "-l", ordinal, filename, prefix)
+		cmd.Dir = dir
+		cmd.WaitDelay = time.Second
+		_, err := run(pageCtx, cmd, 64<<10)
+		cancel()
 		if err != nil {
 			return nil, fmt.Errorf("source: render printed page %d (PDF ordinal %s): %w", printed, ordinal, err)
 		}
@@ -148,10 +149,19 @@ func render(ctx context.Context, dir string, pdf []byte, target Passage) ([]page
 		if err != nil || image.Pt(config.Width, config.Height) != image.Pt(1488, 1925) {
 			return nil, fmt.Errorf("source: page %d is not a full-size rendered PNG", printed)
 		}
-		if _, err := png.Decode(bytes.NewReader(data)); err != nil {
+		img, err := png.Decode(bytes.NewReader(data))
+		if err != nil {
 			return nil, fmt.Errorf("source: malformed rendered PNG for page %d: %w", printed, err)
 		}
-		pages = append(pages, pageImage{path: path, digest: sha256.Sum256(data)})
+		// Poppler emits opaque RGB8 here.
+		// Enforce that format so copying into
+		// the challenged RGB8 PNG cannot reduce
+		// color precision.
+		page, ok := img.(*image.RGBA)
+		if !ok || !page.Opaque() {
+			return nil, fmt.Errorf("source: rendered page %d is not opaque RGB8", printed)
+		}
+		pages = append(pages, page)
 	}
 	return pages, nil
 }
