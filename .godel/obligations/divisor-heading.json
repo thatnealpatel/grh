@@ -8,6 +8,17 @@
     "Question": "What statement, if any, is made under this heading? Identify its hypotheses, conclusion, and the boundary at which the text moves on."
   },
   "Stage": "source",
-  "Block": "source: reader exe-dev-anthropic/claude-opus-4-8@llm: Pi answered with a different model",
-  "Capability": "e8f6705674376741a680295ce4a20804c01631cb10164253e823b26e1a951a5d"
+  "Source": {
+    "disposition": "absent",
+    "anchor": "Alessandro Maria Masullo, The Music of the Primes, https://math216.wordpress.com/wp-content/uploads/2026/11/the-music-of-the-primes.pdf (SHA-256 e039d3f6cf0a4b14f03c7edb85097752dd65c0a2fe543c76fe992be234f97bf5), printed pp. 522–523 = PDF ordinals 522–523: Theorem 13.3.1.2 (Divisor of L(s, χ))",
+    "reading": "Both readers reported the requested statement absent within the rendered passage. Theorem 13.3.1.2 has a heading but no statement: neither hypotheses nor a conclusion are printed under it. The preceding hypotheses and formulas belong to Theorem 13.3.1.1 (Trace Formula).",
+    "attribution": "No attributable statement for this question was established.",
+    "boundary": "Theorem 13.3.1.2 (Divisor of L(s, χ)): Heading at bottom of p.522, followed only by footnote markers and footnotes; p.523 opens Chapter 14 'Complements' with its TOC, so no statement intervenes. Limited to this passage; the packet is not a proof and supplies no external realization assumptions.",
+    "evidence": [
+      "exe-dev-openai/gpt-6.2-sol@llm (absent): Near the bottom of p. 522: ‘Upon combining Theorem 13.3.1.1 and Theorem ??, we obtain the following:’ Theorem 13.3.1.2’s heading carries footnote 2: ‘Insert statement.’",
+      "exe-dev-anthropic/claude-opus-4-8@llm (absent): \"THEOREM 13.3.1.2 (Divisor of L(s,χ)). 2\" followed by footnote \"2 Insert statement.\""
+    ],
+    "comparison": "exe-dev-anthropic/claude-opus-4-8@llm (adjudicator): \"THEOREM 13.3.1.2 (Divisor of L(s, χ)).\" followed by footnote markers 2 and 3; footnote \"2 Insert statement.\"; preceded by \"Upon combining Theorem 13.3.1.1 and Theorem ??, we obtain the following:\""
+  },
+  "Block": "absent: Theorem 13.3.1.2 (Divisor of L(s, χ)): Heading at bottom of p.522, followed only by footnote markers and footnotes; p.523 opens Chapter 14 'Complements' with its TOC, so no statement intervenes. Limited to this passage; the packet is not a proof and supplies no external realization assumptions."
 }
