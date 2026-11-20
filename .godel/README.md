@@ -1,6 +1,6 @@
 # Manuscript formalization handoff
 
-Start or resume the [manuscript program](../cmd/godel/README.md) for work across the paper. Its [mission](../cmd/godel/mission.md) is the goal of both the work node and the improver. The two passages in `pilot.json` are starting questions, not a limit on that mission. Both nodes use Yah and can change and adopt the program. A validated workflow change needs relevant program tests; it is not a checked mathematical result.
+Start or resume the [manuscript program](../cmd/godel/README.md) for work across the paper. Its [mission](../cmd/godel/mission.md) is the goal of both the work node and the improver. The two passages in `pilot.json` are starting questions, not a limit on that mission. Read the [proof frontier](frontier.md) for independent obligations and blocked routes before choosing the next task. Both nodes use Yah and can change and adopt the program. A validated workflow change needs relevant program tests; it is not a checked mathematical result.
 
 ## What the first passage run established
 
