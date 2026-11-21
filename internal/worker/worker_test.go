@@ -28,10 +28,9 @@ func write(t *testing.T, name, content string, mode os.FileMode) {
 	}
 }
 
-// Snapshot only a disposable repository. Changing a
-// source file afterwards distinguishes a revision
-// export from an accidental working-directory copy.
-func repository(t *testing.T) (root, revision string) {
+// Snapshot only a disposable repository. Changing a source file afterwards
+// distinguishes a revision export from an accidental working-directory copy.
+func repository(t *testing.T, additionalModules ...string) (root, revision string) {
 	t.Helper()
 	root = t.TempDir()
 	jj := func(args ...string) string {
@@ -57,6 +56,9 @@ func repository(t *testing.T) (root, revision string) {
 	}
 	source := filepath.Join(root, "Proofs", "Props", "Example.lean")
 	write(t, source, "theorem Example.ok : True := True.intro\n", 0644)
+	for _, m := range additionalModules {
+		write(t, filepath.Join(root, "Proofs", "Props", m+".lean"), "def exampleTwo : Nat := 2\n", 0644)
+	}
 	revision = jj("log", "-r", "@", "-T", "commit_id", "--no-graph")
 	write(t, source, "not the selected commit\n", 0644)
 	write(t, filepath.Join(root, "dirty"), "untracked", 0644)

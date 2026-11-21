@@ -1,4 +1,4 @@
-// Package worker checks a mathematical candidate on an explicitly designated remote worker.
+// Package worker checks Lean proof candidates locally or on a designated worker.
 package worker
 
 import (

@@ -100,8 +100,10 @@ the pinned extraction. The first unproved
 geometric equality needed by this comparison is the global $S$-piece
 identification with that normalized local finite part *minus* both Mellin
 moments, with the same cutoff order and a justified vanishing orbital tail.
-The full explicit formula, as a separate theorem, also still needs a checked
-rational instance. Neither obligation is an assumption about zero location.
+The [rational compact-log explicit formula](rational-explicit-formula.md#checked-real-gamma-evaluation-and-rational-explicit-formula)
+is now checked separately, with both poles and full zero orders. Its
+identification with the idelic principal value is still open. Neither
+remaining obligation is an assumption about zero location.
 
 **Runnable next check:** Take $S=\{\infty\}$, $0<\alpha<1/2$, and degree
 $s=2r\ge4$. Choose a nonzero nonnegative bump $b\in C_c^\infty((0,\log 2))$

@@ -19,15 +19,15 @@ Work reports an observable result or stall; improvement can test and change any 
 
 ## Checking a proof candidate
 
-Use this machine. Have a second agent review the proposed statement against the mathematical obligation. Elaborate drafts in the writer workspace, then use `tool_campaign integrate`. In the **workspace returned by integration**, build the candidate and audit each reviewed declaration. For example, substitute the actual module and declaration in:
+Use this machine. Have a second agent review the proposed statement against the mathematical obligation. Elaborate drafts in the writer workspace, then use `tool_campaign integrate`. From the **workspace returned by integration**, pass the full candidate ID, every changed Lean module, and the independently reviewed endpoints to:
 
 ```sh
-lake --wfail build Proofs
-lake env leanchecker Lemmas.Example
-printf '%s\n' 'import Lemmas.Example' '#check Masullo.exampleLemma' '#print axioms Masullo.exampleLemma' | lake env lean --stdin
+go run ./cmd/godel audit-local <full-candidate-id> Lemmas.Example -- Masullo.exampleLemma
 ```
 
-Check each exit status and inspect the output: The public theorem must have the reviewed type, be proved in the project, and use no axioms beyond `propext`, `Classical.choice`, and `Quot.sound`. Inspect changed Lean sources for new axioms, proof placeholders, or unsafe substitutes. Use the pinned project toolchain and dependencies. Record the candidate ID, declarations, and results. Adopt that exact ID only on success. If a proof needs repair, edit in a writer workspace, integrate, and repeat the checks on the new candidate, including after a stale adoption attempt. No remote worker or `cmd/godel check` is needed for this workflow.
+The command compares `Proofs/` and the pinned Lake inputs on disk with the candidate, runs `lake --wfail build Proofs`, replays each listed module in a separate `leanchecker` process, and checks their axioms and endpoint provenance in Lean. It repeats the input comparison before reporting success. It uses the workspace's trusted local Lake dependencies, and neither contacts a proof worker nor adopts the candidate. Run it with a time bound and keep its output. The check covers the modules named on the command line; it does not select them or certify that a declaration has the intended statement.
+
+Inspect the reviewed statement in the built environment (`import Lemmas.Example` and `#check Masullo.exampleLemma` via `lake env lean --stdin`), and inspect changed Lean sources for new axioms, proof placeholders, or unsafe substitutes. The theorem must be proved in the project and depend only on `propext`, `Classical.choice`, and `Quot.sound`. Record the candidate ID, declarations, and results. Adopt that exact ID only on success. If a proof needs repair, edit in a writer workspace, integrate, and repeat the checks on the new candidate, including after a stale adoption attempt. The older `cmd/godel check` uses a designated remote worker and is not part of this workflow.
 
 ## Bounded pilot
 

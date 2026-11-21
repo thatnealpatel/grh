@@ -640,6 +640,22 @@ digest-matched Masullo layout extraction, and Barner OCR. These were
 not visual readings. No idelic or global trace identification is
 claimed.
 
+## Local audit control
+
+Use [`audit-local`](../../cmd/godel/README.md#checking-a-proof-candidate)
+from the integration workspace with the full candidate ID, all changed
+modules, and the independently reviewed endpoints. On the explicit-formula
+proof tree from `81704cee`, the Lake build passed but the single
+`leanchecker` invocation with all three modules exited 139. The pinned
+checker schedules replay tasks together for multiple targets. Separate
+processes for `Lemmas.GammaRealRightLine`, `Props.GammaRealMellin`, and
+`Theorems.RationalExplicitFormula` all returned success. An end-to-end
+control with the serial helper on the same unchanged proof tree passed
+all three replays and the audit of all five public endpoints, each using
+only `propext`, `Classical.choice`, and `Quot.sound`. The helper fails on
+any individual replay error. This is a checking workflow change, not a
+new statement review or proof.
+
 ## Next runnable obligation: Check the Fourier normalization of the real principal value
 
 In the pinned extraction, (B.4.4.1)–(B.4.4.2), pp. 619–620, define the

@@ -69,4 +69,4 @@ For the full Chapter 13 test class, the [identity-term audit](obligations/trace-
 ## External gates
 
 - **Visual source review:** No new visual reading from the attempted routes. Reopen only with image-capable Yah and working credentials; first run one fresh p. 514 control. This gate does not prevent provisional extracted-text work or labeled project reasoning.
-- **Lean checking:** Use the [local campaign workflow](../cmd/godel/README.md#checking-a-proof-candidate). Older handoffs waiting for remote transport are superseded. Drafts remain unverified until checked.
+- **Lean checking:** Use the [local campaign workflow](../cmd/godel/README.md#checking-a-proof-candidate). The [explicit-formula audit control](obligations/rational-explicit-formula.md#local-audit-control) records why the local command replays one module per process. Older handoffs waiting for remote transport are superseded. Drafts remain unverified until checked.
