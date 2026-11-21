@@ -27,7 +27,8 @@ it is supported in a translate of a product of dilated local integer rings. -/
 @[expose] public noncomputable def rationalAdeleBox (b : 𝓢(ℝ, ℂ)) (a : A) (g : J) (x : A) : ℂ :=
   rationalAdeleUnramified b ((g⁻¹ : J) * (x - a))
 
-private theorem box_at_affine (b : 𝓢(ℝ, ℂ)) (a : A) (g : J) (x : A) :
+/-- The affine box coordinates undo the translation and dilation. -/
+public theorem rationalAdeleBox_at_affine (b : 𝓢(ℝ, ℂ)) (a : A) (g : J) (x : A) :
     rationalAdeleBox b a g (a + (g : A) * x) = rationalAdeleUnramified b x := by
   rw [rationalAdeleBox, add_comm a, add_sub_cancel_right, ← mul_assoc]
   change rationalAdeleUnramified b (((↑((g⁻¹ : J) * g) : A)) * x) = _
@@ -67,7 +68,7 @@ public theorem integral_rationalAdeleBox_mul_conj_char (b : 𝓢(ℝ, ℂ)) (a :
   have h (x : A) : rationalAdeleBox b a g (a + (g : A) * x) *
       conj (χ ((a + (g : A) * x) * y)) =
       conj (χ (a * y)) * (rationalAdeleUnramified b x * conj (χ (x * ((g : A) * y)))) := by
-    rw [box_at_affine, add_mul, mul_assoc, mul_left_comm (g : A) x, AddChar.map_add_eq_mul, map_mul]
+    rw [rationalAdeleBox_at_affine, add_mul, mul_assoc, mul_left_comm (g : A) x, AddChar.map_add_eq_mul, map_mul]
     ring
   simp_rw [h, integral_const_mul, integral_rationalAdeleUnramified_mul_conj_char]
 

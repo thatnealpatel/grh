@@ -2384,26 +2384,67 @@ Independent Yah review (`inversion-endpoint-review`, base
 normalization, forward-integral identification, inverse assembly, and
 LF topology against the drafted statements and the pinned passage.
 
-### Next Fourier step: Schwartz Parseval for normalized rational Haar
+## Checked rational Schwartz Parseval for normalized Haar
 
-Prove the rational Schwartz restriction of (D.1.1.9), Lemma D.1.1.2(4),
-p. 747. For $f$ in `RationalAdeleSchwartzLF`, show integrability of
-$|f|^2$ and $|\widehat f|^2$ and equality of their integrals against
-`rationalAdeleAddHaar` on both sides, using the checked rational frequency
-parameterization of the integral, without claiming it exhausts the dual.
-Start by proving the stage identity
-$\int |f|^2\,d\mu_A = M^{-1}\sum_j\int_{\mathbb R}|b_j|^2$:
-`rationalAdeleBox_stageCell` and the unique cell partition eliminate
-cross terms, and the affine Haar change of variables reduces each cell to
-the unit integral cylinder with real Lebesgue measure. Then use
-`SchwartzMap.integral_norm_sq_fourier` and cyclic character orthogonality.
-For the latter, the proof of `ZMod.dft` in
-`Mathlib.Analysis.Fourier.ZMod` uses `sum_eq_zero_of_ne_one` with
-`isPrimitive_stdAddChar` at nonzero frequency. The normalized finite
-matrix has squared coefficient $1/M^2$, canceling the $M^2$ on the
-orthogonality diagonal. The isometric extension to all of $L^2$, its
-surjectivity, and any identification with the dual Plancherel measure
-are separate obligations.
+The theorem
+[`Masullo.rationalAdeleFourier_parseval`](../../Proofs/Theorems/RationalAdeleFourierParseval.lean)
+proves, for every `RationalAdeleSchwartzLF` input $f$, that $|f|^2$ and
+$|\widehat f|^2$ are integrable against `rationalAdeleAddHaar`, and that
+
+$$
+\int_{\mathbb A_{\mathbb Q}} |\widehat f(y)|^2\,d\mu_A(y)
+= \int_{\mathbb A_{\mathbb Q}} |f(x)|^2\,d\mu_A(x).
+$$
+
+Here $\widehat f$ is the normalized Fourier integral evaluated at every
+adelic frequency, not a chosen $L^2$ representative. No moment conditions
+are used. At a positive stage $M$, the
+[stage norm calculation](../../Proofs/Lemmas/RationalAdeleStageNorm.lean)
+writes the squared norm integral as $M^{-1}\sum_j\int_{\mathbb R}|b_j|^2$.
+Pointwise disjointness eliminates mixed terms. The integral finite cylinder
+has a probability finite factor; the affine substitution has real scale
+one and full modulus $1/M$, the **finite-factor** mass of one cell.
+The [cyclic calculation](../../Proofs/Lemmas/RationalAdeleCyclicFourier.lean)
+uses primitivity at the difference of two distinct residue indices, not
+invertibility of that difference. It gives orthogonality in the positive
+cyclic phase: The $M^2$ terms on the diagonal cancel the squared matrix
+weight $1/M^2$. This includes $M=1$. Integrate that finite squared norm
+identity in the real frequency and apply `SchwartzMap.integral_norm_sq_fourier`
+to each profile. The assembled forward integral is the existing pointwise
+stage transform; the proof does not need the inverse equivalence.
+
+This is the Schwartz restriction of (D.1.1.9), Lemma D.1.1.2(4), p. 747,
+in the rational frequency parameterization, using the unit-strip measure
+of Example A.3.1.8, p. 558. The manuscript cites a general Plancherel
+theorem and explains the global normalization via a fixed Gaussian tensor.
+The Lean proof directly checks the squared norms on every rational stage.
+It uses the project character's conjugated finite factors for diagonal
+cancellation, not the literal positive local product in the provisional
+extraction of Examples A.3.1.5–8. Independent Yah statement review
+(`parseval-statement-review`, base `572ff46e4820e60927c9d9c3944aa055366cbc3b`)
+checked the formulation, both occurrences of $1/M$, the character sign,
+and the scope against the digest-matched layout extraction, not rendered
+pages. This does not identify the full dual or its Haar measure, or prove
+(D.1.1.10), the extension to all of $L^2$.
+
+### Next Fourier step: L² approximation of compactly supported continuous tests
+
+Toward (D.1.1.10), prove that every continuous compactly supported complex
+function on the rational adeles can be approximated in normalized $L^2$
+by assembled Schwartz stages. First approximate uniformly by sampling
+along `rationalAdeleAt t (rationalAdeleStageRepresentative M j)` in each
+cell, extending by zero outside the stage support. Choose the finite
+support level by `exists_rationalFinite_support_bound`, then refine by
+divisibility using `HasCompactSupport.uniformContinuous_of_continuous`
+and `exists_rationalFinite_invariance_bound`. The sampled functions and
+the original share a fixed compact real interval and a fixed finite
+support cylinder, so uniform error there controls $L^2$ error. Then use
+`SchwartzMap.denseRange_toLpCLM` on the finitely many real profiles and
+the same cell norm calculation, generalized to square-integrable real
+profiles for the differences. This step does not require identifying the
+full dual or the manuscript tensor topology. Afterward, prove density of
+these compactly supported tests in the actual adelic $L^2$ and use the
+Schwartz inverse and Parseval to construct the surjective isometric extension.
 
 ## Checked real-lattice inversion
 

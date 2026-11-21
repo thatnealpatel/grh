@@ -25,7 +25,8 @@ private theorem map_inv_dilate (g : J) :
   exact comap_rationalAdeleAddHaar_dilate g
 
 /-- Inverse affine precomposition preserves `L¹` on the rational adeles. -/
-public theorem integrable_rationalAdele_inv_affine {f : A → ℂ} (hf : Integrable f μA)
+public theorem integrable_rationalAdele_inv_affine {E : Type*} [NormedAddCommGroup E]
+    {f : A → E} (hf : Integrable f μA)
     (a : A) (g : J) : Integrable (fun x : A ↦ f ((g⁻¹ : J) * (x - a))) μA := by
   let e := (ContinuousAddEquiv.mulLeft g).toHomeomorph.toMeasurableEquiv
   have h : Integrable f (Measure.map e.symm μA) := by
@@ -38,7 +39,8 @@ public theorem integrable_rationalAdele_inv_affine {f : A → ℂ} (hf : Integra
     (measurePreserving_add_left μA (-a)).integrable_comp_of_integrable h'
 
 /-- Change variables by `x = a + g*z`, with the direct modulus. -/
-public theorem integral_rationalAdele_affine (f : A → ℂ) (a : A) (g : J) :
+public theorem integral_rationalAdele_affine {E : Type*} [NormedAddCommGroup E]
+    [NormedSpace ℝ E] (f : A → E) (a : A) (g : J) :
     (∫ x, f x ∂μA) = ideleNorm g • ∫ z, f (a + (g : A) * z) ∂μA := by
   let e := (ContinuousAddEquiv.mulLeft g).toHomeomorph.toMeasurableEquiv
   have h := e.symm.measurableEmbedding.integral_map (μ := μA) (fun z ↦ f (a + e z))

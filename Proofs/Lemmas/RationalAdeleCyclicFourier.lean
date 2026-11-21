@@ -101,5 +101,76 @@ public theorem rationalAdeleStageFourierEquiv_apply {M : ℕ} (hM : 0 < M) (b : 
   dsimp [e]
   rw [finEquiv_eq_cast, finEquiv_eq_cast]
 
+private theorem conj_stdAddChar {N : ℕ} [NeZero N] (z : ZMod N) :
+    conj (ZMod.stdAddChar z) = ZMod.stdAddChar (-z) := by
+  simp only [ZMod.stdAddChar_apply, ← Circle.coe_inv_eq_conj]
+  exact congrArg ((↑) : Circle → ℂ) (ZMod.toCircle.map_neg_eq_inv z).symm
+
+private theorem cyclic_orthogonality {N : ℕ} [NeZero N] (j l : ZMod N) :
+    (∑ k : ZMod N, ZMod.stdAddChar (j * k) * conj (ZMod.stdAddChar (l * k))) =
+      if j = l then (N : ℂ) else 0 := by
+  simp_rw [conj_stdAddChar, ← AddChar.map_add_eq_mul, ← sub_eq_add_neg, ← sub_mul]
+  split_ifs with h
+  · simp [h, ZMod.card]
+  · exact AddChar.sum_eq_zero_of_ne_one (ZMod.isPrimitive_stdAddChar N (sub_ne_zero.mpr h))
+
+private theorem cyclic_sum_mul_conj {N : ℕ} [NeZero N] (b : ZMod N → ℂ) :
+    let d := fun k : ZMod N ↦ ∑ j : ZMod N, ZMod.stdAddChar (j * k) * b j
+    (∑ k, d k * conj (d k)) = (N : ℂ) * ∑ j, b j * conj (b j) := by
+  classical
+  dsimp only
+  calc
+    _ = ∑ k : ZMod N, ∑ j : ZMod N, ∑ l : ZMod N,
+          (ZMod.stdAddChar (j * k) * conj (ZMod.stdAddChar (l * k))) * (b j * conj (b l)) := by
+      refine Finset.sum_congr rfl fun k _ ↦ ?_
+      rw [map_sum, Finset.sum_mul]
+      refine Finset.sum_congr rfl fun j _ ↦ ?_
+      rw [Finset.mul_sum]
+      exact Finset.sum_congr rfl fun l _ ↦ by rw [map_mul (starRingEnd ℂ)]; ring
+    _ = ∑ j : ZMod N, ∑ l : ZMod N,
+          (∑ k : ZMod N, ZMod.stdAddChar (j * k) * conj (ZMod.stdAddChar (l * k))) *
+            (b j * conj (b l)) := by
+      simp only [Finset.sum_mul]
+      rw [Finset.sum_comm]
+      exact Finset.sum_congr rfl fun _ _ ↦ Finset.sum_comm
+    _ = _ := by
+      simp only [cyclic_orthogonality, ite_mul, zero_mul, Finset.sum_ite_eq, Finset.mem_univ,
+        ite_true, Finset.mul_sum]
+
+private theorem normalized_cyclic_sum_norm_sq {M : ℕ} [NeZero M] (b : ZMod (M ^ 2) → ℂ) :
+    (∑ k : ZMod (M ^ 2), ‖(M : ℂ)⁻¹ * ∑ j : ZMod (M ^ 2), ZMod.stdAddChar (j * k) * b j‖ ^ 2) =
+      ∑ j, ‖b j‖ ^ 2 := by
+  let d (k : ZMod (M ^ 2)) := ∑ j : ZMod (M ^ 2), ZMod.stdAddChar (j * k) * b j
+  have h : (∑ k, ‖d k‖ ^ 2) = ((M ^ 2 : ℕ) : ℝ) * ∑ j, ‖b j‖ ^ 2 := by
+    apply Complex.ofReal_injective
+    simp only [Complex.ofReal_mul, Complex.ofReal_natCast, Complex.ofReal_sum, Complex.sq_norm,
+      ← Complex.mul_conj]
+    exact cyclic_sum_mul_conj b
+  change (∑ k, ‖(M : ℂ)⁻¹ * d k‖ ^ 2) = _
+  simp only [norm_mul, mul_pow, norm_inv, Complex.norm_natCast]
+  rw [← Finset.mul_sum, h, Nat.cast_pow, ← mul_assoc, ← mul_pow,
+    inv_mul_cancel₀ (NeZero.ne (M : ℝ)), one_pow, one_mul]
+
+/-- At each real frequency the Haar-normalized finite matrix preserves the
+sum of the squared magnitudes of the real Fourier profiles. -/
+public theorem rationalAdeleStageFourier_sum_norm_sq {M : ℕ} (hM : 0 < M)
+    (b : Fin (M ^ 2) → S) (t : ℝ) :
+    (∑ k, ‖rationalAdeleStageFourier M b k t‖ ^ 2) = ∑ j, ‖𝓕 (b j) t‖ ^ 2 := by
+  let : NeZero M := ⟨hM.ne'⟩
+  let e := (ZMod.finEquiv (M ^ 2)).toEquiv
+  let c : ZMod (M ^ 2) → ℂ := fun j ↦ 𝓕 (b (e.symm j)) t
+  calc
+    _ = ∑ k : ZMod (M ^ 2),
+        ‖(M : ℂ)⁻¹ * ∑ j : ZMod (M ^ 2), ZMod.stdAddChar (j * k) * c j‖ ^ 2 := by
+      refine Fintype.sum_equiv e _ _ fun k ↦ ?_
+      rw [rationalAdeleStageFourier_apply, sum_apply, Finset.mul_sum]
+      congr 2
+      refine Fintype.sum_equiv e _ _ fun j ↦ ?_
+      simp only [smul_apply, smul_eq_mul, rationalAdeleStageFourier_phase, c, e.symm_apply_apply]
+      change _ = (M : ℂ)⁻¹ * (ZMod.stdAddChar (_ * _) * _)
+      rw [show e j = _ from finEquiv_eq_cast j, show e k = _ from finEquiv_eq_cast k, mul_assoc]
+    _ = ∑ j, ‖c j‖ ^ 2 := normalized_cyclic_sum_norm_sq c
+    _ = _ := Fintype.sum_equiv e.symm _ _ fun _ ↦ rfl
+
 end
 end Masullo
