@@ -27,8 +27,8 @@ now identifies the [normalized quotient measure](#checked-product-of-local-haar-
 and the [upstairs restricted product](#checked-global-restricted-product-characterization).
 Independent Yah statement reviews used text extracted from the
 digest-matched [pinned edition](../sources/masullo/README.md). The readings
-are provisional, not visual. The additive Fourier identification of the
-unramified tensor is not formalized.
+are provisional, not visual. See the later sections for the checked
+additive Fourier theory on the box span and its scope.
 
 ## Manuscript statement and rational reduction
 
@@ -1788,29 +1788,89 @@ Validation endpoints: `rationalAdeleBoxSum_uniform_theta_tails`,
 `lake --wfail build Proofs`, `leanchecker` on both linked modules, and
 `#print axioms` on the four endpoints and the fixed-test specializations.
 
-### Next orbit step: A rational finite quotient stage in box coordinates
+## Checked rational finite quotient stage in box coordinates
 
-The proof of Proposition 2.1.3.2, pp. 69–70, uses two compact open
-subgroups $H\subset K$ of the finite adeles, not merely a common
-support set: The tests supported on $K$ must be constant on $H$-cosets.
-Start with one explicit stage $K=M^{-1}\widehat{\mathbb Z}$,
-$H=M\widehat{\mathbb Z}$ for a positive integer $M$. Prove that the
-$M^2$ translates $j/M+H$ for $0\le j<M^2$ partition $K$ and are fixed
-box factors with real scale one and real center zero. Use the existing
-rational denominator-clearing theorem on $x/M$ for $x\in K$:
-$x/M-q\in\widehat{\mathbb Z}$ implies $M^2q\in\widehat{\mathbb Z}$
-by multiplying by $M^2$ and using $Mx\in\widehat{\mathbb Z}$.
-Integral diagonal rationals are integers, so reduce $M^2q$ modulo $M^2$.
-For distinctness apply that same diagonal-integrality criterion to
-$(j-j')/M^2$. This can be stated on full adeles using the existing
-subring `rationalIntegralAdeles`, which puts no restriction on the
-real coordinate. Use the positive real section to cancel the real
-scale of the diagonal idele $M$.
+In the digest-matched layout extraction of the proof of Proposition
+2.1.3.2, pp. 69–70, the finite-dimensional stages are functions on
+$K/H$ for compact open subgroups $H\subset K$ of the finite adeles.
+They extend by zero outside $K$ and are constant on $H$-cosets inside
+$K$. This extraction is not a visual reading. The topology and
+bornology of the resulting inductive limit are separate from the
+finite-stage coordinate calculation. The extraction labels the statement
+“Lemma” on p. 68 and the proof “Proposition” on p. 69. The explicit
+$M^2$ representatives below are our rational specialization, not
+a formula attributed to the manuscript.
 
-This supplies explicit box coordinates for such finite quotient
-stages. Proving cofinality and showing that every LF-bounded adelic
-family lies boundedly in one stage remain separate obligations; a
-common compact support alone does not bound the invariance level.
+[The rational box stage](../../Proofs/Props/RationalAdeleBoxStage.lean)
+takes $H=M\widehat{\mathbb Z}$ and $K=M^{-1}\widehat{\mathbb Z}$ for a
+positive integer $M$. The Lean sets are cylinders in the full adeles,
+with unrestricted real coordinate. The cell over $j/M+H$ is defined
+by $x/M-j/M^2$ having integral finite coordinates.
+`rationalAdeleStageCell_subset_support` puts each cell in the support
+cylinder, and `mem_rationalAdeleStageSupport_iff_existsUnique_cell`
+gives exactly one cell for each point there, indexed by $0\le j<M^2$.
+[The residue proof](../../Proofs/Lemmas/RationalAdeleResidues.lean)
+clears the finite coordinates of $z=x/M$ by a diagonal rational $q$.
+Then $M^2q$ is an integral diagonal, hence an integer. Euclidean
+reduction modulo $M^2$ gives the representative; for uniqueness, the
+difference of two representatives divided by $M^2$ must be an integer.
+
+`exists_rationalAdeleBox_eq_stageCell` uses the finite parts of
+$j/M$ and $M$ as the center and dilation, with real coordinates zero
+and one. For every real Schwartz profile, the resulting box is that
+profile times the cell indicator. `exists_rationalAdeleBoxSum_stage_coordinates`
+uses all $M^2$ boxes with coefficient one and reconstructs the
+arbitrary tuple of profiles on their cells, extending by zero off the
+support cylinder. The geometry is chosen before the profiles, as
+required by the checked uniform tails. This is an algebraic
+realization for one prescribed stage, not a topological identification
+of the rational adelic Schwartz–Bruhat space. A stage identification
+with the product of real Schwartz spaces also needs the converse:
+Extract each profile by restriction to one representative, prove the
+slices are Schwartz in the intended test class, and use invariance to
+recover the original function.
+
+Independent Yah statement review (`stage-review`, agent `uExkgFZ`)
+at base `97e4b2091a1661a0b3f54f559428aeeaadb33b0c` checked the
+$M^2$ partition, including $M=1$, the mixed real/finite parameters,
+the quantifier order in the assembly, and the distinction from an LF
+identification. The new residue lemmas are checked in this change,
+not assumed from the base.
+
+Validation endpoints: The four declarations above and the three
+`rationalAdele_residue_*` lemmas. Use `lake --wfail build Proofs`,
+`leanchecker` on `Lemmas.RationalAdeleResidues` and
+`Props.RationalAdeleBoxStage`, and `#check` and `#print axioms` on all
+seven declarations.
+
+### Next orbit step: Cofinality of the rational box stages
+
+Show that for any compact open pair $H\subset K$ of subgroups of the
+finite adeles, some $M>0$ satisfies
+$M\widehat{\mathbb Z}\subset H\subset K\subset M^{-1}\widehat{\mathbb Z}$.
+The two bounds are independent:
+
+- For $K$, the open support stages cover the finite adeles by
+  `exists_rational_sub_mem_integral` applied to the lift with real part
+  zero (multiply by the rational translation's denominator). Use
+  `IsCompact.elim_finite_subcover` and the product of the finitely
+  many levels to get a common positive denominator.
+- For $H$, pull the zero neighborhood back to $\prod_v O_v$ along
+  `RestrictedProduct.structureMap`, using
+  `RestrictedProduct.nhds_zero_eq_map_structureMap` or continuity of
+  that embedding. `nhds_pi` and `Filter.mem_pi'` extract the finitely
+  many constrained integral coordinates. There use the rational
+  completion's `padicIntEquiv` and the small balls $p_v^{n_v}O_v$
+  (`Padic.norm_p_pow`); take the product of the corresponding prime
+  powers and use that all the other factors are locally integral.
+
+Enlarge the two integers to their product, using the opposing
+inclusions of invariance and support under divisibility. This proves
+cofinality for Proposition 2.1.3.2 over $\mathbb Q$, not the separate
+LF bounded-set reduction in Theorem 2.2.3.4(4), p. 84. The latter
+still needs to put every bounded family in a common stage with bounded
+real Schwartz coordinates; a common support alone does not control
+invariance.
 
 ## Checked real-lattice inversion
 
