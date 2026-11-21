@@ -286,35 +286,73 @@ bound on the real part of the normalized log. The source check used
 digest-matched Masullo text extraction and Lang scan OCR, not rendered
 pages. The corresponding Lang scan uses different proposition numbering.
 
-## Next runnable obligation: Bound the logarithmic derivative of the quotient
+## Checked logarithmic derivative bound on the moving disk
 
-Using the checked factorization, prove the local Cauchy estimate for
-$g'/g$ on the closed radius-three disk. Take a logarithm $H$ of
-$g/g(c_t)$ on the open radius-five disk with $H(c_t)=0$. The pinned
-`Complex.exists_continuousOn_eqOn_exp_comp` supplies a continuous lift.
-To prove holomorphy, near each $w$ shrink the neighborhood so the
-imaginary part of the lift difference lies in $(-\pi,\pi)$, apply
-`Complex.log_exp`, and use `AnalyticAt.clog` for $g(z)/g(w)$, which
-has value $1$ at $w$. With $M_t=C(1+|t|)^2$, the real part of $H$ is
-bounded by $B=\log(M_t/|f(c_t)|)+N\log 5$. Translate the center to zero
-and apply `Complex.borelCaratheodory_zero` with $B+1$ to bound $|H|$ on
-the closed radius-four disk. Apply
-`Complex.norm_deriv_le_of_forall_mem_sphere_norm_le` on unit circles to
-get $|H'|\le8(B+1)$ on the closed radius-three disk. Differentiating $\exp H=g/g(c_t)$
-identifies $H' = g'/g$ there. The factors add at most $N/\delta$ at
-points of distance at least $\delta>0$ from the removed zeros. Subtract
-$1/s+1/(s-1)$ to transfer from $f'/f$ to $\Lambda'/\Lambda$. This gives
-the planned cubic horizontal bound on the separated-height segments
-$[-1,2]+iT_m$, and a vertical bound at $2+it$ by zero distance at least
-one. Use the checked reflection at $-1$ and compact continuity at
-bounded heights. Using $a=2$ is allowed by the checked finite contour.
+[`Masullo.entireZeta_logDeriv_le_moving_disk`](../../Proofs/Props/ZetaContourLogDeriv.lean)
+proves that there are uniform $D,K>0$ such that whenever $|t|\ge1$,
+$|z-(2+it)|\le3$, and $z$ has distance at least $\delta>0$ from all
+open-strip zeros,
+
+$$
+\left|\frac{f'(z)}{f(z)}\right|
+\le D(1+|t|)+\frac{K(1+|t|)}{\delta},\qquad f=\operatorname{entireZeta}.
+$$
+
+In (B.4.2.1), p. 614, Masullo cites Lang for growth of the completed
+logarithmic derivative in the sense of Definition B.3.1.1, p. 604.
+The corresponding Lang Ch. XVII §2, Propositions 2 and 3 (scan printed
+pp. 335–336), compare logarithmic derivatives from a global Weierstrass
+product and estimate the right edge using the Euler product and
+Stirling. The source comparison is provisional text extraction and OCR,
+not a reading of rendered pages or a match of the exact cited numbering.
+The checked local repair does not import Lang's bound: It estimates the
+entire numerator directly and leaves the two pole terms to the transfer.
+
+[`Masullo.norm_logDeriv_le_on_inner_ball`](../../Proofs/Lemmas/ZeroFreeDiskLogDeriv.lean)
+uses Mathlib's continuous logarithm lift on the open radius-five disk.
+Locally the lift difference agrees with the principal log of $g(w)/g(w_0)$
+near $w_0$, where the quotient is one, so the lift is analytic. Normalize
+the lift to vanish at the center $c_t$. Its real part is bounded by
+$B=\log(M/|g(c_t)|)+1>0$. Borel–Carathéodory at radius four bounds
+its modulus by $8B$. A full unit circle about any point of the closed
+radius-three disk is contained in that radius-four disk, and Cauchy's
+estimate gives $|g'/g|\le8B$ there. The [factorization](#checked-removal-of-the-closed-inner-disk-divisor)
+and [anchor](#checked-lower-bound-at-the-right-hand-anchor) make $B$
+at most linear in $1+|t|$; the finite sum of derivative terms from the
+removed factors is bounded by $N/\delta$ with the full multiplicities.
+Independent Yah statement review (`logdisk-review`) verified the constants,
+boundary inclusion, and use of the full orders, and confirmed that the
+selected-height consumer needs only actual-height polynomial growth. It
+checked the matching-digest Masullo extraction and Lang OCR, not images.
+
+## Next runnable obligation: Bound the completed derivative on the contour edges
+
+First prove $\Lambda'/\Lambda=f'/f-1/z-1/(z-1)$ off the poles and
+zeros. Use `completedZeta_eq_quotient` as a neighborhood equality, not
+just a point equality, then `logDeriv_fun_div` and `logDeriv_fun_mul`.
+For $|\Im z|\ge1$, each pole term has modulus at most one by
+`Complex.abs_im_le_norm`.
+
+Using `exists_height_separated_from_zeta_zeros`, prove that one constant
+bounds $|\Lambda'/\Lambda|$ by $C(1+|T_m|)^3$ throughout each
+$[-1,2]+iT_m$, for integer $|m|\ge2$ and $T_m\in(m,m+1)$.
+The entire segment is in the radius-three disk about $2+iT_m$,
+including the endpoint at $-1$. The ordinate separation is also a lower
+bound on complex distance, and $1+|m|\le2(1+|T_m|)$ converts the
+quadratic margin to the actual height. On the right vertical line at
+$2+it$, take $\delta=1$ by real-part separation from the open-strip zeros.
+This gives a linear large-height bound. Extend it to all heights by
+continuity and compactness on $|t|\le1$, and apply
+`completedZeta_logDeriv_reflection` for the left vertical line at $-1$.
+Using $a=2$ is allowed by the checked finite contour. These estimates
+are not yet Lean declarations.
 
 Absolute vertical integrability and exhaustion of the zero sum still
 need to be checked. The target of (B.4.2.2) remains
 
 $$
-\frac{1}{2\pi}\left[\int_{\mathbb R}(\Phi f)(a+it)\,dt
--\int_{\mathbb R}(\Phi f)(1-a+it)\,dt\right]
+\frac{1}{2\pi}\left[\int_{\mathbb R}(\Phi\Lambda'/\Lambda)(a+it)\,dt
+-\int_{\mathbb R}(\Phi\Lambda'/\Lambda)(1-a+it)\,dt\right]
 = -\Phi(0)-\Phi(1)+\sum_{0<\Re\rho<1}m_\rho\Phi(\rho).
 $$
 
