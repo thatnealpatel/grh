@@ -2506,18 +2506,70 @@ against the accepted interfaces and the digest-matched extraction of
 pp. 556, 558, and 746–747. These are project steps toward (D.1.1.10), not
 statements of D.1.1.2(4), and the source reading is not visual verification.
 
-### Next Fourier step: Extend the rational Schwartz Fourier equivalence to L²
+## Checked rational adelic Plancherel extension from the Schwartz core
 
-Give `RationalAdeleSchwartzLF` its canonical complex-linear map to
-`Lp ℂ 2 rationalAdeleAddHaar` using `MemLp.toLp`. Transfer the representative
-approximation to `DenseRange` via `Lp.dist_def` and `MemLp.coeFn_toLp`.
-Use Schwartz Parseval for norm preservation and the existing LF Fourier
-linear equivalence with Mathlib `LinearEquiv.extendOfIsometry` on this
-same dense map on both sides. Check agreement on the core and uniqueness.
-Agreement with the integral on all of $L^1\cap L^2$ is a separate step:
-$L^2$ approximation alone does not control the Fourier integral. The
-manuscript's target in (D.1.1.10) is the full compact-open dual with its
-Plancherel Haar, not just a second copy of the rational adelic $L^2$.
+[`Masullo.rationalAdeleSchwartzToL2`](../../Proofs/Theorems/RationalAdeleL2Fourier.lean)
+sends a rational adelic Schwartz test to its normalized additive Haar
+$L^2$ class. `rationalAdeleSchwartzToL2_ae_eq` identifies the representative,
+and `denseRange_rationalAdeleSchwartzToL2` transfers the representative
+approximation to the quotient by `Lp.edist_def` and a.e. congruence.
+The norm of each Schwartz class is the square root of its squared-norm
+integral, so the Schwartz Parseval identity makes the induced Fourier
+map isometric on that core. The existing Fourier inverse on the LF
+space lets `LinearEquiv.extendOfIsometry` extend in both directions.
+The extension uses the dense algebraic image of Schwartz in $L^2$;
+it does not require any identification of the manuscript LF topology.
+
+`Masullo.rationalAdeleL2Fourier` is a complex-linear isometric equivalence
+of `Lp ℂ 2 rationalAdeleAddHaar` with itself. With $J$ the class map,
+`rationalAdeleL2Fourier_onSchwartz` checks $U(Jf)=J(\widehat f)$;
+`rationalAdeleL2Fourier_ae_eq_onSchwartz` identifies that output a.e. with
+the normalized integral against $\overline{\psi(xy)}$.
+`rationalAdeleL2Fourier_unique` proves uniqueness among **all continuous
+maps** with the same values on $Jf$. There are no moment hypotheses.
+
+Independent Yah statement review (`plancherel-statement-review`, base
+`27197949876ce9e27e870933df55fb3374a30993`) checked the direction,
+normalization, and core agreement against the pinned text extraction.
+Lemma D.1.1.2(4), p. 747, states Parseval (D.1.1.9) on all of
+$L^1\cap L^2$ and extends to the full compact-open dual in (D.1.1.10).
+The prose on p. 773 confirms conjugation in (D.1.1.4); the underlying
+$\psi$ here uses the project's rational diagonal sign correction.
+Example A.3.1.8, p. 558, asserts rational self-dual Haar normalization.
+The checked equivalence uses normalized Haar on **two rational adelic
+copies**, not a proved topological identification with the full dual
+or transport of its Haar measure. The reading is extraction-based,
+not rendered-page verification.
+
+### Next Fourier step: Agreement with the integral on integrable L² inputs
+
+First prove simultaneous approximation in both `eLpNorm`s by the
+**same** rational Schwartz test. A route reusing the checked $L^2$
+density is to exhaust the adeles by bounded real intervals times
+$(n!)^{-1}\widehat{\mathbb Z}$. Use a cutoff $\chi$ equal to one on a
+large such compact set, formed from a real smooth compact plateau and
+the indicator of the clopen finite cylinder, with $0\le\chi\le1$.
+Both $L^1$ and $L^2$ tails of $(1-\chi)f$ are small by domination. Fix
+this cutoff before choosing the $L^2$-close Schwartz test $g$.
+Multiplying by $\chi$ preserves the rational Schwartz class: In a
+common divisibility stage, support, invariance, and the smooth
+real-profile condition can be checked separately. On the fixed compact
+support of $\chi$, use `eLpNorm_le_eLpNorm_mul_rpow_measure_univ_of_pos`
+with the restricted measure to control $\chi(f-g)$ in $L^1$ by its
+$L^2$ norm. This avoids needing support bounds for the existing globally
+$L^2$-close tests themselves.
+
+Then use the unit modulus of the phase to bound the Fourier integral
+error uniformly by the $L^1$ error (the rational-model bound of
+(D.1.1.7), p. 746). The same approximating sequence converges under $U$
+in $L^2$. Mathlib's `tendstoInMeasure_of_tendsto_Lp` and
+`TendstoInMeasure.exists_seq_tendsto_ae` give a subsequence converging
+a.e. to the output class. Intersect the countably many a.e. core
+agreement events and use uniqueness of the pointwise limit. This should
+give `MemLp (rationalAdeleFourier f) 2 rationalAdeleAddHaar` and a.e.
+agreement with $U(f)$ for each integrable $L^2$ representative. This route
+is not yet formalized. The compact-open dual identification remains a
+separate obligation.
 
 ## Checked real-lattice inversion
 
