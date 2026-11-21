@@ -2678,22 +2678,61 @@ the existence of a self-duality for the other sign convention. The proof
 is a project derivation, not a verification of the external [CF] citation
 or a rendered-page reading.
 
-### Next Fourier step: Haar transport to the full dual
+## Checked Plancherel measure on the full rational adelic dual
 
-Example A.3.1.8, p. 558, additionally identifies the self-dual Haar
-normalization, using the unit-mass strip and citing the transform of the
-Gaussian times the integral-finite indicator. Lemma D.1.1.2(4),
-(D.1.1.9)–(D.1.1.10), p. 747, puts the output on the full compact-open
-dual. Push normalized additive Haar forward along the checked
-equivalence, verify that the pushforward is Haar, and transport the
-checked adelic-frequency Parseval and $L^2$ equivalence along the
-resulting measure-preserving bijection. At the character indexed by
-$y$, identify the dual Fourier integral with the checked adelic
-integral using $xy=yx$ and conjugation. If stating uniqueness among
-Haar measures, use Haar uniqueness up to scalar and one nonzero
-integrable $L^2$ test to force the scalar to be $1$. The topological
-equivalence alone supplies none of this measure comparison. The
-$S$-local normalization is a separate obligation.
+[The dual Plancherel module](../../Proofs/Theorems/RationalAdeleDualPlancherel.lean)
+defines `Masullo.rationalAdeleDualHaar` by pushing normalized additive
+Haar $\mu_A$ through the pairing homeomorphism $e:A\to\widehat A$.
+`rationalAdeleDualHaar_isHaarMeasure` proves it is Haar for pointwise
+multiplication on the full compact-open character group.
+`rationalAdeleDualFourier_pairing` identifies the integral at $e(y)$
+with the checked adelic Fourier integral at $y$, pointwise, by
+$xy=yx$ and the conjugated character convention.
+
+`Masullo.rationalAdeleDualL2Fourier` is a complex-linear isometric
+equivalence from $L^2(A,\mu_A)$ onto $L^2(\widehat A,e_*\mu_A)$:
+Compose the checked adelic-frequency unitary with pullback by $e^{-1}$.
+`rationalAdeleDualL2Fourier_ae_eq_integral` gives almost-everywhere
+agreement with the pointwise integral on every integrable
+square-integrable representative, and `eLpNorm_rationalAdeleDualFourier_two`
+gives Parseval there. `rationalAdeleDualL2Fourier_unique` shows this
+agreement determines the extension among continuous maps, since the
+Schwartz classes are dense. `rationalAdeleDualHaar_unique` shows that no
+other Borel Haar measure on the dual gives Parseval on the same domain.
+Haar uniqueness reduces the comparison to a nonnegative scalar, and
+the indicator of the closed calibration strip has $L^2$ norm one
+upstairs. Its dual norm would scale by the square root of the scalar,
+so both Parseval identities can hold only when the scalar is one.
+
+Independent Yah statement review (`dual-plancherel-statement`, base
+`9790ba17ee0fe956d9c3db8d716d6fa3c8b23fbb`) checked the domain, topology,
+conjugation, and scalar calibration against the digest-matched text
+extraction. This is the normalized rational specialization of Example
+A.3.1.8, p. 558, and Lemma D.1.1.2(4), (D.1.1.9)–(D.1.1.10), p. 747.
+The manuscript cites a Gaussian times the integral-finite indicator
+for the scalar; the project uses the established rational Parseval
+theorem and a strip indicator instead. In (D.1.1.4), p. 746, the text
+extraction loses the overbar. The PDF vector stroke spans $\chi(g)$,
+and the extracted proof of Lemma D.1.6.19, p. 773, explicitly references
+that conjugation. This is vector and text evidence, not independent
+visual review. The finite-place sign repair for diagonal cancellation
+is unchanged. The $S$-local normalization, general number fields, and
+identification of the manuscript Schwartz topology are not covered.
+
+### Next Fourier step: Vanishing at infinity on the full dual
+
+Prove Lemma D.1.1.2(1), p. 747, for arbitrary integrable rational adelic
+input. Use `MemLp.exists_hasCompactSupport_eLpNorm_sub_le` at exponent
+one to approximate by continuous compactly supported tests; these also
+belong to $L^2$ by finite Haar mass on compact sets. The checked
+simultaneous approximation then gives an $L^1$ approximation by rational
+Schwartz tests, with no $L^2$ restriction on the original input. For
+Schwartz tests, the checked stage Fourier theorem keeps the output in
+the stage, a finite sum of real Schwartz profiles on compact clopen
+finite cells. `SchwartzMap.tendsto_cocompact` gives real decay there.
+Use the checked uniform $L^1$ Fourier error bound, transported via the
+pairing homeomorphism, to get continuity and vanishing at infinity on
+the full dual. This does not assert the $L^1$ injectivity of part (2).
 
 ## Checked real-lattice inversion
 

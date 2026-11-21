@@ -28,7 +28,8 @@ set_option linter.concreteInstances false
 
 variable [MeasurableSpace A] [BorelSpace A]
 
-private theorem integrable_schwartz (g : RationalAdeleSchwartzLF) :
+/-- Rational adelic Schwartz functions are integrable for normalized additive Haar. -/
+public theorem integrable_rationalAdeleSchwartzLF (g : RationalAdeleSchwartzLF) :
     Integrable g.toUnion.val μA := by
   obtain ⟨n, hn⟩ := mem_rationalAdeleSchwartzStageUnion.mp g.toUnion.property
   rw [← rationalAdeleLFAssembly_read n g hn, rationalAdeleLFAssembly_toUnion,
@@ -76,7 +77,7 @@ public theorem rationalAdeleL2Fourier_ae_eq_integral {f : A → ℂ}
   have hL₁ : Tendsto (fun n ↦ F (g n).toUnion.val y) atTop (𝓝 (F f y)) := by
     refine EMetric.tendsto_nhds.2 fun δ hδ ↦ (hclose δ hδ).mono fun n hn ↦ ?_
     rw [edist_comm, eDist_eq_eNorm_sub]
-    exact (eNorm_rationalAdeleFourier_sub_le hf₁ (integrable_schwartz (g n)) y).trans_lt
+    exact (eNorm_rationalAdeleFourier_sub_le hf₁ (integrable_rationalAdeleSchwartzLF (g n)) y).trans_lt
       ((hg₁ n).trans hn)
   exact tendsto_nhds_unique (hy.congr fun n ↦ hcorey (s n)) (hL₁.comp hs.tendsto_atTop)
 
