@@ -2075,21 +2075,59 @@ identification with the manuscript tensor topology or extension to
 other number fields. The source locators refer to the digest-matched
 text extraction, not a rendered-page reading.
 
-## Next orbit step: The real dilation derivative on the rational LF space
+## Checked real dilation generator on the rational LF space
 
-For the positive real norm section, implement the generator $D$ on
-`RationalAdeleSchwartzLF` for Lemma 2.2.4.2, (2.2.4.2)–(2.2.4.6),
-pp. 87–88. Write $x=(u,z)$ in real and finite coordinates. Prove that
-$Df(u,z)=u\,\partial_u f(u,z)$ is a complex continuous linear map,
-stage preserving, and equals the derivative at $s=0$ of
-$f(e^s u,z)$. This is the logarithmic parameter of $t\mapsto(t,1)$;
-the quotient in (2.2.4.2) uses $t-1$, and $d(e^s)/ds=1$ at zero.
-On each tuple use `SchwartzMap.derivCLM` followed by
-`SchwartzMap.smulLeftCLM` with `Complex.hasTemperateGrowth_ofReal`.
-The pointwise formula makes the stage maps compatible, and
-`rationalAdeleLF_continuous_iff` gives continuity of the assembled map.
-This endpoint needs neither termwise theta differentiation nor a
-classification of all one-parameter subgroups.
+[RationalAdeleLFDilationDeriv.lean](../../Proofs/Theorems/RationalAdeleLFDilationDeriv.lean)
+proves the positive real norm-section case of Lemma 2.2.4.2,
+(2.2.4.2)–(2.2.4.5), pp. 87–88, in the rational factorial-stage LF
+model. `Masullo.rationalAdeleLFDilationDeriv` is a continuous
+complex-linear endomorphism. Its `_apply` theorem gives
+$Df(u,z)=u\,\partial_u f(u,z)$ for every adele, including $u=0$.
+Its `_assembly` theorem applies the real Euler operator coordinatewise
+on each stage without changing any finite cell. The two `HasDerivAt`
+endpoints `hasDerivAt_rationalAdeleLF_dilate` and
+`hasDerivAt_rationalAdeleLF_logDilation` identify this same value with
+the derivative at scale $1$ and at log scale $0$, respectively. The
+all-real scale formula is an extension of the positive-scale formula
+near $1$; the log theorem uses the actual idelic section.
+
+The [stagewise proof](../../Proofs/Lemmas/RationalAdeleDilationDeriv.lean)
+uses `SchwartzMap.derivCLM` followed by `SchwartzMap.smulLeftCLM`
+with `Complex.hasTemperateGrowth_ofReal`. For an arbitrary LF element,
+stage membership represents each real slice by a Schwartz function,
+so the formula uses a genuine pointwise derivative, not just a totalized
+`deriv`. Derivative uniqueness makes the chosen stage immaterial;
+`rationalAdeleLF_continuous_iff` gives continuity of the resulting map.
+
+Independent Yah statement review checked sign, parameters, and scope
+against the digest-matched extraction of pp. 87–88. No rendered page
+was independently inspected. This result does not assert differentiability
+of the orbit as an LF-valued map, identify the manuscript topology,
+prove its tensor identity (2.2.4.6), or treat arbitrary one-parameter
+subgroups.
+
+### Next orbit step: Differentiate rational class theta
+
+Prove (2.2.4.7), pp. 88–91, in this rational model: For any $f$ and
+rational idele class $d$, the function $s\mapsto\theta_f(\tau(s)d)$
+has derivative $\theta_{Df}(d)$ at $s=0$, and this derivative is
+continuous in $d$. Here $\tau$ is the checked log-norm section projected
+to classes. Descend the calculation from any idele lift. Log-section
+multiplicativity gives the derivative of each term at arbitrary $s$
+by applying `hasDerivAt_rationalAdeleLF_logDilation` at the dilated adele.
+
+Do not take the extracted fractional-ideal bound (2.2.4.8) literally
+for unrestricted finite components; see the
+[representative check](#source-interface-the-finite-part-of-the-representative-matters).
+Instead, represent $Df$ as a finite box sum by its stage assembly.
+On the compact image of $[-1,1]$ under $s\mapsto(\tau(s)k,0)$ for the
+chosen lift $k$, `exists_rationalAdeleBoxSum_orbit_majorant` gives one
+summable bound for all derivatives. Use
+`hasDerivAt_tsum_of_isPreconnected` (Mathlib `SmoothSeries.lean`) on
+$(-1,1)$, with absolute summability of the original series at zero.
+For continuity, apply `continuous_rationalAdeleClassTheta_boxSum` to
+the same representation of $Df$. This route uses no zero-mode hypotheses
+and does not need the Fourier zero-mode identity below.
 
 ### Source interface: The Fourier zero mode of the generator
 

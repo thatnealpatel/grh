@@ -36,6 +36,10 @@ private noncomputable def ofUnion : ↥rationalAdeleSchwartzStageUnion ≃ₗ[�
 public noncomputable def RationalAdeleSchwartzLF.toUnion : E →ₗ[ℂ]
     ↥rationalAdeleSchwartzStageUnion := ofUnion.symm.toLinearMap
 
+/-- LF elements are equal when their underlying adelic functions are equal. -/
+public theorem RationalAdeleSchwartzLF.ext {f g : E} (h : f.toUnion.val = g.toUnion.val) :
+    f = g := ofUnion.symm.injective (Subtype.ext h)
+
 /-- The algebraic stage assembly, now with codomain the LF space. -/
 public noncomputable def rationalAdeleLFAssemblyLinear (n : ℕ) : (Profiles n) →ₗ[ℂ] E :=
   ofUnion.toLinearMap.comp (rationalAdeleFactorialStageAssembly n)
