@@ -463,31 +463,67 @@ the digest-matched Masullo extraction of pp. 614–615. The extraction is
 not a visual reading. The two local evaluations, and their independent
 comparison with the global geometric distribution, are not proved here.
 
-## Next runnable obligation: Admit smooth compact log profiles
+## Checked Mellin admissibility of compact log profiles
 
-For $g:\mathbb R\to\mathbb C$ smooth with compact support, take
-$\Phi_g(s)=\int_{\mathbb R} g(x)e^{sx}\,dx$, as in (B.2.1.29), p. 599.
-Prove analyticity at every $s$ and one constant $B>0$ giving the fourth-power
-bound on the full closed strip $-1\le\Re s\le2$. This is the compact-log
-specialization of Proposition B.2.1.9(1)–(2), pp. 598–599, needed to apply
-`completedZeta_contour_split` to an actual two-sided test. Bound the complex
-derivative on a neighborhood of each $s$ by a compact-support majorant for
-`hasDerivAt_integral_of_dominated_loc_of_deriv_le`. On the full real line,
-`MeasureTheory.integral_mul_deriv_eq_deriv_mul` lets one iterate the
-single integration by parts four times without a boundary at zero. Use
-compact support for the zero boundary values and the uniform estimate
-$|e^{sx}|\le e^{2|x|}$ on the strip. The existing `CompactTestLaplace`
-proof is a pattern, not this result: It integrates on $x>0$ and supplies
-only quadratic decay.
+[`Props.CompactLogMellin`](../../Proofs/Props/CompactLogMellin.lean) proves
+Proposition B.2.1.9(1)–(2), pp. 598–599, for compact log profiles. For
+$g(x)=\phi(e^x)$, `Masullo.compactLogMellin g` is the whole-line integral
+$\Phi_g(s)=\int_{\mathbb R}g(x)e^{sx}\,dx$ of (B.2.1.29), with the
+positive exponent and no moment or half-line condition.
 
-The subsequent finite-place evaluation can then apply pinned
-`Continuous.fourierInv_fourier_eq` to $e^{2x}g(x)$ and to the corresponding
-reflected profile $e^{2x}e^{-x}g(-x)$. A normalization control for
-(B.4.2.10)–(B.4.2.11), p. 615, is that the $n>0$ integral before the von
-Mangoldt coefficient, with its $1/(2\pi)$ factor, must be
-$g(\log n)+n^{-1}g(-\log n)$. This follows at the level of the proposed
-formula by changing $x\mapsto -x$ in $\Phi_g(1-s)$ before applying the
-same Fourier inversion to both terms; the overall finite-place sign in
-the contour remains minus. This control is not yet checked in Lean. The
-Archimedean evaluation, the normalizations in (B.4.4.16), pp. 623–625,
-and the global $S$-piece comparison remain open.
+- `Masullo.analyticAt_compactLogMellin` proves entireness for continuous
+  compactly supported $g$. After (B.2.1.30), Masullo gives uniform absolute
+  convergence but leaves the step to holomorphy implicit. The Lean proof
+  uses dominated differentiation, the strategy in Proposition B.2.1.5(1),
+  p. 594. The compactly supported function
+  $x\mapsto |g(x)e^{sx}|e^{3|x|}$ is bounded for each fixed $s$.
+  `differentiable_compactLogMellin` uses this bound with the checked
+  `hasDerivAt_logMellin_of_decay` to differentiate in a complex
+  neighborhood, then complex differentiability gives analyticity.
+- `Masullo.compactLogMellin_vertical_decay` gives one $B>0$ for each
+  $A,N$ with $|\Phi_g(\sigma+it)|\le B/(1+|t|)^N$ for $|\sigma|\le A$,
+  for smooth compactly supported $g$. The multiplication form of
+  (B.2.1.31) is $\Phi_{g^{(N)}}(s)=(-s)^N\Phi_g(s)$. Compact support
+  kills both whole-line boundary terms, and the estimate (B.2.1.34)
+  applies to the differentiated profile. Near height zero, use the
+  undifferentiated majorant (B.2.1.36), so the bound includes $t=0$.
+  Take $A=2,N=4$ for `completedZeta_contour_split`, including its
+  reflected sample at $-1-it$.
+
+Independent Yah statement review (`compact-mellin-review`) confirmed the
+sign, hypotheses, and exact strip consumer against the digest-matched
+PDF text extraction and the accepted right-line theorem. The extraction
+is not a rendered-page reading. This proves admissibility, not either
+local evaluation or the global comparison.
+
+## Next runnable obligation: Evaluate the rational finite-place term
+
+Let $s=2+it$, $W(t)=\Phi_g(s)+\Phi_g(1-s)$, and $n>0$. Prove
+
+$$
+\frac{1}{2\pi}\int_{\mathbb R}W(t)n^{-s}\,dt
+ = g(\log n)+n^{-1}g(-\log n).
+$$
+
+In the reflected term change $x\mapsto-x$; both terms then give
+$W(t)=\widehat h(-t/(2\pi))$ with
+$h(x)=e^{2x}g(x)+e^xg(-x)$. Pin the sign with
+`Real.fourier_real_eq_integral_exp_smul`, change the Lebesgue variable
+with `Measure.integral_comp_mul_left`, and use
+`Continuous.fourierInv_fourier_eq` at $\log n$. The profile $h$ is
+continuous and compactly supported, and $\widehat h$ is integrable by
+scaling the checked strip bounds for the two samples. The Fourier
+inversion value is $n^{-2}h(\log n)$. The independent review checked
+these Mathlib interfaces but did not elaborate the proposed evaluation.
+
+This is the ordinary Dirac evaluation control on (B.4.2.10)–(11),
+p. 615. With ordinary point evaluation, the extracted unnormalized
+$dt$ formula (B.4.2.10) lacks $2\pi$, and the upward $ds$ integral in
+(B.4.2.11) needs $+2\pi i$, not $-i$. The overall negative sign in the
+contour is from the Euler logarithmic derivative, not the substitution
+in the reflected test. These source comparisons are provisional pending
+visual review. Use `LSeries.term_of_ne_zero` to insert the von Mangoldt
+coefficient at $n>0$, and `LSeries.term_zero` at $n=0$. The checked
+right-line theorem justifies the combined sum and integral. The
+Archimedean evaluation, the normalizations of (B.4.4.16), pp. 623–625,
+and the independent global $S$-piece comparison remain open.
