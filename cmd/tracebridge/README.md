@@ -1,0 +1,7 @@
+# Trace comparison pilot
+
+This peer of `cmd/godel` has one Yah work node, its own Gödel history, and no improver. Its mission instructs it to read the accepted evidence and report on stdout, not to edit the project. This is an instruction to the agent, not a filesystem sandbox. There is no automatic delivery to the manuscript program.
+
+Manual launch only: From a stable GRH workspace containing the adopted version of this directory, change to `cmd/tracebridge`. Supply the operator's starting question (including any newer probe findings) on stdin to `go run .`. Do not run it from the repository root. Use the same directory for later launches: Gödel keys history and its single-run lock by the canonical source directory. Adoption moves the target, not the launch files; this pilot runs the source in that directory. It does not rebuild itself from the bookmark. The investigator reads the mathematical evidence at the accepted target separately.
+
+Each successful `BRIDGE_CONTINUE` handoff becomes the next iteration's stdin. `BRIDGE_STOP` returns the report and ends the loop. Malformed output fails rather than relaunching. On an explicit later restart, empty stdin reuses the latest nonblank work response, not the preceding run's execution state. Give an updated question to reopen a stopped investigation. Bound any unattended launch externally and cancel the runner with INT or TERM for scope cleanup.
