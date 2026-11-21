@@ -331,21 +331,53 @@ Independent Yah review checked the domains, both rays, the pole
 cancellation, and the interpretation of pp. 124–127 against the
 digest-matched layout extraction, not rendered pages.
 
-## Next runnable step: Prove vanishing through the zeta order
+## Checked vanishing through the zeta order
 
-The [positive-width theta-density repair](trace-theta-density-q.md#source-and-claim)
-uses all interior jets below each zeta order, not just point vanishing.
-The project analogue of the consuming interface is (10.2.2.4) and
-(10.2.2.6), p. 446, with the half twist inserted once via
-$z=1/2+\mathrm i w$. First prove the unshifted statement: For two-moment
-$b$ and $0<\Re \rho<1$, the analytic order of $T_b$ at $\rho$ is at
-least that of $\zeta$. Use eventual equality from the checked product
-identity, `analyticOrderAt_congr`, and `analyticOrderAt_mul` with the
-analytic real factor. Use orders in $\mathbb N\cup\{\infty\}$ to allow
-identically zero theta input, and use
-`natCast_le_analyticOrderAt_iff_iteratedDeriv_eq_zero` to
-extract the jets below each finite index. Do not infer an exact theta
-order, since the real factor can itself vanish. This step is independent
-of the rational idele normalization above. Full weighted-closure density,
-continuation to the zero line, and the trace Mellin subtractions are not
-covered by the open-half-plane identity.
+In [RationalThetaMellinOrder.lean](../../Proofs/Theorems/RationalThetaMellinOrder.lean),
+`Masullo.analyticOrderAt_rationalTheta_mellin_ge_zeta` proves that
+$\operatorname{ord}_\rho T_b\ge\operatorname{ord}_\rho\zeta$ for
+$0<\Re\rho<1$ with both zero modes of $b$ zero. In a neighborhood of
+$\rho$ the checked continuation is the product of the holomorphic germs
+$\zeta$ and $M_b$. Mathlib adds their analytic orders in
+$\mathbb N\cup\{\infty\}$, so the lower bound also handles an identically
+zero theta transform. There is no exact-order conclusion, since $M_b$
+can contribute additional vanishing.
+`Masullo.iteratedDeriv_rationalTheta_mellin_eq_zero` extracts
+$T_b^{(m)}(\rho)=0$ for each natural $m<\operatorname{ord}_\rho\zeta$.
+
+This is a project consequence of the continuation mechanism after
+(3.2.2.11), p. 127. In the digest-matched layout extraction, the
+consuming interface is (10.2.2.4) and (10.2.2.6), p. 446: Interior
+jets retain all orders below the multiplicity. The theta image is
+already twisted by $|\cdot|^a$ before taking the closure in
+(10.1.1.3), p. 434. Neither the integral formula for these weighted
+pairings nor their continuity on the Hilbert space is supplied by
+these Lean declarations. The cited Theorem 9.3.2.6, p. 426, concerns
+projections onto common kernels, not this local order inequality;
+its [reversed nesting](trace-spectral-strip-q.md#source-interface-a-missing-totality-step)
+remains a separate source issue. Independent Yah review checked the two
+statements, the multiplicity convention, and the single twist against
+the digest-matched extraction, not the rendered pages.
+
+## Next runnable step: Identify derivatives with log-moment integrals
+
+For each $m\in\mathbb N$, both zero modes zero, and every $z\in\mathbb C$,
+prove integrability of the integrand and the identity
+
+$$
+T_b^{(m)}(z)=\int_{\mathbb R} x^m \theta_b(e^x)e^{zx}\,dx.
+$$
+
+Apply `hasDerivAt_logMellin_of_decay` to the continuous profile
+$x\mapsto x^m\theta_b(e^x)$ using the uniform two-tail bound with
+$N\ge |\Re z|+4$. The polynomial cost is absorbed by
+$|x|^m\le m!e^{|x|}$ from `Real.pow_div_factorial_le_exp`. Induct with
+`iteratedDeriv_succ` and take the derivative of the previous log moment.
+Then at a zero $\rho=a+\beta+it$ the jet functional pairs
+$e^{ax}\theta_b(e^x)$ with $x^m e^{(\beta+it)x}$, inserting the twist
+only once. In the positive-sign Fourier coordinate $w$ with
+$\rho=1/2+iw$, each $w$-derivative also carries a factor $i^m$.
+Continuity on the weighted space and passage to its closure are separate
+steps. This is independent of the rational idele normalization; it
+does not supply full weighted-closure density, a zero-line product
+formula, or the trace Mellin subtractions.
