@@ -5,7 +5,7 @@ public import Lemmas.RationalIntegralAdeles
 
 import Theorems.RationalAdeleAnnihilator
 
-/-! # Finite tests for the rational diagonal pairing -/
+/-! # The adelic pairing and finite tests on the rational diagonal -/
 
 open NumberField IsDedekindDomain
 open scoped BigOperators
@@ -26,35 +26,53 @@ private theorem continuous_phase : Continuous phase :=
 private theorem phase_add (x y : A) : phase (x + y) = phase x * phase y :=
   Circle.coe_injective (rationalAdeleAddChar.map_add_eq_mul x y)
 
-/-- Pair with an adele and restrict the resulting character to the rational diagonal. -/
-public noncomputable def rationalAdeleRestrictChar : A →+ Additive (PontryaginDual R) where
+/-- The standard circle-valued pairing, as a homomorphism into the full adelic dual. -/
+public noncomputable def rationalAdelePairing : A →+ Additive (PontryaginDual (Multiplicative A)) where
   toFun a := Additive.ofMul ({
-    toFun := fun r : R ↦ phase (a * (r.toAdd : A))
+    toFun := fun x : Multiplicative A ↦ phase (a * x.toAdd)
     map_one' := Circle.coe_injective (by
       change rationalAdeleAddChar (a * 0) = 1
       simp)
-    map_mul' := fun r s ↦ by
-      change phase (a * ((r.toAdd : A) + (s.toAdd : A))) = _
+    map_mul' := fun x y ↦ by
+      change phase (a * (x.toAdd + y.toAdd)) = _
       rw [mul_add, phase_add]
-    continuous_toFun := continuous_phase.comp <| continuous_const.mul continuous_subtype_val
-  } : R →ₜ* Circle)
+    continuous_toFun := continuous_phase.comp <| continuous_const.mul continuous_id
+  } : Multiplicative A →ₜ* Circle)
   map_zero' := PontryaginDual.ext fun _ ↦ Circle.coe_injective (by
     change rationalAdeleAddChar (0 * _) = 1
     simp)
-  map_add' a b := PontryaginDual.ext fun r ↦ by
-    change phase ((a + b) * (r.toAdd : A)) = phase (a * (r.toAdd : A)) * _
+  map_add' a b := PontryaginDual.ext fun x ↦ by
+    change phase ((a + b) * x.toAdd) = phase (a * x.toAdd) * _
     rw [add_mul, phase_add]
     rfl
+
+@[simp] public theorem rationalAdelePairing_apply (a x : A) :
+    ((rationalAdelePairing a).toMul (Multiplicative.ofAdd x) : ℂ) =
+      rationalAdeleAddChar (a * x) := by
+  rw [rationalAdelePairing]
+  rfl
+
+public theorem continuous_rationalAdelePairing : Continuous rationalAdelePairing := by
+  change Continuous (fun a ↦ (rationalAdelePairing a).toMul : A → PontryaginDual (Multiplicative A))
+  apply ContinuousMonoidHom.continuous_of_continuous_uncurry
+  exact continuous_phase.comp (continuous_fst.mul continuous_snd)
+
+/-- The diagonal inclusion, with multiplicative notation for the additive groups. -/
+@[expose] public noncomputable def rationalDiagonalInclusion : R →ₜ* Multiplicative A where
+  toMonoidHom := (D).subtype.toMultiplicative
+  continuous_toFun := continuous_subtype_val
+
+/-- Pair with an adele and restrict the resulting character to the rational diagonal. -/
+@[expose] public noncomputable def rationalAdeleRestrictChar : A →+ Additive (PontryaginDual R) :=
+  (PontryaginDual.map rationalDiagonalInclusion).toMonoidHom.toAdditive.comp rationalAdelePairing
 
 @[simp] public theorem rationalAdeleRestrictChar_apply (a : A) (r : R) :
     ((rationalAdeleRestrictChar a).toMul r : ℂ) = rationalAdeleAddChar (a * (r.toAdd : A)) := by
   rw [rationalAdeleRestrictChar]
-  rfl
+  exact rationalAdelePairing_apply a (r.toAdd : A)
 
-public theorem continuous_rationalAdeleRestrictChar : Continuous rationalAdeleRestrictChar := by
-  change Continuous (fun a ↦ (rationalAdeleRestrictChar a).toMul : A → PontryaginDual R)
-  apply ContinuousMonoidHom.continuous_of_continuous_uncurry
-  exact continuous_phase.comp <| continuous_fst.mul (continuous_subtype_val.comp continuous_snd)
+public theorem continuous_rationalAdeleRestrictChar : Continuous rationalAdeleRestrictChar :=
+  (PontryaginDual.map rationalDiagonalInclusion).continuous.comp continuous_rationalAdelePairing
 
 public theorem ker_rationalAdeleRestrictChar : rationalAdeleRestrictChar.ker = D := by
   ext a

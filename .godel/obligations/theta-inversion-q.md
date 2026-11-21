@@ -2638,22 +2638,62 @@ pairing retains the project's conjugated finite phases. This reading is
 extraction-based. The theorem gives neither full adelic self-duality nor
 any Haar comparison.
 
-### Next Fourier step: Surjectivity onto the full adelic dual
+## Checked topological self-duality of the rational adeles
 
-Given a continuous circle character of $A$, use the diagonal theorem to
-remove a pairing character with the same restriction to $\mathbb Q$.
-The ratio now descends to $A/\mathbb Q$. If it differs from every rational
-frequency, its inner product with each rational character vanishes by
-Haar translation. The checked uniform density of the rational span then
-contradicts norm one of the ratio in quotient $L^2$. This is the next runnable
-obligation. For full injectivity, the diagonal test first forces an element
-of the kernel to be rational. A nonzero rational is invertible in $A$,
-so it cannot pair trivially against all adeles, by the nontrivial real phase.
-For the topology, use `MonoidHom.isOpenMap_of_sigmaCompact` once the
-ambient pairing map is continuous and bijective, using the locally
-compact Hausdorff dual instance. Only after that identification transport
-normalized additive Haar and use the checked unitary (or one nonzero test
-for the scalar) to address the Plancherel normalization.
+[`Masullo.rationalAdelePontryaginDualEquiv`](../../Proofs/Theorems/RationalAdeleDual.lean)
+is an additive topological equivalence from $A=\mathbb A_\mathbb Q$ to
+its **full** compact-open dual. Its application theorem identifies the
+character at $a$ as $x\mapsto\psi(ax)$, not the negative-sign Fourier
+kernel. The `Multiplicative` tag presents addition on $A$ to Mathlib's
+`PontryaginDual`; the `Additive` tag presents pointwise multiplication
+on characters as addition. The endpoint has no measure hypotheses.
+
+First restrict a given character to the discrete rational diagonal and
+remove an adelic pairing character with the same restriction. The ratio
+factors continuously through $A/\mathbb Q$. If it were different from
+every rational frequency, Haar translation by a point at which the
+ratio of the two characters is not $1$ would force each Fourier
+coefficient to vanish. The checked uniform reconstruction for an
+absolutely summable coefficient family applies to the zero family and
+would make the descended character zero, contrary to its unit modulus.
+Thus the original character is pairing with $a+\iota r$. For injectivity,
+the diagonal annihilator first forces a kernel element to be rational;
+for a nonzero rational frequency a real-only test gives value $-1$.
+Joint continuity gives compact-open continuity. The group open-mapping
+theorem gives inverse continuity using local compactness and second
+countability upstairs, and Mathlib's locally compact Hausdorff dual.
+
+Independent Yah statement review (`adelic-dual-statement`, base
+`49cc5d857f9abd1dca014dc46bdbf2f9c319c003`) confirmed the scope and proof
+interface against the digest-matched layout extraction. Example A.3.1.8,
+p. 558, states global rational self-duality; Theorem D.1.1.1(1), p. 746,
+specifies the compact-open dual. Equations (D.1.1.1)–(D.1.1.3) concern
+biduality, and (A.3.1.9)–(A.3.1.10), pp. 558–559, concern the separate
+$S$-local group. We use the established project sign repair: The positive
+real and conjugated finite characters cancel on the rational diagonal.
+With the literal positive local phases in the provisional extraction of
+Examples A.3.1.5–6, p. 557, the product at the diagonal $1/3$ would be
+$e^{4\pi i/3}$, not $1$. The repair concerns diagonal cancellation, not
+the existence of a self-duality for the other sign convention. The proof
+is a project derivation, not a verification of the external [CF] citation
+or a rendered-page reading.
+
+### Next Fourier step: Haar transport to the full dual
+
+Example A.3.1.8, p. 558, additionally identifies the self-dual Haar
+normalization, using the unit-mass strip and citing the transform of the
+Gaussian times the integral-finite indicator. Lemma D.1.1.2(4),
+(D.1.1.9)–(D.1.1.10), p. 747, puts the output on the full compact-open
+dual. Push normalized additive Haar forward along the checked
+equivalence, verify that the pushforward is Haar, and transport the
+checked adelic-frequency Parseval and $L^2$ equivalence along the
+resulting measure-preserving bijection. At the character indexed by
+$y$, identify the dual Fourier integral with the checked adelic
+integral using $xy=yx$ and conjugation. If stating uniqueness among
+Haar measures, use Haar uniqueness up to scalar and one nonzero
+integrable $L^2$ test to force the scalar to be $1$. The topological
+equivalence alone supplies none of this measure comparison. The
+$S$-local normalization is a separate obligation.
 
 ## Checked real-lattice inversion
 

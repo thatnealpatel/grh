@@ -100,7 +100,7 @@ public theorem closure_span_rationalAdeleClassCharMap :
   rw [ContinuousMap.starSubalgebra_topologicalClosure_eq_top_of_separatesPoints _ hsep]
   rfl
 
-private theorem exists_char_eq_neg_one {r : ℚ} (hr : r ≠ 0) :
+public theorem exists_rationalAdeleClassChar_eq_neg_one {r : ℚ} (hr : r ≠ 0) :
     ∃ c : Cq, rationalAdeleClassChar r c = -1 := by
   let e := InfinitePlace.Completion.ringEquivRealOfIsReal Rat.isReal_infinitePlace
   let arch := (RingEquiv.piUnique InfinitePlace.Completion).trans e
@@ -131,7 +131,7 @@ variable [MeasurableSpace A] [BorelSpace A] [MeasurableSpace Cq] [BorelSpace Cq]
 
 private theorem integral_char_eq_zero {r : ℚ} (hr : r ≠ 0) :
     ∫ c, rationalAdeleClassChar r c ∂rationalAdeleClassHaar = 0 := by
-  obtain ⟨d, hd⟩ := exists_char_eq_neg_one hr
+  obtain ⟨d, hd⟩ := exists_rationalAdeleClassChar_eq_neg_one hr
   have h := integral_add_left_eq_self (μ := rationalAdeleClassHaar)
     (rationalAdeleClassChar r : Cq → ℂ) d
   simp only [AddChar.map_add_eq_mul, hd, neg_one_mul, integral_neg] at h
