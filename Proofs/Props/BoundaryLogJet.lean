@@ -68,4 +68,20 @@ public theorem memLp_boundaryLogJet_iff {α s : ℝ} (hs : 0 ≤ s) {z : ℂ}
     exact mul_le_of_le_one_left (by unfold sobolevJetPolynomial; positivity)
       (Real.exp_le_one_iff.mpr (by linarith))
 
+/-- An allowed boundary jet as a continuous complex-linear functional in
+weighted `L²(dx)` coordinates. -/
+public noncomputable def boundaryLogJet {α s : ℝ} (hs : 0 ≤ s) {z : ℂ}
+    (hz : |z.re| = α) {m : ℕ} (hm : 2 * (m : ℝ) + 1 < s) : Lp ℂ 2 (volume : Measure ℝ) →L[ℂ] ℂ :=
+  weightedLogJet ((memLp_boundaryLogJet_iff hs hz m).2 hm)
+
+/-- If `W*u` represents the profile `u` in weighted coordinates, the boundary
+functional is the absolutely convergent bilinear integral against `x^m exp(zx)`. -/
+public theorem boundaryLogJet_toLp {α s : ℝ} (hs : 0 ≤ s) {z : ℂ}
+    (hz : |z.re| = α) {m : ℕ} (hm : 2 * (m : ℝ) + 1 < s) (u : ℝ → ℂ)
+    (hu : MemLp (fun x ↦ (symmetricStripWeightRoot α s x : ℂ) * u x) 2 volume) :
+    Integrable (fun x ↦ u x * ((x : ℂ) ^ m * Complex.exp (z * x))) ∧
+    boundaryLogJet hs hz hm (hu.toLp _) =
+      ∫ x : ℝ, u x * ((x : ℂ) ^ m * Complex.exp (z * x)) :=
+  weightedLogJet_toLp ((memLp_boundaryLogJet_iff hs hz m).2 hm) u hu
+
 end Masullo

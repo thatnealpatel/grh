@@ -599,24 +599,50 @@ multiplicity exceeds $m$, it includes a kernel outside the reciprocal
 weighted $L^2$ space. The $s=2$ cap is unaffected. These are readings
 of the digest-matched text extraction, not rendered-page verification.
 
-## Next runnable analytic step: Realize the allowed boundary jets on the theta closure
+## Checked boundary pairings and annihilation of the theta closure
 
-Use the forward construction from `memLp_boundaryLogJet_iff` for
-$2m+1<s$: The conjugate kernel represents the bilinear integral in
-`Lp ℂ 2 volume`, with `innerSL` and `L2.integrable_inner` as for the
-interior. Apply the checked twisted moment identity to the same
-`rationalThetaWeightedLog` generators and use `closure_minimal` with
-the closed kernel. Retain $0<\Re\rho<1$ and
-$m<\operatorname{ord}_\rho\zeta$ for the unshifted zero, even though
-$|\Re(\rho-a)|=\alpha$ for the divided kernel.
+`Masullo.boundaryLogJet` and `Masullo.boundaryLogJet_toLp` in
+[BoundaryLogJet.lean](../../Proofs/Props/BoundaryLogJet.lean) use the
+strict threshold $2m+1<s$ and exactly the same log-Lebesgue $L^2(dx)$
+coordinate $U=Wu$ as the interior jets. The $L^2$ class of the conjugate
+of the divided kernel $k(x)=x^m e^{zx}/W(x)$ represents the continuous
+complex-linear functional. Conjugation is only in the representing
+vector: The value on $U$ is the absolutely convergent **bilinear**
+integral $\int u(x)x^m e^{zx}\,dx$.
 
-Independently, to exclude a bounded extension for other orders, require
-agreement on a specified ambient test domain. In the weighted coordinate,
-test on $U_R=\mathbf{1}_{[-R,R]}\overline{k}$. Its integral against $k$
-is $\|U_R\|_2^2$, whereas a bounded extension gives at most
-$C\|U_R\|_2$. Monotone convergence and the checked non-membership
-force $\|U_R\|_2$ unbounded. If testing only on smooth compactly
-supported profiles, use smooth truncations of $\overline{k}/W$ away
-from zero on the nondecaying tail and justify that domain. Neither
-bounded-extension obstruction is formalized here; the non-membership
-alone is not an obstruction for agreement on just the theta inputs.
+In [RationalThetaJetClosure.lean](../../Proofs/Theorems/RationalThetaJetClosure.lean),
+`Masullo.rationalThetaWeightedLog_closure_subset_boundary_ker` proves
+annihilation of the same weighted closure as in the interior theorem.
+For $z=\rho-a$, the hypotheses are $0<\Re\rho<1$, $|\Re z|=\alpha$,
+$m<\operatorname{ord}_\rho\zeta$, and $2m+1<s$. Width zero is allowed.
+The once-twisted moment identity gives vanishing on every generator,
+and continuity makes the kernel closed. The interior theorem retains
+its statement and shares only the reciprocal-weight pairing proof.
+
+The digest-matched layout extraction of (9.2.2.4), p. 412, and
+(9.2.2.40), p. 417, gives the weight and its reciprocal. Equations
+(10.1.1.3), p. 434, and (10.2.2.3)–(10.2.2.5), pp. 445–446, give the
+one-time twist, bilinear pairing, and positive exponent. We realize
+only the strictly integrable boundary orders in the rational model.
+Theorem 10.2.2.1 cites Theorem 9.3.2.6 for the stronger basis claim;
+that citation assumes a nondegenerate interval and its extracted
+projector argument has the [nesting issue](trace-spectral-strip-q.md#source-interface-a-missing-totality-step).
+The closed-kernel inclusion uses neither that limit nor a converse
+inclusion. It does not identify the adelic completion or settle the
+printed cap at equality; the source reading is provisional.
+
+## Next runnable analytic step: Rule out a bounded extension of excluded boundary jets
+
+Use a specified ambient test domain. With $k$ the divided boundary
+kernel, test on $U_n=\mathbf{1}_{[-n,n]}\overline{k}$ in the $U=Wu$
+coordinate. These tests belong to $L^2$ by local continuity of the
+kernel and compactness of the interval. The bilinear integral is
+$\int_{[-n,n]} |k|^2\,dx=\|U_n\|_2^2$, so any continuous linear
+functional agreeing on them gives $\|U_n\|_2\le\|F\|$.
+Use `MeasureTheory.lintegral_iSup` on the increasing truncated squared
+norms to deduce $k\in L^2$, and then the checked strict criterion.
+Formalize this implication for the compact truncations first; this
+is not an obstruction to agreement on the theta inputs alone.
+If the test domain is later restricted to smooth compactly supported
+profiles, separately justify smooth truncations away from zero on the
+nondecaying tail. No bounded-extension obstruction is checked yet.
