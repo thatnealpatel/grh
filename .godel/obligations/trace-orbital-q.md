@@ -90,6 +90,63 @@ This expression is independent of the choice of uniformizer, even for a test not
 
 **Consequence for the geometric bridge.** If $p>T$, the norms on the entire $U_p\pi^\mathbb Z$ orbit are outside $(T^{-1},T)$ except for norm one. The corrected comb therefore vanishes for two-sided tests supported in that range and vanishing at norm one. The fixed-character formula also vanishes: Its only possible log sample is $0$, where the angular integral is zero. Thus the angular and half-twist corrections do not obstruct that scalar vanishing. They also do not prove that the global $p$-piece equals the scalar. The genuine theta lifts and section cutoff above were constructed only for the trivial isotype. Identification of the Paley–Wiener operators, an admissible global kernel lift, and equality of diagonals are still separate premises.
 
+## Checked density of real-band weighted theta levels
+
+**Scope:** The rational real-lattice model, with the even generators
+$b\in\mathcal S(\mathbb R,\mathbb C)$ and $b(0)=\widehat b(0)=0$.
+No assertion about auxiliary-place transitions or about equality of the
+full adelic and real-lattice closures is needed for the Lean result.
+
+The digest-matched text of Proposition 7.3.2.2(1), pp. 352–353, uses
+compactly supported frequency profiles plus two corrections to obtain
+sequential density. Equations (7.3.2.14)–(7.3.2.15), p. 355, specify the
+invariant band and two-mode restrictions; (7.3.2.18)–(7.3.2.20), pp. 355–356,
+assert nesting, density, and the inclusion from absolute levels. With
+$S'=S=\{\infty\}$ there is no auxiliary-place choice. The standard global
+lift here is $b\otimes\mathbf1_{\widehat{\mathbb Z}}$, not the sum over
+local real norm-one units. The band condition is on additive Fourier
+frequency before taking theta. The weighting in (11.2.1.7), pp. 488–489,
+is applied before taking the Hilbert closure. These source comparisons use
+layout text only, not a verified visual reading.
+
+- [`Masullo.exists_tendsto_fourierBand_twoMoments`](../../Proofs/Props/SchwartzTwoMomentBand.lean)
+  proves Schwartz convergence with exact evenness, both zero modes, and a
+  positive finite band for each approximant. As in the manuscript, the
+  frequency-side corrections kill evaluation and total mass. The Lean
+  specialization takes the even part of the corrected profiles, which
+  preserves both corrections and compact support, then inverts Fourier.
+- [`Masullo.continuous_rationalThetaWeightedLog`](../../Proofs/Theorems/RationalThetaBandClosure.lean)
+  proves continuity on the real two-mode kernel, not just integrability of
+  its elements. Linearity and the existing uniform Poisson tail bound on
+  bounded families give one square-integrable weighted majorant per family.
+  First countability of the linear domain then gives continuity. The
+  representative is $e^{\alpha|x|}(1+x^2)^{s/4}e^{ax}\theta_b(e^x)$ with
+  $a\in\mathbb R$ and $\alpha,s\ge0$, hence the twist appears once.
+- [`Masullo.rationalThetaWeightedLog_band_closure`](../../Proofs/Theorems/RationalThetaBandClosure.lean)
+  identifies the closure of these weighted band images with that of all
+  weighted even two-mode images in $L^2(dx)$. Cofinal increasing bands give
+  the same union since the predicates are nested. This is density, not an
+  estimate on a moving cutoff, nor a Lean theorem about projections or
+  trace norms.
+
+**Review:** `band-statement-review` (`pprJMuc`) reviewed the approximation
+statement and topology. `band-image-interface` (`OCydxfl`) checked the exact
+weight, twist, domain, closure statements, and Mathlib continuity route
+against the accepted prerequisites. `weighted-level-review` (`AZjIddc`)
+checked the source-side band, global lift, and ordering with $S'=S$.
+
+**Runnable successor:** For a cofinal sequence of band radii, take the
+closed linear weighted image levels and prove their orthogonal projections
+converge pointwise in norm to the projection $P$ onto the full closure,
+not to the ambient identity. Mathlib's `Submodule.starProjection_minimal`
+(or `dist_starProjection_eq_infDist`) gives the error bound against a fixed
+approximant in a sufficiently large level; apply it to $Px$ and use that
+$x-Px$ is orthogonal to every level. Read the
+[fixed-cutoff limit audit](trace-hardy-diagonal-q.md#the-fixed-cutoff-limit-retains-a-right-projection)
+before using this as input to a trace comparison. In particular the
+level-removed cutoff trace with the right projection still needs a
+geometric evaluation, not an extrapolation from density.
+
 ## A zero-line descent obstruction for the ring-transition projector
 
 **Source interface (provisional).** Equations (11.2.1.7)–(11.2.1.8), pp. 488–489, take a global weighted Hilbert closure and its **orthogonal** projector. No separate definition of the global $PW^{\mathrm{inv}}_{S,Y}$ was located in the extraction. Theorem 11.2.1.4 invokes the Chapter 7 levels via (7.3.2.20), and Proposition 7.3.2.4(2), p. 356, passes to global theta functions by tensoring outside $S'$. Take $S'=S=\{\infty\}$ in (7.3.2.12)–(7.3.2.17), pp. 354–355, with global extension by $\mathbf1_{\widehat{\mathbb Z}}$ from (2.1.4.2)–(2.1.4.5), p. 71. Enlarging $S'$ by standard integer-ring factors produces the same global generators. But the extracted (7.3.2.13) shows a unit-group indicator for extra places, at odds with the transition it cites and the self-dual factors used on pp. 356–357. The result below is for the standard transition; it does not establish that the orbital proof on pp. 495–496 uses this same range after enlarging $S'$. Chapter 7's diagram (7.3.3.1)–(7.3.3.2), p. 358, is about $PV_p$ between **different** levels, not about an orthogonal projection acting on the orbital quotient.

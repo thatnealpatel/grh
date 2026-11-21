@@ -2,8 +2,7 @@ module
 
 public import Props.BoundaryLogJet
 public import Theorems.RationalThetaMellinLogMoments
-import Theorems.RationalThetaIntegrability
-import Mathlib.Analysis.SpecialFunctions.ExpDeriv
+public import Lemmas.RationalThetaWeightedLog
 
 /-!
 # Zeta jets annihilate the rational theta closure
@@ -19,34 +18,6 @@ open MeasureTheory
 open scoped FourierTransform SchwartzMap
 
 namespace Masullo
-
-/-- Rational unramified inputs with both zero modes removed. -/
-public abbrev RationalThetaInput := {b : 𝓢(ℝ, ℂ) // b 0 = 0 ∧ (𝓕 b) 0 = 0}
-
-private theorem memLp_rationalTheta_weighted (b : RationalThetaInput) (a α s : ℝ)
-    (hs : 0 ≤ s) (hα : 0 ≤ α) :
-    MemLp (fun x : ℝ ↦ (symmetricStripWeightRoot α s x : ℂ) *
-      (Complex.exp ((a : ℂ) * x) * rationalTheta b.val (Real.exp x))) 2 volume := by
-  have htheta : Continuous (fun x : ℝ ↦ rationalTheta b.val (Real.exp x)) :=
-    (rationalTheta_continuousOn b.val).comp_continuous Real.continuous_exp Real.exp_pos
-  have hcont : Continuous (fun x : ℝ ↦ (symmetricStripWeightRoot α s x : ℂ) *
-      (Complex.exp ((a : ℂ) * x) * rationalTheta b.val (Real.exp x))) :=
-    (Complex.continuous_ofReal.comp (continuous_symmetricStripWeightRoot α s)).mul
-    ((by fun_prop : Continuous (fun x : ℝ ↦ Complex.exp ((a : ℂ) * x))).mul htheta)
-  apply (memLp_two_iff_integrable_sq_norm hcont.aestronglyMeasurable).2
-  convert integrable_rationalTheta_hardySobolev b.val b.property.1 b.property.2 a (-α) α s hs using 1
-  ext x
-  rw [norm_mul, norm_mul, Complex.norm_real, Real.norm_of_nonneg (symmetricStripWeightRoot_pos α s x).le,
-    Complex.norm_exp, Complex.mul_re]
-  simp only [Complex.ofReal_re, Complex.ofReal_im, mul_zero, sub_zero]
-  rw [← mul_assoc, mul_pow, symmetricStripWeightRoot_mul_exp_sq hα]
-  ring
-
-/-- The once-twisted rational theta input in the `L²(dx)` coordinate of the
-symmetric-strip Hardy–Sobolev norm. -/
-public noncomputable def rationalThetaWeightedLog (a : ℝ) {α s : ℝ}
-    (hs : 0 ≤ s) (hα : 0 ≤ α) (b : RationalThetaInput) : Lp ℂ 2 (volume : Measure ℝ) :=
-  (memLp_rationalTheta_weighted b a α s hs hα).toLp _
 
 /-- Every interior jet strictly below the open-strip zeta order vanishes
 on the weighted log-line closure of the once-twisted rational theta inputs. -/

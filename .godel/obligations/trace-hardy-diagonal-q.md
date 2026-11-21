@@ -196,21 +196,85 @@ passed `lake --wfail build Proofs` and `lake env leanchecker` for
 reported exactly `propext`, `Classical.choice`, and `Quot.sound` for both
 endpoints and the new measurability and norm lemmas.
 
-## Runnable successor: Check the operator-order difference in the same unit-band model
+## Operator order in the unit-band Hardy model
 
-The level-limit citation (11.2.1.9) has the geometric
-projection *after* convolution, whereas the kernel in (10.4.3.48) has it
-*before*. Test the exact difference $M_\rho(QC_g-C_gQ)$ without cycling a
-bounded factor through a trace at finite position cutoff. On full-line
-$L^2$ let $P_+$ and $P_-$ be the causal and anticausal support projections
-and let $S$ be the unitary inner multiplier from the reverse-lift handoff.
-Use $Q=S P_+ S^*$, commutation of $S$ with full-line convolution, and
-causality to test the reduction to the conjugate of $P_+ C_g P_-$. For
-$\operatorname{supp}g\subset[0,D]$ the cross block is confined to
-$[0,D]\times[-D,0]$; the rank-one Fourier integral above gives a concrete
-trace-class check. Determine its trace after position exhaustion and
-justify the restriction from the full line to the causal space explicitly.
-This tests only the order discrepancy, not weighted level convergence.
+In this paragraph extend $Q$ to the full line by zero on $H_+^\perp$.
+For the causal and anticausal projections $P_+,P_-$ and the unitary inner
+multiplier $S$ from the reverse-lift model, $Q=SP_+S^*$. Since $S$ commutes
+with full-line convolution and $P_-C_gP_+=0$, the difference is
+$$D=QC_g-C_gQ=S(P_+C_gP_-)S^*.$$
+If $\operatorname{supp}g\subset[0,d]$, the cross block kernel $g(x-y)$ lives
+in $[0,d]\times[-d,0]$. Fourier inversion gives a rank-one integral with
+input and output vectors the exponentials restricted to the respective
+intervals. The trace norm of each rank-one term before its scalar
+coefficient is $d$, so $d|\widehat g(t)|/(2\pi)$ is an integrable majorant;
+each term has trace zero by disjoint support. Thus $D$ is trace class with
+trace zero. Its range lies in $SH_+\subset H_+$; multiplication by $\rho$
+preserves $H_+$, so the full-line trace of $M_\rho D$ agrees with the
+trace of its restriction to $H_+$ using a basis adapted to the half lines.
+Bounded position cutoffs exhausting the causal half-line give
+$M_\rho D\to D$ in trace norm by finite-rank approximation. The scalar
+trace difference tends to zero, though the operator difference can persist.
+
+At fixed cutoff this trace difference need not vanish. In the single
+Blaschke factor model, on $H_+$ write $1-Q=u\otimes u$ for
+$u(x)=\sqrt{2r}e^{-rx}$, $r>0$. Choose $\rho=\mathbf1_{[0,R]}$ and a
+nonzero smooth $g\ge0$ supported strictly above $R$, with $R<\log 2$ and
+$\operatorname{supp}g\subset(0,\log 2)$. Then $M_\rho C_g=0$, whereas
+$(1-Q)C_g=(\int g(y)e^{-ry}\,dy)(1-Q)$, so
+$$\operatorname{Tr}(M_\rho D)=-(1-e^{-2rR})\int g(y)e^{-ry}\,dy\ne0.$$
+This test need not be in the mass-zero subclass. It distinguishes orders
+in the one-factor model, not the two weighted manuscript operators.
+
+For orthogonal $Q_n\le Q$ with $Q_n\to Q$ strongly, the fixed-cutoff
+operators $M_\rho QC_gQ_n=(M_\rho C_gQ)Q_n$ converge in trace norm to
+$M_\rho C_gQ$. Thus the iterated trace in this model can use the preceding
+position limit, but this does not identify the actual global levels.
+
+## The fixed-cutoff limit retains a right projection
+
+**Source audit (digest-matched extraction, provisional):** Definition
+10.4.1.3 and (10.4.1.6)–(10.4.1.7), p. 457, give $M_\rho PA$; Definition
+10.4.1.5 and (10.4.3.48), pp. 458 and 473, instead use $M_\rho AP$.
+Here $P$ is the weighted geometric projection and $A=A(\phi)$. Equation
+(10.4.1.10) uses invariance of the geometric space, $PAP=AP$, not
+commutation. Theorem 11.2.1.2(1), p. 488, states strong convergence of the
+absolute level projectors to $P$. Theorem 11.2.1.4(1), p. 489, gives the
+same for invariant levels. The extracted (11.2.1.4) and (11.2.1.9) then
+claim the nuclear limit of $M_\rho PAQ_n$ is $M_\rho PA$ on the ambient
+weighted isotype at each fixed $\rho$. Their dependency Corollary C.3.5.5,
+pp. 702–703, requires projections exhausting the identity on the space under
+consideration. Proposition C.3.6.5, pp. 705–706, instead permits a proper
+strong limit for the self-adjoint right factor and retains it in the target.
+
+The correct ambient limit from the stated strong convergence and localized
+nuclearity is $M_\rho PAP=M_\rho AP$ in trace norm, not $M_\rho PA$ unless
+$M_\rho PA(1-P)=0$. Indeed let $T=M_\rho PA$; the level sequence is $TQ_n$,
+and C.3.6.5 gives $TQ_n\to TP$. The operator discrepancy is already
+forced by uniqueness of the strong limit. Working on $PH$ removes the
+right factor on inputs but requires output compression to speak of a trace
+on $PH$, since multiplication by $\rho$ need not preserve that space.
+
+**Runnable manuscript test:** At $a=1/2$, the geometric-kernel weight and
+$s\ge3$ of Definition 10.4.3.7, and a smooth above-one test, compare the
+fixed-cutoff scalar traces of the two orders using the same normalized
+Haar diagonal. The missing identity in (11.2.1.10) is exactly
+$\operatorname{Tr}(M_\rho PA(1-P))=0$. For a consuming step that only needs
+the iterated scalar limit, it suffices to show this trace tends to zero
+*after* the level limit. A sufficient concrete target is to prove that
+$A(1-P)$ is trace class on the actual weighted isotype; then $PA(1-P)$ is
+a trace-class off-diagonal block, and bounded strong position exhaustion
+removes its scalar trace. Do not assume that the localized nuclearity or
+band density supplies this uncut bound. Alternatively keep the corrected
+operator $M_\rho AP$ through the geometric evaluation and account for
+which order each later citation needs.
+
+**Review evidence:** `order-review` (`xbaKdtT`) checked the Hardy
+cross-block calculation, fixed-cutoff witness, and the ambient limit
+against the pinned layout text; `weighted-level-review` (`AZjIddc`)
+independently checked the right factor and scalar defect. These are
+operator calculations and source audits, not new Lean results or a visual
+review.
 
 **Remaining manuscript-facing obligation:** Compare the actual global
 level operators of (11.2.1.8)–(11.2.1.10) with an independently evaluated
