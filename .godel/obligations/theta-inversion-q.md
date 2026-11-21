@@ -2106,30 +2106,41 @@ of the orbit as an LF-valued map, identify the manuscript topology,
 prove its tensor identity (2.2.4.6), or treat arbitrary one-parameter
 subgroups.
 
-### Next orbit step: Differentiate rational class theta
+<a id="next-orbit-step-differentiate-rational-class-theta"></a>
 
-Prove (2.2.4.7), pp. 88–91, in this rational model: For any $f$ and
-rational idele class $d$, the function $s\mapsto\theta_f(\tau(s)d)$
-has derivative $\theta_{Df}(d)$ at $s=0$, and this derivative is
-continuous in $d$. Here $\tau$ is the checked log-norm section projected
-to classes. Descend the calculation from any idele lift. Log-section
-multiplicativity gives the derivative of each term at arbitrary $s$
-by applying `hasDerivAt_rationalAdeleLF_logDilation` at the dilated adele.
+### Checked differentiation of rational class theta
 
-Do not take the extracted fractional-ideal bound (2.2.4.8) literally
-for unrestricted finite components; see the
-[representative check](#source-interface-the-finite-part-of-the-representative-matters).
-Instead, represent $Df$ as a finite box sum by its stage assembly.
-On the compact image of $[-1,1]$ under $s\mapsto(\tau(s)k,0)$ for the
-chosen lift $k$, `exists_rationalAdeleBoxSum_orbit_majorant` gives one
-summable bound for all derivatives. Use
-`hasDerivAt_tsum_of_isPreconnected` (Mathlib `SmoothSeries.lean`) on
-$(-1,1)$, with absolute summability of the original series at zero.
-For continuity, apply `continuous_rationalAdeleClassTheta_boxSum` to
-the same representation of $Df$. This route uses no zero-mode hypotheses
-and does not need the Fourier zero-mode identity below.
+[RationalAdeleClassThetaDerivative.lean](../../Proofs/Theorems/RationalAdeleClassThetaDerivative.lean)
+proves the positive real norm-section case of Lemma 2.2.4.3,
+(2.2.4.7), pp. 88–91. For every rational Schwartz LF test $f$, every
+rational idele class $d$, and every real log scale $s$,
+`Masullo.hasDerivAt_rationalAdeleClassTheta_logDilation` gives
 
-### Source interface: The Fourier zero mode of the generator
+$$
+\frac{d}{ds}\theta_f(\tau(s)d)=\theta_{Df}(\tau(s)d),
+$$
+
+with $\tau$ the log-norm section on classes. The derivative at zero is
+continuous in $d$ by `Masullo.continuous_rationalAdeleClassTheta_LF`
+applied to $Df$. Neither zero mode is required to vanish.
+
+The [series proof](../../Proofs/Lemmas/RationalAdeleThetaDerivative.lean)
+fixes a lift $k$ of $d$. The ideles $\tau(t)k$ for $|t-s|\le1$ form a
+compact set (here using the section upstairs). The existing compact box
+majorant for $Df$ bounds all the differentiated nonzero rational samples
+on this set. A separate majorant for $f$ at the base point gives absolute
+summability there. This is enough for `hasDerivAt_tsum_of_isPreconnected`;
+there is no need to invoke the printed fractional-ideal bound (2.2.4.8)
+for unrestricted representatives or take a limit in the LF space.
+
+Independent Yah statement review checked the sign, parameters, and no-moment
+scope against the digest-matched layout extraction. At a fixed lift the
+compactness used here follows from the compact log interval alone; the
+proof does not claim one bound over all representatives. The result does
+not identify the manuscript's tensor topology or assert compact-uniform
+convergence of difference quotients on idele classes.
+
+### Next orbit step: The Fourier zero mode of the generator
 
 The digest-matched extraction of Lemma 2.2.4.5, p. 92, appears to set
 $\widehat{\partial_\gamma f}(0)=0$ for general $f$ by using
@@ -2147,12 +2158,24 @@ real bump with nonzero integral: Its transform at zero is that
 integral by `integral_rationalAdeleUnramified_mul_conj_char` and the
 normalized finite factor. The existing `fourier_dilate` proof in
 `Theorems.RationalAdeleBoxThetaInversion` supplies the exact covariance
-needed to formalize the zero-frequency difference quotient. When
-relating this to $Df$, prove the Fourier zero-mode identity, for example
-by integration by parts stagewise, rather than assuming differentiation
-under the integral. This leaves the two-moment subspace invariant but
-blocks an unconditional vanishing assertion. The theta derivative
-commutation (2.2.4.7), pp. 88–91, is a separate step.
+needed to formalize the zero-frequency difference quotient.
+
+For the rational Lean obligation, prove $Df(0)=0$ by the generator's
+pointwise formula and $\widehat{Df}(0)=-\widehat f(0)$ by integration
+by parts, not by assuming differentiation under the integral. Use
+`rationalAdeleLFDilationDeriv_assembly` and represent both stage
+assemblies by the same boxes. `integral_rationalAdeleBoxSum_mul_conj_char`
+at frequency zero reduces each box to the real profile integral times
+its unchanged idelic Jacobian. For the real step use Mathlib's
+`MeasureTheory.integral_mul_deriv_eq_deriv_mul_of_integrable` with
+$u(x)=x$ and $v=b$, taking integrability from the Schwartz maps $b$,
+$x b$, and $x b'$. A local Lean example checked this real identity
+$\int x b'(x)\,dx=-\int b(x)\,dx$ against the pinned dependencies;
+it is not yet a project declaration. Lift that identity to the finite
+sum and conclude that $D$ preserves the intersection of the two kernels.
+This does not yet give the full Fourier covariance
+of $D$ at nonzero frequencies, or the bounded-set operator limit of
+Remark 2.2.4.6.
 
 ## Checked real-lattice inversion
 
