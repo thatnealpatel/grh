@@ -534,62 +534,91 @@ Masullo extraction and the accepted split. Neither source reading is a
 visual check. This does not evaluate the Gamma term or establish the
 global geometric comparison.
 
-## Next runnable obligation: Prove the digamma integral needed at the real place
+<a id="next-runnable-obligation-prove-the-digamma-integral-needed-at-the-real-place"></a>
 
-Proposition B.4.2.1, p. 616, invokes Barner pp. 146, 150 to evaluate
-(B.4.2.13)–(16). The [GDZ Barner scan](https://gdz.sub.uni-goettingen.de/download/pdf/PPN243919689_0323/LOG_0011.pdf)
-(SHA-256 `086a7885f8bd84029e6b8ae98b83ba9a1c172e7615a904d7636aa285c34a1f3b`)
-was read by OCR, not visually: p. 145 starts with Gauss's integral for
-$\Gamma'/\Gamma$ and rescales its positive real variable; p. 146 integrates
-against a Fourier test and uses cancellation at zero; p. 150 shifts the
-contour and applies that proposition to the weighted profile plus its
-reflection. This is a scalar evaluation, not a statement about the
-global trace projection. Compact smooth profiles allow a direct right-line
-version, without Barner's Dirichlet kernel limit for rough tests or a
-second contour shift.
+## Checked digamma integral for the real Gamma factor
 
-**First prove in Lean:** For $\Re z>0$, the kernel below is integrable
-on $(0,1)$ and
+Masullo invokes [Barner](https://gdz.sub.uni-goettingen.de/download/pdf/PPN243919689_0323/LOG_0011.pdf)
+after (B.4.2.16), p. 616, to evaluate the real term. Barner starts from
+Gauss's integral on p. 145 just before (19). Subtract the formula at $z$
+from the one at $1$ and set $t=e^{-u}$ to get the subtracted form.
+Barner's p. 146 Proposition (20) is instead a *tested integral*, which
+p. 150 applies after shifting the contour, with the weighted test and
+its reflection. It does not identify the global trace projection.
+
+- [`Masullo.digamma_one_sub_eq_integral`](../../Proofs/Lemmas/DigammaIntegral.lean)
+  proves absolute integrability on $(0,1)$ and
+  $$
+    \int_0^1\frac{t^{z-1}-1}{1-t}\,dt=\psi(1)-\psi(z),\qquad \Re z>0.
+  $$
+  Barner cites Gauss; pinned Mathlib defines $\psi=\Gamma'/\Gamma$ but
+  does not supply that integral. The Lean repair derives it by
+  subtracting $B(1,\varepsilon)$ from $B(z,\varepsilon)$ for real
+  $\varepsilon>0$. The difference of the Beta integrands is the kernel
+  times $(1-t)^\varepsilon$. The kernel is integrable near zero by the
+  complex-power bound, and extends continuously across $1$ by the
+  divided difference. Thus its norm dominates the regularized integrands.
+  The Beta–Gamma identity, recurrence, and quotient rule compute the
+  same limit as $\psi(1)-\psi(z)$.
+- [`Masullo.logDeriv_GammaReal_eq_integral`](../../Proofs/Props/GammaRealLogDerivative.lean)
+  differentiates Mathlib's actual rational real factor
+  $\Gamma_{\mathbb R}(s)=\pi^{-s/2}\Gamma(s/2)$, giving
+  $(-\log\pi+\psi(s/2))/2$. Substitution $t=e^{-2x}$ in the checked
+  Gauss difference, with decreasing Jacobian of absolute value
+  $2e^{-2x}$, and $\psi(1)=-\gamma$ give, on $\Re s>0$,
+  $$
+  \frac{\Gamma_{\mathbb R}'(s)}{\Gamma_{\mathbb R}(s)}
+   = -\frac{\log\pi+\gamma}{2} + \int_0^\infty K(s,x)\,dx,
+   \qquad K(s,x)=\frac{e^{-2x}-e^{-sx}}{1-e^{-2x}}.
+  $$
+  The statement includes absolute integrability of the combined kernel
+  for each such $s$. It is the scalar input to (B.4.2.13), not the
+  tested evaluation (B.4.2.15).
+
+Independent Yah statement review (`digamma-statement`) checked both
+endpoints against the pinned Mathlib interface, digest-matched Masullo
+layout extraction, and Barner OCR (PDF ordinals 8, 9, and 13, printed
+pp. 145, 146, and 150; SHA-256
+`086a7885f8bd84029e6b8ae98b83ba9a1c172e7615a904d7636aa285c34a1f3b`).
+Neither review is visual. The definition extracted at (3.2.1.4), p. 123,
+agrees with the negative prefactor derivative, unlike the combination of
+$-\alpha_v$ in (B.4.2.12) and negative $\alpha_v$ on p. 616. In the
+central-line form the reflected multiplier on $\Phi(s)$ would be
+$-\log\pi+[\psi(s/2)+\psi((1-s)/2)]/2$; the extracted (B.4.2.16) omits
+both the constant and the half. The extracted (B.4.2.15) also has a
+nonintegrable $g(0)/x$ tail for compact log profiles with $g(0)\ne0$.
+Barner's p. 150 display retains $e^{-2x}$ in that term in the real case.
+These are extraction-based discrepancies, not rendered-page findings.
+The checked scalar normalization uses neither the manuscript's displayed
+constant nor a contour shift.
+
+## Next runnable obligation: Evaluate the tested real Gamma term
+
+Use the checked scalar kernel on $s=2+it$ with
+$W(t)=\Phi_g(s)+\Phi_g(1-s)$ for smooth compact log profiles $g$.
+Prove joint $L^1$ for $W(t)K(2+it,x)$ on $\mathbb R\times(0,\infty)$
+before exchanging integrals. A concrete majorant: For $0<x\le1$,
+$|1-e^{-itx}|\le |t|x$ and $1-e^{-2x}\ge 2xe^{-2x}$ imply
+$|K(2+it,x)|\le |t|/2$. For $x>1$ use
+$2e^{-2x}/(1-e^{-2})$. Both required moments of $|W|$ are finite by
+fourth-power strip decay. Do not split the two singular terms in $K$.
+
+Apply the already checked `compactLogMellin_prime_power_evaluation`
+with $n=e^x$ (it accepts every positive real $n$) and with $n=1$.
+The target is absolute integrability of the following combined $x$
+kernel and the identity
 
 $$
-  \psi(1)-\psi(z)=\int_0^1 \frac{t^{z-1}-1}{1-t}\,dt,
-  \qquad \psi=\Gamma'/\Gamma.
-$$
-
-Pinned Mathlib has `Complex.digamma_def`, `Complex.digamma_one`, and
-`Complex.betaIntegral_eq_Gamma_mul_div`, but not Gauss's integral
-(`Gamma/Digamma.lean` lists it as a TODO). A route using that interface:
-For real $\varepsilon>0$, subtract $B(1,\varepsilon)=1/\varepsilon$
-from $B(z,\varepsilon)$. By the Gamma recurrence, the difference is
-$(\Gamma(z)\Gamma(1+\varepsilon)/\Gamma(z+\varepsilon)-1)/\varepsilon$,
-whose limit is $\psi(1)-\psi(z)$ by differentiation. In the Beta integrals
-use the common factor $(1-t)^{\varepsilon-1}(t^{z-1}-1)$ and dominated
-convergence as $\varepsilon\downarrow0$: Its norm is bounded by the
-$\varepsilon=0$ majorant. Near $1$, the numerator is $O(1-t)$ by
-smoothness; near $0$ use $1+t^{\Re z-1}$. This proposed route has not
-been elaborated.
-
-**Consumer:** Substitute $t=e^{-2x}$ and use `Complex.Gammaℝ_def` to
-obtain, on $\Re s=2$,
-
-$$
-\frac{\Gamma_{\mathbb R}'}{\Gamma_{\mathbb R}}(s)
- = -\frac{\log\pi+\gamma}{2}
-  +\int_0^\infty \frac{e^{-2x}-e^{-sx}}{1-e^{-2x}}\,dx.
-$$
-
-After inserting $W$, justify Fubini on the **difference**: For small
-$x$, $|1-e^{-itx}|\le |t|x$ and strip decay gives an integrable first
-moment in $t$; for large $x$, $e^{-2x}$ controls the tail. The checked
-inversion at $y=x$ and $y=0$ would then give
-
-$$
--(\log\pi+\gamma)g(0)+\int_0^\infty
+ \frac{1}{2\pi}\int_{\mathbb R}W(t)\frac{\Gamma_{\mathbb R}'(2+it)}{\Gamma_{\mathbb R}(2+it)}\,dt
+ = -(\log\pi+\gamma)g(0)+\int_0^\infty
  \frac{2g(0)e^{-2x}-g(x)-e^{-x}g(-x)}{1-e^{-2x}}\,dx.
 $$
 
-Compare this in the appropriate normalization with (B.4.2.15)–(17) and
-(B.4.4.16), pp. 623–625, before using it for the manuscript's trace.
-The Gamma prefactor $\pi^{-s/2}$ and its identity-supported term must
-not be dropped in that comparison. No Archimedean evaluation or global
-comparison is claimed here.
+Insert it in `completedZeta_contour_finite_places`, retaining both poles
+and the full zero orders. In comparing with Barner's centered convention,
+put $F(x)=e^{x/2}g(x)$, so the nonlocal numerator is
+$e^{-x/2}(F(x)+F(-x))$. The different constant subtraction schemes must
+be compared including their identity-supported terms, not by discarding
+$g(0)$. The idelic principal value and Haar comparison in
+(B.4.4.16), pp. 623–625, and the Chapter 12 global geometric comparison
+are still open. This successor is not yet a Lean declaration.
