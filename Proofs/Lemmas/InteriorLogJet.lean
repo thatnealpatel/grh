@@ -30,6 +30,14 @@ public theorem continuous_symmetricStripWeightRoot (α s : ℝ) :
     ((show Continuous (fun x : ℝ ↦ 1 + x ^ 2) by fun_prop).rpow_const
       (fun x ↦ Or.inl (ne_of_gt (by positivity : 0 < 1 + x ^ 2))))
 
+public theorem symmetricStripWeightRoot_sq (α s x : ℝ) :
+    symmetricStripWeightRoot α s x ^ 2 =
+      Real.exp (2 * (α * |x|)) * (1 + x ^ 2) ^ (s / 2) := by
+  rw [symmetricStripWeightRoot, mul_pow, ← Real.exp_nat_mul,
+    pow_two ((1 + x ^ 2) ^ (s / 4)), ← Real.rpow_add (by positivity),
+    show s / 4 + s / 4 = s / 2 by ring]
+  norm_num
+
 /-- Reweighting the once-twisted profile gives exactly the two endpoint
 powers of the shifted strip, not an additional Mellin twist. -/
 public theorem symmetricStripWeightRoot_mul_exp_sq {α : ℝ} (hα : 0 ≤ α) (s a x : ℝ) :

@@ -526,30 +526,68 @@ convergence nor the converse inclusion. The existing
 explains the reversed nesting in Theorem 9.3.2.6, p. 426. There is no
 adelic Haar identification in this theorem.
 
-## Next runnable analytic step: Check the strict boundary threshold
+## Checked strict integrability threshold for boundary jets
 
-Keep the same log-Lebesgue coordinate and allow $|\Re z|=\alpha$,
-including $\alpha=0$. The square of the divided kernel has no
-exponential decay on at least one half-line. There it is
-$|x|^{2m}(1+x^2)^{-s/2}$, comparable on $|x|>1$ to
-$|x|^{2m-s}$ by $x^2\le 1+x^2\le2x^2$. On the other half-line
-its square is bounded above by the same polynomial expression, and
-it is continuous on compact intervals. Formalize the resulting
-$L^2$ criterion **$2m+1<s$** for $s\ge0$, and then reuse the
-bilinear integral and closed-kernel proof for the allowed orders.
-`integrableOn_Ioi_rpow_iff` gives both directions of the power test
-on $(1,\infty)$ in pinned Mathlib; reflection treats the negative
-half-line. The same criterion should give failure of bounded
-extension for the excluded jets by testing on truncations of the
-conjugate divided kernel in the $L^2$ coordinate.
+In [BoundaryLogJet.lean](../../Proofs/Props/BoundaryLogJet.lean),
+`Masullo.memLp_boundaryLogJet_iff` proves that for $s\ge0$ and
+$|\Re z|=\alpha$, including $\alpha=0$, the divided kernel
+$k(x)=x^m e^{zx}/W(x)$ belongs to $L^2(dx)$ **if and only if**
+$2m+1<s$. Here $W$ is the very same positive weight root as for
+interior jets. The imaginary part does not enter the squared norm:
 
-In the digest-matched layout extraction, (10.2.2.5), p. 446, uses
-$\lfloor(s-1)/2\rfloor+1$ as the boundary cap before taking the
-minimum with multiplicity. For the analogous singleton cap
-(10.3.1.4), p. 448, the text explicitly defines the bracket by
-$N\le x$, not $N<x$. At $s=2m+1$ the literal bound would include
-order $m$ if the multiplicity exceeds $m$, but the endpoint power is
-$x^{-1}$ and the dual norm diverges. In particular, $s=1$ fails for
-a boundary point evaluation. This reading is provisional and the
-strict criterion is a log-line repair, not an assertion about the
-rendered glyphs or a failure at the separate $s=2$ cap.
+$$
+|k(x)|^2=e^{2(\Re z\,x-\alpha|x|)}\frac{|x|^{2m}}{(1+x^2)^{s/2}}.
+$$
+
+The exponential factor is at most one everywhere and is exactly one
+on the tail with the sign of $\Re z$ (both tails at width zero).
+`Masullo.integrableOn_sobolevJetPolynomial_Ioi_iff` compares the
+polynomial factor on $(1,\infty)$ to $x^{2m-s}$ above and to
+$2^{-s/2}x^{2m-s}$ below, using $x^2\le1+x^2\le2x^2$. Mathlib's
+`integrableOn_Ioi_rpow_iff` then gives the strict power test. Reflect
+the negative tail and use continuity on the compact middle interval.
+At equality the nondecaying tail has a divergent $1/|x|$ lower bound.
+The criterion concerns the ambient rational log-line space, not an
+identification with the adelic completion. The interior theorem is
+unchanged.
+
+The independent Yah statement review checked the pinned extraction of
+(9.2.2.4), p. 412, and (10.2.2.3)–(10.2.2.5), pp. 445–446, for the
+weight, bilinear pairing, positive exponent, and boundary indexing.
+The provisional extraction of (10.2.2.5) uses $\lfloor(s-1)/2\rfloor+1$
+as the boundary cap before taking the minimum with multiplicity.
+Upstream, Corollary 9.2.2.5(2), (9.2.2.24), p. 414, repeats the
+non-strict bracket cutoff for continuous boundary evaluations. Its
+proof refers to the one-sided result via Proposition 9.2.2.4, whose
+part (3) states the Mellin identification for even integer $s$ only.
+Separately, the reciprocal norm (9.2.2.40), p. 417, used by Proposition
+9.2.2.11 gives precisely the squared tail tested here on the symmetric
+strip. That proposition assumes a nondegenerate interval; the Lean
+calculation does not. For the analogous singleton cap (10.3.1.4),
+p. 448, the text explicitly defines the bracket by $N\le x$, not
+$N<x$. If the extracted cap includes $m$ when $s=2m+1$ and the
+multiplicity exceeds $m$, it includes a kernel outside the reciprocal
+weighted $L^2$ space. The $s=2$ cap is unaffected. These are readings
+of the digest-matched text extraction, not rendered-page verification.
+
+## Next runnable analytic step: Realize the allowed boundary jets on the theta closure
+
+Use the forward construction from `memLp_boundaryLogJet_iff` for
+$2m+1<s$: The conjugate kernel represents the bilinear integral in
+`Lp ℂ 2 volume`, with `innerSL` and `L2.integrable_inner` as for the
+interior. Apply the checked twisted moment identity to the same
+`rationalThetaWeightedLog` generators and use `closure_minimal` with
+the closed kernel. Retain $0<\Re\rho<1$ and
+$m<\operatorname{ord}_\rho\zeta$ for the unshifted zero, even though
+$|\Re(\rho-a)|=\alpha$ for the divided kernel.
+
+Independently, to exclude a bounded extension for other orders, require
+agreement on a specified ambient test domain. In the weighted coordinate,
+test on $U_R=\mathbf{1}_{[-R,R]}\overline{k}$. Its integral against $k$
+is $\|U_R\|_2^2$, whereas a bounded extension gives at most
+$C\|U_R\|_2$. Monotone convergence and the checked non-membership
+force $\|U_R\|_2$ unbounded. If testing only on smooth compactly
+supported profiles, use smooth truncations of $\overline{k}/W$ away
+from zero on the nondecaying tail and justify that domain. Neither
+bounded-extension obstruction is formalized here; the non-membership
+alone is not an obstruction for agreement on just the theta inputs.
