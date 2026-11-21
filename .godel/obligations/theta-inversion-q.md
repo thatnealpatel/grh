@@ -1289,22 +1289,63 @@ Validation: Full `lake --wfail build Proofs`, `leanchecker` for the new
 and touched modules, and external `#check` and `#print axioms` for
 the two endpoints and the exposed supporting declarations.
 
-## Next additive step: Identify the product of local additive Haar probabilities
+## Checked local product on the integral-finite additive stage
 
-For the integral-finite stage in Lemma A.3.1.3 and (A.3.1.3), p. 556,
-identify `rationalFiniteIntegersHaar` with `Measure.infinitePi` of the
-local integral-ring probabilities over `HeightOneSpectrum (𝓞 ℚ)`.
-Use `Rat.HeightOneSpectrum.adicCompletionIntegers.padicIntEquiv` and
-its compatibility with `adicCompletion.padicEquiv` to identify each
-probability with the restriction of `padicAddHaar` to the unit ball,
-viewed as a measure on the corresponding integral-ring subtype. The
-checked `padicAddHaar_integralBall` gives mass one. Prove translation
-invariance of the product via `Measure.infinitePi_map_pi` and deduce
-the equality by uniqueness of normalized Haar on the compact product.
-[Lemmas.RationalLocalUnitHaar](../../Proofs/Lemmas/RationalLocalUnitHaar.lean)
-provides the multiplicative analogue. This obligation only changes the
-compact factor of the checked integral-stage formula; unrestricted
-additive stages and the resulting global characterization remain open.
+In [RationalAdeleIntegralStageHaar.lean](../../Proofs/Theorems/RationalAdeleIntegralStageHaar.lean),
+`Masullo.rationalLocalIntegersAddHaar v` is the comap of the normalized
+`padicAddHaar` along the open additive embedding
+$O_v\hookrightarrow\mathbb Q_v\simeq\mathbb Q_{p(v)}$. The checked
+compatibility of Mathlib's integer and field identifications sends its
+range exactly to $\mathbb Z_{p(v)}$. Thus the comap is additive Haar of
+total mass one, not a measure on the full local field or on its unit group.
+
+`Masullo.rationalFiniteIntegersHaar_eq_infinitePi` identifies the compact
+Haar probability on $\prod_v O_v$ with the countable product of those
+local probabilities. The Borel structure is the product sigma-algebra;
+translation invariance follows by mapping the local translations in
+`Measure.infinitePi_map_pi`, and Haar uniqueness at total mass one gives
+the equality. `Masullo.comap_rationalAdeleAddHaar_integral_eq_prod` then
+identifies the comap along the integral-stage embedding with Lebesgue
+times this product. This equality holds on the entire real coordinate,
+not just on the interval used to normalize it.
+
+In the digest-matched layout extraction, Definition A.3.1.2(1), (3),
+p. 556, gives the real and finite local measures; Example A.3.1.7, p. 558,
+identifies the mass-one measure over $\mathbb Q_p$ with that local
+normalization. The proof of Lemma A.3.1.3, p. 556, uses the local product
+on the integral-finite stage to calibrate the global measure. Example
+A.3.1.8, p. 558, specifies the mass-one strip $[0,1)\times\widehat{\mathbb Z}$.
+Our argument checks exactly the restriction of the global formula
+in (A.3.1.3) to this stage over $\mathbb Q$. It does not invoke
+self-duality or prove the separate $S$-local formula on $A_{F,S}$.
+These locators are provisional readings of text, not rendered pages.
+
+Validation route: `lake --wfail build Proofs`, `lake env leanchecker
+Theorems.RationalAdeleIntegralStageHaar`, and an external `#check` and
+`#print axioms` audit of the two equality theorems, the local measure,
+and its Haar and probability instances.
+
+## Next additive step: Compare Haar on every open finite stage
+
+For a finite set $S$ of finite places, prove that the comap of
+`rationalAdeleAddHaar` along `rationalAdeleFiniteStageEmbedding S` is
+Lebesgue times the finite product of full local additive Haar measures
+inside $S$ and the probability product of `rationalLocalIntegersAddHaar`
+outside $S$. This is the all-stage restriction in the paragraph preceding
+Definition A.3.1.2, p. 556, for the rational adeles with the real factor
+present throughout, not the $S$-local statement in (A.3.1.3).
+
+[Lemmas.RationalAdeleFiniteStage](../../Proofs/Lemmas/RationalAdeleFiniteStage.lean)
+already gives the coordinate map, embedding, and range. Bundle its
+additivity, upgrade it to an open embedding using that range and
+`RestrictedProduct.isOpen_forall_imp_mem`, and transport
+`padicAddHaar` to each full completion via `adicCompletion.padicEquiv`.
+Calibrate both measures by the closed strip with all finite coordinates
+integral: Each inside factor has unit mass on its integral ring, each
+outside factor is a probability, and the real interval has length one.
+The [multiplicative finite-stage measure proof](../../Proofs/Lemmas/RationalIdeleFiniteStageMeasure.lean)
+is a checked analogue. After the restrictions are proved, the countable
+stage cover can identify the global measure among all Borel measures.
 
 ## Checked real-lattice inversion
 
@@ -1781,4 +1822,4 @@ The [complex Borel $L^1$ version](#checked-complex-weil-formula-and-absolute-sum
 is checked, as are the [quotient Fourier coefficient comparison and point
 separation](#checked-unfolding-of-the-quotient-fourier-coefficients) and
 [uniform density and Haar orthogonality](#checked-density-and-orthogonality-of-the-rational-quotient-characters).
-The [pointwise reconstruction and rational counting-series formula](#checked-pointwise-poisson-summation-with-explicit-convergence-hypotheses) are checked under explicit convergence hypotheses. The [unramified tensor periodization](#checked-periodization-of-the-rational-unramified-tensor) is now absolutely convergent at every lift and continuous on the quotient, with the input integrable upstairs. The [unramified transform and pointwise Poisson formula](#checked-fourier-transform-and-pointwise-poisson-for-the-unramified-tensor) now discharge Fourier-side summability. The [adelic theta inversion theorem](#checked-adelic-theta-inversion-for-the-unramified-tensor) now applies to the actual tensor sums at every idele. Next [identify the product of local additive Haar probabilities](#next-additive-step-identify-the-product-of-local-additive-haar-probabilities).
+The [pointwise reconstruction and rational counting-series formula](#checked-pointwise-poisson-summation-with-explicit-convergence-hypotheses) are checked under explicit convergence hypotheses. The [unramified tensor periodization](#checked-periodization-of-the-rational-unramified-tensor) is now absolutely convergent at every lift and continuous on the quotient, with the input integrable upstairs. The [unramified transform and pointwise Poisson formula](#checked-fourier-transform-and-pointwise-poisson-for-the-unramified-tensor) now discharge Fourier-side summability. The [adelic theta inversion theorem](#checked-adelic-theta-inversion-for-the-unramified-tensor) now applies to the actual tensor sums at every idele. The [integral-stage additive product formula](#checked-local-product-on-the-integral-finite-additive-stage) now identifies the compact factor as a product of local Haar probabilities. Next [compare Haar on every open finite stage](#next-additive-step-compare-haar-on-every-open-finite-stage).
