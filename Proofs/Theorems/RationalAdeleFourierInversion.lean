@@ -35,7 +35,7 @@ variable [MeasurableSpace A] [BorelSpace A] [MeasurableSpace D] [BorelSpace D]
 
 /-- The inverse integral uses the original character, not its conjugate,
 and the transported Plancherel measure on the full compact-open dual. -/
-public noncomputable def rationalAdeleDualFourierInverse (g : D → ℂ) (x : A) : ℂ :=
+@[expose] public noncomputable def rationalAdeleDualFourierInverse (g : D → ℂ) (x : A) : ℂ :=
   ∫ χ, g χ * (χ (Multiplicative.ofAdd x) : ℂ) ∂μD
 
 private noncomputable def pairingHomeomorph : A ≃ₜ D :=

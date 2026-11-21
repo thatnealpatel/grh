@@ -2836,29 +2836,68 @@ against the pinned Mathlib interfaces. The manuscript citations were
 verified in extraction, not by visual reading or by reading the cited DE
 statements verbatim. The general number-field endpoints are not implied.
 
-### Next Fourier step: Annihilator support and invariance
+### Checked annihilator support and invariance
 
-In Lemma D.1.5.2(3), p. 761 (provisional text extraction), Masullo proves
-invariance implies annihilator support by translating the Fourier integral;
-for the converse he uses the inverse integral restricted to the annihilator.
-Use an additive subgroup $H$ of $A$ and state support as $\widehat f(\chi)=0$
-whenever $\chi$ is not trivial on $H$. The pointwise statement is equivalent
-to containment of topological support because the annihilator is closed.
+The [Fourier support theorems](../../Proofs/Theorems/RationalAdeleFourierSupport.lean)
+prove the first assertion of Lemma D.1.5.2(3), p. 761, over the rational
+adeles, with the representative correction from D.1.1.2(5), (D.1.1.11),
+p. 747. `Masullo.rationalAdeleDualFourier_inverse_invariant` proves that if
+$f$ and $\widehat f$ are integrable and $\widehat f$ is supported on $H^\perp$,
+the positive-kernel inverse is continuous, represents $f$ a.e., and is
+pointwise $H$-invariant. As in the manuscript, the inverse kernel at $x+h$
+agrees with the kernel at $x$ on $H^\perp$; no restriction or renormalization
+of Haar is needed. Unlike the extracted statement, this does not identify
+the continuous inverse everywhere with an arbitrary $L^1$ representative.
 
-**Runnable next step:** Import `Theorems.RationalAdeleFourierInversion` and
-prove that, for $f,\widehat f$ integrable and $\widehat f$ vanishing off the
-annihilator, `rationalAdeleDualFourierInverse (rationalAdeleDualFourier f)`
-is pointwise $H$-invariant: For $h\in H$, compare the integrands at $x+h$
-and $x$ by `map_mul`, splitting on whether $\chi$ is trivial on $H$. Then
-use `rationalAdeleDualFourier_inversion` to get pointwise $H$-invariance of
-continuous $f$. For arbitrary $f$ the correct consequence is invariance of
-its canonical continuous representative, or a.e. equality of each translate
-with $f$ using `MeasureTheory.measurePreserving_add_right`. The reverse
-implication uses Haar translation and cancellation of the nontrivial
-character, via `MeasureTheory.integral_add_right_eq_self`; it needs only
-$f\in L^1$. The second, structural-pair assertion also uses the reverse
-Fourier direction and a double-annihilator identification; it is not
-established by the inversion theorem alone.
+`Masullo.rationalAdeleDualFourier_support_iff_ae_invariant` uses only
+$f\in L^1$. The translation computation in D.1.5.2(3), with the conjugated
+forward kernel of (D.1.1.4), gives $\widehat{f(\cdot+h)}(\chi)=
+\widehat f(\chi)\chi(h)$. Thus equality a.e. for each translate forces
+vanishing at any character nontrivial on $H$. Conversely, annihilator
+support makes the transforms of each translate and $f$ equal, so the
+checked $L^1$ injectivity gives equality a.e. for that translate. The
+null set may depend on $h$. The annihilator is closed by continuity of
+evaluation in the compact-open topology, so the conclusion uses topological
+support. No closedness of $H$ is needed. For a continuous input,
+`Masullo.rationalAdeleDualFourier_support_iff_invariant` upgrades equality
+a.e. to pointwise equality using open-positive Haar.
+
+Independent Yah review checked the signs, the support closure, and the
+representative hypotheses against the digest-matched text of Lemmas
+D.1.1.2 and D.1.5.2(3), not rendered pages. Reproduce the checks with
+`lake --wfail build Proofs`, `lake env leanchecker Theorems.RationalAdeleFourierSupport`,
+and `#print axioms` on the three public Fourier statements and the closed
+annihilator theorem.
+
+### Next Fourier step: Structural-pair support on the spatial side
+
+The final assertion of D.1.5.2(3), p. 761, also requires support of $f$ on
+$\Gamma$ iff $\widehat f$ is invariant under $\Gamma^\perp$. The printed
+proof uses Fourier inversion in both directions and implicitly uses
+$(\Gamma^\perp)^\perp=\Gamma$ after identifying the bidual by evaluation
+(D.1.1.1)–(D.1.1.3), p. 746. The checked self-duality of the rational
+adeles concerns $A\simeq\widehat A$; it does not by itself give separation
+of all quotient cosets of $\Gamma$ by continuous characters. The first
+support/invariance assertion above already handles the $k$-invariance half.
+
+**Runnable next step:** For an open additive subgroup $\Gamma\le A$ and
+$x\notin\Gamma$, construct a `χ : PontryaginDual (Multiplicative A)` in
+`rationalAdeleDualAnnihilator Γ` with `χ (Multiplicative.ofAdd x) ≠ 1`.
+Use `QuotientAddGroup.discreteTopology` for $A/\Gamma$, and separate its
+nonzero coset by a homomorphism into `AddCircle (1 : ℝ)`: Map the cyclic
+subgroup of a coset of order $n>1$ to the class of $1/n$, or map its
+infinite cyclic subgroup's generator to the class of $1/2$. Extend via
+`AddCommGrpCat.injective_of_divisible` and the `DivisibleBy` instance for
+`AddCircle`; `AddCircle.toCircle` and `AddCircle.injective_toCircle`
+then give the nontrivial continuous character after pullback. These are
+pinned Mathlib interfaces, not a checked separation proof. Once separation
+is available, modulate $f$ by $\overline{\chi}$ to translate $\widehat f$
+by $\chi$; injectivity and continuity give pointwise vanishing off
+$\Gamma$ if all these translations fix $\widehat f$. In the other
+direction, characters in the annihilator act trivially on the support
+of $f$, so the Fourier integral is invariant. This approach can avoid
+needing a second LCA inversion theorem; the structural-pair assertion
+is not yet checked.
 
 ## Checked real-lattice inversion
 
