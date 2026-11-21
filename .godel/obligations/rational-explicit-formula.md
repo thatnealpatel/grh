@@ -1238,30 +1238,80 @@ scope: `Lemmas.RationalLocalShiftedTest`,
 `Lemmas.RationalLocalLogPairTransport`, and
 `Theorems.RationalLocalShiftedFourier`.
 
-### Next: Remove the identity-value hypothesis by unit subtraction
+## Checked rational finite-place principal value by unit subtraction
 
-Prove the rational case of (B.4.4.14), pp. 622–623, for **all** locally
-constant, compactly supported $f:K_v^\times\to\mathbb C$. On the
-right side, replace $f$ by $f-f(1)\mathbf1_{U_v}$ in the multiplicative
-kernel, where $U_v$ is the norm-one subgroup. This is precisely the two
-pieces in the definition below (B.4.4.14): An unchanged integral off
-$U_v$ and ordinary integrable subtraction on $U_v$. The obligation is
-absolute integrability of the unmodified shifted Fourier integrand and
-the subtracted multiplicative integrand, and equality of their signed
-integrals, with $\log p$ on both sides for the canonical normalization
-(B.4.4.3). The different is trivial over $\mathbb Q_p$.
+[`rationalLocalShifted_principal_value`](../../Proofs/Theorems/RationalLocalPrincipalValue.lean)
+proves the rational case of (B.4.4.14), pp. 622–623, and hence the
+per-place comparison (B.4.4.21), p. 625, for **all** locally constant,
+compactly supported $f:K_v^\times\to\mathbb C$. Write $U_v$ for the
+integral units and $u_f$ for the shifted test of (B.4.4.2), p. 620.
+The two integrands are absolutely integrable, and
 
-Use the checked shifted endpoint on $f-f(1)\mathbf1_{U_v}$. Prove that
-the norm-one indicator is an admissible test and its shifted weighted
-extension corresponds under `adicCompletion.padicEquiv` to the set
-indicator in `padicTranslatedUnits_log_fourier`. Transport that
-theorem's integrability and zero pairing, then prove linearity for the
-shifted Fourier expressions, including convergence of the inner
-integrals. This is the unit-indicator reduction in the proof on p. 623;
-the existing checked calibration replaces the unverified frequency
-ball display there. For radial compact log profiles, match the result
-to `rationalLocalRadialHaar_eq_shellSum`; this does not identify the
-global geometric trace.
+$$
+-\log(p)\int_{K_v} J(\xi)\widehat{u_f}(\xi)\,d\nu_v(\xi)
+= \log(p)\int_{K_v^\times}
+    \frac{(f(y)-f(1)\mathbf1_{U_v}(y))|y|_v^{1/2}}{|1-y|_v}\,d\mu_v(y).
+$$
+
+Here $J(\xi)=\log|\xi|_v/\log p$ by (B.4.3.2), p. 617,
+$\mu_v(U_v)=1$, and $\nu_v(O_v)=1$ with the standard rational additive
+character. The leading minus is from (B.4.4.1), p. 619. The
+subtraction is only on $U_v$, not on the whole multiplicative group.
+The factor $\log p$ follows (B.4.4.3) and (B.4.4.21); the local different
+is trivial. The extraction of the denominator in (B.4.4.14) does not
+clearly retain the unit superscript. The adjacent definition of
+$\mathrm{PF}_0$ and (B.4.4.21) use the mass of the integral units.
+This reading remains provisional pending rendered-page review.
+
+Masullo reduces to $f(1)=0$ and the integral-unit indicator on p. 623.
+Lean uses (B.4.4.5) on the **subtracted** test. For the discarded term,
+`rationalLocalUnitIndicator_properties` checks that the indicator is
+locally constant, compactly supported, and one at the identity. The
+shifted extension is exactly the indicator of $|1+x|_v=1$, including
+at $x=-1$. `rationalLocalUnitIndicator_log_fourier` transports the
+checked p-adic pairing, including its absolute integrability and value
+zero, to the actual completion. This replaces the frequency display
+after (B.4.4.15), p. 623, questioned in footnote 24. The proof uses
+`rationalLocalShiftedFourier_add_mul` to restore the **original** test
+on the additive side, checking integrability of the inner Fourier
+integrals from continuity and compact support before applying Bochner
+linearity.
+
+Independent Yah `principal-value-statement-review` (output
+`8a161bbba3b6bbe8e11370bcff4120b08d40cbdc`) approved the hypotheses,
+unit subtraction, and sign and scalar of the endpoint against the
+pinned extraction. The normalized $J$ is the explicit non-Archimedean
+definition (B.4.3.2), not the unnormalized logarithm in the section
+introduction. Audit scope: `Lemmas.RationalLocalPrincipalValue` and
+`Theorems.RationalLocalPrincipalValue`.
+
+### Next: Identify the rational radial Fourier value with the prime-power sum
+
+For any compactly supported $F:\mathbb R\to\mathbb C$, set
+$f(y)=F(\log |y|_v)$. Prove that this is an admissible finite-place
+test: Expose the existing private `locallyConstant_unitNorm` in
+`Lemmas.RationalLocalShiftedTest`, then compose with `F ∘ Real.log`. Use
+`RationalLocalNormShell.log_norm` to put the support in finitely many
+shells, each compact by `RationalLocalNormShell.eq_translate` and
+`isCompact_range_rationalLocalUnitInclusion`. On $U_v$ the subtracted integrand is identically
+zero. Off $U_v$, `Real.sqrt_eq_rpow` matches it with
+`rationalLocalRadialSubtracted`. Compose the checked comparison
+(B.4.4.21) with `rationalLocalRadialHaar_eq_primeSamples` in
+[`Props/RationalFiniteHaar.lean`](../../Proofs/Props/RationalFiniteHaar.lean)
+for the Fourier integral's signed, absolutely integrable prime-power
+value, with the factor $\log p$ and the reflected twist from
+(B.4.2.10)–(11), p. 615. The shell expansion is (B.4.4.22), p. 625.
+For a common compact log profile, the bound $\log p$ greater than its
+support radius kills every nonzero shell, and subtraction kills the
+unit shell. This is a radial local comparison, not an identification
+of Masullo's global geometric trace. For the nonradial finite-place
+vanishing used on p. 625, support alone only rules out nonzero shells;
+unit subtraction also requires control on the integral units. A test
+invariant under a fixed open compact subgroup of the norm-one classes
+is constant on the integral units at all but finitely many rational
+places. Do not use the radial cancellation for a general local test.
+
+### Separate open obligation: Ramified calibration
 
 For ramified continuation, the second frequency ball in the display
 after (B.4.4.15), p. 623, needs its own check. The extracted subscript
