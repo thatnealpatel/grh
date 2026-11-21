@@ -100,7 +100,8 @@ public theorem log_fourier_integrable (v : 𝓢(ℝ, ℂ)) :
 
 /-- Use a subtracted Cauchy kernel to represent the negative logarithm.
 The exchange of integrations is absolute, even before imposing a zero moment. -/
-public theorem log_pairing_eq_cauchy (v : 𝓢(ℝ, ℂ)) :
+public theorem log_pairing_eq_cauchy {v : ℝ → ℂ} (hv : Continuous v)
+    (hlog : Integrable (fun x ↦ (Real.log |x| : ℂ) * v x)) :
     -(∫ x, (Real.log |x| : ℂ) * v x) =
       ∫ a in Ioi (0 : ℝ), ∫ x, ((cauchy a x - cauchy a 1 : ℝ) : ℂ) * v x := by
   let F (x a : ℝ) := ((cauchy a x - cauchy a 1 : ℝ) : ℂ) * v x
@@ -109,7 +110,7 @@ public theorem log_pairing_eq_cauchy (v : 𝓢(ℝ, ℂ)) :
     refine (integrable_prod_iff hF.aestronglyMeasurable).2 ⟨?_, ?_⟩
     · filter_upwards [Measure.ae_ne volume (0 : ℝ)] with x hx
       exact ((cauchy_sub_integrals hx).1.ofReal).mul_const (v x)
-    · apply (integrable_log_mul_schwartz v).norm.congr
+    · apply hlog.norm.congr
       filter_upwards [Measure.ae_ne volume (0 : ℝ)] with x hx
       simp only [Function.uncurry_apply_pair, F, norm_mul, Complex.norm_real, Real.norm_eq_abs, integral_mul_const,
         (cauchy_sub_integrals hx).2.2]
@@ -182,20 +183,20 @@ private theorem fourier_laplaceProfile {a : ℝ} (ha : 0 < a) (x : ℝ) :
 
 /-- Bilinear Fourier exchange turns the Cauchy kernel on the frequency line
 into the spatial Laplace profile, with no frequency reflection. -/
-public theorem cauchy_pairing_eq_laplace (u : 𝓢(ℝ, ℂ)) {a : ℝ} (ha : 0 < a) :
-    (∫ x, (cauchy a x : ℂ) * 𝓕 (u : ℝ → ℂ) x) =
+public theorem cauchy_pairing_eq_laplace {u : ℝ → ℂ} (hu : Continuous u)
+    (hi : Integrable u) (huf : Integrable (𝓕 u)) {a : ℝ} (ha : 0 < a) :
+    (∫ x, (cauchy a x : ℂ) * 𝓕 u x) =
       (Real.pi : ℂ) * ∫ z, laplaceProfile a z * u z := by
-  have huf : Integrable (𝓕 (u : ℝ → ℂ)) := (𝓕 u).integrable
   have he := VectorFourier.integral_fourierIntegral_smul_eq_flip (L := innerₗ ℝ)
     Real.continuous_fourierChar continuous_inner (laplaceProfile_integrable ha) huf
-  have hinv (z : ℝ) : 𝓕 (𝓕 (u : ℝ → ℂ)) z = u (-z) := by
+  have hinv (z : ℝ) : 𝓕 (𝓕 u) z = u (-z) := by
     simpa only [Real.fourierInv_eq_fourier_neg, neg_neg] using
-      congrFun (u.continuous.fourierInv_fourier_eq u.integrable huf) (-z)
-  have he' : (∫ x, 𝓕 (laplaceProfile a) x * 𝓕 (u : ℝ → ℂ) x) =
+      congrFun (hu.fourierInv_fourier_eq hi huf) (-z)
+  have he' : (∫ x, 𝓕 (laplaceProfile a) x * 𝓕 u x) =
       ∫ z, laplaceProfile a z * u (-z) := by
     rw [flip_innerₗ] at he
-    change (∫ x, 𝓕 (laplaceProfile a) x • 𝓕 (u : ℝ → ℂ) x) =
-      (∫ z, laplaceProfile a z • 𝓕 (𝓕 (u : ℝ → ℂ)) z) at he
+    change (∫ x, 𝓕 (laplaceProfile a) x • 𝓕 u x) =
+      (∫ z, laplaceProfile a z • 𝓕 (𝓕 u) z) at he
     simpa only [smul_eq_mul, hinv] using he
   have hπ : (Real.pi : ℂ) ≠ 0 := Complex.ofReal_ne_zero.mpr Real.pi_ne_zero
   rw [← integral_neg_eq_self (fun z ↦ laplaceProfile a z * u z) volume]
@@ -209,20 +210,20 @@ public theorem cauchy_pairing_eq_laplace (u : 𝓢(ℝ, ℂ)) {a : ℝ} (ha : 0 
 
 /-- Fourier inversion at zero removes the constant subtraction at each
 positive scale. The two summands are not integrated separately in scale. -/
-public theorem cauchy_sub_pairing_eq_laplace (u : 𝓢(ℝ, ℂ)) (hzero : u 0 = 0)
+public theorem cauchy_sub_pairing_eq_laplace {u : ℝ → ℂ} (hu : Continuous u)
+    (hi : Integrable u) (huf : Integrable (𝓕 u)) (hzero : u 0 = 0)
     {a : ℝ} (ha : 0 < a) :
-    (∫ x, ((cauchy a x - cauchy a 1 : ℝ) : ℂ) * 𝓕 (u : ℝ → ℂ) x) =
+    (∫ x, ((cauchy a x - cauchy a 1 : ℝ) : ℂ) * 𝓕 u x) =
       (Real.pi : ℂ) * ∫ z, laplaceProfile a z * u z := by
-  have huf : Integrable (𝓕 (u : ℝ → ℂ)) := (𝓕 u).integrable
-  have hinv := congrFun (u.continuous.fourierInv_fourier_eq u.integrable huf) 0
+  have hinv := congrFun (hu.fourierInv_fourier_eq hi huf) 0
   rw [Real.fourierInv_eq', hzero] at hinv
-  have hmass : (∫ x, 𝓕 (u : ℝ → ℂ) x) = 0 := by simpa using hinv
-  have hkc : Integrable (fun x ↦ (cauchy a x : ℂ) * 𝓕 (u : ℝ → ℂ) x) := by
+  have hmass : (∫ x, 𝓕 u x) = 0 := by simpa using hinv
+  have hkc : Integrable (fun x ↦ (cauchy a x : ℂ) * 𝓕 u x) := by
     apply (huf.norm.const_mul a⁻¹).mono'
     · have h : Continuous fun x ↦ (cauchy a x : ℂ) := by
         apply Complex.continuous_ofReal.comp
         exact continuous_const.div (by fun_prop) (fun x ↦ (by positivity : 0 < a ^ 2 + x ^ 2).ne')
-      exact (h.mul (𝓕 u).continuous).aestronglyMeasurable
+      exact h.aestronglyMeasurable.mul huf.aestronglyMeasurable
     · filter_upwards with x
       rw [norm_mul, Complex.norm_real, Real.norm_eq_abs, abs_of_nonneg (by unfold cauchy; positivity)]
       gcongr
@@ -233,21 +234,38 @@ public theorem cauchy_sub_pairing_eq_laplace (u : 𝓢(ℝ, ℂ)) (hzero : u 0 =
         _ ≤ a⁻¹ * (a ^ 2 + x ^ 2) := by gcongr; exact le_add_of_nonneg_right (sq_nonneg x)
   simp only [Complex.ofReal_sub, sub_mul]
   rw [integral_sub hkc (huf.const_mul _), integral_const_mul, hmass, mul_zero, sub_zero,
-    cauchy_pairing_eq_laplace u ha]
+    cauchy_pairing_eq_laplace hu hi huf ha]
 
-/-- Division by `|z|` is harmless for a compactly supported test that
-vanishes on a neighborhood of zero. -/
+/-- A linear bound near zero suffices for division by `|z|`; away from
+zero absolute integrability of the original test suffices. -/
+public theorem integrable_div_abs_of_local_bound {u : ℝ → ℂ} (hu : Continuous u)
+    (hi : Integrable u) {ε C : ℝ} (hε : 0 < ε) (hbound : ∀ z, |z| < ε → ‖u z‖ ≤ C * |z|) :
+    Integrable (fun z ↦ u z / ((|z| : ℝ) : ℂ)) := by
+  let S := Ioo (-ε) ε
+  have hm : Measurable (fun z ↦ u z / ((|z| : ℝ) : ℂ)) := hu.measurable.div (by fun_prop)
+  have hlocal : IntegrableOn (fun z ↦ u z / ((|z| : ℝ) : ℂ)) S := by
+    have hC : IntegrableOn (fun _ : ℝ ↦ max C 0) S :=
+      integrableOn_const (by unfold S; exact measure_Ioo_lt_top.ne)
+    apply hC.mono' hm.aestronglyMeasurable
+    filter_upwards [ae_restrict_mem (measurableSet_Ioo : MeasurableSet S)] with z hz
+    simp only [norm_div, Complex.norm_real, Real.norm_eq_abs, abs_abs]
+    by_cases hzero : z = 0
+    · simp [hzero]
+    · exact (div_le_iff₀ (abs_pos.mpr hzero)).2
+        ((hbound z (abs_lt.mpr hz)).trans (mul_le_mul_of_nonneg_right (le_max_left _ _) (abs_nonneg _)))
+  have htail : IntegrableOn (fun z ↦ u z / ((|z| : ℝ) : ℂ)) Sᶜ := by
+    apply ((hi.norm.div_const ε).integrableOn (s := Sᶜ)).mono' hm.aestronglyMeasurable
+    filter_upwards [ae_restrict_mem (measurableSet_Ioo.compl : MeasurableSet Sᶜ)] with z hz
+    simp only [norm_div, Complex.norm_real, Real.norm_eq_abs, abs_abs]
+    exact div_le_div_of_nonneg_left (norm_nonneg _) hε (le_of_not_gt (fun h ↦ hz (abs_lt.mp h)))
+  simpa using integrableOn_union.mpr ⟨hlocal, htail⟩
+
+/-- Division by `|z|` for a compactly supported test vanishing near zero. -/
 public theorem integrable_div_abs {u : ℝ → ℂ} (hu : Continuous u) (hc : HasCompactSupport u)
     {ε : ℝ} (hε : 0 < ε) (hgap : ∀ z, |z| < ε → u z = 0) :
-    Integrable (fun z ↦ u z / ((|z| : ℝ) : ℂ)) := by
-  apply ((hu.integrable_of_hasCompactSupport hc).norm.div_const ε).mono'
-  · have := hu.measurable
-    exact Measurable.aestronglyMeasurable (by fun_prop)
-  · filter_upwards with z
-    by_cases hz : |z| < ε
-    · simp [hgap z hz]
-    · simp only [norm_div, Complex.norm_real, Real.norm_eq_abs, abs_abs]
-      exact div_le_div_of_nonneg_left (norm_nonneg _) hε (le_of_not_gt hz)
+    Integrable (fun z ↦ u z / ((|z| : ℝ) : ℂ)) :=
+  integrable_div_abs_of_local_bound hu (hu.integrable_of_hasCompactSupport hc) (C := 0) hε
+    (fun z hz ↦ by simp [hgap z hz])
 
 private theorem laplace_scale_integral {z : ℝ} (hz : z ≠ 0) :
     let f (a : ℝ) := Real.exp (-(2 * Real.pi * a) * |z|)

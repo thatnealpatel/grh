@@ -703,32 +703,67 @@ identity term vanishes. Visual verification remains open. The two new
 modules built with `lake --wfail build Props.RealPrincipalValue`; the
 integration audit checks both modules and this endpoint with `audit-local`.
 
-## Next runnable obligation: Extend the real kernel to tests vanishing at zero
+<a id="next-runnable-obligation-extend-the-real-kernel-to-tests-vanishing-at-zero"></a>
 
-Generalize the Cauchy exchange in the two modules above to a continuous
-$u$ with $u(0)=0$ and integrable $u$, $\widehat u$,
-$\log|\xi|\,\widehat u(\xi)$, and $u(z)/|z|$. Prove the same equality
-without the support gap or the Schwartz assumptions. This is the
-zero-value remainder needed to calibrate Connes Appendix II (34).
-The current scalar Cauchy and spatial Fubini proofs already use the
-exact absolute slices, so only the uses of Schwartz regularity in the
-frequency argument, Fourier inversion, and measurability need adapting.
-Continuity of the Fourier transform follows from $u\in L^1$.
+## Checked real logarithmic Fourier kernel for zero-value tests
 
-Then let $T$ denote the additive Fourier pairing in (B.4.4.1) and put
+[`Masullo.real_log_fourier_of_zero`](../../Proofs/Props/RealPrincipalValue.lean)
+proves the same $1/2$ kernel for continuous $u$ with $u(0)=0$, assuming
+absolute integrability of $u$, $\widehat u$, $\log|\xi|\,\widehat u(\xi)$,
+and $u(z)/|z|$. It does not require a gap in the support, compactness,
+or smoothness. This is the zero-value component of Connes Appendix II
+(34), p. 74 of the arXiv v1 extraction, for Masullo's real additive
+pairing (B.4.4.1), pp. 619–620. The earlier off-zero theorem now follows
+by specialization. The extracted footnote 16 on p. 619 itself asks for
+a recheck of the factors and of the contact coefficient. It does not
+change the transform in A.3.1.5 or justify using unnormalized Haar for
+the fixed additive pairing. The source statements here use the pinned
+PDF's text, not rendered-page verification.
+
+Continuity of the transform of an $L^1$ function justifies the frequency
+measurability in the existing Cauchy exchange. Ordinary Fourier
+inversion applies to continuous $u$ with both $L^1$ hypotheses, so the
+subtraction again cancels at each positive scale. The spatial Fubini
+argument uses exactly the absolute $u(z)/|z|$ pairing. The new Lean
+helper `RealLogFourier.integrable_div_abs_of_local_bound` proves this
+last integrability from $u\in L^1$ and $|u(z)|\le C|z|$ near zero,
+bounding the quotient on a bounded interval and the tail by a multiple
+of $|u|$. This is the estimate needed for the comparator remainder
+below, which need not be differentiable at zero. Independent Yah review
+(`real-zero-statement`) checked both statements, the two absolute Fubini
+exchanges, and the comparator's remaining hypotheses against the pinned
+Mathlib and the digest-verified Masullo extraction and Connes Appendix II.
+The two modules and reviewed endpoints are the scope of `audit-local`.
+
+## Next runnable obligation: Calibrate the contact term in the real cutoff
+
+Let $T$ denote the negative additive Fourier pairing in (B.4.4.1) and
 $P(u)=\tfrac12\int (u(z)-u(0)\mathbf1_{\{|z|\le1\}})/|z|\,dz$.
-For the remainder $r=u-u(0)G$, a Lipschitz bound at zero and integrable
-tails suffice for $r/|\cdot|\in L^1$. The exact remaining scalar target
-is $T(G)-P(G)=\log(2\pi)+\gamma$ with $G(0)=1$. Connes (32)–(35) uses
-a self-dual Gaussian; `Complex.digamma_one_half` is in pinned Mathlib.
-A smaller alternative comparator permitted by the generalized endpoint is
-$G(z)=e^{-2\pi|z|}$: The already computed transform is $1/(\pi(1+\xi^2))$,
-so $T(G)=0$ by inversion $\xi\mapsto1/\xi$ on the positive half-line and
-evenness. Integration by parts gives $P(G)=-\log(2\pi)-\gamma$ using
-`Real.deriv_Gamma_one_eq_integral_log` and `Real.hasDerivAt_Gamma_one`.
-Neither calibration is checked yet. Prove the cutoff limit from $P$ by
-absolute convergence of the subtracted integrand and the elementary
-annular integral $\int_{\varepsilon\le|z|\le1} dz/(2|z|)=-\log\varepsilon$.
+With the checked zero-value theorem applied to $r=u-u(0)G$, the exact
+remaining scalar target is $T(G)-P(G)=\log(2\pi)+\gamma$ for a comparator
+$G(0)=1$. Connes (32)–(35) uses a self-dual Gaussian. A comparator reusing
+the checked real Fourier kernel is $G(z)=e^{-2\pi|z|}$: The existing
+`fourier_laplaceProfile` gives $1/(\pi(1+\xi^2))$ at scale one. Prove
+$T(G)=0$ by evenness and the positive-half-line substitution
+`integral_comp_rpow_Ioi` at exponent $-1$, checking absolute integrability
+separately. The remaining spatial scalar is
+
+$$
+P(G)=\int_0^\infty \frac{e^{-2\pi x}-\mathbf1_{x\le1}}{x}\,dx
+     =-\log(2\pi)-\gamma.
+$$
+
+For that identity, integrate by parts on $(0,1)$ and $(1,\infty)$
+without separating the singular subtraction. Alternatively write the
+numerator as
+$\int_0^\infty b e^{-bt}(\mathbf1_{x\le t}-\mathbf1_{x\le1})\,dt$,
+where $b=2\pi$. The absolute $dx/x$ slice of the difference is
+$|\log t|$, so the exchange follows from exponential log integrability;
+the signed slice is $\log t$. Rescale by $b$ and use the pinned
+`Real.eulerMascheroniConstant_eq_neg_integral_log`. Neither calibration
+is checked here. After proving the calibrated pairing, obtain its
+cutoff form by dominated convergence on the subtracted integrand and
+$\int_{\varepsilon\le|z|\le1} dz/(2|z|)=-\log\varepsilon$.
 
 For the subsequent identity term, Connes (36)–(37) retains $\lambda$.
 Use [`map_realMultiplicativeHaar_val`](../../Proofs/Theorems/RealMultiplicativeHaar.lean)
