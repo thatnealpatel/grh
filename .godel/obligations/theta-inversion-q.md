@@ -2140,42 +2140,64 @@ proof does not claim one bound over all representatives. The result does
 not identify the manuscript's tensor topology or assert compact-uniform
 convergence of difference quotients on idele classes.
 
-### Next orbit step: The Fourier zero mode of the generator
+<a id="next-orbit-step-the-fourier-zero-mode-of-the-generator"></a>
 
-The digest-matched extraction of Lemma 2.2.4.5, p. 92, appears to set
-$\widehat{\partial_\gamma f}(0)=0$ for general $f$ by using
-$\gamma(t)^{-1}0=0$ in (2.2.4.29). The same limit still contains the
-factor $|\gamma(t)|_F^{-1}$. The matrix (2.2.4.27), p. 91, and the
-closing argument on p. 95 instead give
-$-\alpha_\gamma\widehat f(0)$, consistent with (2.2.4.36), p. 93.
-For the real norm section $|\gamma(t)|=t$, the quotient at zero is
-exactly $-t^{-1}\widehat f(0)$ for $t\ne1$. Thus its limit is
-$-\widehat f(0)$, and it vanishes on the Fourier zero-mode kernel,
-not on every test. This reading is provisional pending visual review.
+### Checked zero modes of the rational real dilation generator
 
-A concrete control is the unramified tensor of a nonnegative smooth
-real bump with nonzero integral: Its transform at zero is that
-integral by `integral_rationalAdeleUnramified_mul_conj_char` and the
-normalized finite factor. The existing `fourier_dilate` proof in
-`Theorems.RationalAdeleBoxThetaInversion` supplies the exact covariance
-needed to formalize the zero-frequency difference quotient.
+[RationalAdeleLFDilationZeroModes.lean](../../Proofs/Theorems/RationalAdeleLFDilationZeroModes.lean)
+checks the rational positive real section case of Lemma 2.2.4.5(1).
+For every rational Schwartz LF test $f$, with no moment hypotheses,
+`Masullo.rationalAdeleLFDilationDeriv_at_zero` and
+`Masullo.rationalAdeleFourier_LFDilationDeriv_at_zero` give
 
-For the rational Lean obligation, prove $Df(0)=0$ by the generator's
-pointwise formula and $\widehat{Df}(0)=-\widehat f(0)$ by integration
-by parts, not by assuming differentiation under the integral. Use
-`rationalAdeleLFDilationDeriv_assembly` and represent both stage
-assemblies by the same boxes. `integral_rationalAdeleBoxSum_mul_conj_char`
-at frequency zero reduces each box to the real profile integral times
-its unchanged idelic Jacobian. For the real step use Mathlib's
-`MeasureTheory.integral_mul_deriv_eq_deriv_mul_of_integrable` with
-$u(x)=x$ and $v=b$, taking integrability from the Schwartz maps $b$,
-$x b$, and $x b'$. A local Lean example checked this real identity
-$\int x b'(x)\,dx=-\int b(x)\,dx$ against the pinned dependencies;
-it is not yet a project declaration. Lift that identity to the finite
-sum and conclude that $D$ preserves the intersection of the two kernels.
-This does not yet give the full Fourier covariance
-of $D$ at nonzero frequencies, or the bounded-set operator limit of
-Remark 2.2.4.6.
+$$
+(Df)(0)=0,\qquad \widehat{Df}(0)=-\widehat f(0).
+$$
+
+`Masullo.rationalAdeleLFDilationDeriv_preserves_zero_modes` then gives
+preservation of the intersection of the two kernels in (2.2.4.23).
+The Fourier statements use additive adelic Haar, with no quotient
+measurability hypothesis. They do not construct the quotient isomorphism
+in (2.2.4.25).
+
+The spatial identity follows from the Euler factor at zero. For the
+Fourier identity, put $f$ and $Df$ in the same factorial stage and use
+the same finite boxes for both. Those stage boxes have zero real centers
+and unit real scales. At frequency zero each box transforms to its
+idele Jacobian times the integral of its profile. This Jacobian is
+unchanged by replacing the profile $b$ by $u b'(u)$.
+Mathlib's `integral_mul_deriv_eq_deriv_mul_of_integrable` gives
+$\int u b'(u)\,du=-\int b(u)\,du$ because $b$, $u b$, and $u b'$
+are integrable Schwartz functions. No adelic limit is interchanged
+with the integral.
+
+Independent Yah statement review checked the sign, stage geometry, and
+scope against the digest-matched extraction, pp. 91–95. The p. 92 proof
+appears to conclude that $\widehat{\partial_\gamma f}(0)=0$ for general
+$f$ because $\gamma(t)^{-1}0=0$. That does not remove the norm factor in
+(2.2.4.29). For the positive real norm section, `ideleNorm_logSection`
+with $s=\log t$ gives $|\gamma(t)|=t$, and the quotient at zero for
+$t\ne1$ is $-t^{-1}\widehat f(0)$. Its limit agrees with (2.2.4.27)
+and the closing sentence on p. 95, not with the extracted intermediate
+zero claim. The sign can also be tested on an unramified tensor of a
+nonnegative smooth bump with positive integral. This is an extracted,
+not visually verified, reading.
+
+### Next orbit step: Fourier covariance at every frequency
+
+Prove the rational pointwise case of (2.2.4.29) for arbitrary adelic
+frequency $y$: At $s=0$, the function
+$s\mapsto e^{-s}\widehat f(\tau(-s)y)$ has derivative $\widehat{Df}(y)$,
+where $\tau$ is the upstairs log-norm section. The scale derivative at
+$t=1$ is equivalent by the chain rule. First check the real profile
+identity $\mathcal F(u b')(\xi)=-\mathcal F b(\xi)-\xi(\mathcal F b)'(\xi)$:
+Use $(u b)'=b+u b'$ and Mathlib's `SchwartzMap.fourier_lineDerivOp_eq`
+and `SchwartzMap.lineDerivOp_fourier_eq` in direction $1$. Then use the
+stagewise box transform. Along $\tau(-s)y$ the finite support and finite
+phase are fixed; the phase from the real center is trivial for these
+stage boxes, whose real centers are zero. Retain the derivative of
+$e^{-s}$ in the product rule. This endpoint would still be pointwise,
+not the bounded-set operator limit of Remark 2.2.4.6.
 
 ## Checked real-lattice inversion
 
