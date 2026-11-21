@@ -1,6 +1,6 @@
 # Recovering the divisor from the Chapter 13 test class
 
-**Status:** Conditional project argument over $\mathbb Q$ in the trivial compact isotype. The [assembled $D=1$ uniqueness proposition](../../Proofs/Props/ZeroMassUniqueness.lean) and the [geometric inputs for the shifted zeta family](../../Proofs/Lemmas/ShiftedZetaZeros.lean) are in Lean. Multiplicity-weighted summability and the full-versus-capped comparison are not. Source readings are provisional, based on raw and layout text from the [digest-matched edition](../sources/masullo/README.md). This fills a downstream implication under a specified normalization; it does not supply the Chapter 13 trace or the manuscript's missing positivity criterion.
+**Status:** Conditional project argument over $\mathbb Q$ in the trivial compact isotype. The [assembled $D=1$ uniqueness proposition](../../Proofs/Props/ZeroMassUniqueness.lean) and the [geometric inputs for the shifted zeta family](../../Proofs/Lemmas/ShiftedZetaZeros.lean) are in Lean. [Quadratic summability of the full multiplicities](../../Proofs/Lemmas/ZetaZeroSummability.lean) is in Lean. The full-versus-capped comparison is not. Source readings are provisional, based on raw and layout text from the [digest-matched edition](../sources/masullo/README.md). This fills a downstream implication under a specified normalization; it does not supply the Chapter 13 trace or the manuscript's missing positivity criterion.
 
 ## The common test class and the missing comparison
 
@@ -48,7 +48,7 @@ Take $w=\rho-1/2$ for distinct nontrivial zeta zeros and $d_w=\operatorname{ord}
 
 Independent Yah statement review confirmed that the compact-set finiteness, countable index, strip bound, injectivity, and every-point gap suffice for the geometric inputs, without an assumption at the strip boundary or a statement about the central weight.
 
-For the arithmetic branch, Lean now transfers the orders to an entire function. The next step is to [bound a disk count with Jensen](trace-divisor-summability.md#next-runnable-step-bound-a-disk-count-with-jensen) before proving the quadratic summability bound. The comparison on the shared tests and the weight at the center remain separate.
+The new [quadratic summability lemma](trace-divisor-summability.md#checked-dyadic-shell-summability) gives the arithmetic input. The [next Lean step](trace-divisor-summability.md#next-runnable-step-specialize-conditional-uniqueness-to-the-zeta-divisor) is to specialize to the full-minus-capped weights under the shared-test comparison. The comparison itself and the weight at the center remain separate.
 
 ## A pole test for the raw Haar reading
 

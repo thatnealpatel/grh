@@ -24,7 +24,7 @@ public theorem mem_criticalStripZetaZeros {ρ : ℂ} :
     ρ ∈ criticalStripZetaZeros ↔ riemannZeta ρ = 0 ∧ 0 < ρ.re ∧ ρ.re < 1 := Iff.rfl
 
 /-- Translate the critical line to the imaginary axis. -/
-public noncomputable def shiftedZetaZero (ρ : criticalStripZetaZeros) : ℂ :=
+@[expose] public noncomputable def shiftedZetaZero (ρ : criticalStripZetaZeros) : ℂ :=
   (ρ : ℂ) - 1 / 2
 
 public theorem shiftedZetaZero_injective : Function.Injective shiftedZetaZero := by
