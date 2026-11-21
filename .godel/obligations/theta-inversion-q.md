@@ -461,28 +461,52 @@ prescription on p. 556 uses these stages in Lemma A.3.2.4, equation
 (A.3.2.5), p. 560. The readings are from a SHA-256-matched extraction, not
 rendered pages. The Lean result is topological, not a measure comparison.
 
-## Next Haar step: Identify the full real local measure
+## Checked full real local multiplicative Haar measure
 
-Implement the real factor of Definition A.3.2.2(1), p. 560, on
-$\mathbb R^\times$, with its Borel sigma-algebra. A concrete route is the
-sign and log-absolute-value splitting: Transport counting measure on the
-order-two sign group times log-Lebesgue measure, using counting measure
-rather than probability so each sign has mass one. Identify its pushforward
-under the real value map with $dt/|t|$ off zero. On the positive ray use
-`Masullo.map_volume_exp_eq_restrict_realMultiplicative`; on the negative
-ray use reflection. Audit the Haar instance and mass one on the inverse
-image of $[1,e]$. The positive-ray result alone does not supply a measure on
-both components.
+[RealMultiplicativeHaar.lean](../../Proofs/Theorems/RealMultiplicativeHaar.lean)
+constructs `Masullo.realMultiplicativeHaar` on all of $\mathbb R^\times$
+with Mathlib's measurable structure, proved Borel by `realUnitsBorelSpace`.
+`map_realMultiplicativeHaar_val` says that pushing it forward by the value
+map gives Lebesgue measure restricted off zero and weighted by $|t|^{-1}$.
+The Haar instance uses the signed scaling $t\mapsto at$: The absolute
+Jacobian $|a|$ cancels the density change even when $a<0$. No sign
+probability or folding is used. `realMultiplicativeHaar_unitStrip` gives
+mass one on the inverse image of $[1,e]$ under the value map, not under
+the absolute value. It reuses the checked positive-ray identity.
 
-Then compare the pullback of `rationalIdeleHaar` on each checked stage with
-the product of that real Haar, the finitely many field-unit Haar measures
-in $S$, and the compact product of integral-unit probabilities off $S$.
-The open homomorphism gives the local topology for the pullback. For the
-comparison by Haar uniqueness, use the preimage of $K$: The real value
-lies in $[1,e]$, and all finite coordinates are integral units, including
-those in $S$. The local masses are one. The Borel and product measure
-interfaces, measure transport, and stage equalities remain open. The
-additive finite Fourier self-duality problem is independent.
+Independent Yah statement review matched the full signed density with
+Definition A.3.1.2(1), p. 556, and Definition A.3.2.2(1), p. 560, in the
+SHA-256-matched text extraction. The positive-strip mass is a project
+calibration for the comparison below, not a normalization prescribed by
+that definition. The source reading is provisional, with no rendered-page
+inspection. This verifies the real local factor only, not (A.3.2.5).
+
+## Next Haar step: Compare the finite-stage measures
+
+For each finite set of rational finite places $S$, define the product on
+`RationalIdeleFiniteStage S` and prove that it equals the comap of
+`rationalIdeleHaar` along `rationalIdeleFiniteStageEmbedding S`. The product
+is `realMultiplicativeHaar` times `Measure.pi` of the local field-unit Haar
+measures in $S$ times `Measure.infinitePi` of the local integral-unit Haar
+probabilities off $S$. This is the stage restriction described on p. 556
+and used in Lemma A.3.2.4, p. 560 (A.3.2.5). It must hold also for empty
+$S$, with the whole signed real group still present.
+
+Use the open embedding to comap upstairs Haar. For the product side,
+`Measure.pi.isHaarMeasure` and the binary product instance handle the
+finite factors. For the infinite factor, the proof in
+[Lemmas/RationalLocalUnitHaar.lean](../../Proofs/Lemmas/RationalLocalUnitHaar.lean)
+uses `Measure.infinitePi_map_pi` and compactness; adapt it to the subtype of
+places outside $S$. Use the product sigma-algebra, with `Pi.borelSpace`
+from countability of the index set and second countability of the local
+factors. Calibrate on the preimage of `rationalIdeleWindowUnitStrip`:
+The real value is in $[1,e]$, the coordinates in $S$ are in the ranges of
+the local integral-unit inclusions, and the entire off-$S$ factor is
+allowed. The checked norm formula for finite units removes the norm
+condition there, and the three product factors all give mass one. This
+stage equality is still open, as is any subsequent global uniqueness
+step using the stages to exhaust the actual idele group. Additive finite
+Fourier self-duality is independent.
 
 ## Checked real-lattice inversion
 
@@ -940,5 +964,6 @@ The [local restriction comparison](#checked-local-multiplicative-haar-and-its-re
 is now checked. The [positive real multiplicative measure](#checked-positive-real-multiplicative-measure)
 is also checked. [Upstairs normalization and window strip mass](#checked-upstairs-haar-and-window-strip-mass)
 are checked for the constructed measure. The [finite-stage embeddings](#checked-open-embedding-of-every-rational-idele-stage)
-are checked. The [full real local measure](#next-haar-step-identify-the-full-real-local-measure)
+are checked. The [full real local measure](#checked-full-real-local-multiplicative-haar-measure)
+is checked. The [finite-stage measure comparison](#next-haar-step-compare-the-finite-stage-measures)
 can run separately from checking the printed endpoint at the visual gate.
