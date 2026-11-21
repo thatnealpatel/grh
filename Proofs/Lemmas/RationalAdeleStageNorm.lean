@@ -1,18 +1,20 @@
 module
 
 public import Props.RationalAdeleStageCoordinates
+public import Theorems.RationalAdeleAddHaar
+public import Lemmas.RationalAdeleStageApproximation
 import Lemmas.RationalAdeleAffineIntegral
 import Lemmas.RationalAdeleStageFourier
+import Mathlib.MeasureTheory.Function.LpSeminorm.Indicator
 import Mathlib.MeasureTheory.Integral.Prod
 
-/-! # Squared norm of a rational adelic Schwartz stage
+/-! # Squared norm of a rational adelic stage
 
-The finite cells are disjoint, and each has finite Haar mass `1/M`.
-These coordinates therefore give the squared norm with weight `1/M` on
-all `M²` copies of the real Schwartz space.
+The real marginal on each clopen cell is Lebesgue measure scaled by `1/M`.
+Disjointness then gives the squared norm on assembled real profiles.
 -/
 
-open NumberField MeasureTheory
+open NumberField MeasureTheory Set
 open scoped SchwartzMap
 
 namespace Masullo
@@ -24,80 +26,110 @@ local notation "W" => (rationalIntegralAdeles : Set A)
 
 set_option linter.concreteInstances false
 
-private theorem unramified_sq (b : S) :
-    (fun x ↦ ‖rationalAdeleUnramified b x‖ ^ 2) =
-      Set.indicator W (fun x ↦ ‖b (rationalAdeleReal x)‖ ^ 2) := by
-  funext x
-  by_cases hx : x ∈ W <;> simp [rationalAdeleUnramified, hx]
-
 variable [MeasurableSpace A] [BorelSpace A]
 
-private theorem integrable_unramified_sq (b : S) :
-    Integrable (fun x ↦ ‖rationalAdeleUnramified b x‖ ^ 2) μA := by
-  rw [unramified_sq, integrable_indicator_iff isOpen_rationalIntegralAdeles.measurableSet]
+private theorem map_real_restrict_integral :
+    Measure.map rationalAdeleReal (Measure.restrict μA W) = volume := by
   let j := rationalAdeleIntegralEmbedding
   have hj : MeasurableEmbedding j := isOpenEmbedding_rationalAdeleIntegralEmbedding.measurableEmbedding
-  change Integrable (fun a ↦ ‖b (rationalAdeleReal a)‖ ^ 2) (Measure.restrict μA W)
-  rw [← range_rationalAdeleIntegralEmbedding, ← hj.map_comap, hj.integrable_map_iff,
+  rw [← range_rationalAdeleIntegralEmbedding, ← hj.map_comap,
+    Measure.map_map continuous_rationalAdeleReal.measurable hj.measurable,
     comap_rationalAdeleAddHaar_integral]
-  change Integrable (fun z : ℝ × RationalFiniteIntegers ↦
-    ‖b (rationalAdeleReal (rationalIntegralAdelesHomeomorph z : A))‖ ^ 2)
-    (volume.prod rationalFiniteIntegersHaar)
-  simpa only [rationalIntegralAdelesHomeomorph_real] using
-    ((b.memLp 2 volume).integrable_norm_pow (by decide : 2 ≠ 0)).comp_fst rationalFiniteIntegersHaar
+  have he : rationalAdeleReal ∘ j = Prod.fst := funext rationalIntegralAdelesHomeomorph_real
+  rw [he, (measurePreserving_fst (μ := volume) (ν := rationalFiniteIntegersHaar)).map_eq]
 
-private theorem integral_unramified_sq (b : S) :
-    (∫ x, ‖rationalAdeleUnramified b x‖ ^ 2 ∂μA) = ∫ t, ‖b t‖ ^ 2 := by
-  let j := rationalAdeleIntegralEmbedding
-  have hj : MeasurableEmbedding j := isOpenEmbedding_rationalAdeleIntegralEmbedding.measurableEmbedding
-  rw [unramified_sq, integral_indicator isOpen_rationalIntegralAdeles.measurableSet,
-    ← range_rationalAdeleIntegralEmbedding, ← hj.map_comap, hj.integral_map,
-    comap_rationalAdeleAddHaar_integral]
-  change (∫ z : ℝ × RationalFiniteIntegers,
-    ‖b (rationalAdeleReal (rationalIntegralAdelesHomeomorph z : A))‖ ^ 2
-    ∂(volume.prod rationalFiniteIntegersHaar)) = _
-  simp only [rationalIntegralAdelesHomeomorph_real]
-  rw [integral_fun_fst (fun t : ℝ ↦ ‖b t‖ ^ 2)]
-  simp [Measure.real]
+/-- The real projection of Haar restricted to one adelic cell is `dt / M`. -/
+public theorem map_real_restrict_rationalAdeleStageCell {M : ℕ} (hM : 0 < M) (j : Fin (M ^ 2)) :
+    Measure.map rationalAdeleReal (Measure.restrict μA (rationalAdeleStageCell M j)) =
+      ENNReal.ofReal ((M : ℝ)⁻¹) • volume := by
+  let a := rationalAdeleStageCenter M j
+  let g := rationalAdeleStageScale M hM
+  let e : A → A := fun x ↦ (g⁻¹ : _) * (x - a)
+  have hm : Measurable e := (continuous_const.mul (continuous_id.sub continuous_const)).measurable
+  have hr : rationalAdeleReal ∘ e = rationalAdeleReal := by
+    funext x
+    rw [Function.comp_apply, rationalAdeleReal_apply (e x)]
+    change (InfinitePlace.Completion.ringEquivRealOfIsReal Rat.isReal_infinitePlace)
+      (1 * (x.1 Rat.infinitePlace - 0)) = _
+    rw [sub_zero, one_mul, rationalAdeleReal_apply]
+  have hc : e ⁻¹' W = rationalAdeleStageCell M j :=
+    Set.ext (rationalAdeleStageCell_box_mem hM j)
+  rw [← hc, ← hr, ← Measure.map_map continuous_rationalAdeleReal.measurable hm,
+    ← Measure.restrict_map hm isOpen_rationalIntegralAdeles.measurableSet,
+    show Measure.map e μA = _ from map_rationalAdele_inv_affine a g,
+    ideleNorm_rationalAdeleStageScale hM, Measure.restrict_smul,
+    Measure.map_smul _ continuous_rationalAdeleReal.measurable.aemeasurable, map_real_restrict_integral]
 
-/-- Squared norms on a rational stage integrate as the sum of the real
-squared norms with the common Haar mass of a cell. -/
+/-- Assemblies of real `L²` profiles are in adelic `L²`, with squared norms
+summed with the common finite Haar mass of a cell. -/
+public theorem rationalAdeleAssembleProfiles_norm_sq {M : ℕ} (hM : 0 < M)
+    (b : Fin (M ^ 2) → ℝ → ℂ) (hb : ∀ j, MemLp (b j) 2 volume) :
+    let f := rationalAdeleAssembleProfiles M b
+    MemLp f 2 μA ∧
+      (∫ x, ‖f x‖ ^ 2 ∂μA) = (M : ℝ)⁻¹ * ∑ j, ∫ t, ‖b j t‖ ^ 2 := by
+  classical
+  dsimp only
+  let C := rationalAdeleStageCell M
+  let w : ℝ := (M : ℝ)⁻¹
+  let u (j : Fin (M ^ 2)) := (C j).indicator (b j ∘ rationalAdeleReal)
+  have hm (j : Fin (M ^ 2)) : MeasurableSet (C j) :=
+    (isClopen_rationalAdeleStageCell M j).2.measurableSet
+  have hmap (j : Fin (M ^ 2)) : MemLp (b j) 2 (Measure.map rationalAdeleReal (Measure.restrict μA (C j))) := by
+    rw [map_real_restrict_rationalAdeleStageCell hM j]
+    exact (hb j).smul_measure ENNReal.ofReal_ne_top
+  have hu (j : Fin (M ^ 2)) : MemLp (u j) 2 μA :=
+    (memLp_indicator_iff_restrict (hm j).nullMeasurableSet).2
+      ((hmap j).comp_of_map continuous_rationalAdeleReal.measurable.aemeasurable)
+  refine ⟨memLp_finsetSum Finset.univ (fun j _ ↦ hu j), ?_⟩
+  have hcell (j : Fin (M ^ 2)) :
+      (∫ x, ‖u j x‖ ^ 2 ∂μA) = w * ∫ t, ‖b j t‖ ^ 2 := by
+    have he : (fun x ↦ ‖u j x‖ ^ 2) = (C j).indicator (fun x ↦ ‖b j (rationalAdeleReal x)‖ ^ 2) := by
+      funext x
+      by_cases hx : x ∈ C j <;> simp [u, hx]
+    rw [he, integral_indicator (hm j), ← integral_map continuous_rationalAdeleReal.measurable.aemeasurable
+      ((hmap j).integrable_norm_pow (by decide : 2 ≠ 0)).aestronglyMeasurable,
+      map_real_restrict_rationalAdeleStageCell hM j, integral_smul_measure,
+      ENNReal.toReal_ofReal (by positivity), smul_eq_mul]
+  have he : (fun x ↦ ‖rationalAdeleAssembleProfiles M b x‖ ^ 2) = fun x ↦ ∑ j, ‖u j x‖ ^ 2 := by
+    funext x
+    by_cases hx : x ∈ rationalAdeleStageSupport M
+    · obtain ⟨j, hj, hj'⟩ := (mem_rationalAdeleStageSupport_iff_existsUnique_cell hM x).mp hx
+      rw [rationalAdeleAssembleProfiles_on_cell hM b hj, Finset.sum_eq_single_of_mem j (Finset.mem_univ j)]
+      · simp [u, C, hj]
+      · intro k _ hkj
+        have hk : x ∉ C k := fun h ↦ hkj (hj' k h)
+        simp [u, hk]
+    · rw [rationalAdeleAssembleProfiles_off_stage hM b hx, norm_zero, zero_pow (by decide : 2 ≠ 0)]
+      symm
+      apply Finset.sum_eq_zero
+      intro j _
+      have hj : x ∉ C j := fun h ↦ hx (rationalAdeleStageCell_subset_support hM j h)
+      simp [u, hj]
+  rw [he, integral_finsetSum _ (fun j _ ↦ (hu j).integrable_norm_pow (by decide : 2 ≠ 0))]
+  simp_rw [hcell, Finset.mul_sum, w]
+
+omit [MeasurableSpace A] [BorelSpace A] in
+/-- Inverse Schwartz coordinates give the cell assembly of the underlying real profiles. -/
+public theorem rationalAdeleStageCoordinates_symm_eq_assembleProfiles {M : ℕ} (hM : 0 < M)
+    (b : Fin (M ^ 2) → S) :
+    ((rationalAdeleStageCoordinates hM).symm b).val = rationalAdeleAssembleProfiles M (fun j ↦ b j) := by
+  funext x
+  by_cases hx : x ∈ rationalAdeleStageSupport M
+  · obtain ⟨j, hj, _⟩ := (mem_rationalAdeleStageSupport_iff_existsUnique_cell hM x).mp hx
+    rw [rationalAdeleAssembleProfiles_on_cell hM _ hj, ← rationalAdeleStageCoordinates_eq_on_cell hM _ hj,
+      LinearEquiv.apply_symm_apply]
+  · rw [rationalAdeleAssembleProfiles_off_stage hM _ hx]
+    exact ((rationalAdeleStageCoordinates hM).symm b).property.1 x hx
+
+/-- Squared norms in Schwartz coordinates are the weighted real squared norms. -/
 public theorem rationalAdeleStage_integrable_integral_norm_sq {M : ℕ} (hM : 0 < M)
     (b : Fin (M ^ 2) → S) :
     let f := ((rationalAdeleStageCoordinates hM).symm b).val
     Integrable (fun x ↦ ‖f x‖ ^ 2) μA ∧
       (∫ x, ‖f x‖ ^ 2 ∂μA) = (M : ℝ)⁻¹ * ∑ j, ∫ t, ‖b j t‖ ^ 2 := by
-  classical
   dsimp only
-  let f := (rationalAdeleStageCoordinates hM).symm b
-  let a := rationalAdeleStageCenter M
-  let g := rationalAdeleStageScale M hM
-  let q (j : Fin (M ^ 2)) (x : A) := ‖rationalAdeleBox (b j) (a j) g x‖ ^ 2
-  have hq (j : Fin (M ^ 2)) : Integrable (q j) μA :=
-    integrable_rationalAdele_inv_affine (integrable_unramified_sq (b j)) (a j) g
-  have hcell (j : Fin (M ^ 2)) : (∫ x, q j x ∂μA) = (M : ℝ)⁻¹ * ∫ t, ‖b j t‖ ^ 2 := by
-    rw [integral_rationalAdele_affine (q j) (a j) g, ideleNorm_rationalAdeleStageScale hM]
-    simp_rw [q, rationalAdeleBox_at_affine, integral_unramified_sq, smul_eq_mul]
-  have he : (fun x ↦ ‖f.val x‖ ^ 2) = fun x ↦ ∑ j, q j x := by
-    funext x
-    by_cases hx : x ∈ rationalAdeleStageSupport M
-    · obtain ⟨j, hj, hu⟩ := (mem_rationalAdeleStageSupport_iff_existsUnique_cell hM x).mp hx
-      rw [← rationalAdeleStageCoordinates_eq_on_cell hM f hj, show
-        rationalAdeleStageCoordinates hM f = b from LinearEquiv.apply_symm_apply _ _,
-        Finset.sum_eq_single_of_mem j (Finset.mem_univ j)]
-      · simp only [q, a, g, rationalAdeleBox_stageCell, Set.indicator_of_mem hj]
-      · intro k _ hkj
-        have hk : x ∉ rationalAdeleStageCell M k := fun hm ↦ hkj (hu k hm)
-        simp [q, a, g, rationalAdeleBox_stageCell, hk]
-    · rw [f.property.1 x hx, norm_zero, zero_pow (by decide : 2 ≠ 0)]
-      symm
-      apply Finset.sum_eq_zero
-      intro j _
-      have hj : x ∉ rationalAdeleStageCell M j := fun h ↦
-        hx (rationalAdeleStageCell_subset_support hM j h)
-      simp [q, a, g, rationalAdeleBox_stageCell, hj]
-  change Integrable (fun x ↦ ‖f.val x‖ ^ 2) μA ∧ _
-  rw [he, integral_finsetSum _ (fun j _ ↦ hq j)]
-  exact ⟨integrable_finsetSum _ (fun j _ ↦ hq j), by simp_rw [hcell, Finset.mul_sum]⟩
+  rw [rationalAdeleStageCoordinates_symm_eq_assembleProfiles hM b]
+  obtain ⟨hf, he⟩ := rationalAdeleAssembleProfiles_norm_sq hM (fun j ↦ b j) (fun j ↦ (b j).memLp 2 volume)
+  exact ⟨hf.integrable_norm_pow (by decide), he⟩
 
 end Masullo

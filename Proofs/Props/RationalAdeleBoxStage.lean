@@ -101,7 +101,8 @@ private theorem mem_integral_iff_fin {x y : A} (h : x.2 = y.2) : x ∈ W ↔ y �
   change x.2 ∈ rationalFiniteIntegralAdeles ↔ y.2 ∈ rationalFiniteIntegralAdeles
   rw [h]
 
-private theorem stageCell_box_mem {M : ℕ} (hM : 0 < M) (j : Fin (M ^ 2)) (x : A) :
+/-- The inverse affine chart takes the stage cell to the integral-finite cylinder. -/
+public theorem rationalAdeleStageCell_box_mem {M : ℕ} (hM : 0 < M) (j : Fin (M ^ 2)) (x : A) :
     (↑(rationalAdeleStageScale M hM)⁻¹ : A) * (x - rationalAdeleStageCenter M j) ∈ W ↔
       x ∈ rationalAdeleStageCell M j := by
   let q : ℚ := (j.val : ℚ) / M
@@ -126,7 +127,7 @@ public theorem rationalAdeleBox_stageCell {M : ℕ} (hM : 0 < M) (j : Fin (M ^ 2
     rw [rationalAdeleReal_apply y]
     change e (1 * (x.1 Rat.infinitePlace - 0)) = _
     rw [sub_zero, one_mul, rationalAdeleReal_apply]
-  have hfin : y ∈ W ↔ x ∈ rationalAdeleStageCell M j := stageCell_box_mem hM j x
+  have hfin : y ∈ W ↔ x ∈ rationalAdeleStageCell M j := rationalAdeleStageCell_box_mem hM j x
   change rationalAdeleUnramified b y = _
   rw [rationalAdeleUnramified]
   by_cases hy : y ∈ W

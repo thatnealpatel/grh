@@ -21,9 +21,19 @@ local notation "F" => FiniteAdeleRing (𝓞 ℚ) ℚ
 local notation "W" => rationalFiniteIntegralAdeles
 
 /-- Assemble arbitrary real profiles on the disjoint finite cells of a stage. -/
-public noncomputable def rationalAdeleAssembleProfiles (M : ℕ)
+@[expose] public noncomputable def rationalAdeleAssembleProfiles (M : ℕ)
     (b : Fin (M ^ 2) → ℝ → ℂ) (x : A) : ℂ :=
   ∑ j, (rationalAdeleStageCell M j).indicator (fun y ↦ b j (rationalAdeleReal y)) x
+
+public theorem rationalAdeleAssembleProfiles_sub (M : ℕ) (b c : Fin (M ^ 2) → ℝ → ℂ) :
+    rationalAdeleAssembleProfiles M (b - c) =
+      rationalAdeleAssembleProfiles M b - rationalAdeleAssembleProfiles M c := by
+  classical
+  funext x
+  simp only [rationalAdeleAssembleProfiles, Pi.sub_apply, ← Finset.sum_sub_distrib]
+  apply Finset.sum_congr rfl
+  intro j _
+  by_cases hx : x ∈ rationalAdeleStageCell M j <;> simp [hx]
 
 public theorem rationalAdeleAssembleProfiles_on_cell {M : ℕ} (hM : 0 < M)
     (b : Fin (M ^ 2) → ℝ → ℂ) {x : A} {j : Fin (M ^ 2)} (hx : x ∈ rationalAdeleStageCell M j) :

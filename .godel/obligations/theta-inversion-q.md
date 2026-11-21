@@ -2467,22 +2467,57 @@ checked the statement scopes, the clopen assembly, and the normalization
 against the pinned extraction. The final statement includes `MemLp f`
 as recommended by that review.
 
-### Next Fourier step: Replace the sampled profiles by real Schwartz functions
+## Checked L² density of rational adelic Schwartz tests
 
-At the now fixed positive stage $M$, generalize the
-[stage norm calculation](../../Proofs/Lemmas/RationalAdeleStageNorm.lean)
-to arbitrary complex real profiles in `MemLp · 2 volume`, with assembly
-`rationalAdeleAssembleProfiles M`. The same integral-stage product and
-affine change of variables give the weight $M^{-1}$ on the squared real
-norms; disjointness is unchanged. Use `SchwartzMap.denseRange_toLpCLM`
-at $p=2$ and that calculation on the finitely many **differences** of
-profiles. Combine this new error with the checked sampling error to prove
-$L^2$ approximation of $C_c(\mathbb A_{\mathbb Q})$ by Schwartz stages.
-Afterward, `MemLp.exists_hasCompactSupport_eLpNorm_sub_le`, with regularity
-of `rationalAdeleAddHaar`, supplies the passage from $C_c$ approximation
-to density in the full $L^2$ space. The Schwartz inverse and Parseval are
-then available for the surjective isometric extension. Neither the full
-additive dual nor the manuscript tensor topology is identified by sampling.
+For a positive stage $M$, the real projection of Haar restricted to a
+cell pushes forward to $M^{-1}\,dt$. In
+[the stage norm calculation](../../Proofs/Lemmas/RationalAdeleStageNorm.lean),
+`map_real_restrict_rationalAdeleStageCell` proves this from the probability
+finite factor of the integral cylinder and the inverse affine pushforward.
+Thus real null sets pull back to null sets in the restricted cell. For
+arbitrary real-line profiles $b_j\in L^2(dt)$, not necessarily pointwise
+measurable, `rationalAdeleAssembleProfiles_norm_sq` proves that the assembly
+belongs to $L^2(\mu_A)$ and has squared norm
+$M^{-1}\sum_{j\in\operatorname{Fin}(M^2)}\int |b_j(t)|^2\,dt$.
+The previous Schwartz stage integral identity is a corollary.
+
+[`Masullo.exists_rationalAdeleSchwartzStage_L2_approx`](../../Proofs/Lemmas/RationalAdeleStageSchwartzApproximation.lean)
+first samples a continuous compactly supported adelic function, then uses
+Mathlib's `MemLp.exist_eLpNorm_sub_le` on the real profiles of that fixed
+stage. The smooth compactly supported approximants are Schwartz. With a
+finite error budget $\eta>0$ for this replacement, each real profile
+gets tolerance $\eta/M$; the weighted squared norm of the differences is
+at most $\eta^2/M\le\eta^2$. No uniform-support estimate on the replacement
+is needed. The adelic sampling and replacement errors add in $L^2$.
+
+[`Masullo.exists_rationalAdeleSchwartzLF_L2_approx`](../../Proofs/Theorems/RationalAdeleSchwartzDensity.lean)
+now gives, for every `MemLp f 2 rationalAdeleAddHaar` and every positive
+extended tolerance $\varepsilon$, an LF Schwartz test $g$ in the same
+$L^2$ with `eLpNorm (f - g.toUnion.val) 2 rationalAdeleAddHaar < ε`.
+Regularity of Haar provides the initial $C_c$ approximant; it is that
+continuous function, not the original a.e. representative, that is
+sampled. The positive stage of $g$ embeds in the factorial union. No
+moment conditions or LF-topological convergence are asserted.
+
+Independent Yah statement review (`stage-density-review`, base
+`50ace6853f134aa013aa781163af763fe11d054f`) checked the $1/M$ weight,
+null-set transport, representative scope, and regular-Haar density step
+against the accepted interfaces and the digest-matched extraction of
+pp. 556, 558, and 746–747. These are project steps toward (D.1.1.10), not
+statements of D.1.1.2(4), and the source reading is not visual verification.
+
+### Next Fourier step: Extend the rational Schwartz Fourier equivalence to L²
+
+Give `RationalAdeleSchwartzLF` its canonical complex-linear map to
+`Lp ℂ 2 rationalAdeleAddHaar` using `MemLp.toLp`. Transfer the representative
+approximation to `DenseRange` via `Lp.dist_def` and `MemLp.coeFn_toLp`.
+Use Schwartz Parseval for norm preservation and the existing LF Fourier
+linear equivalence with Mathlib `LinearEquiv.extendOfIsometry` on this
+same dense map on both sides. Check agreement on the core and uniqueness.
+Agreement with the integral on all of $L^1\cap L^2$ is a separate step:
+$L^2$ approximation alone does not control the Fourier integral. The
+manuscript's target in (D.1.1.10) is the full compact-open dual with its
+Plancherel Haar, not just a second copy of the rational adelic $L^2$.
 
 ## Checked real-lattice inversion
 
