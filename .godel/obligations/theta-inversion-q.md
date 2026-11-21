@@ -20,6 +20,10 @@ $\Re z>0$ off $1$, computes the removable value at $1$, and gives
 vanishing at every zeta zero in the open critical strip. The
 [finite-unit representative theorem](../../Proofs/Theorems/RationalIdeleNormalization.lean)
 now gives the algebraic normalization needed to leave the real section.
+The [log-norm section and splitting](../../Proofs/Theorems/RationalIdeleLogSection.lean)
+construct the canonical continuous section and separate log norm from
+the norm-one class as a topological product. Neither this product nor
+the pointwise sum reduction identifies the quotient Haar measure.
 Independent Yah statement reviews used text extracted from the
 digest-matched [pinned edition](../sources/masullo/README.md). The readings
 are provisional, not visual. Finite Fourier self-duality and measure
@@ -138,26 +142,59 @@ This is a specialized pointwise evaluation of the manuscript's series,
 not a construction of the global Schwartz–Bruhat tensor space or the
 manuscript's general compact-uniform convergence theorem.
 
-## Independent next step: Construct the continuous log-norm section
+## Checked continuous log-norm section and class splitting
 
-As a first Lean step toward the Haar reduction, construct the section
-in (A.2.2.4), p. 546, in log coordinates: A continuous homomorphism
-from `Multiplicative ℝ` to rational ideles, with finite coordinates one,
-real coordinate $e^x$, and idelic norm $e^x$. Construct the real unit
-via the inverse ring equivalence at `Rat.infinitePlace` and use
-`IdeleGroup.ofCompletion`. `Units.continuous_iff` reduces continuity to
-that of the value and inverse, which have coordinates $e^x$ and
-$e^{-x}$ at the real place and constant coordinates elsewhere. Compose
-with the class quotient for a section there. This does not need an
-adelic measure instance.
+In [RationalIdeleLogSection.lean](../../Proofs/Theorems/RationalIdeleLogSection.lean),
+`Masullo.rationalIdeleLogSection` is the continuous homomorphism
+$x\mapsto(e^x,1,\ldots)$ into rational ideles. Its domain
+`Multiplicative ℝ` is the *additive* real line in multiplicative notation.
+`Masullo.rationalIdeleReal_logSection`, `Masullo.rationalIdeleLogSection_finite`,
+and `Masullo.ideleNorm_logSection` give the two coordinate formulas and
+the norm $e^x$. This models Lemma A.2.2.1, (A.2.2.4), p. 546, after the
+exp/log coordinate change. In contrast to principal normalization of an
+arbitrary idele, the section has finite coordinates literally one.
+Continuity is for the idele topology on units: Both the adele value and
+its inverse are continuous, with real coordinates $e^x$ and $e^{-x}$.
 
-The measure target after the section is the pushforward of the
-manuscript's quotient Haar measure by log norm, namely $dx$.
-A.3.3.1, p. 561, uses $dt/t$ and the norm-one measure from
-(A.3.2.1), p. 560, of mass one for $\mathbb Q$. The section and
-norm-fiber calculation do not by themselves identify that measure
-or prove its normalization. This branch remains independent of the
-log-moment integral formula below.
+The section on classes is right inverse to the descended log norm.
+`Masullo.rationalIdeleClassLogSplit` gives a continuous multiplicative
+equivalence $\mathbb R\times C_{\mathbb Q}^1\simeq C_{\mathbb Q}$,
+with forward map $(x,k)\mapsto[s_{\mathbb Q}(e^x)]k$ and inverse first
+coordinate $\log|g|_{\mathbb Q}$. The inverse removes the section from
+$g$ to give the norm-one component. The class product is a project
+corollary: (A.2.2.12), p. 547, states the analogous splitting on ideles,
+and p. 546 explicitly notes passage of a section to classes. The proof
+uses the norm-one subgroup directly and does not identify it with the
+product of finite units as in (A.2.2.3). Independent Yah review checked
+these distinctions against the digest-matched layout extraction, not
+rendered pages.
+
+## Independent next step: Represent the norm-one classes by finite units
+
+For the compactness step of Theorem A.1.4.3(1), pp. 542–543, and the
+rational description (A.2.2.3), p. 546, construct the continuous
+surjection from $\prod_v\mathcal O_v^\times$ onto $C_{\mathbb Q}^1$:
+Insert the finite units and set the real coordinate to one, then take
+the quotient class. The checked principal normalization supplies
+surjectivity: At norm one it makes the real coordinate exactly one and
+all finite valuations one. For continuity use
+`RestrictedProduct.continuous_rng_of_top` at the all-integral
+stage `⊤`, then `RestrictedProduct.continuous_inclusion` to the
+cofinite product; check both values and inverses by
+`Units.continuous_iff`. For compactness of the source, Mathlib's
+`Rat.HeightOneSpectrum.adicCompletionIntegers.padicIntEquiv` identifies
+each integer ring with a compact `PadicInt`; the Mathlib `Units`
+topology preserves compactness of units of these compact Hausdorff
+rings. None of this needs the weighted jet pairing.
+
+The later measure target is the pushforward of the manuscript's quotient
+Haar measure by log norm, namely $dx$. Definition A.3.2.1, pp. 559–560,
+specifies quotient Haar with counting measure on $\mathbb Q^\times$ and
+$dt/t$ on the norm quotient; (A.3.2.1) gives mass one for the norm-one
+factor over $\mathbb Q$. A.3.3.1, p. 561, describes the product upstairs
+and the measure of a strip over a norm-one fundamental domain. The
+checked topological splitting makes log norm the first projection but
+does not construct the quotient measure or identify its normalization.
 
 ## Checked real-lattice inversion
 

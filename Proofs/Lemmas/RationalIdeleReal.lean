@@ -17,6 +17,7 @@ open scoped BigOperators
 namespace Masullo
 
 /-- Identify the completion at the unique infinite place of `ℚ` with `ℝ`. -/
+@[expose]
 public noncomputable def rationalIdeleReal (a : IdeleGroup (𝓞 ℚ) ℚ) : ℝ :=
   InfinitePlace.Completion.ringEquivRealOfIsReal Rat.isReal_infinitePlace
     ((a : AdeleRing (𝓞 ℚ) ℚ).1 Rat.infinitePlace)
@@ -31,7 +32,8 @@ public theorem rationalIdeleReal_principal_mul (r : ℚˣ) (a : IdeleGroup (𝓞
     ← InfinitePlace.Completion.WithAbs.ratCast_equiv _ (WithAbs.toAbs _ (r : ℚ)), map_ratCast]
   rfl
 
-private theorem ideleNorm_eq_abs_rationalIdeleReal (a : IdeleGroup (𝓞 ℚ) ℚ)
+/-- The norm of a rational idele with integral-unit finite coordinates is its real absolute value. -/
+public theorem ideleNorm_eq_abs_rationalIdeleReal (a : IdeleGroup (𝓞 ℚ) ℚ)
     (ha : ∀ v : HeightOneSpectrum (𝓞 ℚ), Valued.v ((a : AdeleRing (𝓞 ℚ) ℚ).2 v) = 1) :
     ideleNorm a = |rationalIdeleReal a| := by
   have hfin (v : HeightOneSpectrum (𝓞 ℚ)) : ‖(a : AdeleRing (𝓞 ℚ) ℚ).2 v‖ = 1 :=
