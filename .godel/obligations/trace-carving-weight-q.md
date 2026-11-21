@@ -206,17 +206,93 @@ compute, including the sign of the desired correction, is
 $$-Z_\alpha(f)-J_f+\widehat f_{\rm M}(-1/2)+\widehat f_{\rm M}(1/2).$$
 
 Use the classical full rational explicit formula with the same Haar
-normalization as an independent diagnostic for this lift: The
+normalization as an independent diagnostic for this lift. The
 [full-versus-strip comparison](trace-to-zeros.md#full-versus-positive-width-sums-on-the-same-tests)
-identifies the residual as $Z_{\rm full}(f)-Z_\alpha(f)$, since there are
-no finite prime powers in the support. Ask whether this omitted-zero
-distribution is detectable on mass-zero tests supported in $(0,\log 2)$;
-do not infer that short-window agreement implies global agreement.
-This diagnostic is not an independent geometric derivation of zero
-residual. The actual source lift, its orbital trace, and the derivation
-of $-\widehat f_{\rm M}(1/2)$ with compatible cutoffs remain open.
-Neither local level exhaustion nor a projected weighted prime carving
-justifies changing the cutoff order in this calculation.
+identifies the residual as $D_\alpha(f)=Z_{\rm full}(f)-Z_\alpha(f)$:
+There are no finite prime powers or identity terms in the support.
+This is the positive Mellin convention of (12.5.1.3), pp. 519–520,
+and (B.4.4.16), p. 623, with full orders as in (B.4.2.2), p. 614. In
+[Weil's full-divisor formula](https://doi.org/10.1070/IM1972v006n01ABEH001866),
+§§12–13, (8), (10), and §16, the opposite Mellin sign gives the same
+full sum after $\rho\mapsto1-\rho$. None of these passages identifies
+the replacement lift with the actual indented operator.
+
+### The short window detects any omitted zero
+
+**Reviewed mathematics, not Lean:** At any fixed $0<\alpha<1/2$, the
+omitted zeta zeros have sublinear counting growth. Take
+$\sigma=1/2+\min(\alpha,1/8)$. Masullo's bibliography lists Ingham's
+1940 paper as [Ingh1]. The bound is also given in
+[Chourasiya–Simonič, Corollary 1 and Table 1](https://arxiv.org/abs/2507.15184v2),
+checked in the v2 TeX: It counts with multiplicity at real part at least
+$\sigma$ and positive height at most $T$, with power
+$3(1-\sigma)/(2-\sigma)<1$ and additional logarithms. Conjugation and
+reflection transfer this bound to both halves of the omitted set. The
+real zeros in the closed strip form a finite set. Thus, writing
+$w_j=\rho_j-1/2=a_j+i\gamma_j$ for the distinct omitted locations,
+there are only finitely many in each bounded height window, and
+$\sum_{|\gamma_j|>1}|\gamma_j|^{-1}<\infty$ by dyadic summation.
+The latter does not follow from the full divisor's quadratic bound.
+
+Fix an omitted location $w_0$. Inside any prescribed nonempty open
+subinterval of $(0,\log 2)$, choose a narrow nonnegative smooth bump
+$b$ with $\widehat b_{\rm M}(w_0)\ne0$, leaving room for right
+translations. For the tail above a sufficiently large height, use
+$h_j=\pi/|\gamma_j|$ and the operators
+
+$$
+B_j u(x)=\frac{u(x)+e^{-a_jh_j}u(x-h_j)}{1+e^{-a_jh_j}},
+\qquad
+p_j(z)=\frac{1+e^{(z-a_j)h_j}}{1+e^{-a_jh_j}}.
+$$
+
+Here $p_j$ is the positive Mellin multiplier, and $p_j(w_j)=0$.
+Choose the height so the summed $h_j$ fit in the reserved space and
+$|\gamma_0|h_j<\pi$ throughout the tail. Each average is a contraction
+in every derivative sup norm. Its increment in derivative order $k$
+is bounded by $h_j\|b^{(k+1)}\|_\infty$ when applied after any finite
+number of previous averages. The products therefore converge in every
+such norm on one common compact support. The limit kills every tail
+frequency, and $\widehat b_{\rm M}(w_0)\prod_j p_j(w_0)\ne0$:
+No factor is zero, and $p_j(w_0)-1=O_{w_0}(h_j)$ uniformly since
+$|a_j|<1/2$. For each of the finitely many remaining omitted locations
+$w\ne w_0$, apply $\partial_x+w$, with multiplier $w-z$. Apply another
+$\partial_x$ for mass zero; $|\Re w_0|>\alpha$ ensures it does not
+kill the selected value. After scaling, the resulting test satisfies
+$D_\alpha(f)=m_{\rho_0}>0$. Real tests suffice by taking the real part,
+since conjugation preserves the weights. The pairing with the full
+zero sum is absolutely convergent by compact-test decay and the
+[checked quadratic summability](trace-divisor-summability.md#checked-dyadic-shell-summability).
+No pointwise convergence or analyticity of the zero distribution is used.
+
+The reciprocal-ordinate condition is substantive: The symmetric model
+frequencies $\pm a+2\pi i(n+1/2)/L$, each of weight one, for
+$\alpha<a<1/2$ and $L\ge\log 2$, also satisfy quadratic summability.
+But Poisson summation gives a distribution supported on $L\mathbb Z$,
+invisible on this open window. It violates the fixed-width sublinear
+counting bound. The isolation proof does not cover width zero.
+
+**Consequence and successor:** In the specified rational replacement
+lift, scalar agreement after the $+1/2$ subtraction on just these
+mass-zero tests at arbitrarily small good positive widths would imply
+rational RH. Do not repeat the detectability test or take the explicit
+formula as a geometric evaluation of the residual. Establish vanishing
+by computing the remaining finite-part correction in that order, or
+identify and compute a compensating orbital contribution on the
+actual lift. The first check is to specify an actual $S$ kernel and
+right-shell cutoff at fixed left position support in (11.3.1.4)–(11.3.2.3)
+and verify they represent the same operator as the corrected level-first
+trace before taking any limit. The [right-shell obstruction](trace-orbital-q.md#the-right-cutoff-erases-a-fixed-shell-in-the-literal-chain)
+excludes the literal same-chain choice. This comparison and its tail
+remain open. A separate checked route is the
+[finite completed-zeta contour](rational-explicit-formula.md#next-runnable-obligation-the-finite-completed-zeta-contour).
+
+**Diagnostic review:** Independent Yah analysis (`short-window`)
+supplied the isolation argument and checked the classical source
+conventions. The improver checked the positive-sign source extraction,
+the density estimate in v2 TeX, and the multiplier and convergence
+arguments. Neither the isolation proof nor the density estimate is a
+Lean declaration. No new rendered-page reading was attempted.
 
 **Review:** Independent Yah review (`carving-review`) verified the
 pp. 480, 483–485, and 493–496 extraction locators, norm-summable inverse,

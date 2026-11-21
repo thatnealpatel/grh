@@ -107,42 +107,59 @@ Euler product with the factors in $S$ removed, including the Archimedean
 factor. The completed bound and its vertical-line companion are still
 unformalized.
 
-## Next runnable obligation: A finite rectangle with simple principal parts
+## Checked finite rectangle with simple principal parts
 
-Formalize (B.3.2.3) for an axis-aligned rectangle with strict real and
-imaginary widths. Take a finite set $Z$ **inside** the rectangle, $g$
-analytic near each point of the closed rectangle outside $Z$, and for
-each $z\in Z$ a punctured-germ equality $g(w)=c_z/(w-z)+H_z(w)$ with
-$H_z$ analytic at $z$. Prove that the counterclockwise boundary integral
-is $(2\pi i)\sum_{z\in Z}c_z$, with no assumptions about the totalized
-values of $g$ at $Z$. This does not require an asymptotic hypothesis or
-any zeta-specific estimate. Subtract the finite sum of kernels and
-replace the values at $Z$ by those of the corresponding analytic
-extensions. Apply `Complex.integral_boundary_rect_eq_zero_of_differentiableOn`
-from pinned Mathlib to the resulting remainder. A concrete first Lean
-test is the kernel $(w-z)^{-1}$: Subdivide around a small square centered
-at $z$, use rectangle Cauchy–Goursat on the other boxes, and compute the
-centered square boundary integral as $2\pi i$. Use the same four
-oriented real interval integrals as Mathlib, so shared edges cancel.
-For the square calculation, translate and scale by the positive half-side
-length to the unit square. Quarter-turn invariance of $dw/w$ reduces the
-integral to four copies of the right edge, traversed upward:
+[`Masullo.rectangleIntegral_eq_sum_simpleResidues`](../../Proofs/Props/RectangleResidue.lean)
+proves the finite step of (B.3.2.3), p. 606. The contour is the closed
+axis-aligned rectangle with strictly positive real and imaginary widths.
+The finite pole set lies in its interior. Analyticity is required at
+every other point of the closed rectangle. At a pole, the coefficient
+and regular term are specified by an equality in the punctured germ, so
+no totalized value of the integrand there is constrained.
 
-$$
-\int_{-1}^{1}\frac{i}{1+it}\,dt
-=\int_{-1}^{1}\frac{t+i}{1+t^2}\,dt=i\pi/2.
-$$
+The tested germ, not a product of separately computed residues, is the
+input to this proposition. The [rational local terms](#checked-local-terms-of-b422)
+provide these simple germs for (B.4.2.2), p. 614. Figure 3, p. 605,
+specifies counterclockwise orientation. The signs of the two horizontal
+terms in the extracted (B.3.2.4), p. 606, are reversed relative to that
+orientation. The checked integral is bottom minus top plus $i$ times
+right minus $i$ times left, with each real parameter increasing. The
+horizontal signs cease to matter only once horizontal vanishing has
+been proved.
 
-The odd real part cancels under $t\mapsto-t$ and pinned Mathlib's
-`integral_inv_one_add_sq` evaluates the imaginary part.
+The proof [patches the remainder at the poles](../../Proofs/Lemmas/SimplePrincipalParts.lean),
+subtracting the other kernels from each assigned regular value. It applies
+Mathlib's rectangle Cauchy–Goursat theorem and sums the single-kernel
+integrals. The [kernel calculation](../../Proofs/Lemmas/RectangleCauchyKernel.lean)
+uses principal log on the bottom, top, and right translated edges and
+$\log(-(w-z))$ on the left. The right corners cancel and the signed
+branch jumps at the left corners add to $2\pi i$. Independent Yah review
+(`residue-review`) checked the hypotheses, orientation, and manuscript
+locators with the digest-matched extraction, not rendered pages.
 
-For the subsequent rational specialization, show no zeros outside the
-open strip in the fixed rectangle off $0,1$: On the right use pinned
-Mathlib's `riemannZeta_ne_zero_of_one_le_re` and the nonvanishing real
-gamma factor; on the left reflect. Choose both horizontal sides to
-avoid zeros and use the height bound above. Absolute integrability on
-both vertical lines and height exhaustion of the zero sum are separate
-obligations. The [quadratic zero summability](trace-divisor-summability.md#checked-dyadic-shell-summability)
+## Next runnable obligation: The finite completed-zeta contour
+
+Take $1<a<2$, bottom height $u<0$, and top height $v>0$. Require no
+critical-strip zeta zero at either horizontal height. In the rectangle
+with real sides $1-a$ and $a$, prove that the checked boundary integral
+of $\Phi\Lambda'/\Lambda$, for $\Phi$ analytic near the closed rectangle,
+is $2\pi i$ times $-\Phi(0)-\Phi(1)+\sum_{u<\Im\rho<v} m_\rho\Phi(\rho)$.
+Sum over distinct open-strip zeros. Use `IsCompact.inter_riemannZetaZeros_finite`
+on the closed rectangle and the strict height condition to put these
+zeros in the interior, along with $0,1$. Off $0,1$, use
+`riemannZeta_def_of_ne_zero` and `Complex.Gammaℝ_ne_zero_of_re_pos` to
+compare zeros on the positive real-part side. Exclude $\Re s\ge1$ by
+`riemannZeta_ne_zero_of_one_le_re`, and $\Re s\le0$ by reflection.
+Analyticity of the tested integrand away from those points follows from
+analyticity and nonvanishing of $\Lambda$ there, differentiating and
+dividing. Instantiate the checked finite rectangle proposition with
+the checked local principal parts. This step assumes no bounds on the
+horizontal or vertical edge integrals.
+
+Afterward, choose both horizontal sides to avoid zeros and formalize
+[the bound in actual heights](#upstream-growth-check-use-height-rather-than-the-sequence-index).
+Absolute integrability on both vertical lines and height exhaustion of
+the zero sum are separate obligations. The [quadratic zero summability](trace-divisor-summability.md#checked-dyadic-shell-summability)
 provides a majorant once the test's uniform strip decay is in hand.
 The resulting target of (B.4.2.2), written in the real parameter, is
 
