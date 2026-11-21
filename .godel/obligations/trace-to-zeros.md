@@ -137,7 +137,14 @@ lift criterion](trace-reverse-lift-q.md) now makes the obstruction exact:
 Lifting all compressed outputs in this model requires a weighted
 reciprocal-zeta integral. No unconditional bound or identification of
 the Mellin terms follows. The quotient projection can instead be used
-directly without dividing by zeta.
+directly without dividing by zeta. The [weighted prime-carving audit](trace-carving-weight-q.md)
+now rules out another direct replacement: At positive width the uncut
+finite carvings are invertible on the geometric closure, and their
+orthogonal projectors cannot approximate the local projected operator on
+a fixed annulus in the common weighted chart. This is a vector-level
+obstruction. The [scalar comparison in a specified rational lift](trace-carving-weight-q.md#next-comparison-and-checks)
+remains distinct from the identification of the source indentation and
+orbital trace.
 
 ## Fixed-parameter subtraction over the rationals
 
