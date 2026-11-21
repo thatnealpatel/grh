@@ -17,6 +17,7 @@ namespace Masullo
 
 noncomputable section
 
+local notation "A" => AdeleRing (𝓞 ℚ) ℚ
 local notation "F" => FiniteAdeleRing (𝓞 ℚ) ℚ
 local notation "S" => 𝓢(ℝ, ℂ)
 local notation "rep" => rationalAdeleStageRepresentative
@@ -83,6 +84,11 @@ public def rationalAdeleStageFourierEquiv {M : ℕ} (hM : 0 < M) :
   (ContinuousLinearEquiv.piCongrRight fun _ ↦ FourierTransform.fourierCLE ℂ S).trans
     (residues.trans (cyclicDFT.symm.trans (finiteScale.trans residues.symm)))
 
+private theorem stageFourier_scale {M : ℕ} [NeZero M] :
+    (M : ℂ) * ((M ^ 2 : ℕ) : ℂ)⁻¹ = (M : ℂ)⁻¹ := by
+  push_cast
+  field_simp [NeZero.ne (M : ℂ)]
+
 /-- The equivalence has the same forward map as the adelic Fourier matrix. -/
 public theorem rationalAdeleStageFourierEquiv_apply {M : ℕ} (hM : 0 < M) (b : Fin (M ^ 2) → S) :
     rationalAdeleStageFourierEquiv hM b = rationalAdeleStageFourier M b := by
@@ -91,15 +97,87 @@ public theorem rationalAdeleStageFourierEquiv_apply {M : ℕ} (hM : 0 < M) (b : 
   funext k
   change ((M : ℂ) • (ZMod.dft (E := S)).symm (fun j ↦ 𝓕 (b (e.symm j)))) (e k) = _
   rw [Pi.smul_apply, ZMod.invDFT_apply, smul_smul, rationalAdeleStageFourier_apply]
-  have hweight : (M : ℂ) * ((M ^ 2 : ℕ) : ℂ)⁻¹ = (M : ℂ)⁻¹ := by
-    push_cast
-    field_simp [NeZero.ne (M : ℂ)]
-  rw [hweight, Finset.smul_sum]
+  rw [stageFourier_scale, Finset.smul_sum]
   symm
   refine Fintype.sum_equiv e _ _ fun j ↦ ?_
   rw [e.symm_apply_apply, rationalAdeleStageFourier_phase, ← smul_smul]
   dsimp [e]
   rw [finEquiv_eq_cast, finEquiv_eq_cast]
+
+/-- Inverting the stage matrix reflects the finite residue and real frequency
+in the forward matrix. The scalar in the inverse of `M • dft.symm` is
+`1/M`, the same coefficient as in the reflected forward sum. -/
+private theorem stageFourierEquiv_symm_eval {M : ℕ} [NeZero M] (hM : 0 < M)
+    (b : Fin (M ^ 2) → S) (j k : Fin (M ^ 2))
+    (hk : ZMod.finEquiv (M ^ 2) k = -ZMod.finEquiv (M ^ 2) j) (t : ℝ) :
+    (rationalAdeleStageFourierEquiv hM).symm b j t =
+      rationalAdeleStageFourierEquiv hM b k (-t) := by
+  let e := (ZMod.finEquiv (M ^ 2)).toEquiv
+  let c : ZMod (M ^ 2) → S := fun l ↦ b (e.symm l)
+  let T := FourierTransform.fourierCLE ℂ S
+  change (𝓕⁻ (ZMod.dft ((M : ℂ)⁻¹ • c) (e j)) : S) t =
+    ((M : ℂ) • (ZMod.dft (E := S)).symm (fun l ↦ T (c l))) (e k) (-t)
+  have hk' : e k = -e j := hk
+  simp only [Pi.smul_apply, ZMod.invDFT_apply', hk', neg_neg, smul_smul, stageFourier_scale,
+    ZMod.dft_const_smul]
+  change T ((M : ℂ)⁻¹ • ZMod.dft c (e j)) (-t) = _
+  simp only [ZMod.dft_apply, map_smul, map_sum]
+
+/-- Negating an adele negates its cell index in the cyclic quotient. -/
+private theorem neg_mem_stageCell {M : ℕ} [NeZero M] (hM : 0 < M)
+    {x : A} {j k : Fin (M ^ 2)}
+    (hk : ZMod.finEquiv (M ^ 2) k = -ZMod.finEquiv (M ^ 2) j)
+    (hx : x ∈ rationalAdeleStageCell M j) : -x ∈ rationalAdeleStageCell M k := by
+  have hzmod : ((j.val + k.val : ℕ) : ZMod (M ^ 2)) = 0 := by
+    rw [Nat.cast_add, ← finEquiv_eq_cast, ← finEquiv_eq_cast, hk, add_neg_cancel]
+  obtain ⟨q, hq⟩ := (ZMod.natCast_eq_zero_iff _ _).mp hzmod
+  let κ := algebraMap ℚ F
+  have hrep : rep M j + rep M k = (M : F) * κ (q : ℚ) := by
+    rw [rationalAdeleStageRepresentative, rationalAdeleStageRepresentative,
+      ← map_add, ← add_div, ← Nat.cast_add, hq, Nat.cast_mul, Nat.cast_pow,
+      ← map_natCast κ M, ← map_mul]
+    congr 1
+    field_simp [NeZero.ne (M : ℚ)]
+  obtain ⟨z, hz, he⟩ := (mem_rationalAdeleStageCell_iff hM j x).mp hx
+  have hqint : κ (q : ℚ) ∈ rationalFiniteIntegralAdeles := by
+    rw [map_natCast]
+    exact fun v ↦ natCast_mem (v.adicCompletionIntegers ℚ).toSubring q
+  refine (mem_rationalAdeleStageCell_iff hM k (-x)).mpr
+    ⟨-z - κ (q : ℚ), rationalFiniteIntegralAdeles.sub_mem
+      (rationalFiniteIntegralAdeles.neg_mem hz) hqint, ?_⟩
+  change -x.2 = _
+  rw [he, mul_sub, mul_neg, ← hrep]
+  abel
+
+/-- Assembly of the inverse matrix is assembly of the forward matrix
+reflected on both the real line and the finite cells. -/
+public theorem rationalAdeleStageFourierEquiv_symm_coordinates {M : ℕ} (hM : 0 < M)
+    (b : Fin (M ^ 2) → S) (x : A) :
+    ((rationalAdeleStageCoordinates hM).symm ((rationalAdeleStageFourierEquiv hM).symm b)).val x =
+      ((rationalAdeleStageCoordinates hM).symm (rationalAdeleStageFourierEquiv hM b)).val (-x) := by
+  let : NeZero M := ⟨hM.ne'⟩
+  let c := rationalAdeleStageCoordinates hM
+  by_cases hx : x ∈ rationalAdeleStageSupport M
+  · obtain ⟨j, hj, _⟩ := (mem_rationalAdeleStageSupport_iff_existsUnique_cell hM x).mp hx
+    let e := ZMod.finEquiv (M ^ 2)
+    let k := e.symm (-e j)
+    have hk : e k = -e j := e.apply_symm_apply _
+    have hc := neg_mem_stageCell hM hk hj
+    have hr : rationalAdeleReal (-x) = -rationalAdeleReal x := by
+      rw [rationalAdeleReal_apply, rationalAdeleReal_apply]
+      exact map_neg (InfinitePlace.Completion.ringEquivRealOfIsReal Rat.isReal_infinitePlace) _
+    rw [← rationalAdeleStageCoordinates_eq_on_cell hM _ hj,
+      ← rationalAdeleStageCoordinates_eq_on_cell hM _ hc]
+    change c (c.symm ((rationalAdeleStageFourierEquiv hM).symm b)) j (rationalAdeleReal x) =
+      c (c.symm (rationalAdeleStageFourierEquiv hM b)) k (rationalAdeleReal (-x))
+    rw [LinearEquiv.apply_symm_apply, LinearEquiv.apply_symm_apply, hr]
+    exact stageFourierEquiv_symm_eval hM b j k hk _
+  · have hn : -x ∉ rationalAdeleStageSupport M := by
+      change (M : F) * x.2 ∉ rationalFiniteIntegralAdeles at hx
+      change (M : F) * (-x.2) ∉ rationalFiniteIntegralAdeles
+      rw [mul_neg]
+      exact fun h ↦ hx (by simpa only [neg_neg] using rationalFiniteIntegralAdeles.neg_mem h)
+    rw [(c.symm _).property.1 x hx, (c.symm _).property.1 (-x) hn]
 
 private theorem conj_stdAddChar {N : ℕ} [NeZero N] (z : ZMod N) :
     conj (ZMod.stdAddChar z) = ZMod.stdAddChar (-z) := by

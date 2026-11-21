@@ -2750,6 +2750,39 @@ p. 747. As for Plancherel above, the extraction loses the conjugation in
 (D.1.1.4), but the proof of Lemma D.1.6.19, p. 773, names it explicitly.
 These are extracted-text readings, not independent visual checks.
 
+## Checked pointwise inverse on rational Schwartz tests
+
+[`Masullo.rationalAdeleLFFourierEquiv_symm_apply`](../../Proofs/Theorems/RationalAdeleLFFourierInversion.lean)
+identifies the inverse of the checked LF equivalence with
+$g\mapsto[x\mapsto\widehat g(-x)]$ at **every** rational adele. The
+operator and Haar measure are unchanged. This is not an inversion theorem
+for general integrable input, and no topology from the manuscript's
+completed tensor product is identified here.
+
+The digest-matched extraction of Lemma D.1.6.19(2), pp. 774–775,
+reduces the Schwartz map to the transforms on elementary stages and uses
+(D.1.1.11) for pointwise inversion, citing Deitmar–Echterhoff
+[DE, Thm. 3.5.8] for that formula (p. 747). The manuscript notes on p. 774,
+nn. 5–6, allow an unchecked scalar for the stage identification when
+proving a topological isomorphism. For the pointwise normalized integral
+that scalar matters. The Lean stage equality
+`Masullo.rationalAdeleStageFourierEquiv_symm_coordinates` uses the already
+checked Haar-normalized forward matrix $M\mathrm{DFT}^{-1}$ on
+$\mathbb Z/M^2\mathbb Z$. Mathlib's `ZMod.invDFT_apply'` gives the factor
+$1/M^2$ and finite reflection, so the inverse of the normalized matrix
+has the same $1/M$ coefficient as the reflected forward one. The real
+Schwartz inverse is the real forward transform at the negative coordinate.
+Negating an adele negates its finite coset and preserves the zero region
+outside the support cylinder. The conjugated character convention is
+explicit on p. 773. These source readings are from extraction, not
+rendered-page verification. Independent Yah statement review
+(`schwartz-reflection-statement`, base
+`af52fd504801136cfc2554b9e5776428314ce01a`) confirmed the exact
+pointwise scope, both reflected coordinates, and the finite coefficient
+$1/M$. The reviewer verified the [DE] citation, not the cited theorem's
+wording: The publisher route returned HTML, not chapter text. The stage
+proof does not rely on that cited result.
+
 ### Next Fourier step: Inversion on representatives
 
 The digest-matched layout extraction of (D.1.1.11), p. 747, says that
@@ -2774,15 +2807,21 @@ and equals $f$ almost everywhere. For continuous $f$ it equals $f$
 everywhere by `MeasureTheory.eq_of_ae_eq` and open-positive Haar.
 No pointwise assertion is valid for an arbitrary representative.
 
-**Runnable first step:** Identify the checked inverse on rational
-Schwartz LF tests pointwise with $g\mapsto [x\mapsto \widehat g(-x)]$
-in the pairing coordinates. In the stage model, use `ZMod.dft_dft` (the
-scalar $M^2$ cancels the two factors of $1/M$), real Schwartz inversion,
-and identify finite residue negation with the cell of $-x$. Then
-`integral_integral_swap` on the product of two $L^1$ inputs gives the
-bilinear test identities: Pairing $u$ against a test $g$ equals pairing
-$\widehat f$ against $\widehat g(-\cdot)$, hence pairing $f$ against $g$.
-A separate separation step is needed for locally integrable $u-f$:
+**Runnable next step:** Establish the bilinear test identity in the
+pairing coordinates. Write $F$ for the normalized forward adelic integral
+and $u(x)=F(Ff)(-x)$, with $f,Ff\in L^1(A,\mu_A)$. First prove the
+transpose identity $\int (Fp)q\,d\mu_A=\int p(Fq)\,d\mu_A$
+for integrable $p,q$, and its reflected-kernel version. In pinned
+Mathlib, use `Integrable.mul_prod`, multiply by the continuous character
+of modulus one, and apply `integral_integral_swap` and `mul_comm`.
+For Schwartz $g$, the reflected identity gives
+$\int ug=\int (Ff)h$ with $h(x)=Fg(-x)$, and the checked LF inverse
+identifies $h$ as an integrable Schwartz input with $Fh=g$, so the second
+identity gives $\int ug=\int fg$. The Plancherel measure is the pushforward
+by the pairing, so `MeasurePreserving.integral_comp` can then transport
+the inverse integral to the full dual without a new normalization.
+
+The remaining separation step needs to detect locally integrable $u-f$:
 Construct $[0,1]$ rational Schwartz cutoffs equal to one on a given
 compact set and supported in prescribed shrinking open neighborhoods,
 then use dominated convergence and

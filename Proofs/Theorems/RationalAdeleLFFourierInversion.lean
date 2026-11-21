@@ -100,5 +100,23 @@ public theorem rationalAdeleLFFourierEquiv_symm_assembly (n : ℕ) (b : Profiles
     rationalAdeleLFFourierEquiv.symm (assemble n b) = assemble n ((stageFourier n).symm b) :=
   linearInverse_assembly n b
 
+/-- Pointwise Schwartz inversion, in the rational adelic pairing coordinates.
+
+Lemma D.1.6.19(2), pp. 773–775, reduces to elementary stages and invokes
+(D.1.1.11) for pointwise inversion. Here the finite stage has the exact
+Haar coefficient `1/M`, so the inverse is the normalized forward integral
+at `-x`. Unlike the literal statement of (D.1.1.11) for arbitrary `L¹`
+representatives, this equality uses the actual Schwartz functions. -/
+public theorem rationalAdeleLFFourierEquiv_symm_apply (g : E) (x : A) :
+    (rationalAdeleLFFourierEquiv.symm g).toUnion.val x = rationalAdeleFourier g.toUnion.val (-x) := by
+  obtain ⟨n, hn⟩ := mem_rationalAdeleSchwartzStageUnion.mp g.toUnion.property
+  rw [← rationalAdeleLFFourierEquiv_apply, ← rationalAdeleLFAssembly_read n g hn,
+    rationalAdeleLFFourierEquiv_symm_assembly]
+  change (assemble n ((stageFourier n).symm _)).toUnion.val x =
+    (rationalAdeleLFFourier (assemble n _)).toUnion.val (-x)
+  rw [forward_assembly]
+  simp only [rationalAdeleLFAssembly_toUnion, rationalAdeleFactorialStageAssembly_val]
+  exact rationalAdeleStageFourierEquiv_symm_coordinates (rationalAdeleFactorialLevel_pos n) _ x
+
 end
 end Masullo
