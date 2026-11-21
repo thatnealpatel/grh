@@ -1159,41 +1159,67 @@ review. Independent Yah statement review `review-off-zero-assembly`
 checked the endpoint and its two helpers, including the normalization,
 finite-ball argument, and scope.
 
-### Next: Identify the density with rational multiplicative Haar
+The exact adopted revision `746ae9dc5d40257e3e095ea7b5c3cd5579db9d6a`
+passed the full Lake build and separate kernel replay of
+`Lemmas.PadicTestDecomposition`, `Lemmas.PadicLogPair`, and
+`Theorems.PadicLogTestFourier`. The pairing endpoint and its three checked
+helpers use only `propext`, `Classical.choice`, and `Quot.sound`.
 
-Lemma A.3.2.3, (A.3.2.3)–(4), p. 560, uses additive dilation to cancel
-the factor $|x|^{-1}$ and the difference of the integral and maximal
-ideal balls to calibrate the units. Prove the following exact Borel
-measure equality at every rational finite place $v$:
+## Checked density of rational finite-place multiplicative Haar
+
+[`map_rationalLocalMultiplicativeHaar_val`](../../Proofs/Theorems/RationalLocalHaarDensity.lean)
+proves (A.3.2.3)–(4), p. 560, over $\mathbb Q$ as an equality of Borel
+measures in the value coordinate of the actual rational completion:
 
 $$
-  \operatorname{map}(\mathrm{Units.val},\mu_v)
-    = (1-p^{-1})^{-1}\,
-      (\nu_v|_{K_v\setminus\{0\}}).\mathrm{withDensity}(|\cdot|_v^{-1}),
+(\mathrm{Units.val})_*\mu_v =
+\frac{1}{1-p^{-1}}\frac{1}{|x|_v}\bigl(\nu_v|_{K_v\setminus\{0\}}\bigr).
 $$
 
-where $K_v=\mathbb Q_v$, $p$ is its rational residue prime,
+Here $p$ is the prime attached to $v$, $K_v=\mathbb Q_v$,
 $\mu_v=\texttt{rationalLocalMultiplicativeHaar}\ v$, and
-$\nu_v=\texttt{rationalLocalFieldAddHaar}\ v$. Use
-`norm_rationalLocal_padicEquiv` and
-`rationalLocalFieldAddHaar_dilate_integers` to obtain the arbitrary
-nonzero dilation law by additive Haar uniqueness. Pull the normalized
-density back to units along the open embedding `Units.val`; verify
-left invariance by the dilation law and `lintegral` change of variables.
-Calibrate its mass on `range (rationalLocalUnitInclusion v)` by
-subtracting the radius-$p^{-1}$ ball from the integral ball. Apply
-`rationalLocalMultiplicativeHaar_eq` after proving that the pulled-back
-measure is Haar. `map_realMultiplicativeHaar_val` illustrates the
-`MeasurableEmbedding.map_comap` pattern, but its real Jacobian proof
-is not an input at finite places.
+$\nu_v=\texttt{rationalLocalFieldAddHaar}\ v$. There is no extra
+$\log p$ factor: The equation uses the unit-normalized measure from
+(A.3.2.2), not the canonical modulated measure in (B.4.4.3).
 
-The subsequent obligation is (B.4.4.7)–(8), p. 621: Use the pairing on
-$u(x)=f(1+x)|1+x|_p^{-1/2}$, extended by zero at $x=-1$, when $f(1)=0$.
-Show local constancy and compact support after extension, and justify
-the additive translation and the two density conversions. For general
-$f$, subtract $f(1)\mathbf1_{\mathbb Z_p^\times}$ and use the checked
-translated unit-indicator pairing. This does not identify the global
-geometric trace. For ramified continuation, separately check the second
+Masullo uses the normalized absolute value to assert Haar invariance,
+then subtracts the maximal-ideal mass from the integer-ball mass.
+`RationalLocalHaarDensity.measure_preimage_mul` checks the invariance on
+every Borel set: Additive Haar uniqueness extends the calibrated
+integral-ball dilation to the full measure, and the inverse-norm density
+cancels the scaling under the nonnegative change of variables.
+`RationalLocalHaarDensity.onUnits_unitMass` computes the unnormalized
+mass $1-p^{-1}$ by the discrete norm gap and the two ball masses.
+The theorem transports invariance to units, applies the checked Haar
+uniqueness at mass one, and pushes the resulting equality along the
+measurable embedding. Its image is the punctured field. The proof does
+not use the off-zero Fourier pairing to establish Haar invariance.
+The pinned text extraction is provisional; independent Yah review
+`density-statement-review` (output `101bc63eac85545cd94857354dcdcd5fb17cce8a`)
+checked the normalization, domain, and scope against the text and the
+accepted interfaces. Audit scope: `Lemmas.RationalLocalNormShell`,
+`Lemmas.RationalLocalHaarDensity`, and `Theorems.RationalLocalHaarDensity`.
+
+### Next: Compare the shifted Fourier pairing on tests vanishing at one
+
+For a locally constant, compactly supported complex test $f$ on $K_v^\times$
+with $f(1)=0$, prove (B.4.4.5), p. 620, via (B.4.4.7)–(8), p. 621:
+With $u(x)=f(1+x)|1+x|_v^{-1/2}$ extended by zero at $x=-1$,
+show both integrals absolutely converge and
+
+$$
+-\int_{K_v} J(\xi)\widehat u(\xi)\,d\nu_v(\xi)
+= \int_{K_v^\times}\frac{f(y)|y|_v^{1/2}}{|1-y|_v}\,d\mu_v(y).
+$$
+
+The leading minus is the rational unit-mass case of (B.4.4.1), p. 619.
+Prove local constancy and compact support of the extension, transport
+the off-zero pairing via `adicCompletion.padicEquiv`, translate by
+$y=1+x$ for additive Haar, and apply the checked density identity in
+Bochner form. For general $f$, the subsequent step is to subtract
+$f(1)\mathbf1_{\mathbb Z_p^\times}$ and use the checked translated
+unit-indicator pairing. Neither step identifies the global geometric
+trace. For ramified continuation, separately check the second
 frequency ball in the display after (B.4.4.15): The extracted subscript
 appears to have $\mathfrak m_v^{-1}\mathfrak d$, whereas the annihilator
 of $\mathfrak m_v$ for the trace character is

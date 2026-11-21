@@ -46,7 +46,8 @@ private theorem norm_uniformizer (v : V) : ‖(rationalLocalUniformizer v : K v)
   change ‖((p[v] : ℕ) : K v)‖ = _
   rw [← norm_rationalLocal_padicEquiv v, map_natCast, Padic.norm_p]
 
-private theorem mem_unitRange_iff (v : V) (x : G v) :
+/-- The image of integral units is precisely the norm-one subgroup. -/
+public theorem mem_unitRange_iff (v : V) (x : G v) :
     x ∈ range (rationalLocalUnitInclusion v) ↔ ‖(x : K v)‖ = 1 := by
   have h (a : K v) : a ∈ v.adicCompletionIntegers ℚ ↔ ‖a‖ ≤ 1 := by
     rw [Valued.toNormedField.norm_le_one_iff, ← mem_adicCompletionIntegers]
