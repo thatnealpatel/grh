@@ -2427,24 +2427,62 @@ and the scope against the digest-matched layout extraction, not rendered
 pages. This does not identify the full dual or its Haar measure, or prove
 (D.1.1.10), the extension to all of $L^2$.
 
-### Next Fourier step: L² approximation of compactly supported continuous tests
+## Checked finite-stage sampling in normalized adelic L²
 
-Toward (D.1.1.10), prove that every continuous compactly supported complex
-function on the rational adeles can be approximated in normalized $L^2$
-by assembled Schwartz stages. First approximate uniformly by sampling
-along `rationalAdeleAt t (rationalAdeleStageRepresentative M j)` in each
-cell, extending by zero outside the stage support. Choose the finite
-support level by `exists_rationalFinite_support_bound`, then refine by
-divisibility using `HasCompactSupport.uniformContinuous_of_continuous`
-and `exists_rationalFinite_invariance_bound`. The sampled functions and
-the original share a fixed compact real interval and a fixed finite
-support cylinder, so uniform error there controls $L^2$ error. Then use
-`SchwartzMap.denseRange_toLpCLM` on the finitely many real profiles and
-the same cell norm calculation, generalized to square-integrable real
-profiles for the differences. This step does not require identifying the
-full dual or the manuscript tensor topology. Afterward, prove density of
-these compactly supported tests in the actual adelic $L^2$ and use the
-Schwartz inverse and Parseval to construct the surjective isometric extension.
+These are project lemmas toward (D.1.1.10), not statements claimed in the
+manuscript. The digest-matched extraction of p. 747 states the unitary
+extension for a locally compact abelian group and its dual, with the
+Plancherel measure on the dual. Here we work directly over $\mathbb Q$
+with `rationalAdeleAddHaar` on the adele ring and the existing rational
+frequency parameterization.
+
+[`Masullo.exists_rationalAdeleStage_uniform_sample`](../../Proofs/Lemmas/RationalAdeleStageApproximation.lean)
+chooses a **single compact set** $K$ for each continuous compactly supported
+$f$, before choosing the tolerance. For every $\varepsilon>0$ it gives a
+positive level $M$ and the exact profiles
+$b_j(t)=f(\texttt{rationalAdeleAt}(t,\operatorname{rep}_M(j)))$.
+Each $b_j$ is continuous and compactly supported. Their assembly $g$
+equals $b_j$ of the real coordinate on the cell $j$ and is zero off the
+stage. The cells are clopen, so the assembly is continuous. Both $f$ and
+$g$ vanish off $K$, and $\|f-g\|_\infty\le\varepsilon$ pointwise.
+
+For the support bound, choose $D>0$ so the finite projection of the
+topological support lies in $D^{-1}\widehat{\mathbb Z}$ and take $K$ to
+be the product with its infinite projection. Uniform continuity controls
+the change from a finite displacement in $N\widehat{\mathbb Z}$ for some
+$N>0$. At $M=ND$, the change from a point to its representative line is
+in $M\widehat{\mathbb Z}\subseteq N\widehat{\mathbb Z}$ and preserves
+membership in $K$. This support control matters: The entire stage cylinder
+is not the compact set, and the finite part of that cylinder grows with
+$M$.
+
+[`Masullo.exists_rationalAdeleStage_L2_sample`](../../Proofs/Lemmas/RationalAdeleStageLpApproximation.lean)
+proves that $f\in L^2(\mu_A)$ and that $g\in L^2(\mu_A)$ can be chosen with
+`eLpNorm (f - g) 2 rationalAdeleAddHaar < ε` for every positive extended
+nonnegative $\varepsilon$. The error vanishes off $K$ and is bounded in
+$L^2$ by its uniform bound times $\mu_A(K)^{1/2}$. The theorem does not
+assert that these real profiles are Schwartz. Independent Yah review
+(`sample-type-review`, base `3f1999ed3b46f34509f2a0dba0369e75f28cdac9`)
+checked the statement scopes, the clopen assembly, and the normalization
+against the pinned extraction. The final statement includes `MemLp f`
+as recommended by that review.
+
+### Next Fourier step: Replace the sampled profiles by real Schwartz functions
+
+At the now fixed positive stage $M$, generalize the
+[stage norm calculation](../../Proofs/Lemmas/RationalAdeleStageNorm.lean)
+to arbitrary complex real profiles in `MemLp · 2 volume`, with assembly
+`rationalAdeleAssembleProfiles M`. The same integral-stage product and
+affine change of variables give the weight $M^{-1}$ on the squared real
+norms; disjointness is unchanged. Use `SchwartzMap.denseRange_toLpCLM`
+at $p=2$ and that calculation on the finitely many **differences** of
+profiles. Combine this new error with the checked sampling error to prove
+$L^2$ approximation of $C_c(\mathbb A_{\mathbb Q})$ by Schwartz stages.
+Afterward, `MemLp.exists_hasCompactSupport_eLpNorm_sub_le`, with regularity
+of `rationalAdeleAddHaar`, supplies the passage from $C_c$ approximation
+to density in the full $L^2$ space. The Schwartz inverse and Parseval are
+then available for the surjective isometric extension. Neither the full
+additive dual nor the manuscript tensor topology is identified by sampling.
 
 ## Checked real-lattice inversion
 

@@ -25,11 +25,14 @@ local notation "O" v => HeightOneSpectrum.adicCompletionIntegers ℚ v
 local notation "A" => AdeleRing (𝓞 ℚ) ℚ
 local notation "K" => RationalFiniteIntegers
 
-local instance : T2Space A := by
+/-- The rational adele ring is Hausdorff in its restricted-product topology. -/
+public theorem t2Space_rationalAdeles : T2Space A := by
   let : T2Space (FiniteAdeleRing (𝓞 ℚ) ℚ) :=
     show T2Space (Πʳ v : V, [v.adicCompletion ℚ, v.adicCompletionIntegers ℚ]) from inferInstance
   unfold AdeleRing InfiniteAdeleRing
   infer_instance
+
+local instance : T2Space A := t2Space_rationalAdeles
 
 local instance : CompactSpace K := compactSpace_rationalFiniteIntegers
 

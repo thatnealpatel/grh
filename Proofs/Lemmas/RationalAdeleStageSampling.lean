@@ -2,6 +2,8 @@ module
 
 public import Props.RationalAdeleBoxStage
 
+import Mathlib.Topology.Homeomorph.Lemmas
+
 /-! # Sampling and assembly on a fixed rational adelic stage -/
 
 open NumberField IsDedekindDomain Set
@@ -29,6 +31,19 @@ public noncomputable def rationalAdeleAt (t : ℝ) (z : F) : A :=
 
 @[simp] public theorem rationalAdeleAt_finite (t : ℝ) (z : F) :
     (rationalAdeleAt t z).2 = z := by rw [rationalAdeleAt]
+
+/-- Replacing the finite component leaves the infinite component unchanged. -/
+@[simp] public theorem rationalAdeleAt_fst_real (x : A) (z : F) :
+    (rationalAdeleAt (rationalAdeleReal x) z).1 = x.1 := by
+  rw [rationalAdeleReal_apply]
+  exact archEquiv.symm_apply_apply x.1
+
+/-- Fixing a finite component gives a continuous real coordinate line. -/
+public theorem continuous_rationalAdeleAt (z : F) :
+    Continuous (fun t ↦ rationalAdeleAt t z) := by
+  let e := (Homeomorph.piUnique (InfinitePlace.Completion (K := ℚ))).trans
+    (InfinitePlace.Completion.isometryEquivRealOfIsReal Rat.isReal_infinitePlace).toHomeomorph
+  exact e.symm.continuous.prodMk continuous_const
 
 /-- The finite part of the representative `j/M` of a stage cell. -/
 @[expose] public noncomputable def rationalAdeleStageRepresentative (M : ℕ)
