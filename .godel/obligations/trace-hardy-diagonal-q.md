@@ -255,26 +255,90 @@ forced by uniqueness of the strong limit. Working on $PH$ removes the
 right factor on inputs but requires output compression to speak of a trace
 on $PH$, since multiplication by $\rho$ need not preserve that space.
 
-**Runnable manuscript test:** At $a=1/2$, the geometric-kernel weight and
-$s\ge3$ of Definition 10.4.3.7, and a smooth above-one test, compare the
-fixed-cutoff scalar traces of the two orders using the same normalized
-Haar diagonal. The missing identity in (11.2.1.10) is exactly
-$\operatorname{Tr}(M_\rho PA(1-P))=0$. For a consuming step that only needs
-the iterated scalar limit, it suffices to show this trace tends to zero
-*after* the level limit. A sufficient concrete target is to prove that
-$A(1-P)$ is trace class on the actual weighted isotype; then $PA(1-P)$ is
-a trace-class off-diagonal block, and bounded strong position exhaustion
-removes its scalar trace. Do not assume that the localized nuclearity or
-band density supplies this uncut bound. Alternatively keep the corrected
-operator $M_\rho AP$ through the geometric evaluation and account for
-which order each later citation needs.
+## Removing the order defect in the weighted rational isotype
+
+**Scope:** $F=\mathbb Q$, trivial compact isotype, $a=1/2$, even degree
+$s=2r\ge4$, and the common full-measure set of widths $0<\alpha<1/2$
+defined by the [two-sided zero separation](trace-theta-density-q.md#bounds-for-division-by-zeta).
+This is the full weighted theta closure in this isotype, not the unit-band
+Hardy space and not an assertion at every width. Let $A$ be convolution by
+a smooth compactly supported log profile, including the above-one tests in
+Theorem 11.2.1.4. Write $P$ for the **geometric** projector and $J=1-P$ for
+its complementary projector. In the pinned layout extraction,
+(11.2.1.7)–(11.2.1.10) use $W^{s,2}$ without $I$, the polynomial weight of
+(9.1.2.3). At positive width the weight is instead (9.2.2.34), p. 417.
+The positive-width levels here are constructed in that norm; no transport
+of the printed zero-width orthogonal projectors is used.
+
+The [Gaussian-division result](trace-theta-density-q.md#gaussian-division-and-compact-theta-approximation)
+identifies the geometric closure with the interior common jet kernel in the
+original weighted norm. Thus $J$ is the projection called $Q$ in the
+[strip trace-class result](trace-spectral-strip-q.md#convolution-after-projection),
+which controls $AJ$, not just $JA$. This distinction is necessary: The
+former gives the off-diagonal block $D=PAJ$, whereas the latter alone does
+not. Invariance of the geometric closure gives $PAP=AP$. It follows that
+$$
+PA-AP=PAJ=D,\qquad \operatorname{Tr}(D)=0.
+$$
+Indeed $D$ is trace class by the ideal property and has zero trace in a
+basis adapted to $PH\oplus JH$: It vanishes on $PH$ and maps $JH$ into
+$PH$. If the uniformly bounded cutoffs $\rho$ tend to one almost everywhere,
+then $M_\rho$ converges strongly to the identity by dominated convergence
+in the original weighted norm. C.3.6.5 with $p=1$ (or finite-rank
+approximation) gives $M_\rho D\to D$ in trace norm, so
+$\operatorname{Tr}(M_\rho PA)-\operatorname{Tr}(M_\rho AP)\to0$.
+This is neither an operator equality nor a proof of zero defect at fixed
+cutoff in the weighted model.
+
+In this rational isotype the terms in the last difference are defined at
+fixed compact position support. The log convolution kernel of $M_\rho A$
+uses input on a fixed compact enlargement of that support, where the
+weighted and ordinary norms are equivalent. Before multiplying by $\rho$,
+smooth convolution restricted there is bounded into every fixed-order
+Sobolev space on a larger interval, using a smooth output bump that is one
+on the cutoff support. Place the bumped output on a circle containing the
+interval. The inclusion of its $H^2$ space in $L^2$ is trace class by the
+summable Fourier singular values; multiplication by $\rho$ on that
+interval and extension by zero are bounded. This proves localized trace
+class for $M_\rho A$ and hence $M_\rho AP$; add $M_\rho D$ to obtain
+$M_\rho PA$.
+
+The Lean theorem
+[`Masullo.tendsto_rationalThetaWeightedEvenBand_projection`](../../Proofs/Theorems/RationalThetaBandClosure.lean)
+checks the strong limit $P_n\to P$ of the increasing cofinal real-band
+levels in the weighted even lattice chart. For each fixed compact $\rho$,
+C.3.6.5 then gives $M_\rho PA P_n\to M_\rho AP$ in trace norm for those
+levels. The term on the right has the terminal projection before using
+invariance; exhausting position only *after* this limit makes the scalar
+order difference vanish on the common widths above. Neither this argument
+nor (11.2.1.9) supplies a bound uniform in two moving cutoffs. The
+trace-class steps in this section use the independently reviewed paper
+repairs above; they are not Lean declarations.
+
+**Next manuscript test:** Keep the corrected right projection through the
+fixed-cutoff global-to-local comparison. On the [positive-log mass-zero
+control](trace-to-zeros.md#first-unmatched-geometric-evaluation-and-a-positive-log-control),
+identify the integral of the global $S$ component from (11.3.1.4), p. 494,
+with the normalized local level of (11.2.1.6), not with the Fourier
+multiplier of (12.4.1.8–12), p. 517. Track any correction and test whether
+it supplies the remaining $-\widehat f_{\rm M}(1/2)$ after the local
+model's $-\widehat f_{\rm M}(-1/2)$ term. The operator-order estimate
+above is for the **whole** ambient trace. It cannot be applied separately
+to an $S$ piece or shell without identifying that piece and its localized
+trace. The p. 520 inference from Theorem 12.4.1.1 after both subtractions
+still requires that identification and the orbital accounting. Compare at
+the same width and justify any passage from the iterated level-first limit
+to a different joint local cutoff; do not infer it from strong convergence.
 
 **Review evidence:** `order-review` (`xbaKdtT`) checked the Hardy
 cross-block calculation, fixed-cutoff witness, and the ambient limit
 against the pinned layout text; `weighted-level-review` (`AZjIddc`)
-independently checked the right factor and scalar defect. These are
-operator calculations and source audits, not new Lean results or a visual
-review.
+independently checked the right factor and scalar defect.
+`level-order-statement` (`rtajUvr`, based on `39a6f063c6a73c04d0765c28b0614b1a35eedf80`)
+reviewed the strong projection endpoint, the identification $J=Q$ in the
+original strip weight, the fixed-cutoff nuclear limit and subsequent
+position limit, and the zero-width versus positive-width source notation.
+No visual review is claimed.
 
 **Remaining manuscript-facing obligation:** Compare the actual global
 level operators of (11.2.1.8)–(11.2.1.10) with an independently evaluated

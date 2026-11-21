@@ -2,6 +2,7 @@ module
 
 public import Theorems.RationalThetaIntegrability
 public import Lemmas.InteriorLogJet
+public import Mathlib.Topology.Algebra.Module.ClosedSubmodule
 import Mathlib.Analysis.LocallyConvex.ContinuousOfBounded
 import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 
@@ -137,5 +138,39 @@ public theorem rationalThetaWeightedLog_continuous_of_tail_bounds (a : ℝ) {α 
   rw [← mul_assoc]
   exact mul_le_mul_of_nonneg_left
     (htheta b.val ⟨b, hb, rfl⟩ b.property.1 b.property.2 x) (hw0 x)
+
+private def evenThetaInputsOn (freq : Set ℝ) : Submodule ℂ thetaInputSubmodule where
+  carrier := {b | Function.Even (⇑b.val) ∧ ∀ ξ ∉ freq, (𝓕 b.val) ξ = (0 : ℂ)}
+  zero_mem' := by
+    change Function.Even (⇑(0 : 𝓢(ℝ, ℂ))) ∧ ∀ ξ ∉ freq, (𝓕 (0 : 𝓢(ℝ, ℂ))) ξ = 0
+    simp [Function.Even]
+  add_mem' := by
+    intro b c hb hc
+    refine ⟨fun x ↦ ?_, fun ξ hξ ↦ ?_⟩
+    · change (b.val + c.val) (-x) = (b.val + c.val) x
+      simp only [_root_.add_apply, hb.1 x, hc.1 x]
+    · change (𝓕 (b.val + c.val)) ξ = 0
+      simp [FourierAdd.fourier_add, hb.2 ξ hξ, hc.2 ξ hξ]
+  smul_mem' := by
+    intro k b hb
+    refine ⟨fun x ↦ ?_, fun ξ hξ ↦ ?_⟩
+    · change (k • b.val) (-x) = (k • b.val) x
+      simp only [_root_.smul_apply, hb.1 x]
+    · change (𝓕 (k • b.val)) ξ = 0
+      simp [fourier_smul, hb.2 ξ hξ]
+
+/-- Closed weighted theta image of even, two-moment Schwartz tests whose
+additive Fourier transform vanishes outside `freq`. -/
+public noncomputable def rationalThetaWeightedEvenImage (a : ℝ) {α s : ℝ}
+    (hs : 0 ≤ s) (hα : 0 ≤ α) (freq : Set ℝ) :
+    ClosedSubmodule ℂ (Lp ℂ 2 (volume : Measure ℝ)) :=
+  ((evenThetaInputsOn freq).map (weightedLogLinear a hs hα)).closure
+
+public theorem coe_rationalThetaWeightedEvenImage (a : ℝ) {α s : ℝ}
+    (hs : 0 ≤ s) (hα : 0 ≤ α) (freq : Set ℝ) :
+    (rationalThetaWeightedEvenImage a hs hα freq : Set (Lp ℂ 2 (volume : Measure ℝ))) =
+      closure (rationalThetaWeightedLog a hs hα ''
+        {b : RationalThetaInput | Function.Even (⇑b.val) ∧ ∀ ξ ∉ freq, (𝓕 b.val) ξ = 0}) := by
+  rfl
 
 end Masullo

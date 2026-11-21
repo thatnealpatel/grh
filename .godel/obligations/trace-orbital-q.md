@@ -135,17 +135,20 @@ weight, twist, domain, closure statements, and Mathlib continuity route
 against the accepted prerequisites. `weighted-level-review` (`AZjIddc`)
 checked the source-side band, global lift, and ordering with $S'=S$.
 
-**Runnable successor:** For a cofinal sequence of band radii, take the
-closed linear weighted image levels and prove their orthogonal projections
-converge pointwise in norm to the projection $P$ onto the full closure,
-not to the ambient identity. Mathlib's `Submodule.starProjection_minimal`
-(or `dist_starProjection_eq_infDist`) gives the error bound against a fixed
-approximant in a sufficiently large level; apply it to $Px$ and use that
-$x-Px$ is orthogonal to every level. Read the
-[fixed-cutoff limit audit](trace-hardy-diagonal-q.md#the-fixed-cutoff-limit-retains-a-right-projection)
-before using this as input to a trace comparison. In particular the
-level-removed cutoff trace with the right projection still needs a
-geometric evaluation, not an extrapolation from density.
+**Checked strong limit:**
+[`Masullo.tendsto_rationalThetaWeightedEvenBand_projection`](../../Proofs/Theorems/RationalThetaBandClosure.lean)
+takes the closure of the complex-linear image for each band's even two-mode
+tests. For any nondecreasing cofinal sequence of band radii, the orthogonal
+projections converge pointwise in norm to the projector onto the full even
+two-mode closure in the same weighted chart. Cofinality and the preceding
+closure theorem identify the closure of the supremum; Mathlib's
+`Submodule.starProjection_tendsto_closure_iSup` supplies the limiting
+argument. This proves the strong limit modeled on (11.2.1.8)–(11.2.1.9),
+not a nuclear limit to the same right-factor-free operator in the ambient
+space. The [order comparison](trace-hardy-diagonal-q.md#removing-the-order-defect-in-the-weighted-rational-isotype)
+records the repaired order, the position limit on common widths, and the
+unmet geometric comparison. No coupled-cutoff estimate follows from this
+Lean result.
 
 ## A zero-line descent obstruction for the ring-transition projector
 
