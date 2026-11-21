@@ -1,5 +1,6 @@
 module
 
+public import Lemmas.CompactTestLaplace
 public import Lemmas.ZetaZeroOrders
 public import Mathlib.Topology.Algebra.InfiniteSum.Real
 import Lemmas.ZetaZeroDiskCount
@@ -16,7 +17,8 @@ comparison of the full divisor in Masullo's (B.4.2.2), p. 614, with the capped
 sum in (13.3.1.3), p. 522. It does not use either distribution formula.
 -/
 
-open scoped BigOperators
+open MeasureTheory Set
+open scoped BigOperators ContDiff
 
 namespace Masullo
 
@@ -160,5 +162,23 @@ public theorem summable_zetaZeroOrder_div_one_add_norm_sq :
     _ ≤ ∑ j ∈ A.image dyadicShell, B j :=
       Finset.sum_le_sum fun j _ ↦ hblock j _ (fun ρ hρ ↦ (Finset.mem_filter.mp hρ).2)
     _ ≤ ∑' j, B j := hB.sum_le_tsum _ (fun j _ ↦ by dsimp [B]; positivity)
+
+/-- On every smooth compact positive-log test, any zero weights dominated by the
+full zeta orders yield an absolutely convergent test sum. No mass condition is needed. -/
+public theorem summable_norm_zetaZero_mul_positiveLaplaceTest
+    {d : criticalStripZetaZeros → ℂ} (hd : ∀ ρ, ‖d ρ‖ ≤ (zetaZeroOrder ρ : ℝ))
+    {f : ℝ → ℂ} (hf : ContDiff ℝ ∞ f) (hc : HasCompactSupport f)
+    (ht : tsupport f ⊆ Ioi (0 : ℝ)) :
+    Summable fun ρ ↦ ‖d ρ * positiveLaplaceTest (shiftedZetaZero ρ) f‖ := by
+  let a : ℝ := 1 / 2
+  let C := (∫ x in Ioi (0 : ℝ), Real.exp (a * x) * ‖f x‖) +
+    (∫ x in Ioi (0 : ℝ), Real.exp (a * x) * ‖deriv (deriv f) x‖)
+  have hs : Summable (fun ρ ↦ ‖d ρ‖ / (1 + ‖shiftedZetaZero ρ‖ ^ 2)) :=
+    summable_zetaZeroOrder_div_one_add_norm_sq.of_nonneg_of_le (fun _ ↦ by positivity)
+      (fun ρ ↦ div_le_div_of_nonneg_right (hd ρ) (by positivity))
+  refine (hs.mul_left C).of_nonneg_of_le (fun _ ↦ norm_nonneg _) fun ρ ↦ ?_
+  have ha : (shiftedZetaZero ρ).re ≤ a :=
+    ((le_abs_self _).trans_lt (abs_re_shiftedZetaZero_lt ρ)).le
+  exact norm_mul_positiveLaplaceTest_le ha hf hc ht (le_refl C)
 
 end Masullo

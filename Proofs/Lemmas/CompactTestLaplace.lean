@@ -105,4 +105,20 @@ public theorem norm_positiveLaplaceTest_mul_weight_le (w : ℂ) (a : ℝ) (hwa :
   exact add_le_add (norm_positiveLaplaceTest_le w a hwa hf.continuous hcf)
     (norm_positiveLaplaceTest_le w a hwa (h₂.continuous_deriv le_rfl) hcf.deriv.deriv)
 
+/-- A uniform quadratic majorant for the Laplace transform multiplied by a coefficient. -/
+public theorem norm_mul_positiveLaplaceTest_le {w d : ℂ} {a C : ℝ} {f : ℝ → ℂ}
+    (hw : w.re ≤ a) (hf : ContDiff ℝ ∞ f) (hc : HasCompactSupport f)
+    (ht : tsupport f ⊆ Ioi (0 : ℝ))
+    (hC : (∫ x in Ioi (0 : ℝ), Real.exp (a * x) * ‖f x‖) +
+      (∫ x in Ioi (0 : ℝ), Real.exp (a * x) * ‖deriv (deriv f) x‖) ≤ C) :
+    ‖d * positiveLaplaceTest w f‖ ≤ C * (‖d‖ / (1 + ‖w‖ ^ 2)) := by
+  have hpos : 0 < 1 + ‖w‖ ^ 2 := by positivity
+  have h := (norm_positiveLaplaceTest_mul_weight_le w a hw hf hc ht).trans hC
+  rw [norm_mul]
+  calc
+    ‖d‖ * ‖positiveLaplaceTest w f‖ ≤ ‖d‖ * (C / (1 + ‖w‖ ^ 2)) :=
+      mul_le_mul_of_nonneg_left ((le_div_iff₀ hpos).2 (by simpa only [mul_comm] using h))
+        (norm_nonneg _)
+    _ = C * (‖d‖ / (1 + ‖w‖ ^ 2)) := by simp only [div_eq_mul_inv, mul_left_comm]
+
 end Masullo

@@ -58,21 +58,6 @@ private theorem positiveLaplaceTest_sub_mul (w m : ℂ) {f h : ℝ → ℂ}
     rw [integral_const_mul]
     rfl)
 
-private theorem norm_weighted_transform_le {w d : ℂ} {a C : ℝ} {f : ℝ → ℂ}
-    (hw : w.re ≤ a) (hf : ContDiff ℝ ∞ f) (hc : HasCompactSupport f)
-    (ht : tsupport f ⊆ Ioi (0 : ℝ))
-    (hC : (∫ x in Ioi (0 : ℝ), Real.exp (a * x) * ‖f x‖) +
-      (∫ x in Ioi (0 : ℝ), Real.exp (a * x) * ‖deriv (deriv f) x‖) ≤ C) :
-    ‖d * positiveLaplaceTest w f‖ ≤ C * (‖d‖ / (1 + ‖w‖ ^ 2)) := by
-  have hpos : 0 < 1 + ‖w‖ ^ 2 := by positivity
-  have h := (norm_positiveLaplaceTest_mul_weight_le w a hw hf hc ht).trans hC
-  rw [norm_mul]
-  calc
-    ‖d‖ * ‖positiveLaplaceTest w f‖ ≤ ‖d‖ * (C / (1 + ‖w‖ ^ 2)) :=
-      mul_le_mul_of_nonneg_left ((le_div_iff₀ hpos).2 (by simpa only [mul_comm] using h))
-        (norm_nonneg _)
-    _ = C * (‖d‖ / (1 + ‖w‖ ^ 2)) := by simp only [div_eq_mul_inv, mul_left_comm]
-
 /-- If the difference distribution annihilates all smooth positive-log tests of mass
 zero, the subtracted reciprocal series is absolutely summable in the right half-plane
 and equals the stated mass term. Its coefficient is independent of `z`. -/
@@ -91,7 +76,7 @@ public theorem hasSum_subtractedReciprocals_of_annihilation {ι : Type*} {w d : 
     let C := (∫ x in Ioi (0 : ℝ), Real.exp (a * x) * ‖h x‖) +
       (∫ x in Ioi (0 : ℝ), Real.exp (a * x) * ‖deriv (deriv h) x‖)
     exact (hs.mul_left C).of_norm_bounded
-      (fun i ↦ norm_weighted_transform_le (hwa i) hh hch hth le_rfl)
+      (fun i ↦ norm_mul_positiveLaplaceTest_le (hwa i) hh hch hth le_rfl)
   refine ⟨∑' i, H i, fun z hz ↦ ?_⟩
   obtain ⟨C, hC⟩ := cutoffTest_uniform hz hz₀
   let f (n : ℕ) := cutoffTest z z₀ ((n : ℝ) + 2)
@@ -102,7 +87,7 @@ public theorem hasSum_subtractedReciprocals_of_annihilation {ι : Type*} {w d : 
   have hB : Summable B := hs.mul_left C
   have hf (n : ℕ) := hC ((n : ℝ) + 2) (le_add_of_nonneg_left (Nat.cast_nonneg n))
   have hbound (n : ℕ) (i : ι) : ‖F n i‖ ≤ B i :=
-    norm_weighted_transform_le (hwa i) (hf n).1 (hf n).2.1 (hf n).2.2.1 (hf n).2.2.2
+    norm_mul_positiveLaplaceTest_le (hwa i) (hf n).1 (hf n).2.1 (hf n).2.2.1 (hf n).2.2.2
   have hpt (i : ι) : Tendsto (fun n ↦ F n i) atTop (𝓝 (G i)) :=
     tendsto_const_nhds.mul (tendsto_positiveLaplaceTest_cutoffTest ((hwa i).trans_lt hz)
       ((hwa i).trans_lt hz₀))
