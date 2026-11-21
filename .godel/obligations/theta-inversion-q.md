@@ -598,37 +598,71 @@ The candidate checks are `lake --wfail build Proofs`,
 `lake env leanchecker Theorems.PadicStandardCharacter`, and `#check` and
 `#print axioms` on the character and its four public theorems.
 
-## Next Fourier step: The local integral indicator over Qp
+<a id="next-fourier-step-the-local-integral-indicator-over-qp"></a>
 
-Construct the additive Haar measure $\nu_p$ normalized by
-$\nu_p(\mathbb Z_p)=1$ (Definition A.3.1.2(3), p. 556, and Example
-A.3.1.7, pp. 557–558). Prove for all $y\in\mathbb Q_p$ that
+## Checked Fourier transform of the integral indicator over Qp
+
+[`Masullo.padicAddHaar`](../../Proofs/Theorems/PadicIntegralBallFourier.lean)
+is additive Haar on the Borel sets of $\mathbb Q_p$, normalized using
+its compact open closed unit ball $B=\mathbb Z_p$. The separate theorem
+`padicAddHaar_integralBall` gives $\nu_p(B)=1$.
+`padicIntegralBall_fourier` proves, pointwise for every $y\in\mathbb Q_p$,
 
 $$
-\int_{\mathbb Z_p}\overline{\psi_p(xy)}\,d\nu_p(x)
-=\mathbf 1_{\mathbb Z_p}(y),
+\int_B \overline{\psi_p(xy)}\,d\nu_p(x)=\mathbf 1_B(y).
 $$
 
-using the checked positive `padicStdAddChar` for $\psi_p$ and
-conjugating it for the negative-exponent transform convention. The
-source gives the centered identity with the positive sign, for which
-the same proof works. Example A.3.1.10, p. 558, and Remark A.3.4.2,
-p. 562, distinguish the unramified identity from the inverse-different
-formula. These locators use text extraction, not rendered pages.
+For $y\in B$ the integrand is one by the exact kernel theorem. Otherwise,
+translation by $1$ preserves both the ambient Haar measure and the ball.
+Apply translation invariance to the indicator times the integrand: The
+integral is multiplied by $\overline{\psi_p(y)}\ne1$, so it vanishes.
+The measure used in the set integral is the restriction of ambient Haar,
+not an additive Haar measure on $\mathbb Q_p$ in its own right.
 
-Use the compact open closed unit ball as `PositiveCompacts` for
-`Measure.addHaarMeasure`. Import `Mathlib.NumberTheory.Padics.ProperSpace`
-for compactness of closed balls and use the ultrametric closed-ball
-openness lemma. One route is to integrate in the coordinates
-$\mathbb Z_p$ via the comap of the normalized Haar along
-`PadicInt.isOpenEmbedding_coe`. It is invariant by addition and has
-total mass one. For integral $y$, the integrand is one by the checked
-kernel. Otherwise the translation by $1$ multiplies the integral by
-$\overline{\psi_p(y)}\ne1$ but leaves its value unchanged. Use
-`integral_add_left_eq_self` and `integral_const_mul`, and transport the
-result to the set integral with the measurable embedding. This is a
-local Fourier identity, not a proof of the entire local self-duality
-claim.
+Independent Yah review checked the statement and this proof route against
+the SHA-256-matched layout extraction: Definition A.3.1.2(3), (A.3.1.2),
+p. 556, and Examples A.3.1.6–7, pp. 557–558. We use the conjugated kernel
+following the real negative-exponent convention of Example A.3.1.5,
+p. 557; the centered unit-ball identity is the same for either sign.
+This does not establish the topological dual parametrization or the
+Plancherel identification inferred in Example A.3.1.7. Example A.3.1.10,
+p. 558, concerns the inverse different and a different volume in general.
+Rendered-page verification remains open.
+
+Exact-candidate checks: `lake --wfail build Proofs`,
+`lake env leanchecker Theorems.PadicIntegralBallFourier`, and an external
+Lean import checking the Haar instance, both statements, and their axioms.
+
+## Next Fourier step: Dilated and translated integral balls
+
+Prove the corrected negative-sign version of (A.3.1.5), p. 557, first
+for $N\in\mathbb N$ and all $a,y\in\mathbb Q_p$:
+
+$$
+\int_{a+p^N B}\overline{\psi_p(xy)}\,d\nu_p(x)
+=p^{-N}\overline{\psi_p(ay)}\,\mathbf 1_{p^{-N}B}(y).
+$$
+
+The extracted line has a positive phase and appears to shift frequency
+in its intermediate expression. Under the chosen convention a position
+translation changes only the phase. A sign control is $N=1$, $a=1$,
+$y=1/p$ at an odd prime: The two phases are distinct and the frequency
+is in the support. Do not treat the extracted typography as verified.
+
+First compute $\nu_p(p^N B)=p^{-N}$ by counting the cosets of $p^N B$
+in $B$. Pinned Mathlib's `PadicInt.toZModPow` has kernel given by
+`PadicInt.ker_toZModPow`. Surjectivity follows by taking the natural
+representative of each residue and using `map_natCast`. Every fiber is
+a translate of the kernel, so finite additivity and mass one compute
+the common mass. Multiplication by $(p^N)^{-1}$ is a continuous additive
+automorphism. Use `ContinuousAddEquiv.isAddHaarMeasure_map` and
+`Measure.addHaarMeasure_unique` (with the same ball calibration) to
+identify its pushforward as $p^{-N}\nu_p$. For the affine domain first
+translate back, then use this pushforward on the restricted measure to
+reduce to the checked centered formula at $p^N y$. The norm identity
+`Padic.norm_p_pow` or the inverse automorphism gives the indicated
+frequency ball. Global product signs, dual parametrization, and
+Plancherel still need independent arguments.
 
 ## Checked real-lattice inversion
 
@@ -1089,5 +1123,6 @@ are checked for the constructed measure. The [finite-stage embeddings](#checked-
 are checked. The [full real local measure](#checked-full-real-local-multiplicative-haar-measure)
 is checked. The [finite-stage Haar comparison](#checked-finite-stage-product-of-local-haar-measures)
 is checked. The [global restricted-product characterization](#checked-global-restricted-product-characterization)
-is checked over $\mathbb Q$. The [local Fourier indicator](#next-fourier-step-the-local-integral-indicator-over-qp)
-is a separate additive obligation, not a consequence of multiplicative Haar.
+is checked over $\mathbb Q$. The [centered local Fourier indicator](#checked-fourier-transform-of-the-integral-indicator-over-qp)
+is now checked on the separate additive branch. The [scaled and translated
+formula](#next-fourier-step-dilated-and-translated-integral-balls) remains open.
