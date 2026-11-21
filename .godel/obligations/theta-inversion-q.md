@@ -996,21 +996,55 @@ The $[0,\infty]$ formulation is a project extension for Borel functions,
 not a proof of the complex $L^1$ or Pettis claims in the manuscript. The
 source reading is provisional, not visual.
 
-## Next additive step: complex Weil formula and absolute summability
+## Checked complex Weil formula and absolute summability
 
-For Borel $f:\mathbb A_{\mathbb Q}\to\mathbb C$ integrable for $\mu$,
-prove that $\sum_d f(s(c)+d)$ converges absolutely for $\lambda$-almost
-all $c$, gives an integrable periodization, and integrates to
-$\int f\,d\mu$. Apply the checked nonnegative formula to the extended
-norm of $f$ for finiteness of the integrated norm sum. Then use
-`IsAddFundamentalDomain.integral_eq_tsum''`, `integral_tsum`, and the
-measure-preserving projection; restrict any pointwise convergence claim
-to the full-measure set of classes where the norm sum is finite. This is
-the Borel $L^1$ case of (D.1.2.1), p. 747, and a direct input to the
-Fourier-coefficient comparison of Theorem D.1.2.7(1), p. 749. Neither the
-latter comparison, the Plancherel normalization, nor continuity of
-periodization for all relevant Schwartz–Bruhat tests follows from the
-nonnegative formula alone.
+In [RationalAdeleWeil.lean](../../Proofs/Theorems/RationalAdeleWeil.lean),
+`Masullo.integral_eq_integral_rationalAdeleComplexPeriodization` proves
+for Borel $f:\mathbb A_{\mathbb Q}\to\mathbb C$ integrable for $\mu$ that
+$$
+\int_{\mathbb A_{\mathbb Q}} f\,d\mu
+  = \int_{\mathbb A_{\mathbb Q}/\mathbb Q} P f\,d\lambda,
+\qquad P f(c)=\sum_{d\in\mathbb Q} f(s(c)+d).
+$$
+The nonnegative formula for the extended norm makes the norm sum
+integrable. `Masullo.ae_summable_norm_rationalAdeleComplexPeriodization`
+proves absolute summability for $\lambda$-almost all classes, and
+`Masullo.integrable_rationalAdeleComplexPeriodization` uses the norm sum
+to dominate $P f$. The Borel representative uses a totalized complex
+sum. `Masullo.rationalAdeleComplexPeriodization_mk` reindexes it at every
+lift without asserting everywhere convergence. The integral equality
+splits upstairs over translated strips, exchanges the sum with the
+Bochner integral on the strip using summability of the norm integrals,
+and pushes forward to the quotient.
+
+Independent Yah statement review checked the digest-matched layout
+extraction of (D.1.2.1), p. 747, Proposition D.1.2.4, p. 748, and
+Theorem D.1.2.7, p. 749. This is the rational diagonal, complex Borel
+$L^1$ case of D.1.2.1 and the parallel (C.4.4.5), p. 718. The review
+confirmed counting measure, the unit-strip quotient probability in
+(A.3.1.1), and the distinction between absolute convergence almost
+everywhere and invariance of the totalized sum everywhere. This does
+not prove the general locally compact group result, a Pettis formula,
+or any Fourier inversion statement. The reading is provisional, not visual.
+
+## Next additive step: unfolding the quotient Fourier coefficients
+
+For a diagonal rational frequency $r$, descend the checked character
+$a\mapsto\psi(ra)$ to a continuous character $\chi_r$ on the quotient.
+Use diagonal triviality for descent. With the project's negative Fourier
+sign (conjugate of the checked character), the exact obligation is
+$$
+\int_{\mathbb A_{\mathbb Q}/\mathbb Q} P f(c)\overline{\chi_r(c)}\,d\lambda(c)
+  = \int_{\mathbb A_{\mathbb Q}} f(a)\overline{\psi(ra)}\,d\mu(a).
+$$
+Apply complex Weil to the twisted Borel $L^1$ function; the phase has norm
+one and factors out of the fiber sum. This proves the coefficient
+comparison in Theorem D.1.2.7(1), p. 749, **at the displayed characters**
+with this explicit sign. The opposite sign is obtained by $r\mapsto-r$;
+do not infer the printed conjugation from layout extraction alone. This
+step needs no full dual identification or Plancherel theorem. Those,
+Fourier inversion, and everywhere convergence for the relevant
+Schwartz–Bruhat periodizations are separate obligations.
 
 Independently, the integral-stage comparison can be strengthened by
 identifying `rationalFiniteIntegersHaar` with the product of the restrictions
@@ -1491,4 +1525,5 @@ is checked. The [half-open additive fundamental domain](#checked-half-open-addit
 is also checked, as is the [upstairs unit-strip mass](#checked-additive-haar-normalization-over-the-rationals).
 The [additive quotient probability Haar](#checked-probability-haar-on-the-additive-rational-quotient)
 is checked, as is the [nonnegative Weil formula](#checked-nonnegative-weil-formula-over-the-additive-rational-quotient).
-Next prove the [complex Borel $L^1$ version](#next-additive-step-complex-weil-formula-and-absolute-summability).
+The [complex Borel $L^1$ version](#checked-complex-weil-formula-and-absolute-summability)
+is checked. Next [unfold its Fourier coefficients](#next-additive-step-unfolding-the-quotient-fourier-coefficients).
