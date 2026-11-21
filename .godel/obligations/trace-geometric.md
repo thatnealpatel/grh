@@ -54,20 +54,14 @@ $$D_S+M(\varphi)(|\cdot|_F^{1/2})+M(\varphi)(|\cdot|_F^{-1/2})=P_S.$$
 
 This isolates what the argument still needs. Vanishing on the norm-one subgroup removes the logarithmic term, not the Mellin corrections. Neither the normalization nor the cutoff identification, nor this comparison itself, has been proved here.
 
-### Mathlib entry point (source inspected, not elaborated)
+### Formalizing the finite-place support argument
 
 At the pinned Mathlib revision `fc4f59e577feb1a4956671bc04ac18aaaf8cd842`:
 
 - `NumberTheory/NumberField/AdeleRing.lean` defines `NumberField.IdeleClassGroup.ofAdicCompletion` as the single-place unit map followed by the principal quotient. `NumberField.AdeleRing.norm_apply_of_isUnit` expands the *adelic* norm on units into local factors, and `NumberField.AdeleRing.norm_algebraMap_eq_one_of_ne_zero` gives its value on principal ideles when the base ring is the ring of integers. These declarations do not themselves supply the descended norm used in the support argument.
 - `NumberTheory/NumberField/Completion/FinitePlace.lean` gives `NumberField.FinitePlace.norm_def` on the adic completion in terms of its valuation, normalized using the ideal's absolute norm. Its use of `WithZeroMulInt.toNNReal_neg_apply` in `FinitePlace.two_le_norm_of_one_lt_norm` shows how to expose an integer exponent. The bound by 2 in that lemma is too weak here: Keep the actual ideal norm $q_v$ for the comparison with $T$.
 
-**First worker target.** An [independently source-reviewed draft](single-place-norm.md) is ready for elaboration once the designated worker is available. For a number field `K`, `v : IsDedekindDomain.HeightOneSpectrum (𝓞 K)`, and `u : (v.adicCompletion K)ˣ`, prove that the adelic norm of the underlying adele of `IdeleGroup.ofAdicCompletion (𝓞 K) K v u` equals the local norm `‖(u : v.adicCompletion K)‖`.
-
-Use `AdeleRing.norm_apply_of_isUnit` with the embedded unit's `isUnit`. The infinite component is 1. For the finite factor, unfold `AdeleRing.ofAdicCompletion` and `IsDedekindDomain.FiniteAdeleRing.ofAdicCompletion` to the restricted product's `mulSingleMonoidHom`. The component at `v` is `↑u`, and all others are 1. Apply `finprod_eq_single` with precisely the off-place equality, not a separate nontriviality assumption at `v`: The result must also hold when `‖↑u‖ = 1`.
-
-**Quotient target.** Define a multiplicative map from `IdeleGroup (𝓞 K) K` to `ℝ` with value the norm of the underlying adele. Prove multiplicativity on units, not from an assumed `NormedRing` structure on adeles. In `AdeleRing.norm_apply_of_isUnit`, distribute the finite Archimedean product using local `norm_mul`, powers, and `Finset.prod_mul_distrib`. Distribute the other product with `finprod_mul_distrib`, using `NumberField.FiniteAdeleRing.hasFiniteMulSupport_norm` for each unit's finite component (the image of the idele under `Units.map` of the second projection). For the identity, all factors are 1. For the principal-subgroup inclusion in the kernel, write an element of the subgroup as `IdeleGroup.unitEmbedding` of `x : Kˣ` and use `AdeleRing.norm_algebraMap_eq_one_of_ne_zero x.ne_zero`. `QuotientGroup.lift` then gives the class-group map; `QuotientGroup.lift_mk'` reduces its value at `IdeleClassGroup.ofAdicCompletion` to the first worker target. The kernel is the norm-one subgroup for this construction. No continuity or Haar normalization is needed for this algebraic support step, and neither is obtained by quotient descent here.
-
-This is a source-inspected proof plan for the project's finite-place support argument, not a checked Lean result or a justification of the analytic bridge. The [idele-class support draft](finite-place-support.md) implements the plan and the remaining discrete-norm argument on paper; it also locates the linear local functional to which the support lemma applies.
+The [single-place norm](single-place-norm.md) computes the adelic norm of a local unit included at one place. The [idele-class support lemma](finite-place-support.md) descends the norm by the product formula and proves the remaining discrete-norm implication in Lean. Its handoff locates the linear local functional and separates the open continuity and support-band inputs from the unresolved analytic bridge.
 
 ## Where the two Mellin corrections could come from
 
