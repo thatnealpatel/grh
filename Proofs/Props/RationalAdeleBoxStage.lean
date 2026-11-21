@@ -67,7 +67,8 @@ public theorem mem_rationalAdeleStageSupport_iff_existsUnique_cell {M : ℕ} (hM
   · rintro ⟨j, hj, _⟩
     exact rationalAdeleStageCell_subset_support hM j hj
 
-private noncomputable def stageScale (M : ℕ) (hM : 0 < M) : J where
+/-- At the finite places this idele is the diagonal `M`; at the real place it is one. -/
+@[expose] public noncomputable def rationalAdeleStageScale (M : ℕ) (hM : 0 < M) : J where
   val := (1, (ι (M : ℚ)).2)
   inv := (1, (ι (M : ℚ)⁻¹).2)
   val_inv := by
@@ -81,46 +82,82 @@ private noncomputable def stageScale (M : ℕ) (hM : 0 < M) : J where
     change (ι (M : ℚ)⁻¹ * ι (M : ℚ)).2 = _
     rw [← map_mul, inv_mul_cancel₀ hMq, map_one]
 
-/-- A cell indicator times an arbitrary real Schwartz factor is a translated
-adelic box. For each cell the center and scale are independent of the factor;
-the real coordinate is unchanged. -/
-public theorem exists_rationalAdeleBox_eq_stageCell {M : ℕ} (hM : 0 < M) (j : Fin (M ^ 2)) :
-    ∃ (a : A) (g : J), rationalAdeleReal a = 0 ∧ rationalAdeleReal (g : A) = 1 ∧
-      ∀ b : 𝓢(ℝ, ℂ), rationalAdeleBox b a g = (rationalAdeleStageCell M j).indicator
-        (fun x ↦ b (rationalAdeleReal x)) := by
+/-- The center of a cell box has real coordinate zero and finite coordinate `j/M`. -/
+@[expose] public noncomputable def rationalAdeleStageCenter (M : ℕ) (j : Fin (M ^ 2)) : A :=
+  (0, (ι ((j.val : ℚ) / M)).2)
+
+@[simp] public theorem rationalAdeleReal_stageCenter (M : ℕ) (j : Fin (M ^ 2)) :
+    rationalAdeleReal (rationalAdeleStageCenter M j) = 0 := by
+  rw [rationalAdeleReal_apply]
+  exact map_zero _
+
+@[simp] public theorem rationalAdeleReal_stageScale (M : ℕ) (hM : 0 < M) :
+    rationalAdeleReal (rationalAdeleStageScale M hM : A) = 1 := by
+  rw [rationalAdeleReal_apply]
+  exact map_one _
+
+-- Integrality only depends on the finite coordinate, where the box calculation takes place.
+private theorem mem_integral_iff_fin {x y : A} (h : x.2 = y.2) : x ∈ W ↔ y ∈ W := by
+  change x.2 ∈ rationalFiniteIntegralAdeles ↔ y.2 ∈ rationalFiniteIntegralAdeles
+  rw [h]
+
+private theorem stageCell_box_mem {M : ℕ} (hM : 0 < M) (j : Fin (M ^ 2)) (x : A) :
+    (↑(rationalAdeleStageScale M hM)⁻¹ : A) * (x - rationalAdeleStageCenter M j) ∈ W ↔
+      x ∈ rationalAdeleStageCell M j := by
   let q : ℚ := (j.val : ℚ) / M
-  let a : A := (0, (ι q).2)
-  let g := stageScale M hM
+  have hq : (M : ℚ)⁻¹ * q = (j.val : ℚ) / (M : ℚ)^2 := by
+    simp [q, div_eq_mul_inv, pow_two, mul_left_comm]
+  apply mem_integral_iff_fin
+  let ρ := algebraMap ℚ F
+  change ρ (M : ℚ)⁻¹ * (x.2 - ρ q) = ρ (M : ℚ)⁻¹ * x.2 - ρ ((j.val : ℚ) / (M : ℚ)^2)
+  rw [mul_sub, ← map_mul ρ, hq]
+
+/-- A cell indicator times a real Schwartz factor is the canonical translated box. -/
+public theorem rationalAdeleBox_stageCell {M : ℕ} (hM : 0 < M) (j : Fin (M ^ 2))
+    (b : 𝓢(ℝ, ℂ)) : rationalAdeleBox b (rationalAdeleStageCenter M j)
+      (rationalAdeleStageScale M hM) = (rationalAdeleStageCell M j).indicator
+        (fun x ↦ b (rationalAdeleReal x)) := by
+  let a := rationalAdeleStageCenter M j
+  let g := rationalAdeleStageScale M hM
   let e := InfinitePlace.Completion.ringEquivRealOfIsReal Rat.isReal_infinitePlace
-  refine ⟨a, g, ?_, ?_, fun b ↦ ?_⟩
-  · rw [rationalAdeleReal_apply]
-    exact map_zero e
-  · rw [rationalAdeleReal_apply]
-    exact map_one e
-  · funext x
-    let y : A := (↑g⁻¹ : A) * (x - a)
-    have hreal : rationalAdeleReal y = rationalAdeleReal x := by
-      rw [rationalAdeleReal_apply y]
-      change e (1 * (x.1 Rat.infinitePlace - 0)) = _
-      rw [sub_zero, one_mul, rationalAdeleReal_apply]
-    have hfin : y ∈ W ↔ x ∈ rationalAdeleStageCell M j := by
-      have hq : (M : ℚ)⁻¹ * q = (j.val : ℚ) / (M : ℚ)^2 := by
-        simp [q, div_eq_mul_inv, pow_two, mul_left_comm]
-      have hf : y.2 = (ι (M : ℚ)⁻¹ * x - ι ((j.val : ℚ) / (M : ℚ)^2)).2 := by
-        change (ι (M : ℚ)⁻¹ * (x - ι q)).2 = _
-        rw [mul_sub, ← map_mul (ι), hq]
-      change (∀ v : HeightOneSpectrum (𝓞 ℚ), y.2 v ∈ v.adicCompletionIntegers ℚ) ↔ _
-      rw [hf]
-      rfl
-    change rationalAdeleUnramified b y = _
-    rw [rationalAdeleUnramified]
-    by_cases hy : y ∈ W
-    · rw [indicator_of_mem hy, indicator_of_mem (hfin.mp hy), hreal]
-    · rw [indicator_of_notMem hy, indicator_of_notMem (mt hfin.mpr hy)]
+  funext x
+  let y : A := (↑g⁻¹ : A) * (x - a)
+  have hreal : rationalAdeleReal y = rationalAdeleReal x := by
+    rw [rationalAdeleReal_apply y]
+    change e (1 * (x.1 Rat.infinitePlace - 0)) = _
+    rw [sub_zero, one_mul, rationalAdeleReal_apply]
+  have hfin : y ∈ W ↔ x ∈ rationalAdeleStageCell M j := stageCell_box_mem hM j x
+  change rationalAdeleUnramified b y = _
+  rw [rationalAdeleUnramified]
+  by_cases hy : y ∈ W
+  · rw [indicator_of_mem hy, indicator_of_mem (hfin.mp hy), hreal]
+  · rw [indicator_of_notMem hy, indicator_of_notMem (mt hfin.mpr hy)]
 
 /-- The fixed boxes reconstruct one Schwartz profile per coset on this stage,
 with zero extension off the support. Neither centers nor scales vary with the
 profiles, so bounded coordinate sets can be used directly in the box estimates. -/
+public theorem rationalAdeleBoxSum_stage_coordinates {M : ℕ} (hM : 0 < M)
+    (b : Fin (M ^ 2) → 𝓢(ℝ, ℂ)) :
+    let f := rationalAdeleBoxSum Finset.univ (fun _ ↦ 1) b (rationalAdeleStageCenter M)
+      (fun _ ↦ rationalAdeleStageScale M hM)
+    (∀ j x, x ∈ rationalAdeleStageCell M j → f x = b j (rationalAdeleReal x)) ∧
+      (∀ x, x ∉ rationalAdeleStageSupport M → f x = 0) := by
+  classical
+  refine ⟨?_, ?_⟩
+  · intro j x hx
+    have hj : ∀ k, x ∈ rationalAdeleStageCell M k → k = j := by
+      obtain ⟨i, _, hi⟩ := (mem_rationalAdeleStageSupport_iff_existsUnique_cell hM x).mp
+        (rationalAdeleStageCell_subset_support hM j hx)
+      exact fun k hk ↦ (hi k hk).trans (hi j hx).symm
+    simp only [rationalAdeleBoxSum, one_mul, rationalAdeleBox_stageCell]
+    rw [Finset.sum_eq_single_of_mem j (Finset.mem_univ _) (fun k _ hkj ↦
+      indicator_of_notMem (fun hk ↦ hkj (hj k hk)) _), indicator_of_mem hx]
+  · intro x hx
+    simp only [rationalAdeleBoxSum, one_mul, rationalAdeleBox_stageCell]
+    exact Finset.sum_eq_zero fun j _ ↦
+      indicator_of_notMem (fun hj ↦ hx (rationalAdeleStageCell_subset_support hM j hj)) _
+
+/-- Existential form of the canonical box assembly, recording its real geometry. -/
 public theorem exists_rationalAdeleBoxSum_stage_coordinates_real {M : ℕ} (hM : 0 < M) :
     ∃ (a : Fin (M ^ 2) → A) (g : Fin (M ^ 2) → J),
       (∀ j, rationalAdeleReal (a j) = 0) ∧ (∀ j, rationalAdeleReal (g j : A) = 1) ∧
@@ -128,22 +165,9 @@ public theorem exists_rationalAdeleBoxSum_stage_coordinates_real {M : ℕ} (hM :
         (∀ j x, x ∈ rationalAdeleStageCell M j →
           rationalAdeleBoxSum Finset.univ (fun _ ↦ 1) b a g x = b j (rationalAdeleReal x)) ∧
         (∀ x, x ∉ rationalAdeleStageSupport M →
-          rationalAdeleBoxSum Finset.univ (fun _ ↦ 1) b a g x = 0) := by
-  classical
-  choose a g ha hg hbox using exists_rationalAdeleBox_eq_stageCell hM
-  refine ⟨a, g, ha, hg, fun b ↦ ⟨?_, ?_⟩⟩
-  · intro j x hx
-    have hj : ∀ k, x ∈ rationalAdeleStageCell M k → k = j := by
-      obtain ⟨i, _, hi⟩ := (mem_rationalAdeleStageSupport_iff_existsUnique_cell hM x).mp
-        (rationalAdeleStageCell_subset_support hM j hx)
-      exact fun k hk ↦ (hi k hk).trans (hi j hx).symm
-    simp only [rationalAdeleBoxSum, one_mul, hbox]
-    rw [Finset.sum_eq_single_of_mem j (Finset.mem_univ _) (fun k _ hkj ↦
-      indicator_of_notMem (fun hk ↦ hkj (hj k hk)) _), indicator_of_mem hx]
-  · intro x hx
-    simp only [rationalAdeleBoxSum, one_mul, hbox]
-    exact Finset.sum_eq_zero fun j _ ↦
-      indicator_of_notMem (fun hj ↦ hx (rationalAdeleStageCell_subset_support hM j hj)) _
+          rationalAdeleBoxSum Finset.univ (fun _ ↦ 1) b a g x = 0) :=
+  ⟨_, _, rationalAdeleReal_stageCenter M, fun _ ↦ rationalAdeleReal_stageScale M hM,
+    rationalAdeleBoxSum_stage_coordinates hM⟩
 
 /-- Fixed-geometry assembly, forgetting the real coordinates of the boxes. -/
 public theorem exists_rationalAdeleBoxSum_stage_coordinates {M : ℕ} (hM : 0 < M) :

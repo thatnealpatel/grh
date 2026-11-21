@@ -55,6 +55,12 @@ public noncomputable def rationalAdeleAddChar : AddChar A ℂ where
     rw [AddChar.map_add_eq_mul]
     ac_rfl
 
+/-- At real coordinate zero, only the finite additive character contributes. -/
+public theorem rationalAdeleAddChar_eq_finite {a : A} (ha : rationalAdeleReal a = 0) :
+    rationalAdeleAddChar a = rationalFiniteAdeleAddChar a.2 := by
+  change Complex.exp (2 * Real.pi * Complex.I * (rationalAdeleReal a : ℂ)) * _ = _
+  simp [ha]
+
 /-- Any finite set containing the nonintegral coordinates gives the same character value. -/
 public theorem rationalAdeleAddChar_eq_prod (a : A) (S : Finset V)
     (hS : ∀ v ∉ S, a.2 v ∈ v.adicCompletionIntegers ℚ) :

@@ -1815,7 +1815,7 @@ Then $M^2q$ is an integral diagonal, hence an integer. Euclidean
 reduction modulo $M^2$ gives the representative; for uniqueness, the
 difference of two representatives divided by $M^2$ must be an integer.
 
-`exists_rationalAdeleBox_eq_stageCell` uses the finite parts of
+`rationalAdeleBox_stageCell` uses the finite parts of
 $j/M$ and $M$ as the center and dilation, with real coordinates zero
 and one. For every real Schwartz profile, the resulting box is that
 profile times the cell indicator. `exists_rationalAdeleBoxSum_stage_coordinates`
@@ -2216,7 +2216,7 @@ weighted inverse dilation of each real Schwartz profile. The proof
 sums a finite family of derivatives rather than differentiating an
 adelic integral or extending from a sequentially dense subclass.
 
-### Next Fourier step: A fixed-stage continuous linear map
+## Checked Fourier continuity on each rational Schwartz stage
 
 The proof on p. 95 invokes a Fourier automorphism of $\mathcal S(A_F)$
 with its Schwartz–Bruhat topology. The corresponding upstream argument,
@@ -2230,20 +2230,39 @@ without assuming Fourier-side integrability. Part (1) of D.1.6.19 is
 about invariant differential operators, not the real Euler operator;
 it does not itself supply the dilation identity.
 
-A runnable rational level obligation is to construct, for each $n$, a
-continuous complex-linear map on the profile tuples of the factorial
-stage $M=n!$, such that applying `rationalAdeleLFAssembly n` to its
-output realizes `rationalAdeleFourier` of the input assembly pointwise
-on all adeles. For a cell box with finite center $j/M$ and finite scale
-$M$, the checked box transform cuts out the common support
-$M^{-1}\widehat{\mathbb Z}$ on the frequency side. On that support its
-character is unchanged by a shift in $M\widehat{\mathbb Z}$: The
-product of $j/M$ with the shift is finite integral. Use these two
-facts to show the formula on each cell and off the support. In the
-sampled tuple it is a finite matrix of fixed coefficients applied to
-the real transforms, so use `SchwartzMap.fourierTransformCLM` and
-finite sums. This forward level map need not prove inversion or
-identify the manuscript topology.
+In [RationalAdeleStageFourier.lean](../../Proofs/Theorems/RationalAdeleStageFourier.lean),
+`Masullo.rationalAdeleStageFourier M` is a continuous complex-linear map
+on the $M^2$ real Schwartz profiles. For $M>0$ it computes
+
+$$
+(T_M b)_k = \frac1M \sum_{j=0}^{M^2-1}
+  \overline{\chi_f((j/M)(k/M))}\,\mathcal F_{\mathbb R} b_j,
+$$
+
+where $\chi_f$ is the finite factor of the actual rational additive
+character. `Masullo.rationalAdeleStageCoordinates_symm_fourier` shows
+that assembly of the output is exactly the normalized adelic Fourier
+integral of the assembled input at every frequency.
+`Masullo.rationalAdeleLFAssembly_fourier` gives the same identity for
+each factorial-stage inclusion into the rational LF space.
+
+The scaled unramified factor cuts out $M^{-1}\widehat{\mathbb Z}$ on
+the frequency side. The phase is constant under changing $k/M$ by
+$Mz$ with $z\in\widehat{\mathbb Z}$, since the pairing changes by
+$jz\in\widehat{\mathbb Z}$. The Jacobian is exactly $1/M$: Multiply
+the box scale $(1,M)$ by the diagonal $M^{-1}$ and use the product
+formula. This leaves real scale $M^{-1}$ and finite scale one. The
+CLM is a finite matrix composed with `FourierTransform.fourierCLM` on
+real Schwartz profiles. The proof uses no Fourier-side $L^1$ premise. In the cell-box
+identification, the normalization equation is proved in the finite
+adele ring and then transported to integral membership. This avoids a
+kernel replay stall encountered when the same calculation rewrote a
+projected full-adele expression under the integral-membership predicate.
+The result proves forward continuity on levels, not the manuscript's full
+Fourier automorphism or an identification of LF topologies. The
+source comparison above is based on the digest-matched extraction.
+
+### Next Fourier step: Uniform Taylor remainder on real Schwartz profiles
 
 Remark 2.2.4.6, p. 92, asks for the limit in $L_\beta$: Uniform on
 bounded input families in the **target Schwartz topology**. The p. 94
@@ -2253,10 +2272,18 @@ is $-1/t$, not zero. A bound of $4+16\pi|u_\infty y_\infty|$ for
 $t\in[1/2,3/2]$ suffices for fixed-frequency domination with the
 project's rational kernel, not uniform convergence of Schwartz
 seminorms. Equicontinuity of operators alone is also not that limit.
-After the forward level map, use common-stage boundedness and prove
-uniform Taylor remainders in every product Schwartz seminorm on a
-bounded family of profiles, for $s\to0$ in the same target stage.
-This is a possible repair, not yet checked. Neither (2.2.4.30)'s
+First prove the real-profile estimate for $U_s b(t)=e^{-s}b(e^{-s}t)$
+and $G b=-b-tb'$: For each Schwartz seminorm $p_{a,d}$ and
+$0<|s|\le1$, bound the seminorm of $(U_s b-b)/s-Gb$ by
+$C_{a,d}|s|p_{a,d}(G^2 b)$. Differentiate twice in $s$ after taking
+$d$ derivatives in $t$ and use the scalar norm Taylor bound. The
+seminorm of $U_s$ grows by at most $e^{|a-d-1|}$ in this interval.
+For the LF application, common-stage boundedness gives one factorial
+stage for the inputs; its forward Fourier CLM sends their coordinates
+to another bounded set in that same product. The pointwise covariance
+identifies the proposed limit there, and the stage assembly is
+continuous. The profile estimate and the bounded-set limit are not
+yet checked. Neither (2.2.4.30)'s
 explicit phase convention nor the general number-field or manuscript
 tensor-topology comparison has been settled here.
 
