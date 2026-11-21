@@ -957,27 +957,60 @@ Haar on the quotient, not yet its characterization by that counting
 integral. It does not prove the all-stage local product formula, or use
 adelic self-duality. The source reading is provisional, not visual.
 
-## Next additive step: Weil's formula with diagonal counting measure
+## Checked nonnegative Weil formula over the additive rational quotient
 
-For Borel $f:\mathbb A_{\mathbb Q}\to[0,\infty]$, prove
+In [RationalAdeleWeil.lean](../../Proofs/Theorems/RationalAdeleWeil.lean),
+`Masullo.lintegral_eq_lintegral_rationalAdelePeriodization` proves for all
+Borel $f:\mathbb A_{\mathbb Q}\to[0,\infty]$ that
 $$
 \int_{\mathbb A_{\mathbb Q}} f\,d\mu
   = \int_{\mathbb A_{\mathbb Q}/\mathbb Q}
-      \sum_{d\in\mathbb Q} f(s(c)+d)\,d\lambda(c),
+      \sum_{d\in\mathbb Q} f(s(c)+d)\,d\lambda(c).
 $$
-where $\mu$ is the checked upstairs Haar, $\lambda$ is the checked
-quotient probability, and $s(c)$ is the unique half-open strip
-representative. The section only needs to be Borel:
-Exhaust the strip by the compact windows
-$[0,1-1/(n+1)]\times\prod_v O_v$ in the integral stage. The quotient map
-on each is a continuous injection into a Hausdorff space and hence a
-homeomorphism onto a closed image. Use those countably many images to
-check preimages under $s$. Pull back the quotient integral to the strip
-by `measurePreserving_rationalAdeleClass_mk`, then apply the pinned
-`IsAddFundamentalDomain.lintegral_eq_tsum''` and exchange the nonnegative
-sum with the strip integral. Reindex by translation to check independence
-of the representative. This is the nonnegative rational case of (C.4.4.5);
-the complex $L^1$ or vector-valued statements are separate.
+Here $\mu$ is the checked additive Haar, $\lambda$ is the checked quotient
+probability, and the inner sum is counting on the diagonal subgroup
+(the injective image of $\mathbb Q$). Neither side is required to be finite.
+`Masullo.rationalAdelePeriodization_mk` proves that replacing $s(c)$ by
+any lift of $c$ leaves the sum unchanged, pointwise, by reindexing a
+translation of the diagonal. `Masullo.measurable_rationalAdelePeriodization`
+then supplies Borel measurability for Borel $f$ by countable summation.
+
+[RationalAdeleStripSection.lean](../../Proofs/Lemmas/RationalAdeleStripSection.lean)
+constructs $s(c)$ as the unique representative in the half-open strip.
+The compact windows $[0,t]\times\prod_p\mathbb Z_p$, indexed by rational
+$t<1$, cover it. Their projections are continuous injections into a
+Hausdorff quotient, hence closed embeddings. For each Borel set upstairs,
+the preimage under $s$ is a countable union of the images of its
+intersections with these windows. The integral proof applies Mathlib's
+`IsAddFundamentalDomain.lintegral_eq_tsum''` on the strip, exchanges the
+countable nonnegative sum with the strip integral, and uses the checked
+measure-preserving projection to obtain the quotient integral.
+
+Independent Yah statement review checked the digest-matched extraction
+of (C.4.4.5), p. 718, and (D.1.2.1), p. 747, for the quotient integral;
+Proposition D.1.2.4(1)–(2), p. 748, identifies the discrete counting measure
+and the bijective fundamental-domain projection. The half-open strip is
+from Example A.2.1.3, pp. 545–546. With Definition A.3.1.1, p. 555, this checks
+the counting-measure compatibility of the rational additive normalization.
+The $[0,\infty]$ formulation is a project extension for Borel functions,
+not a proof of the complex $L^1$ or Pettis claims in the manuscript. The
+source reading is provisional, not visual.
+
+## Next additive step: complex Weil formula and absolute summability
+
+For Borel $f:\mathbb A_{\mathbb Q}\to\mathbb C$ integrable for $\mu$,
+prove that $\sum_d f(s(c)+d)$ converges absolutely for $\lambda$-almost
+all $c$, gives an integrable periodization, and integrates to
+$\int f\,d\mu$. Apply the checked nonnegative formula to the extended
+norm of $f$ for finiteness of the integrated norm sum. Then use
+`IsAddFundamentalDomain.integral_eq_tsum''`, `integral_tsum`, and the
+measure-preserving projection; restrict any pointwise convergence claim
+to the full-measure set of classes where the norm sum is finite. This is
+the Borel $L^1$ case of (D.1.2.1), p. 747, and a direct input to the
+Fourier-coefficient comparison of Theorem D.1.2.7(1), p. 749. Neither the
+latter comparison, the Plancherel normalization, nor continuity of
+periodization for all relevant Schwartz–Bruhat tests follows from the
+nonnegative formula alone.
 
 Independently, the integral-stage comparison can be strengthened by
 identifying `rationalFiniteIntegersHaar` with the product of the restrictions
@@ -1457,5 +1490,5 @@ is now exactly the diagonal. The [additive quotient topology](#checked-additive-
 is checked. The [half-open additive fundamental domain](#checked-half-open-additive-fundamental-domain)
 is also checked, as is the [upstairs unit-strip mass](#checked-additive-haar-normalization-over-the-rationals).
 The [additive quotient probability Haar](#checked-probability-haar-on-the-additive-rational-quotient)
-is checked. Prove [Weil's formula with diagonal counting measure](#next-additive-step-weils-formula-with-diagonal-counting-measure)
-next.
+is checked, as is the [nonnegative Weil formula](#checked-nonnegative-weil-formula-over-the-additive-rational-quotient).
+Next prove the [complex Borel $L^1$ version](#next-additive-step-complex-weil-formula-and-absolute-summability).
