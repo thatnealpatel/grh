@@ -216,41 +216,75 @@ The factor $\pi^{-s/2}$ has modulus $1/\pi$. The exposed existing lemma
 $s(s-1)$, of modulus at least one here. This bounds the entire numerator,
 not the pole-subtracted `completedRiemannZeta₀` itself.
 
-## Next runnable obligation: A multiplicity count in the moving disk
+## Checked multiplicity count in the moving disk
 
-With $c_t=2+it$, prove in Lean that one constant $K>0$ bounds the sum of
-`zetaZeroOrder` over any finite set of open-strip zeros in
-$\overline B(c_t,5)$ by $K(1+|t|)$, uniformly for $1\le|t|$.
-Generalize the center in the divisor-sum comparison already used in
-[`ZetaZeroDiskCount`](../../Proofs/Lemmas/ZetaZeroDiskCount.lean) and apply
-`AnalyticOnNhd.sum_divisor_le` with inner radius $5$ and outer radius $6$.
+[`Masullo.sum_zetaZeroOrder_le_moving_disk`](../../Proofs/Lemmas/ZetaZeroDiskCount.lean)
+proves that one constant $K>0$ bounds the sum of `zetaZeroOrder` over any
+finite set of open-strip zeros in $\overline B(c_t,5)$ by $K(1+|t|)$, where
+$c_t=2+it$ and $1\le|t|$. This uses the full orders and includes zeros on the
+radius-five boundary. It is an input to the project replacement of the
+completed logarithmic-derivative growth cited in (B.4.2.1), p. 614, not a
+bound on that derivative. The Lang scan's §2, Lemma 2 and Proposition 1
+(printed pp. 333–334), use an elementary two-circle count at a right-hand
+anchor with different bounds and radii. The scan's Proposition 2 on
+pp. 335–336 uses a Weierstrass product comparison for the horizontal bound.
+
 On the outer circle, $|\Re s|\le8$ and $\|s\|\le8+|t|$. Fixing $n=8$
 in `completedZeta₀_factorial_growth` and expanding
-$1+s(s-1)\operatorname{completedRiemannZeta}_0(s)$ gives the required outer
-upper bound of the form $C(1+|t|)^2$. Matching exponential decay on the
-outer circle is not needed for a polynomial bound on the logarithmic
-derivative: The logarithm of the outer-to-anchor ratio grows at most
-linearly in $1+|t|$. This moving-center Jensen estimate is not yet checked.
+$1+s(s-1)\operatorname{completedRiemannZeta}_0(s)$ gives the separate checked
+estimate `Masullo.entireZeta_moving_circle_upper_bound`, with envelope
+$M_t=C(1+|t|)^2$ for one $C\ge1$, now without a restriction on $|t|$.
+Compare the actual orders to the nonnegative inner divisor, and apply
+Mathlib's `AnalyticOnNhd.sum_divisor_le` with radii $5$ and $6$. The
+[anchor bound](#checked-lower-bound-at-the-right-hand-anchor) and
+$\log(1+|t|)\le |t|$ make $\log(M_t/\|\operatorname{entireZeta}(c_t)\|)$ at
+most linear in $1+|t|$. Matching exponential decay on the outer circle
+is not needed. Independent Yah review (`moving-disk-review`) checked the
+statement, the role of the count, and the envelope against the
+matching-digest Masullo text extraction and Lang scan OCR, not rendered
+pages. The elementary Lang inequality by itself does not give the count
+with radii $5$ and $6$; the checked argument uses Jensen.
 
-For the successor, center a disk at $2+it$, take a radius in $(4,5)$
-avoiding the zero radii, and strip the disk's zeros with finite
-Blaschke factors. The factors preserve the boundary norm and only increase the norm at
-the center after division. On the zero-free quotient use a branch of
-logarithm, Borel–Carathéodory, and a fixed-radius Cauchy estimate to
-bound the logarithmic derivative for $\|s-(2+it)\|\le3$. Pinned
-Mathlib supplies `MeromorphicOn.extract_zeros_poles`,
-`Complex.exists_continuousOn_eqOn_exp_comp`,
-`Complex.borelCaratheodory_zero`, and
-`Complex.norm_deriv_le_of_forall_mem_sphere_norm_le`; the disk
-comparison is not yet formalized. The log derivatives of the factors
-each cost $O(1+\delta^{-1})$ at distance
-at least $\delta$ from the zeros, because the denominator of each
-Blaschke factor stays bounded away from zero in the inner disk after
-normalization. At $s=2+it$ the distance to each zero is at least $1$,
-so this route can also bound that vertical edge (use the checked
-reflection for the left edge at $-1$ and compact continuity at bounded
-heights). This uses $a=2$, allowed for the finite rational contour,
-whose vertical lines are already known to be regular.
+## Next runnable obligation: Divide out the closed inner disk divisor
+
+Prove the following factor-removal lemma in Lean. Given an entire $f$,
+a finite set $A$ of points, and the exact finite analytic order $m_a$ of
+$f$ at each $a\in A$, let $P(z)=\prod_{a\in A}(z-a)^{m_a}$. Construct an
+**entire** $g$ with $f=P g$ everywhere and $g(a)\ne0$ for all $a\in A$.
+Away from $A$, $g=f/P$; at each $a$ use the local nonvanishing analytic
+factor supplied by `AnalyticAt.analyticOrderAt_eq_natCast` and divide by
+the other, locally nonzero factors. One can patch those local germs or
+remove the factors one at a time, preserving the order at the other
+points. Do not use the raw totalized quotient as the analytic extension,
+or extend a disk-only identity to its exterior without proof.
+
+For $f=\operatorname{entireZeta}$ take $A$ to be all zeros in the closed
+radius-five disk about $c_t$, with $N=\sum_{a\in A}m_a$. The existing
+`completedZeta_eq_zero_iff_mem_criticalStripZetaZeros` and pole-clearing
+identity identify all numerator zeros off $0,1$; the numerator equals
+one at both poles. The factorization supplies a zero-free $g$ on the open
+radius-five disk. **No choice of a zero-avoiding radius or Blaschke factors
+is needed:** On the radius-six circle each $|z-a|\ge1$, hence $|g|\le M_t$
+there and on the enclosed disk by `Complex.norm_le_of_forall_mem_frontier_norm_le`.
+At the anchor, $|g(c_t)|\ge |f(c_t)|/5^N$. This ordinary-factor comparison
+was independently reviewed as mathematics by `moving-disk-review`; it
+is not yet checked in Lean.
+
+For the subsequent derivative estimate, take a holomorphic logarithm
+$H$ of $g/g(c_t)$ with $H(c_t)=0$. The pinned
+`Complex.exists_continuousOn_eqOn_exp_comp` gives only continuity; prove
+holomorphy by locally comparing $H(z)-H(w)$ with the principal log of
+$g(z)/g(w)$ near each $w$ in the open disk. Its real part is bounded by
+$B=\log(M_t/|f(c_t)|)+N\log 5$. Translate the center to zero and apply
+`Complex.borelCaratheodory_zero` with $B+1$ to bound $|H|$ on the closed
+radius-four disk. Cauchy on unit circles then gives $|H'|\le8(B+1)$ on
+the closed radius-three disk. The factors add at most $N/\delta$ at
+points of distance at least $\delta>0$ from the removed zeros. Subtract
+$1/s+1/(s-1)$ to transfer from $f'/f$ to $\Lambda'/\Lambda$. This gives
+the planned cubic horizontal bound on the separated-height segments
+$[-1,2]+iT_m$, and a vertical bound at $2+it$ by zero distance at least
+one. Use the checked reflection at $-1$ and compact continuity at
+bounded heights. Using $a=2$ is allowed by the checked finite contour.
 
 Absolute vertical integrability and exhaustion of the zero sum still
 need to be checked. The target of (B.4.2.2) remains
