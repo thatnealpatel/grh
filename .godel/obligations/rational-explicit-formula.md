@@ -810,38 +810,64 @@ Only the text extraction, not the printed display, was checked. The local
 integration audit covers `Lemmas.RealLogFourierContact`,
 `Props.RealPrincipalValue`, and the new cutoff endpoint.
 
-## Next runnable obligation: Translate the cutoff to real multiplicative Haar
+<a id="next-runnable-obligation-translate-the-cutoff-to-real-multiplicative-haar"></a>
 
-Let $F$ be a smooth compactly supported log profile, $f(y)=F(\log|y|)$
-on $\mathbb R^\times$, and $u(z)=|1+z|^{-1/2}f(1+z)$, extended by zero
-near $z=-1$. First show that $u$ is a smooth compactly supported additive
-test. For each $\varepsilon>0$, prove that its half-weighted spatial
-cutoff equals
+## Checked real cutoff on multiplicative Haar
+
+[`Props.RealLogProfileHaar`](../../Proofs/Props/RealLogProfileHaar.lean)
+uses Masullo's translate (B.4.4.2), p. 620. For a smooth compactly
+supported log profile $F$, put $f(y)=F(\log|y|)$ on $\mathbb R^\times$
+and $u(z)=|1+z|^{-1/2}f(1+z)$, extended by zero at $-1$.
+`real_log_profile_additive_test` proves that $u$ is smooth and compactly
+supported, with $u(0)=F(0)$. Compact log support ensures an actual zero
+neighborhood at $-1$, not just a removable point. For each $\varepsilon>0$,
+`real_log_profile_haar_cutoff` proves absolute integrability and
 
 $$
-\int_{\{y\in\mathbb R^\times:\,|1-y|\ge\varepsilon\}}
-     f(y)\frac{|y|^{1/2}}{|1-y|}\,\frac{dy}{2|y|}.
+\frac12\int_{|z|\ge\varepsilon}\frac{u(z)}{|z|}\,dz
+=\int_{\substack{y\in\mathbb R^\times\\|1-y|\ge\varepsilon}}
+  f(y)\frac{|y|^{1/2}}{|1-y|}\,\frac{dy}{2|y|}.
 $$
 
-This is a fixed-cutoff identity with absolute integrability, not a
-comparison of limits. Use translation of Lebesgue measure, then
-[`map_realMultiplicativeHaar_val`](../../Proofs/Theorems/RealMultiplicativeHaar.lean)
-to compare to half the full Haar on the actual real units. Connes
-Appendix II (36)–(37) supplies the translation. Masullo (B.4.4.2)
-specifies $u$; if retaining the external
-$1/M_\infty$ of (B.4.4.16), p. 623, the raw-Haar functional it multiplies
-must be twice the additive functional, not the literal (B.4.4.1).
-This is also the coefficient used in the Chapter 12 source comparison:
-(12.4.1.25) cites Lemma B.4.3.2, and (12.5.1.1) uses $1/2$ on the real
-term, p. 519. The fixed-cutoff identity cannot justify the preceding
-Chapter 12 operator limit or its identification with the global $S$-piece.
+The Lean proof first translates Lebesgue measure and the cutoff by
+$y=1+z$, then uses `map_realMultiplicativeHaar_val` for the density on
+real units, with both signs retained. `real_log_profile_haar_principalValue`
+transfers the right-sided limit: The Haar integral plus
+$F(0)\log\varepsilon$ tends to the negative additive Fourier log pairing
+of $u$ minus $(\log(2\pi)+\gamma)F(0)$. Thus the functional itself
+includes the contact term; the limit alone does not.
 
-**After translation:** Compare the physical cutoff with the symmetric
-log cutoff $|\log|y||\ge\varepsilon$. At $y>0$ the physical log thresholds
-are $\log(1+\varepsilon)$ and $-\log(1-\varepsilon)$, whose ratios to
+Connes Appendix II (34)–(37), p. 74, supplies this normalization, also
+consistent with Masullo Remark B.4.4.4, p. 620, on canonical real Haar.
+In the provisional Masullo extraction, if retaining the external
+$1/M_\infty=1/2$ in (B.4.4.16), p. 623, and the real $1/2$ in
+(12.5.1.1), p. 519, the raw-Haar functional being scaled must be twice
+the additive functional, not the literal (B.4.4.1). Equation (12.4.1.25),
+p. 519, cites Lemma B.4.3.2 and uses the inverse argument before passing
+to (12.5.1.1). Inversion does not preserve the finite physical cutoff;
+this result does not identify the actual global $S$-piece, justify its
+operator limit, or supply either Mellin subtraction. Independent Yah
+review (`real-haar-review`) matched the three endpoint types to the
+pinned extraction, Connes Appendix II, and the checked Haar and additive
+interfaces. The printed displays have not been visually checked. The
+local integration audit covers both new modules and the three endpoints.
+
+## Next runnable obligation: Compare physical and symmetric log cutoffs
+
+For the same $F$ and normalized Haar integrand, prove that the difference
+between the integrals cut at $|1-y|\ge\varepsilon$ and at
+$|\log|y||\ge\varepsilon$ tends to zero as $\varepsilon\to0^+$. Keep the
+identity value arbitrary here, so the result also covers Appendix B.
+At $y>0$ the physical log thresholds are $\log(1+\varepsilon)$ and
+$-\log(1-\varepsilon)$, whose ratios to
 $\varepsilon$ tend to one; bound the discrepancies by the resulting
 log-ratios using an $O(1/|\log y|)$ majorant. At $y<0$ the deleted log
-interval has length $2\varepsilon$ and bounded density. Folding
+interval has length $2\varepsilon$ and bounded density. This comparison
+also permits inversion of the finite part, since inversion preserves
+the symmetric log cutoff and the Haar integrand apart from replacing
+$F(t)$ by $F(-t)$.
+
+After the cutoff comparison, folding
 $y=\pm e^{\pm x}$ gives the weight $e^{-x/2}/(1-e^{-2x})$ for $x>0$.
 The identity subtraction contributes
 $-\log(1-e^{-2\varepsilon})+\log\varepsilon\to-\log 2$, leaving
