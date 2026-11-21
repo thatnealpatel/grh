@@ -1,6 +1,9 @@
 # Rational theta inversion at the unramified tensor
 
-**Status:** The [real-lattice inversion module](../../Proofs/Theorems/RationalThetaInversion.lean)
+**Status:** The [finite support theorem](../../Proofs/Theorems/RationalThetaUnramified.lean)
+now identifies the explicit nonzero rational sum for the unramified
+input on the real section with the integer lattice, with absolute
+summability. The [real-lattice inversion module](../../Proofs/Theorems/RationalThetaInversion.lean)
 proves continuity, inversion, and uniform two-tail estimates. The
 [weighted integrability module](../../Proofs/Theorems/RationalThetaIntegrability.lean)
 proves finiteness of the compact-strip squared-norm integral in log
@@ -11,7 +14,8 @@ proves complex differentiability with both zero modes removed. The local
 two-ray factor is holomorphic on $\Re z>0$ without moment conditions.
 Independent Yah statement reviews used text extracted from the
 digest-matched [pinned edition](../sources/masullo/README.md). The readings
-are provisional, not visual. The adelic reduction itself is not formalized.
+are provisional, not visual. The norm-fiber reduction, finite Fourier
+self-duality, and measure comparison are not formalized.
 
 ## Manuscript statement and rational reduction
 
@@ -41,10 +45,63 @@ $$
 Retain both zero modes for arbitrary complex Schwartz $b$. Neither
 evenness nor a Gaussian hypothesis is needed. The two-moment case
 $b(0)=\widehat b(0)=0$ is a corollary, not the inversion statement.
-The identification of the finite factors, tensor Fourier transform,
-and norm section above explains why the checked real statement models
-this passage. It gives no theorem for other finite inputs or number
-fields.
+The finite support reduction on the section is now checked below. The
+identification of the tensor Fourier transform and the continuation of
+this reduction to arbitrary representatives remain open. This model
+gives no theorem for other finite inputs or number fields.
+
+## Checked finite support on the real section
+
+`Masullo.rationalTheta_eq_unramified_sum` specializes (2.2.3.1),
+pp. 81–82, at $s_{\mathbb Q}(t)=(t,1,\ldots)$ from (A.2.2.4), p. 546.
+For $t>0$ and complex Schwartz $b$, the summand at $q\in\mathbb Q^\times$
+is $b(tq)$ if the image of $q$ lies in every finite completion-integer
+ring, and zero otherwise. Lean proves absolute summability and identifies
+the sum with `rationalTheta b t`. This evaluates the characteristic
+function on diagonal inputs without constructing a global
+Schwartz–Bruhat space.
+
+At each finite place the completion valuation agrees with the field
+valuation on the image of $q$. Mathlib's
+`HeightOneSpectrum.mem_integers_of_valuation_le_one` puts a rational
+number integral at all finite places in the image of $\mathcal O_{\mathbb Q}$;
+`Rat.ringOfIntegersEquiv` identifies that image with $\mathbb Z$.
+Conversely, each integer lies in every completion-integer ring. Thus
+nonzero integer indices inject into the nonzero rational indices with
+the same summands, and all terms outside the range vanish. Existing
+Schwartz lattice summability transfers along this inclusion. This is
+not a claim that every integer gives a nonzero term or that the
+surviving indices are required to be local units. Independent Yah
+statement review checked the finite factors, both signs, and the
+exclusion of zero against the digest-matched text of (2.2.3.1),
+(A.2.2.1)–(A.2.2.4), and the context on pp. 77–78. No visual reading
+or adelic Haar equality is claimed.
+
+## Independent next step: Normalize a rational idele representative
+
+Equations (A.2.2.1)–(A.2.2.3), p. 546, give the manuscript's rational
+idele and idele-class decompositions. A first runnable part in Lean is
+**existence only**: For $a$ in `IdeleGroup (𝓞 ℚ) ℚ`, find $r\in\mathbb Q^\times$
+so the finite coordinates of $\operatorname{diag}(r)a$ and their inverses
+are integral. The positive real coordinate and its identification with
+the idelic norm can then use a sign and the product formula. Do not
+normalize the finite coordinates to one.
+
+For the first part, use `FiniteAdeleRing.hasFiniteMulSupport_valued` on
+the finite component to restrict to a finite set of places. Use
+`HeightOneSpectrum.intValuation_singleton` at a generator of each
+prime ideal of $\mathcal O_{\mathbb Q}$ and `intValuation_eq_one_iff`
+at the other primes. These give valuation $\exp(-1)$ at the chosen
+place and $1$ elsewhere. If the nonzero value of $a_v$ is
+$\exp(-k_v)$, multiply by the product of the generators to powers
+$-k_v$ using `IdeleGroup.unitEmbedding`. This route has not been
+elaborated. After normalization, theta constancy on each norm fiber
+needs two separate facts: Multiplication by a local unit preserves
+the indicator, and principal rescaling reindexes the nonzero rational
+sum. Only after that can (A.3.3.1), p. 561, and the mass-one
+specialization of (A.3.2.1), p. 560, be used to reduce the quotient
+integral to the section. Neither this work nor the open-strip
+continuation needs to wait for a visual audit of p. 522.
 
 ## Checked real-lattice inversion
 
