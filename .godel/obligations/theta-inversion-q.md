@@ -4,7 +4,9 @@
 proves continuity, inversion, and uniform two-tail estimates. The
 [weighted integrability module](../../Proofs/Theorems/RationalThetaIntegrability.lean)
 proves finiteness of the compact-strip squared-norm integral in log
-coordinates. Independent Yah statement reviews used text extracted from the
+coordinates. The [Mellin unfolding theorem](../../Proofs/Theorems/RationalThetaMellin.lean)
+proves absolute convergence and the zeta factorization in $\Re z>1$.
+Independent Yah statement reviews used text extracted from the
 digest-matched [pinned edition](../sources/masullo/README.md). The readings
 are provisional, not visual. The adelic reduction itself is not formalized.
 
@@ -123,31 +125,72 @@ It does not supply the theta-to-Hilbert map's continuity in the source
 topology, the identification with the partitioned diagonal, or a trace
 formula.
 
-## Next runnable step: Unfold the rational theta Mellin integral
+## Checked rational theta Mellin unfolding
 
-Theorem 3.2.2.1(2)–(3), pp. 124–125, and (3.2.2.11), p. 127, first
-unfold the absolutely convergent theta integral in $\Re z>1$. In our
-rational unramified lattice model, let $B(x)=b(e^x)+b(-e^x)$. For
-$z\in\mathbb C$ with $\Re z>1$, the target is
+Theorem 3.2.2.1(2)–(3), pp. 124–125, and (3.2.2.11), p. 127, unfold
+the absolutely convergent theta integral in $\Re z>1$. In the rational
+unramified model the integrand is constant on the norm-one fibers:
+One can represent those classes with real component one and finite unit
+components, which do not change the finite tensor factors. The norm-one
+volume is one by (A.3.2.1), p. 560, and the real section has measure
+$dt/t=dx$ for $t=e^x$. The archimedean factor integrates both signs,
+using the local measure $dt/|t|$ from Definition A.3.2.2(1), p. 560.
+No extra factor of two is inserted. The example on p. 127 uses a modified
+$2$-adic input, unlike the unramified tensor here.
+
+For any complex Schwartz $b$, put $B(x)=b(e^x)+b(-e^x)$ and
+$F_z(x)=B(x)e^{zx}$. `Masullo.integrable_rationalMellinIntegrand` proves
+$F_z\in L^1(dx)$ for $\Re z>0$: The order-zero Schwartz seminorm bounds
+the negative tail, and an order $N>\Re z$ bounds the positive tail.
+`Masullo.rationalTheta_mellin_eq_zeta_mul` proves both integrability of
+the weighted theta profile and
 
 $$
   \int_{\mathbb R}\theta_b(e^x)e^{zx}\,dx
-   =\zeta(z)\int_{\mathbb R}B(x)e^{zx}\,dx.
+   =\zeta(z)\int_{\mathbb R}F_z(x)\,dx,\qquad \Re z>1.
 $$
 
-This is the rational calculation in the orbital handoff, not an
-adelic unfolding theorem. No moment hypotheses are needed on this
-half-plane: $B$ is bounded at the negative end and decays rapidly in
-$e^x$ at the positive end. Start by proving integrability of
-$B(x)e^{zx}$ and the exact norm-series bound. Split the nonzero integers
-into positive and negative pairs indexed by $k=n+1$, $n\in\mathbb N$.
-With $F_z(x)=B(x)e^{zx}$ the $k$th weighted sample is
-$k^{-z}F_z(x+\log k)$. By translation invariance, its integrated norm
-is $k^{-\Re z}\int_{\mathbb R}|F_z(x)|\,dx$. Thus the norm-integral
-series has a finite sum by the real $p$-series test. Pinned Mathlib's
-`MeasureTheory.integral_tsum` asks for exactly this finite sum of norm
-lintegrals and a.e. strong measurability of each sample. Use
-`zeta_eq_tsum_one_div_nat_add_one_cpow` to match $k=n+1$, without relying
-on the convention for complex powers of zero. This step does not
-continue the identity to the zero line, prove zero-line nonvanishing,
-or identify any quotient projection.
+This does not require evenness or either zero mode to vanish. The Lean
+proof reindexes the already absolutely summable signed lattice samples
+into pairs $k,-k$, with $k=n+1$. The $k$th weighted pair is
+$k^{-z}F_z(x+\log k)$. Its integrated norm is exactly
+$k^{-\Re z}\int|F_z|$ by translation invariance. The real $p$-series test
+makes these norms summable, justifying Tonelli for the norm majorant and
+termwise Bochner integration. The resulting positive-index series is
+Mathlib's `zeta_eq_tsum_one_div_nat_add_one_cpow`. This proves the lattice
+factorization, not an adelic quotient integral or locally uniform
+convergence in the parameter. Independent Yah review checked the two
+signs, both half-planes, and all measure factors against the digest-matched
+extraction, not the rendered pages.
+
+The wording of Theorem 3.2.2.1(2)(b), p. 125, provisionally refers to the
+*unprojected* integral (3.2.2.3). Multiplying by a unitary angular
+character does not affect its absolute integrability at a fixed real
+part. Cancellation for a nontrivial compact isotype happens in the
+compact average **before** the norm-section integral in (3). The
+trivial-isotype calculation above does not depend on that wording.
+
+## Next runnable step: Differentiate the two-moment theta Mellin integral
+
+This targets Theorem 3.2.2.1(2)(a) and (3)(a), pp. 124–125, in the same
+rational model. For $b(0)=\widehat b(0)=0$, show that
+$z\mapsto\int_{\mathbb R}\theta_b(e^x)e^{zx}\,dx$ is entire. For each
+$z_0$ and $|z-z_0|<1$, both the weighted theta and its parameter
+derivative are bounded by $C(1+|x|)e^{-(N-|\Re z_0|-1)|x|}$ using
+`rationalTheta_uniform_log_bound`. Choose $N>|\Re z_0|+2$ and absorb
+$1+|x|\le e^{|x|}$. Apply pinned Mathlib's
+`hasDerivAt_integral_of_dominated_loc_of_deriv_le`, with derivative
+the integral of $x\theta_b(e^x)e^{zx}$. Prove holomorphy of the two-ray
+factor on $\Re z>0$ by the analogous positive and negative tail bounds
+on a neighborhood whose real parts stay positive. These are the two
+holomorphy inputs to the identity theorem on
+$\{\Re z>0\}\setminus\{1\}$. Use `differentiableAt_riemannZeta` there.
+
+If $B$ is not identically zero, the series of integrated norms of the
+paired samples diverges for $0<\Re z\le1$, even for two-moment inputs.
+Continuation into the strip must not repeat the absolute interchange.
+Treat $z=1$ separately: The two-ray factor at $1$ is $\int b=0$ when
+$\widehat b(0)=0$, but the removable value of the product is given by
+the derivative of that factor, not by evaluating the totalized
+`riemannZeta 1`. Neither the zero-line identity nor the trace's Mellin
+subtractions are established by the half-plane theorem.
