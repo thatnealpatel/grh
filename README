@@ -21,3 +21,8 @@ This project makes use of AI-assistance
 heavily. The intention is that the files
 in Proofs/{Props,Theorems} are the final
 human attention surface.
+
+Agent nodes in Gödel programs invoke yah;
+deterministic nodes may use other executables.
+See cmd/handoff/README.md for a standalone
+historical handoff reading check.
