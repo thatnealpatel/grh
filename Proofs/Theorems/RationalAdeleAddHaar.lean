@@ -101,6 +101,11 @@ variable [MeasurableSpace A] [BorelSpace A]
 unit interval with integral finite coordinates. -/
 public noncomputable def rationalAdeleAddHaar : Measure A := Measure.addHaarMeasure rationalAdeleClosedUnitStrip
 
+public theorem rationalAdeleAddHaar_eq_addHaarMeasure :
+    rationalAdeleAddHaar = Measure.addHaarMeasure rationalAdeleClosedUnitStrip := by
+  unfold rationalAdeleAddHaar
+  rfl
+
 public instance : rationalAdeleAddHaar.IsAddHaarMeasure := by
   unfold rationalAdeleAddHaar
   infer_instance

@@ -43,6 +43,9 @@ public scoped instance (S : Finset V) : SecondCountableTopology (RationalAdeleFi
   change SecondCountableTopology (ℝ × (((v : {v // v ∈ S}) → F v.val) × ((v : {v // v ∉ S}) → O v.val)))
   infer_instance
 
+/-- The full finite-place Haar measures are sigma-finite. -/
+public scoped instance (v : V) : SigmaFinite (rationalLocalFieldAddHaar v) := inferInstance
+
 private noncomputable def outsideHaar (S : Finset V) : Measure ((v : {v // v ∉ S}) → O v.val) :=
   Measure.infinitePi (fun v ↦ rationalLocalIntegersAddHaar v.val)
 
@@ -100,7 +103,8 @@ public noncomputable def rationalAdeleFiniteStageClosedUnitStrip (S : Finset V) 
     obtain ⟨x, rfl⟩ := closedStrip_subset_stage S (interior_subset ha)
     exact ⟨x, ha⟩
 
-private theorem closedStrip_eq (S : Finset V) :
+/-- The calibration strip is a box in finite-stage coordinates. -/
+public theorem rationalAdeleFiniteStageClosedUnitStrip_eq (S : Finset V) :
     (rationalAdeleFiniteStageClosedUnitStrip S : Set (RationalAdeleFiniteStage S)) =
       Icc 0 1 ×ˢ (univ.pi (fun v : {v // v ∈ S} ↦ (O v.val : Set (F v.val))) ×ˢ univ) := by
   ext x
@@ -121,7 +125,7 @@ private theorem closedStrip_eq (S : Finset V) :
 /-- The product measure gives the closed unit strip mass one. -/
 public theorem rationalAdeleFiniteStageHaar_closedUnitStrip (S : Finset V) :
     rationalAdeleFiniteStageHaar S (rationalAdeleFiniteStageClosedUnitStrip S) = 1 := by
-  rw [closedStrip_eq, rationalAdeleFiniteStageHaar]
+  rw [rationalAdeleFiniteStageClosedUnitStrip_eq, rationalAdeleFiniteStageHaar]
   change volume.prod ((Measure.pi _).prod (outsideHaar S)) _ = 1
   rw [Measure.prod_prod, Measure.prod_prod, Measure.pi_pi]
   simp [Real.volume_Icc, rationalLocalFieldAddHaar_integers, measure_univ]

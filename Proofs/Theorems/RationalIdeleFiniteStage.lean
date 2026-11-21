@@ -2,7 +2,7 @@ module
 
 public import Lemmas.RationalIdeleReal
 
-import Lemmas.RationalAdeleFiniteStage
+public import Lemmas.RationalAdeleFiniteStage
 import Mathlib.Topology.Algebra.Group.Units
 
 /-!
@@ -110,5 +110,14 @@ public theorem iUnion_range_rationalIdeleFiniteStageEmbedding :
   intro v hv
   by_contra hnot
   exact hv (hfinite.mem_toFinset.mpr hnot)
+
+/-- Every rational idele comes from a unit of some additive finite-stage ring. -/
+public theorem exists_rationalAdeleFiniteStage_unit (g : IdeleGroup (𝓞 ℚ) ℚ) :
+    ∃ (S : Finset V) (u : (RationalAdeleFiniteStage S)ˣ),
+      Units.map (rationalAdeleFiniteStageEmbedding S) u = g := by
+  obtain ⟨S, x, hx⟩ := mem_iUnion.mp
+    (show g ∈ ⋃ S : Finset V, range (rationalIdeleFiniteStageEmbedding S) by
+      rw [iUnion_range_rationalIdeleFiniteStageEmbedding]; trivial)
+  exact ⟨S, (stageUnits S).symm x, hx⟩
 
 end Masullo

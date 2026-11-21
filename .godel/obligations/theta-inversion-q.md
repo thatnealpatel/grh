@@ -1395,34 +1395,54 @@ on `Lemmas.PadicAddHaar`, `Lemmas.RationalLocalAdditiveModulus`, and
 `Theorems.PadicIntegralBallFourier`, and external `#check` and
 `#print axioms` on the local endpoints and Fourier statements.
 
-## Next additive step: Compute the additive modulus of idele dilation
+## Checked rational additive Haar scaling under idele dilation
 
-For Lemma A.3.1.4, p. 556, prove for any rational idele $g$ that the
-**comap** of `rationalAdeleAddHaar` by the continuous additive automorphism
-$x\mapsto gx$ equals $\operatorname{ofReal}(\mathrm{ideleNorm}(g))$ times
-that measure. The corresponding pushforward has the reciprocal factor.
-This is an upstream change of variables for Fourier transforms of
-finite-box Schwartz tensors, not needed by the checked unramified theta
-proof.
+In [RationalAdeleAdditiveDilation.lean](../../Proofs/Theorems/RationalAdeleAdditiveDilation.lean),
+`Masullo.rationalAdeleHaar_image_idele_mul` proves
+$\mu(gB)=|g|_{\mathbb Q}\mu(B)$ for every rational idele $g$,
+Borel set $B$, and additive Haar measure $\mu$ on the actual adeles.
+`Masullo.comap_rationalAdeleAddHaar_dilate` gives the measure identity
+for the normalized choice. The comap is by $x\mapsto gx$ and gives the
+image mass on $B$, not its preimage mass. A pushforward by that same
+map would have the reciprocal factor.
 
-First compute the mass of the image of `rationalAdeleClosedUnitStrip`.
-Use `iUnion_range_rationalIdeleFiniteStageEmbedding` to write $g$ in a
-stage $S$. In `RationalAdeleFiniteStage S` its image strip is the box
-with real interval $[\min(0,g_\infty),\max(0,g_\infty)]$, inside factors
-$g_vO_v$, and the whole outside integer product. Prove the box image
-identity using coordinatewise division by $g$, with the unit inverse
-preserving the outside integer rings. Evaluate via
-`comap_rationalAdeleAddHaar_finiteStage`, `Measure.prod_prod`,
-`Measure.pi_pi`, `Real.volume_Icc`, and
-`rationalLocalFieldAddHaar_dilate_integers`; rewrite the finite part of
-`AdeleRing.norm_apply_of_isUnit` as the product over $S$ since the norm
-is one outside. Then apply Haar uniqueness on the closed strip to the
-comap by the additive automorphism. Extend by Haar uniqueness and
-scalar multiplication to arbitrary rational additive Haar and evaluate
-on Borel sets. The manuscript cites [CF, Ch. XV, Lemma 4.1.2]; this
-rational proof uses the checked stage product instead. The global
-modulus, the arbitrary-Haar formulation, and the general number-field
-case remain open.
+Every idele is a unit of some finite-stage ring: Choose the stage to
+contain the nonintegral coordinates of both $g$ and $g^{-1}$. The stage
+embedding commutes with multiplication, so the closed unit strip can be
+dilated within this one stage. In coordinates, the real interval is the
+unordered closed interval with endpoints $0$ and $g_\infty$. The
+inside factors are $g_vO_v$, and the outside factors are still the whole
+integer rings by invertibility there. The checked stage product formula
+computes the image mass as the real absolute value times the product of
+the local norms on the stage, with norm one outside. Haar uniqueness on
+the second-countable, locally compact adeles extends this calibration to
+the comap, and comparing Haar normalizations gives the Borel-set result
+without a separate regularity hypothesis on $\mu$.
+
+Independent Yah statement review matched the direction, quantifiers, and
+norm with Lemma A.3.1.4, p. 556, and the rational norm in (A.2.2.2),
+p. 546, in the digest-matched layout extraction. The manuscript cites
+[CF, Ch. XV, Lemma 4.1.2]; the checked proof over $\mathbb Q$ is a
+project derivation from the finite-stage product. It does not prove the
+general number-field case or use additive self-duality. Source readings
+are provisional text readings, not rendered-page verification.
+
+## Next additive step: Fourier transform of translated finite boxes
+
+For a real Schwartz function $b$, let $U_b$ denote
+`rationalAdeleUnramified b`. Prove the adelic Fourier integral of
+$x\mapsto U_b(g^{-1}(x-a))$ at every $y$ for $a\in A_{\mathbb Q}$ and
+$g\in A_{\mathbb Q}^{\times}$ is
+$|g|_{\mathbb Q}\overline{\psi(ay)}\,U_{\mathcal F b}(gy)$, with the
+same character and Haar as `integral_rationalAdeleUnramified_mul_conj_char`.
+Choose the substitution $x=a+gz$; Haar translation and the checked
+comap reduce it to the unramified integral. The phase is a multiplier,
+not a shift of frequency support. Check the $L^1$ transport alongside
+the integral using Mathlib's measurable-equivalence change of variables.
+This is a project extension of the tensor calculation in Example
+A.3.1.8, p. 558, with the negative real Fourier convention of Example
+A.3.1.5, p. 557. This result alone would not establish ambient self-duality
+or Poisson summation on the full Schwartz–Bruhat space in Theorem 2.2.3.2.
 
 ## Checked real-lattice inversion
 
@@ -1899,4 +1919,4 @@ The [complex Borel $L^1$ version](#checked-complex-weil-formula-and-absolute-sum
 is checked, as are the [quotient Fourier coefficient comparison and point
 separation](#checked-unfolding-of-the-quotient-fourier-coefficients) and
 [uniform density and Haar orthogonality](#checked-density-and-orthogonality-of-the-rational-quotient-characters).
-The [pointwise reconstruction and rational counting-series formula](#checked-pointwise-poisson-summation-with-explicit-convergence-hypotheses) are checked under explicit convergence hypotheses. The [unramified tensor periodization](#checked-periodization-of-the-rational-unramified-tensor) is now absolutely convergent at every lift and continuous on the quotient, with the input integrable upstairs. The [unramified transform and pointwise Poisson formula](#checked-fourier-transform-and-pointwise-poisson-for-the-unramified-tensor) now discharge Fourier-side summability. The [adelic theta inversion theorem](#checked-adelic-theta-inversion-for-the-unramified-tensor) now applies to the actual tensor sums at every idele. The [integral-stage additive product formula](#checked-local-product-on-the-integral-finite-additive-stage) now identifies the compact factor as a product of local Haar probabilities. The [all-stage product theorem and global characterization](#checked-restricted-product-formula-for-rational-additive-haar) now give the rational global formula (A.3.1.3). Next [compute the additive modulus of idele dilation](#next-additive-step-compute-the-additive-modulus-of-idele-dilation).
+The [pointwise reconstruction and rational counting-series formula](#checked-pointwise-poisson-summation-with-explicit-convergence-hypotheses) are checked under explicit convergence hypotheses. The [unramified tensor periodization](#checked-periodization-of-the-rational-unramified-tensor) is now absolutely convergent at every lift and continuous on the quotient, with the input integrable upstairs. The [unramified transform and pointwise Poisson formula](#checked-fourier-transform-and-pointwise-poisson-for-the-unramified-tensor) now discharge Fourier-side summability. The [adelic theta inversion theorem](#checked-adelic-theta-inversion-for-the-unramified-tensor) now applies to the actual tensor sums at every idele. The [integral-stage additive product formula](#checked-local-product-on-the-integral-finite-additive-stage) now identifies the compact factor as a product of local Haar probabilities. The [all-stage product theorem and global characterization](#checked-restricted-product-formula-for-rational-additive-haar) now give the rational global formula (A.3.1.3). The [global additive dilation law](#checked-rational-additive-haar-scaling-under-idele-dilation) is checked over $\mathbb Q$. Next [transform translated finite boxes](#next-additive-step-fourier-transform-of-translated-finite-boxes).
