@@ -35,6 +35,16 @@ public theorem isOpen_rationalIntegralAdeles : IsOpen (rationalIntegralAdeles : 
 @[expose]
 public noncomputable def rationalDiagonal : AddSubgroup A := (ι).toAddMonoidHom.range
 
+/-- Parametrize the additive diagonal by the rationals. -/
+public noncomputable def rationalDiagonalEquiv : ℚ ≃ rationalDiagonal :=
+  Equiv.ofBijective (fun q ↦ (⟨ι q, ⟨q, rfl⟩⟩ : rationalDiagonal))
+    ⟨fun _ _ h ↦ AdeleRing.algebraMap_injective (𝓞 ℚ) ℚ (congrArg Subtype.val h),
+      fun ⟨_, ⟨q, hq⟩⟩ ↦ ⟨q, Subtype.ext hq⟩⟩
+
+public theorem rationalDiagonalEquiv_apply (q : ℚ) : (rationalDiagonalEquiv q : A) = ι q := by
+  unfold rationalDiagonalEquiv
+  rfl
+
 /-- Integer casts lie in the integral-finite stage. -/
 public theorem intCast_mem_rationalIntegralAdeles (z : ℤ) : (z : A) ∈ rationalIntegralAdeles :=
   fun v ↦ intCast_mem (O v) z

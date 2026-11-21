@@ -52,20 +52,13 @@ private theorem unramified_idele_mul (b : 𝓢(ℝ, ℂ)) (g : J) :
   rw [mul_mul_mul_comm, ← map_mul, ← Units.val_mul, mul_inv_cancel, Units.val_one,
     map_one, one_mul]
 
-private noncomputable def diagonalParam : ℚ ≃ rationalDiagonal :=
-  Equiv.ofBijective (fun q ↦ (⟨ι q, ⟨q, rfl⟩⟩ : rationalDiagonal))
-    ⟨fun _ _ h ↦ AdeleRing.algebraMap_injective (𝓞 ℚ) ℚ (congrArg Subtype.val h),
-      fun ⟨_, ⟨q, hq⟩⟩ ↦ ⟨q, Subtype.ext hq⟩⟩
-
-private theorem diagonalParam_apply (q : ℚ) : (diagonalParam q : A) = ι q := rfl
-
 private noncomputable def diagonalScale (r : ℚˣ) : Equiv.Perm rationalDiagonal :=
-  (diagonalParam.symm.trans (Equiv.mulLeft₀ (r : ℚ) r.ne_zero)).trans diagonalParam
+  (rationalDiagonalEquiv.symm.trans (Equiv.mulLeft₀ (r : ℚ) r.ne_zero)).trans rationalDiagonalEquiv
 
 private theorem diagonalScale_apply (r : ℚˣ) (d : rationalDiagonal) :
     (diagonalScale r d : A) = ι (r : ℚ) * (d : A) := by
-  obtain ⟨q, rfl⟩ := diagonalParam.surjective d
-  simp only [diagonalScale, Equiv.trans_apply, Equiv.symm_apply_apply, diagonalParam_apply]
+  obtain ⟨q, rfl⟩ := rationalDiagonalEquiv.surjective d
+  simp only [diagonalScale, Equiv.trans_apply, Equiv.symm_apply_apply, rationalDiagonalEquiv_apply]
   exact map_mul ι _ _
 
 private theorem box_diagonal_reindex (b : 𝓢(ℝ, ℂ)) (a : A) (g : J) :
@@ -109,7 +102,7 @@ public theorem summable_norm_rationalAdeleUnramified_mul_diagonal (b : 𝓢(ℝ,
   obtain ⟨r, c, h⟩ := unramified_idele_mul b g
   have hs := (diagonalScale r).summable_iff.mpr
     (summable_norm_rationalAdeleUnramified_add c 0)
-  have hq := diagonalParam.summable_iff.mpr hs
-  simpa only [Function.comp_def, zero_add, diagonalScale_apply, diagonalParam_apply, h] using hq
+  have hq := rationalDiagonalEquiv.summable_iff.mpr hs
+  simpa only [Function.comp_def, zero_add, diagonalScale_apply, rationalDiagonalEquiv_apply, h] using hq
 
 end Masullo

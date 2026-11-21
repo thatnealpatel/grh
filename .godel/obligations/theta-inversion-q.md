@@ -1524,20 +1524,77 @@ rendered-page inspection. The checked result concerns the algebraic
 span of explicit functions, not an independently constructed full
 Schwartz–Bruhat space, its LF topology, or Fourier stability of that span.
 
-## Next additive step: Theta inversion on the generator span
+## Checked pointwise theta inversion on the generator span
 
-For Theorem 2.2.3.2, (2.2.3.2), p. 82, take a finite box sum $F$ and
-apply the checked Poisson formula at zero to $z\mapsto F(kz)$, for
-$k\in\mathbb A_{\mathbb Q}^{\times}$. The summands are boxes with centers
-$k^{-1}a_i$ and scales $k^{-1}g_i$. Compare their explicit Fourier
-formulas to get $\widehat{F(k\,\cdot)}(y)=|k|_{\mathbb Q}^{-1}\widehat F(k^{-1}y)$
-with no ambient duality premise. Reindex the diagonal by $\mathbb Q$ and
-use `Summable.sum_add_tsum_compl` at $\{0\}$ (as in `ScaledPoisson.lean`),
-then `unitsEquivNeZero` for the nonzero indices. This gives the pointwise
-identity with both zero-mode corrections. To reach the text's identity
-of continuous functions on the idele class group, separately check
-continuity in the dilation variable and descent; continuity of a fixed
-box's additive periodization alone is not that assertion.
+[RationalAdeleBoxThetaInversion.lean](../../Proofs/Theorems/RationalAdeleBoxThetaInversion.lean)
+proves the pointwise identity of Theorem 2.2.3.2, (2.2.3.2), p. 82,
+over $\mathbb Q$ for a finite complex linear combination $F$ of boxes.
+Writing $\Theta(F)(k)=\sum_{q\in\mathbb Q^\times} F(\iota^\times(q) k)$
+and $\widehat F$ for the negative-sign integral against the normalized
+additive Haar, `Masullo.rationalAdeleBoxSum_theta_inversion` gives
+$$
+\Theta(F)(k)=|k|_{\mathbb Q}^{-1}\Theta(\widehat F)(k^{-1})
+ + |k|_{\mathbb Q}^{-1}\widehat F(0)-F(0)
+$$
+for every idele $k$. `Masullo.summable_norm_rationalAdeleBoxSum_theta`
+proves absolute convergence of both nonzero sums without extra premises.
+Here $\Theta$ denotes the nonzero sum that the manuscript calls $\Phi_F$;
+the Lean definition `rationalAdeleTheta` also omits zero.
+
+The manuscript cites Tate and Lemma 2.2.2.1. In Lean, dilating by $k$
+replaces each center $a_i$ and scale $g_i$ by $k^{-1}a_i$ and
+$k^{-1}g_i$. The checked affine integral gives
+$\widehat{F(k\,\cdot)}(y)=|k|_{\mathbb Q}^{-1}\widehat F(k^{-1}y)$.
+Apply the checked box-sum Poisson formula at zero and parametrize the
+additive diagonal by $\mathbb Q$. Split off zero on each side before
+reindexing the remaining terms by $\mathbb Q^\times$. This proof uses
+neither an ambient duality or Plancherel theorem nor the printed
+continuity assertion in Lemma 2.2.2.1. As noted in Remark 2.2.3.3,
+quotient Haar has mass one for the chosen counting measure and upstairs
+normalization, so no quotient volume factor occurs.
+
+The formal result does not yet give the stated identity *of continuous
+functions on the idele class group*. Fixed-dilation continuity on the
+additive quotient is a different assertion from continuity as $k$ varies.
+Nor does this prove the full two-variable locally uniform convergence in
+Lemma 2.2.2.1 or identify the manuscript's LF space. Source references
+are to the digest-matched layout extraction, not to rendered pages.
+
+An independent Yah statement review against base
+`a0610272274b6dd1600cc0afd0e1d67f48bcaa30` confirmed the negative-sign
+integral convention, the inverse scale, the quotient mass factor of one,
+the signs of the zero modes, and pointwise absolute convergence. It did
+not certify visual readings or the stronger continuity claim.
+
+### Next additive step: Continuity and descent of theta on the generator span
+
+Prove spatial theta continuity on the ideles for a single box, then take
+finite linear combinations. For a concrete local majorant at $k_0$, use
+the open neighborhood $k_0 W$, with $W$ the checked positive finite-unit
+window. Normalize $g^{-1}k_0$ by a principal rational unit $r$ as in
+`exists_rational_principal_mul_norm_section`. Then $r g^{-1}k$ has finite
+unit coordinates for all $k\in k_0 W$. Choose a positive integer $D$
+clearing the finite denominators of $g^{-1}a$: Apply
+`exists_rational_sub_mem_integral` to this center and clear the denominator
+of the resulting rational. A nonzero sample must satisfy
+$g^{-1}(k\iota(q)-a)$ integral at the finite places. After multiplication
+by $D$ and addition of the cleared center, finite units can be canceled
+and `algebraMap_mem_rationalIntegralAdeles_iff` gives $Dq/r\in\mathbb Z$.
+Thus the same lattice $(r/D)\mathbb Z$ controls the index on the whole
+neighborhood. On a smaller neighborhood where the absolute real scale
+is bounded below, the real argument has magnitude at least a fixed
+positive multiple of $|n|$ for sufficiently large $|n|$, even after the
+fixed translation. Use the Schwartz seminorm of order $(2,0)$ there and
+order $(0,0)$ for the finite remainder, and apply `continuousOn_tsum`.
+This is a candidate route for the $x=0$ part of Lemma 2.2.2.1(2),
+pp. 77–78, not a checked uniform estimate yet.
+
+Reindex by rational units to get principal invariance, then use
+`QuotientGroup.isQuotientMap_mk` for continuity downstairs. For the
+Fourier theta sum, the pointwise inversion at $k^{-1}$ solves for
+$\Theta(\widehat F)(k)$ as a continuous expression in the spatial sum,
+the norm, and the zero terms. No prior Fourier stability of the box span
+is needed for this continuity step.
 
 ## Checked real-lattice inversion
 
@@ -2014,4 +2071,4 @@ The [complex Borel $L^1$ version](#checked-complex-weil-formula-and-absolute-sum
 is checked, as are the [quotient Fourier coefficient comparison and point
 separation](#checked-unfolding-of-the-quotient-fourier-coefficients) and
 [uniform density and Haar orthogonality](#checked-density-and-orthogonality-of-the-rational-quotient-characters).
-The [pointwise reconstruction and rational counting-series formula](#checked-pointwise-poisson-summation-with-explicit-convergence-hypotheses) are checked under explicit convergence hypotheses. The [unramified tensor periodization](#checked-periodization-of-the-rational-unramified-tensor) is now absolutely convergent at every lift and continuous on the quotient, with the input integrable upstairs. The [unramified transform and pointwise Poisson formula](#checked-fourier-transform-and-pointwise-poisson-for-the-unramified-tensor) now discharge Fourier-side summability. The [adelic theta inversion theorem](#checked-adelic-theta-inversion-for-the-unramified-tensor) now applies to the actual tensor sums at every idele. The [integral-stage additive product formula](#checked-local-product-on-the-integral-finite-additive-stage) now identifies the compact factor as a product of local Haar probabilities. The [all-stage product theorem and global characterization](#checked-restricted-product-formula-for-rational-additive-haar) now give the rational global formula (A.3.1.3). The [global additive dilation law](#checked-rational-additive-haar-scaling-under-idele-dilation) is checked over $\mathbb Q$. The [translated finite-box transform](#checked-fourier-transform-of-translated-finite-boxes) and [pointwise Poisson summation for these boxes](#checked-pointwise-poisson-summation-for-finite-boxes) are now checked. The resulting [generator-span Poisson theorem](#checked-poisson-summation-on-the-translated-generator-span) is checked. Next [derive rational theta inversion on this span](#next-additive-step-theta-inversion-on-the-generator-span).
+The [pointwise reconstruction and rational counting-series formula](#checked-pointwise-poisson-summation-with-explicit-convergence-hypotheses) are checked under explicit convergence hypotheses. The [unramified tensor periodization](#checked-periodization-of-the-rational-unramified-tensor) is now absolutely convergent at every lift and continuous on the quotient, with the input integrable upstairs. The [unramified transform and pointwise Poisson formula](#checked-fourier-transform-and-pointwise-poisson-for-the-unramified-tensor) now discharge Fourier-side summability. The [adelic theta inversion theorem](#checked-adelic-theta-inversion-for-the-unramified-tensor) now applies to the actual tensor sums at every idele. The [integral-stage additive product formula](#checked-local-product-on-the-integral-finite-additive-stage) now identifies the compact factor as a product of local Haar probabilities. The [all-stage product theorem and global characterization](#checked-restricted-product-formula-for-rational-additive-haar) now give the rational global formula (A.3.1.3). The [global additive dilation law](#checked-rational-additive-haar-scaling-under-idele-dilation) is checked over $\mathbb Q$. The [translated finite-box transform](#checked-fourier-transform-of-translated-finite-boxes) and [pointwise Poisson summation for these boxes](#checked-pointwise-poisson-summation-for-finite-boxes) are now checked. The resulting [generator-span Poisson theorem](#checked-poisson-summation-on-the-translated-generator-span) is checked. The [pointwise theta identity](#checked-pointwise-theta-inversion-on-the-generator-span) is checked on that span; [continuity and descent](#next-additive-step-continuity-and-descent-of-theta-on-the-generator-span) remain.
