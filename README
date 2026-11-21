@@ -1,0 +1,23 @@
+This is an experimental, unaffiliated
+project that formalizes and investigates
+arguments from Alessandro Maria Masullo’s
+manuscript: The Music of the Primes.
+
+The LICENSE file covers this project's
+code, Lean proofs, and other content
+expressly not from the manuscript which
+is wholly the original work of Masullo.
+
+This project uses patel.codes/godel, an
+experimental abstraction beyond agentic
+coding harness, to define self-improving
+programs whose goal is to formalize the
+manuscript in Lean 4 and substantiate
+any repairs that might be required in a
+manner that is respectful towards expert
+human attention.
+
+This project makes use of AI-assistance
+heavily. The intention is that the files
+in Proofs/{Props,Theorems} are the final
+human attention surface.
