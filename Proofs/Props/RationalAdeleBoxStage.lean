@@ -1,6 +1,7 @@
 module
 
 public import Theorems.RationalAdeleBoxSumPoisson
+public import Lemmas.RationalAdeleBoxCofinality
 import Lemmas.RationalAdeleResidues
 import Mathlib.Tactic.FieldSimp
 
@@ -9,7 +10,8 @@ import Mathlib.Tactic.FieldSimp
 The stages in the proof of Proposition 2.1.3.2, pp. 69–70, have separate
 support and invariance subgroups. Here we use the rational pair
 `M ℤ̂ ⊂ M⁻¹ ℤ̂`. We work on the full adeles, with no restriction on their
-real coordinate. Neither cofinality nor the LF topology enters this result.
+real coordinate. The rational pairs are cofinal among the compact-open
+pairs of finite adeles. No identification of LF topologies is needed.
 -/
 
 open NumberField IsDedekindDomain Set
@@ -17,6 +19,7 @@ open scoped SchwartzMap
 
 namespace Masullo
 
+local notation "F" => FiniteAdeleRing (𝓞 ℚ) ℚ
 local notation "A" => AdeleRing (𝓞 ℚ) ℚ
 local notation "J" => IdeleGroup (𝓞 ℚ) ℚ
 local notation "W" => rationalIntegralAdeles
@@ -140,5 +143,59 @@ public theorem exists_rationalAdeleBoxSum_stage_coordinates {M : ℕ} (hM : 0 < 
     simp only [rationalAdeleBoxSum, one_mul, hbox]
     exact Finset.sum_eq_zero fun j _ ↦
       indicator_of_notMem (fun hj ↦ hx (rationalAdeleStageCell_subset_support hM j hj)) _
+
+/-- The pair `M ℤ̂ ⊂ M⁻¹ ℤ̂` can accommodate any prescribed support subgroup
+`K` and invariance subgroup `H`, in particular when `H ⊆ K`.
+Compactness bounds denominators in `K`;
+openness shrinks the translations into `H`. -/
+public theorem exists_rationalAdeleBoxStage_cofinal (H K : AddSubgroup F)
+    (hH : IsOpen (H : Set F)) (hK : IsCompact (K : Set F)) :
+    ∃ M : ℕ, 0 < M ∧
+      ((M : F) * ·) '' (rationalFiniteIntegralAdeles : Set F) ⊆ H ∧
+      (K : Set F) ⊆ ((M : F) * ·) ⁻¹' (rationalFiniteIntegralAdeles : Set F) := by
+  obtain ⟨N, hN, hi⟩ := exists_rationalFinite_invariance_bound (hH.mem_nhds H.zero_mem)
+  obtain ⟨D, hD, hs⟩ := exists_rationalFinite_support_bound hK
+  refine ⟨N * D, mul_pos hN hD, ?_, hs.trans (rationalFinite_support_mono (dvd_mul_left D N))⟩
+  rintro _ ⟨x, hx, rfl⟩
+  apply hi
+  refine ⟨(D : F) * x, ?_, ?_⟩
+  · change (D : F) * x ∈ rationalFiniteIntegralAdeles
+    simpa only [nsmul_eq_mul] using rationalFiniteIntegralAdeles.nsmul_mem hx D
+  · change (N : F) * ((D : F) * x) = ((N * D : ℕ) : F) * x
+    rw [Nat.cast_mul, mul_assoc]
+
+/-- Both finite stages are compact and open. The invariance stage is contained
+in the support stage. Multiplication by the positive rational `M` is an
+additive homeomorphism of the finite adeles. -/
+public theorem rationalAdeleBoxStage_isCompact_isOpen {M : ℕ} (hM : 0 < M) :
+    let H := ((M : F) * ·) '' (rationalFiniteIntegralAdeles : Set F)
+    let K := ((M : F) * ·) ⁻¹' (rationalFiniteIntegralAdeles : Set F)
+    IsCompact H ∧ IsOpen H ∧ IsCompact K ∧ IsOpen K ∧ H ⊆ K := by
+  have hMq : (M : ℚ) ≠ 0 := by exact_mod_cast hM.ne'
+  have hu : IsUnit (M : F) := by
+    simpa only [map_natCast] using hMq.isUnit.map (algebraMap ℚ F)
+  obtain ⟨u, hu⟩ := hu
+  let e := (ContinuousAddEquiv.mulLeft u).toHomeomorph
+  have he : (e : F → F) = ((M : F) * ·) := by
+    funext x
+    change (u : F) * x = (M : F) * x
+    rw [hu]
+  dsimp only
+  rw [← he]
+  refine ⟨e.isCompact_image.mpr isCompact_rationalFiniteIntegralAdeles,
+    e.isOpenMap _ isOpen_rationalFiniteIntegralAdeles,
+    e.isCompact_preimage.mpr isCompact_rationalFiniteIntegralAdeles,
+    isOpen_rationalFiniteIntegralAdeles.preimage e.continuous, ?_⟩
+  rw [he]
+  rintro _ ⟨x, hx, rfl⟩
+  change (M : F) * ((M : F) * x) ∈ rationalFiniteIntegralAdeles
+  simpa only [nsmul_eq_mul] using
+    rationalFiniteIntegralAdeles.nsmul_mem (rationalFiniteIntegralAdeles.nsmul_mem hx M) M
+
+/-- The finite support subgroup pulls back to the support cylinder used for the
+box coordinates. -/
+public theorem rationalAdeleStageSupport_eq_preimage (M : ℕ) :
+    rationalAdeleStageSupport M =
+      Prod.snd ⁻¹' (((M : F) * ·) ⁻¹' (rationalFiniteIntegralAdeles : Set F)) := rfl
 
 end Masullo

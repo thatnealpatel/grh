@@ -1843,34 +1843,76 @@ Validation endpoints: The four declarations above and the three
 `Props.RationalAdeleBoxStage`, and `#check` and `#print axioms` on all
 seven declarations.
 
-### Next orbit step: Cofinality of the rational box stages
+## Checked cofinality of the rational box stages
 
-Show that for any compact open pair $H\subset K$ of subgroups of the
-finite adeles, some $M>0$ satisfies
-$M\widehat{\mathbb Z}\subset H\subset K\subset M^{-1}\widehat{\mathbb Z}$.
-The two bounds are independent:
+In the digest-matched layout extraction of Proposition 2.1.3.2's
+proof, pp. 69–70, the transition extends support and shrinks the
+subgroup of translations fixing the test. Thus a new pair dominates
+$(H,K)$ when $H_{\rm new}\subset H\subset K\subset K_{\rm new}$.
+The use of rational integer dilations is a project specialization,
+not a formula attributed to the manuscript. This is a provisional
+text reading, not rendered-page verification.
 
-- For $K$, the open support stages cover the finite adeles by
-  `exists_rational_sub_mem_integral` applied to the lift with real part
-  zero (multiply by the rational translation's denominator). Use
-  `IsCompact.elim_finite_subcover` and the product of the finitely
-  many levels to get a common positive denominator.
-- For $H$, pull the zero neighborhood back to $\prod_v O_v$ along
-  `RestrictedProduct.structureMap`, using
-  `RestrictedProduct.nhds_zero_eq_map_structureMap` or continuity of
-  that embedding. `nhds_pi` and `Filter.mem_pi'` extract the finitely
-  many constrained integral coordinates. There use the rational
-  completion's `padicIntEquiv` and the small balls $p_v^{n_v}O_v$
-  (`Padic.norm_p_pow`); take the product of the corresponding prime
-  powers and use that all the other factors are locally integral.
+`Masullo.exists_rationalAdeleBoxStage_cofinal` in
+[RationalAdeleBoxStage.lean](../../Proofs/Props/RationalAdeleBoxStage.lean)
+proves there is one $M>0$ for which $M\widehat{\mathbb Z}\subset H$
+and $K\subset M^{-1}\widehat{\mathbb Z}$, assuming only that $H$
+is an open additive subgroup and $K$ is a compact additive subgroup
+of the rational finite adeles. Inserting $H\subset K$ gives the
+required cofinality. `rationalAdeleBoxStage_isCompact_isOpen` proves
+that both scaled stages are compact and open, and that the invariance
+stage lies in the support stage. They are the image and preimage of
+an additive subgroup under the same additive homeomorphism, namely
+multiplication by $M$. `rationalAdeleStageSupport_eq_preimage` ties
+the finite support subgroup to the earlier box coordinates: Its
+inverse image under the finite projection is the support cylinder
+with no condition on the real coordinate.
 
-Enlarge the two integers to their product, using the opposing
-inclusions of invariance and support under divisibility. This proves
-cofinality for Proposition 2.1.3.2 over $\mathbb Q$, not the separate
-LF bounded-set reduction in Theorem 2.2.3.4(4), p. 84. The latter
-still needs to put every bounded family in a common stage with bounded
-real Schwartz coordinates; a common support alone does not control
-invariance.
+The [two bounds](../../Proofs/Lemmas/RationalAdeleBoxCofinality.lean)
+are independent. Compact $K$ is covered by the open sets where a
+positive integer clears denominators; take a finite subcover and
+multiply its levels. This reuses the denominator-clearing lemma
+already proved in the box-tail argument, now shared with that argument.
+For $H$, pull the zero neighborhood back to the product of the local
+integer rings and refine it by an open box with finitely many
+restricted coordinates. At each restricted place, multiplication by
+a sufficiently large power of the prime maps the whole local integer
+ring into the coordinate neighborhood. Their product $N$ works
+simultaneously: Additional integer factors preserve integrality.
+Taking $M=ND$ with $D$ the common denominator of $K$ combines the
+bounds without identifying the support and invariance subgroups.
+
+Independent Yah review (`cofinality-review`, agent `NpmwsOR`) matched
+the inclusion directions and the distinction between finite stages
+and full-adele cylinders, using pp. 69–70 and 84–85 of the pinned
+text. Validation: `lake --wfail build Proofs`, `leanchecker` on
+`Lemmas.RationalIntegralAdeles`, `Lemmas.RationalAdeleBoxCofinality`,
+`Props.RationalAdeleBoxStage`, and `Lemmas.RationalAdeleBoxTail`, and
+`#check` and `#print axioms` on the cofinality and stage endpoints
+and their new public dependencies.
+
+### Next orbit step: Identify the stage with its Schwartz coordinates
+
+Cofinality puts a prescribed finite support/invariance pair inside a
+rational stage, but does not identify the topology of the adelic test
+space. For fixed $M>0$, define the stage of functions vanishing off
+the support cylinder, invariant under finite translations by
+$M\widehat{\mathbb Z}$, and with real slices in $\mathcal S(\mathbb R)$.
+Prove the converse to box assembly: Sample along the real line at
+the finite representative $j/M$ to extract a Schwartz profile for
+each $j$. Show that two points at the same real coordinate in the
+same cell differ by an allowed finite translation, and use it to
+prove that sampling and the checked box assembly are inverse linear
+maps. This gives an explicit stage interface for transporting the
+product topology and then building split inclusions along the
+factorial levels (every positive $M$ divides some factorial).
+
+Theorem 2.2.3.4(4), pp. 84–85, uses a bounded adelic family in the
+strict locally convex inductive limit, not just functions with a
+common finite support. The common-stage and bounded-Schwartz-coordinate
+conclusion for such families remains open. Do not substitute a
+common support bound for a common invariance bound, or the
+projective tensor topology for the inductive one.
 
 ## Checked real-lattice inversion
 

@@ -49,6 +49,17 @@ public theorem rationalDiagonalEquiv_apply (q : ℚ) : (rationalDiagonalEquiv q 
 public theorem intCast_mem_rationalIntegralAdeles (z : ℤ) : (z : A) ∈ rationalIntegralAdeles :=
   fun v ↦ intCast_mem (O v) z
 
+/-- Multiplication by a positive integer makes all finite coordinates integral. -/
+public theorem exists_nat_mul_mem_rationalIntegralAdeles (a : A) :
+    ∃ D : ℕ, 0 < D ∧ (D : A) * a ∈ rationalIntegralAdeles := by
+  obtain ⟨q, hq⟩ := exists_rational_sub_mem_integral a
+  have hmul : (q.den : A) * ι q = (q.num : A) := by
+    simpa only [map_natCast, map_mul, map_intCast] using congrArg ι q.den_mul_eq_num
+  refine ⟨q.den, q.den_pos, ?_⟩
+  have h := rationalIntegralAdeles.add_mem (rationalIntegralAdeles.nsmul_mem hq q.den)
+    (intCast_mem_rationalIntegralAdeles q.num)
+  simpa only [nsmul_eq_mul, mul_sub, hmul, sub_add_cancel] using h
+
 /-- The integer diagonal as a homomorphism into the integral-finite stage. -/
 @[expose]
 public noncomputable def rationalIntegralIntHom : ℤ →+ rationalIntegralAdeles :=

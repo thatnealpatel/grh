@@ -19,16 +19,6 @@ local notation "ιˣ" => IdeleGroup.unitEmbedding (𝓞 ℚ) ℚ
 private theorem norm_pos (k : J) : 0 < ideleNorm k :=
   ideleClassNorm_mk k ▸ ideleClassNorm_pos (QuotientGroup.mk k)
 
-private theorem exists_clear_finite_denominators (a : A) :
-    ∃ D : ℕ, 0 < D ∧ (D : A) * a ∈ rationalIntegralAdeles := by
-  obtain ⟨q, hq⟩ := exists_rational_sub_mem_integral a
-  have hmul : (q.den : A) * ι q = (q.num : A) := by
-    simpa only [map_natCast, map_mul, map_intCast] using congrArg ι q.den_mul_eq_num
-  refine ⟨q.den, q.den_pos, ?_⟩
-  have h := rationalIntegralAdeles.add_mem (rationalIntegralAdeles.nsmul_mem hq q.den)
-    (intCast_mem_rationalIntegralAdeles q.num)
-  simpa only [nsmul_eq_mul, mul_sub, hmul, sub_add_cancel] using h
-
 private theorem real_mul_sub (x y a : A) :
     rationalAdeleReal (x * y - a) = rationalAdeleReal x * rationalAdeleReal y - rationalAdeleReal a := by
   simp only [rationalAdeleReal_apply]
@@ -86,7 +76,7 @@ private theorem exists_box_tail_majorant {B : Set 𝓢(ℝ, ℂ)} (hB : Bornolog
         (∑' q, u q) ≤ C / ideleNorm k ^ m := by
   classical
   let a' : A := (↑g⁻¹ : A) * a
-  obtain ⟨D, hD, ha⟩ := exists_clear_finite_denominators a'
+  obtain ⟨D, hD, ha⟩ := exists_nat_mul_mem_rationalIntegralAdeles a'
   let L : ℝ := ideleNorm g * D
   let x := rationalAdeleReal a'
   have hL : 0 < L := mul_pos (norm_pos g) (Nat.cast_pos.mpr hD)
