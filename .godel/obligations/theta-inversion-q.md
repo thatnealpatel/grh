@@ -2262,30 +2262,67 @@ The result proves forward continuity on levels, not the manuscript's full
 Fourier automorphism or an identification of LF topologies. The
 source comparison above is based on the digest-matched extraction.
 
-### Next Fourier step: Uniform Taylor remainder on real Schwartz profiles
+### Checked Taylor remainder on real Schwartz profiles
 
 Remark 2.2.4.6, p. 92, asks for the limit in $L_\beta$: Uniform on
-bounded input families in the **target Schwartz topology**. The p. 94
-bound following (2.2.4.42) appears to omit the norm-weight term in
-(2.2.4.39); at zero frequency the full rational scale kernel quotient
-is $-1/t$, not zero. A bound of $4+16\pi|u_\infty y_\infty|$ for
-$t\in[1/2,3/2]$ suffices for fixed-frequency domination with the
-project's rational kernel, not uniform convergence of Schwartz
-seminorms. Equicontinuity of operators alone is also not that limit.
-First prove the real-profile estimate for $U_s b(t)=e^{-s}b(e^{-s}t)$
-and $G b=-b-tb'$: For each Schwartz seminorm $p_{a,d}$ and
-$0<|s|\le1$, bound the seminorm of $(U_s b-b)/s-Gb$ by
-$C_{a,d}|s|p_{a,d}(G^2 b)$. Differentiate twice in $s$ after taking
-$d$ derivatives in $t$ and use the scalar norm Taylor bound. The
-seminorm of $U_s$ grows by at most $e^{|a-d-1|}$ in this interval.
-For the LF application, common-stage boundedness gives one factorial
-stage for the inputs; its forward Fourier CLM sends their coordinates
-to another bounded set in that same product. The pointwise covariance
-identifies the proposed limit there, and the stage assembly is
-continuous. The profile estimate and the bounded-set limit are not
-yet checked. Neither (2.2.4.30)'s
-explicit phase convention nor the general number-field or manuscript
-tensor-topology comparison has been settled here.
+bounded input families in the **target Schwartz topology**. In the
+pinned PDF's layout extraction, the bound following (2.2.4.42), p. 94,
+appears to omit the norm-weight term from (2.2.4.39). At zero frequency
+the full rational scale kernel quotient is $-1/t$, not zero. A bound of
+$4+16\pi|u_\infty y_\infty|$ for $t\in[1/2,3/2]$ suffices for
+fixed-frequency domination with the project's rational kernel, not for
+convergence in Schwartz seminorms. Equicontinuity alone does not supply
+that convergence. This reading is provisional, not a rendered-page check.
+
+[SchwartzWeightedDilation.lean](../../Proofs/Lemmas/SchwartzWeightedDilation.lean)
+implements a repair on the real profiles. Let $U_s b(x)=e^{-s}b(e^{-s}x)$
+and $Gb(x)=-b(x)-xb'(x)$. Both operators are continuous complex-linear
+maps on $\mathcal S(\mathbb R,\mathbb C)$ for each fixed $s$.
+`Masullo.seminorm_weightedInverseDilation_difference_quotient` proves, for
+all $a,d\in\mathbb N$, every profile $b$, and $0<|s|\le1$,
+
+$$
+p_{a,d}\big((U_s b-b)/s-Gb\big)
+\le e^{|a-d-1|}|s|\,p_{a,d}(G^2 b).
+$$
+
+After $d$ spatial derivatives, one log-scale derivative replaces $b$
+by $Gb$, and two replace it by $G^2b$. Multiplying by $|x|^a$ and
+rescaling the spatial argument gives the factor $e^{(a-d-1)s}$.
+Two scalar mean value estimates give the quadratic remainder before
+division by $s$. This uses neither integration in Schwartz space nor
+moment assumptions. Independent Yah statement review checked the
+operator weight, sign, real casts of the indices, and both signs of
+$s$ against this calculation and the digest-matched source extraction.
+
+### Next Fourier step: Bounded-set convergence in the rational LF topology
+
+State the target with `TendstoUniformlyOn` on each complex von Neumann
+bounded input set and punctured real scale filter at $1$. The family
+is the weighted inverse-dilation quotient of the forward transform,
+and the limit is the forward transform of $Df$. A runnable first
+subgoal is `TendstoUniformlyOn (fun s b ↦ s⁻¹ • (U s b - b)) G
+(𝓝[≠] 0) B` on a bounded real-profile family $B$. Use the checked
+estimate and `WithSeminorms.isVonNBounded_iff_seminorm_bounded` on
+$G^2(B)$, which is bounded by continuity and linearity. The neighborhood
+basis given by the Schwartz seminorms and `uniformity_eq_comap_nhds_zero`
+turn the simultaneous finite seminorm bounds into uniform convergence.
+
+For a bounded rational LF family, `rationalAdeleLF_bounded_iff` supplies
+one factorial stage with bounded coordinate tuples. Apply its forward
+Fourier CLM, take the profile limits in the finite product, and pass
+through continuous linear stage assembly, which is uniformly
+continuous. Pointwise derivative uniqueness using
+`hasDerivAt_rationalAdeleFourier_LFDilation` identifies the assembled
+limit with $\widehat{Df}$. For scale $t$ near $1$, use $s=\log t$
+and $q=\log t/(t-1)$: The error is $q$ times the log-scale error plus
+$(q-1)Gb$. `Real.hasDerivAt_log` gives $q\to1$ and boundedness of
+$G(B)$ controls the extra term.
+
+The bounded-set limit itself is not yet checked. It needs no inverse
+Fourier continuity. The explicit phase convention in (2.2.4.30),
+Fourier inversion, the comparison to the manuscript's tensor topology,
+and extension to general number fields are separate obligations.
 
 ## Checked real-lattice inversion
 
