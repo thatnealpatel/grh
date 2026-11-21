@@ -15,10 +15,12 @@ two-ray factor is holomorphic on $\Re z>0$ without moment conditions.
 The [continuation theorem](../../Proofs/Theorems/RationalThetaMellinContinuation.lean)
 now identifies the two-moment theta transform with the zeta product on
 $\Re z>0$ off $1$, computes the removable value at $1$, and gives
-vanishing at every zeta zero in the open critical strip.
+vanishing at every zeta zero in the open critical strip. The
+[finite-unit representative theorem](../../Proofs/Theorems/RationalIdeleNormalization.lean)
+now gives the algebraic normalization needed to leave the real section.
 Independent Yah statement reviews used text extracted from the
 digest-matched [pinned edition](../sources/masullo/README.md). The readings
-are provisional, not visual. The norm-fiber reduction, finite Fourier
+are provisional, not visual. The full norm-fiber reduction, finite Fourier
 self-duality, and measure comparison are not formalized.
 
 ## Manuscript statement and rational reduction
@@ -81,31 +83,54 @@ exclusion of zero against the digest-matched text of (2.2.3.1),
 (A.2.2.1)–(A.2.2.4), and the context on pp. 77–78. No visual reading
 or adelic Haar equality is claimed.
 
-## Independent next step: Normalize a rational idele representative
+## Checked finite-unit normalization of rational ideles
 
-Equations (A.2.2.1)–(A.2.2.3), p. 546, give the manuscript's rational
-idele and idele-class decompositions. A first runnable part in Lean is
-**existence only**: For $a$ in `IdeleGroup (𝓞 ℚ) ℚ`, find $r\in\mathbb Q^\times$
-so the finite coordinates of $\operatorname{diag}(r)a$ and their inverses
-are integral. The positive real coordinate and its identification with
-the idelic norm can then use a sign and the product formula. Do not
-normalize the finite coordinates to one.
+`Masullo.exists_rational_principal_mul_finite_valued_eq_one` proves:
+For each $a\in\mathbb A_{\mathbb Q}^{\times}$ there is an
+$r\in\mathbb Q^{\times}$ such that every finite coordinate of
+$\operatorname{diag}(r)a$ has valuation one. By Mathlib's
+`HeightOneSpectrum.adicCompletionIntegers.mem_units_iff_valued_eq_one`,
+this is exactly membership in the local integral units for those
+coordinates, not equality of the coordinates to one.
 
-For the first part, use `FiniteAdeleRing.hasFiniteMulSupport_valued` on
-the finite component to restrict to a finite set of places. Use
-`HeightOneSpectrum.intValuation_singleton` at a generator of each
-prime ideal of $\mathcal O_{\mathbb Q}$ and `intValuation_eq_one_iff`
-at the other primes. These give valuation $\exp(-1)$ at the chosen
-place and $1$ elsewhere. If the nonzero value of $a_v$ is
-$\exp(-k_v)$, multiply by the product of the generators to powers
-$-k_v$ using `IdeleGroup.unitEmbedding`. This route has not been
-elaborated. After normalization, theta constancy on each norm fiber
-needs two separate facts: Multiplication by a local unit preserves
-the indicator, and principal rescaling reindexes the nonzero rational
-sum. Only after that can (A.3.3.1), p. 561, and the mass-one
-specialization of (A.3.2.1), p. 560, be used to reduce the quotient
-integral to the section. Neither this work nor the open-strip
-continuation needs to wait for a visual audit of p. 522.
+The proof uses `Rat.ringOfIntegersEquiv` to choose a generator $p_v$
+of each height-one prime. Its value is $\exp(-1)$ at $v$ and $1$
+at the other places, since distinct nonzero prime ideals are maximal.
+`AdeleRing.isUnit_iff` restricts the primes where
+$a_v$ has value different from one to a finite set. If $a_v$ has value
+$\exp(k_v)$, use the factor $p_v^{k_v}$ in $r$ to cancel it. These
+exponents can be negative. The proof works directly in Mathlib's idele
+group and uses neither the manuscript's splitting nor a global Fourier
+transform.
+
+Independent Yah review of the SHA-256-matched extraction checked that
+this is the existence part of the finite factor in (A.2.2.1), p. 546,
+used in (A.2.2.2)–(A.2.2.4). It does not prove the topological
+isomorphism, uniqueness, or a continuous choice of representatives.
+
+## Independent next step: Reduce the arbitrary-representative sum
+
+For a complex-valued Schwartz function $b$ on $\mathbb R$ and a rational
+idele $a$, form the summand on $q\in\mathbb Q^{\times}$ that applies $b$
+to the real coordinate of $a\operatorname{diag}(q)$ if every finite
+coordinate is integral, and is zero otherwise. Prove absolute summability
+and identify the sum with $\theta_b(\operatorname{ideleNorm}(a))$.
+
+First prove the summand-level invariances: Principal multiplication
+reindexes the nonzero rationals by a unit, and multiplying a finite
+coordinate by an integral unit preserves its integrality in both
+directions. Use the checked normalization theorem and the product formula
+with `Masullo.ideleNorm`. With finite valuations one,
+`AdeleRing.norm_apply_of_isUnit` leaves only the real norm; use
+`Rat.infinitePlace`, `Rat.isReal_infinitePlace`, and
+`InfinitePlace.Completion.ringEquivRealOfIsReal`. If the real coordinate
+is negative, reindex the lattice by negation, without assuming $b$ is
+even. This reduces the sum to `rationalTheta_eq_unramified_sum` on the
+positive real section. The invariances and this combined theorem are
+not yet elaborated. Only after constancy on the norm fibers can the
+Haar reduction use (A.3.3.1), p. 561, and the mass-one specialization
+of (A.3.2.1), p. 560. Neither this step nor the zeta-order step below
+needs to wait for a visual audit of p. 522.
 
 ## Checked real-lattice inversion
 
