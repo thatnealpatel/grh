@@ -2541,35 +2541,54 @@ copies**, not a proved topological identification with the full dual
 or transport of its Haar measure. The reading is extraction-based,
 not rendered-page verification.
 
+## Checked simultaneous L¹ and L² density of rational adelic Schwartz tests
+
+[`Masullo.exists_rationalAdeleSchwartzLF_L1_L2_approx`](../../Proofs/Theorems/RationalAdeleSchwartzDensity.lean)
+gives **one** rational Schwartz function approximating a representative
+`f : A → ℂ` in both normalized Haar seminorms. It assumes `MemLp f 1 μA`
+and `MemLp f 2 μA`, with independent positive extended tolerances, and
+requires no moment conditions or pointwise Borel measurability of `f`.
+
+Choose a compactly supported continuous approximant in each norm using
+Haar regularity. Outside the union of their two supports, the respective
+errors are just `f`. The [Schwartz cutoff lemma](../../Proofs/Lemmas/RationalAdeleSchwartzCutoff.lean)
+puts a real smooth plateau on the real projection of that compact union
+and a finite-cylinder indicator on its finite projection. The resulting
+cutoff `χ` is Schwartz, equals one on the union, and lies in `[0,1]`. For
+an independently chosen $L^2$-close Schwartz test `g`, the product `χg`
+is Schwartz by passing both factors to a common divisibility stage.
+The error splits into `(1-χ)f` and `χ(f-g)`. The first term is controlled
+by the original errors in each norm. The second contracts the $L^2$
+error and is supported in the fixed compact support of `χ`; Hölder on
+that restriction bounds its $L^1$ error by its $L^2$ error times the
+square root of the compact set's Haar mass. Thus the proof needs no
+support control on the globally $L^2$-close tests.
+
+The digest-matched extraction of pp. 746–747 gives (D.1.1.7), the
+$L^1$-to-sup bound, and (D.1.1.9)–(D.1.1.10), Parseval on the
+intersection and its unitary extension on the compact-open dual.
+The text cites Rudin for (1) and (2), and Deitmar–Echterhoff, Theorem
+3.4.8 and p. 77, for (4). The simultaneous approximation is a project
+lemma used to reach that interface on the rational frequency model,
+not a density assertion read off the manuscript. The source check
+used extracted text, not rendered pages.
+
 ### Next Fourier step: Agreement with the integral on integrable L² inputs
 
-First prove simultaneous approximation in both `eLpNorm`s by the
-**same** rational Schwartz test. A route reusing the checked $L^2$
-density is to exhaust the adeles by bounded real intervals times
-$(n!)^{-1}\widehat{\mathbb Z}$. Use a cutoff $\chi$ equal to one on a
-large such compact set, formed from a real smooth compact plateau and
-the indicator of the clopen finite cylinder, with $0\le\chi\le1$.
-Both $L^1$ and $L^2$ tails of $(1-\chi)f$ are small by domination. Fix
-this cutoff before choosing the $L^2$-close Schwartz test $g$.
-Multiplying by $\chi$ preserves the rational Schwartz class: In a
-common divisibility stage, support, invariance, and the smooth
-real-profile condition can be checked separately. On the fixed compact
-support of $\chi$, use `eLpNorm_le_eLpNorm_mul_rpow_measure_univ_of_pos`
-with the restricted measure to control $\chi(f-g)$ in $L^1$ by its
-$L^2$ norm. This avoids needing support bounds for the existing globally
-$L^2$-close tests themselves.
-
-Then use the unit modulus of the phase to bound the Fourier integral
-error uniformly by the $L^1$ error (the rational-model bound of
-(D.1.1.7), p. 746). The same approximating sequence converges under $U$
-in $L^2$. Mathlib's `tendstoInMeasure_of_tendsto_Lp` and
-`TendstoInMeasure.exists_seq_tendsto_ae` give a subsequence converging
-a.e. to the output class. Intersect the countably many a.e. core
-agreement events and use uniqueness of the pointwise limit. This should
-give `MemLp (rationalAdeleFourier f) 2 rationalAdeleAddHaar` and a.e.
-agreement with $U(f)$ for each integrable $L^2$ representative. This route
-is not yet formalized. The compact-open dual identification remains a
-separate obligation.
+Choose one sequence of Schwartz tests with both errors tending to zero
+using the simultaneous approximation theorem. Next prove a pointwise
+error inequality uniform in frequency: Expand `rationalAdeleFourier`
+(the normalized integral against the conjugated character) and use
+`norm_rationalAdeleAddChar` and the integral norm bound to control the
+error by `eLpNorm (f - g) 1 μA`. In parallel, the Schwartz classes
+converge in $L^2$ and the unitary preserves that convergence. Mathlib's
+`tendstoInMeasure_of_tendsto_Lp` and `TendstoInMeasure.exists_seq_tendsto_ae`
+give an a.e.-convergent subsequence of output representatives. Intersect
+its a.e. limit event with the countably many a.e. Schwartz agreement
+events and use uniqueness of the pointwise limit. The target is
+`MemLp (rationalAdeleFourier f) 2 μA` and a.e. agreement with
+`rationalAdeleL2Fourier (hf₂.toLp f)` for each integrable $L^2$ input.
+The compact-open dual identification and Haar comparison remain separate.
 
 ## Checked real-lattice inversion
 
