@@ -13,7 +13,7 @@ open scoped FourierTransform Topology SchwartzMap
 namespace Masullo.RealLogFourier
 
 /-- The scale-`a` Cauchy kernel without the factor `1 / π`. -/
-public noncomputable def cauchy (a x : ℝ) : ℝ := a / (a ^ 2 + x ^ 2)
+@[expose] public noncomputable def cauchy (a x : ℝ) : ℝ := a / (a ^ 2 + x ^ 2)
 
 private theorem cauchy_sub_integrals {x : ℝ} (hx : x ≠ 0) :
     IntegrableOn (fun a ↦ cauchy a x - cauchy a 1) (Ioi 0) ∧
@@ -123,10 +123,11 @@ public theorem log_pairing_eq_cauchy {v : ℝ → ℂ} (hv : Continuous v)
     Complex.ofReal_neg, neg_mul]
 
 /-- Spatial profile at a positive scale for the standard `2π` convention. -/
-public noncomputable def laplaceProfile (a z : ℝ) : ℂ :=
+@[expose] public noncomputable def laplaceProfile (a z : ℝ) : ℂ :=
   (Real.exp (-(2 * Real.pi * a) * |z|) : ℂ)
 
-private theorem laplaceProfile_integrable {a : ℝ} (ha : 0 < a) :
+/-- At a positive scale the two-sided exponential is integrable. -/
+public theorem laplaceProfile_integrable {a : ℝ} (ha : 0 < a) :
     Integrable (laplaceProfile a) := by
   have h : 0 < 2 * Real.pi * a := by positivity
   have hp : IntegrableOn (laplaceProfile a) (Ioi 0) := by
@@ -139,7 +140,8 @@ private theorem laplaceProfile_integrable {a : ℝ} (ha : 0 < a) :
       simp [laplaceProfile, abs_of_nonpos hz.out, mul_neg, neg_mul])
   simpa using (integrableOn_union.mpr ⟨hp, hn⟩)
 
-private theorem fourier_laplaceProfile {a : ℝ} (ha : 0 < a) (x : ℝ) :
+/-- The standard additive transform sends the two-sided exponential to the Cauchy kernel. -/
+public theorem fourier_laplaceProfile {a : ℝ} (ha : 0 < a) (x : ℝ) :
     𝓕 (laplaceProfile a) x = (cauchy a x : ℂ) / Real.pi := by
   let b : ℝ := 2 * Real.pi * a
   let c : ℝ := 2 * Real.pi * x

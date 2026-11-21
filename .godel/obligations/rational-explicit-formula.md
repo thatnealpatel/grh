@@ -735,37 +735,66 @@ exchanges, and the comparator's remaining hypotheses against the pinned
 Mathlib and the digest-verified Masullo extraction and Connes Appendix II.
 The two modules and reviewed endpoints are the scope of `audit-local`.
 
-## Next runnable obligation: Calibrate the contact term in the real cutoff
+<a id="next-runnable-obligation-calibrate-the-contact-term-in-the-real-cutoff"></a>
 
-Let $T$ denote the negative additive Fourier pairing in (B.4.4.1) and
-$P(u)=\tfrac12\int (u(z)-u(0)\mathbf1_{\{|z|\le1\}})/|z|\,dz$.
-With the checked zero-value theorem applied to $r=u-u(0)G$, the exact
-remaining scalar target is $T(G)-P(G)=\log(2\pi)+\gamma$ for a comparator
-$G(0)=1$. Connes (32)–(35) uses a self-dual Gaussian. A comparator reusing
-the checked real Fourier kernel is $G(z)=e^{-2\pi|z|}$: The existing
-`fourier_laplaceProfile` gives $1/(\pi(1+\xi^2))$ at scale one. Prove
-$T(G)=0$ by evenness and the positive-half-line substitution
-`integral_comp_rpow_Ioi` at exponent $-1$, checking absolute integrability
-separately. The remaining spatial scalar is
+## Checked real logarithmic Fourier contact term
+
+[`Masullo.real_log_fourier_unit_subtraction`](../../Proofs/Props/RealPrincipalValue.lean)
+proves the real additive principal value on all complex Schwartz tests. With
+$T(u)=-\int \log|\xi|\,\widehat u(\xi)\,d\xi$ in the standard additive
+Fourier convention, Lean gives
 
 $$
-P(G)=\int_0^\infty \frac{e^{-2\pi x}-\mathbf1_{x\le1}}{x}\,dx
-     =-\log(2\pi)-\gamma.
+T(u)=\frac12\int_{\mathbb R}
+  \frac{u(z)-u(0)\mathbf 1_{|z|\le1}}{|z|}\,dz
+  +(\log(2\pi)+\gamma)u(0).
 $$
 
-For that identity, integrate by parts on $(0,1)$ and $(1,\infty)$
-without separating the singular subtraction. Alternatively write the
-numerator as
-$\int_0^\infty b e^{-bt}(\mathbf1_{x\le t}-\mathbf1_{x\le1})\,dt$,
-where $b=2\pi$. The absolute $dx/x$ slice of the difference is
-$|\log t|$, so the exchange follows from exponential log integrability;
-the signed slice is $\log t$. Rescale by $b$ and use the pinned
-`Real.eulerMascheroniConstant_eq_neg_integral_log`. Neither calibration
-is checked here. After proving the calibrated pairing, obtain its
-cutoff form by dominated convergence on the subtracted integrand and
+Both pairings are absolutely integrable as written. Masullo supplies the
+additive definition in (B.4.4.1), pp. 619–620, and refers from (B.4.3.13),
+p. 619, to Connes Appendix II. Connes (32)–(35), pp. 73–74, fixes this
+contact coefficient by a Gaussian calculation. Lean instead uses the
+scale-one comparator $G(z)=e^{-2\pi|z|}$ to repair the doubled magnitude
+in the provisionally extracted (B.4.3.13). The existing transform
+calculation gives $\widehat G(\xi)=1/(\pi(1+\xi^2))$. On the positive
+half-line, writing $\xi=e^s$ makes its log-weighted integral an odd
+integrable function of $s$; even folding then gives $T(G)=0$.
+
+In [`Lemmas.RealLogFourierContact`](../../Proofs/Lemmas/RealLogFourierContact.lean),
+`laplace_unitSubtraction_contact` computes the half-weighted spatial
+pairing of $G$ as $-\log(2\pi)-\gamma$. On the positive ray, with
+$b=2\pi$ and $z=e^s$, use the density $be^{-bt}dt$ to express the
+subtraction as the mean of
+$\mathbf1_{s\le\log t}-\mathbf1_{s\le0}$. Its signed Lebesgue integral
+is $\log t$ and its absolute integral is $|\log t|$. This gives an
+absolute Fubini exchange; rescaling $t$ by $b$ then applies Mathlib's
+integral for Euler's constant. The cusp comparator and its remainder
+need not be smooth. The checked zero-value theorem applies to the
+remainder $u-u(0)G$ by continuity, absolute integrability, and the local
+first-order bound from differentiability of $u$ and the exponential
+inequality. Independent Yah review (`contact-statement`) checked the
+normalizations and hypotheses against the digest-verified Masullo
+extraction and Connes (30), (32)–(37). The printed displays have not
+been visually verified. The three changed Lean modules and the scalar
+and Schwartz endpoints are the scope of `audit-local`.
+
+## Next runnable obligation: Prove the shrinking-cutoff form
+
+For $0<\varepsilon\le1$, integrate the absolute subtracted density on
+$|z|\ge\varepsilon$. The difference from the unsubtracted cutoff
+is exactly $u(0)\log\varepsilon$ after the factor $1/2$, by evaluating
 $\int_{\varepsilon\le|z|\le1} dz/(2|z|)=-\log\varepsilon$.
+Use dominated convergence on the already integrable subtracted density
+as $\varepsilon\to0^+$, giving Connes (34)–(35) and the corrected
+additive reading of Masullo (B.4.3.13). This cutoff limit is not part
+of the checked unit-subtraction statement.
 
-For the subsequent identity term, Connes (36)–(37) retains $\lambda$.
+For the subsequent idelic identity term, Connes (36)–(37) retains $\lambda$.
+The checked additive functional is already normalized: If retaining the
+external $1/M_\infty$ from (B.4.4.16), p. 623, the raw-Haar functional
+it multiplies must be twice the additive functional, not the literal
+(B.4.4.1). The translated test in (B.4.4.2) is extended by zero near
+$z=-1$ using compact support in $\mathbb R^\times$.
 Use [`map_realMultiplicativeHaar_val`](../../Proofs/Theorems/RealMultiplicativeHaar.lean)
 to track both signs and the division by two when starting with full Haar.
 Folding $y=\pm e^{\pm x}$ gives the nonlocal weight
