@@ -145,3 +145,35 @@ Then the circle operators $R_{\rho,a} A Q_{Y,a}J_a$ converge in trace norm at ea
 It follows by termwise dominated convergence in the trace norm that $R_{\rho,a} A J_a\to A_{\mathrm{circle}}$ as $0\le\rho\le1$ tends pointwise to one. In fact $P A_a S_{d_n}v_n=\lambda_n e_n$: Periodization interchanges convolution with circle convolution, and $P S_{d_n}v_n=e_n$. The trace is the half-twisted comb computed above. This is an **iterated** limit in the ring-transition model on the indicated lifts, not a finite-level descent statement or a comparison with the partitioned global diagonal.
 
 **Review and next step:** Independent Yah review checked the estimates and the source interfaces against the digest-matched extraction. No visual or Lean check was performed. Next, use the half-line support of the level and quantitative Fourier-band approximation of the shifted tests to see whether the trace-norm level error can absorb the growing untwisting norm and yield a joint estimate.
+
+## A coupled level and position limit at half weight
+
+**Scope and source interface.** Use the same rational trivial isotype, $s>1$, $a=1/2$, and the standard integer-ring transition. This is a project estimate on specified lifts in the order of (11.2.1.9), p. 489. The digest-matched layout extraction of Definition 9.3.3.1, p. 427, puts the position cutoff in $[\Lambda^{-1},\Lambda]$ in norm, so its log support lies in $[-\log\Lambda,\log\Lambda]$. The proof after (11.3.2.4), p. 496, invokes a sufficiently large level and $\varepsilon\Lambda=o(1)$ but the extracted sentence gives no quantitative rate relating the level to $\Lambda$. The condition below is sufficient for our model, not a reading of that sentence or an identification of its diagonal.
+
+**A trace-norm rate for the projected lifts.** Keep the previous section $J_a$, choosing the constant in $d_n=O(\log(2+|n|))$ large enough that
+
+$$\|J_a e_n\|_{H_s}\le C(2+|n|)^{-2}.$$
+
+This follows from the exponential factor $e^{-ad_n}$ in the weighted translation bound. Let $b^{(n)}(y)=b_{n,\infty}(e^{d_n}y)/\zeta(i\omega_n)$, so $J_a e_n$ is its weighted theta sum. For each fixed Schwartz seminorm, the seminorm of $b^{(n)}$ grows at most polynomially in $2+|n|$. The unshifted test has fixed compact support off zero and polynomial derivative bounds, the inverse zeta factor has polynomial growth, and each derivative of the dilation costs a fixed power of $e^{d_n}$.
+
+For an even two-moment Schwartz test $b$, define $b_Y$ in Fourier coordinates, for sufficiently large $Y$, by
+
+$$\widehat b_Y(\xi)=\psi(\xi/Y)\widehat b(\xi)
+-\gamma(\xi)\int_{\mathbb R}\psi(\eta/Y)\widehat b(\eta)\,d\eta.$$
+
+Here $\psi$ is even and smooth, supported in $[-1,1]$ and equal to one on $[-1/2,1/2]$. The fixed $\gamma$ is smooth, even, supported off zero inside $(-1,1)$, and of integral one. Thus $b_Y$ has both moments zero and belongs to the real band $Y$. For each fixed Schwartz seminorm $q$ there is a finite Schwartz seminorm bound $q'$ with $q(b-b_Y)\le C_qY^{-1}q'(b)$. Indeed the Fourier remainder $(1-\psi(\xi/Y))\widehat b$ and all its terms after differentiation are supported in $|\xi|\ge Y/2$ and bounded by Schwartz seminorms there; one extra weight gives the factor $Y^{-1}$. For the scalar correction use $\int\widehat b=0$ to write its coefficient as minus the integral of that same tail, using an integrable weight as well. The Fourier transform and its inverse preserve the Schwartz topology.
+
+Apply the weighted theta continuity estimate from the previous section to $b^{(n)}-b_Y^{(n)}$. Since the projector is the best approximation in $H_s$, the band approximation and the bound by the norm of the input give, for some fixed $M\ge0$,
+
+$$\|(Q_{Y,a}-G_a)J_a e_n\|_{H_s}
+\le C\min\{(2+|n|)^{-2},\ Y^{-1}(2+|n|)^M\}.$$
+
+In the rank-one expansion of $(Q_{Y,a}-G_a)J_a$ sum the second bound for $|n|\le H$ and the first for $|n|>H$. For $H\asymp Y^{1/(M+2)}$ this proves
+
+$$\|(Q_{Y,a}-G_a)J_a\|_1\ll Y^{-1}H^{M+1}+H^{-1}\ll Y^{-\beta},\qquad \beta=1/(M+2)>0.$$
+
+**Joint convergence on an explicit family of paths.** For $0\le\rho\le1$ supported on a compact log interval with lower endpoint $-R$, the level error after convolution and untwisting is bounded in trace norm by $C e^{aR}Y^{-\beta}$. The position error after the level limit tends to zero in trace norm for any such profiles tending pointwise to one, by the summable smoothed outputs in the previous section. Hence the operators $R_{\rho,a} A Q_{Y,a}J_a$ converge in trace norm to the half-twisted circle convolution along every joint path with $\rho\to1$ pointwise and $e^{aR}Y^{-\beta}\to0$. In particular, for the log support $[-\log\Lambda,\log\Lambda]$, one may take $Y\ge\Lambda^q$ for any fixed $q>a/\beta$ with this section. This is a rate condition, not merely a diagonal-sequence argument based on the fixed-position convergence.
+
+**What the half-line support adds.** If the kernel of $A$ is supported in $[\ell,u]$, then $A Q_{Y,a}$ has outputs supported in $x\ge-\log Y+\ell$. On this region the untwisting factor is at most $e^{-a\ell}Y^a$, regardless of the position cutoff. Below it the level error after untwisting is just the omitted part of $T_{-a}AJ_a$ with a minus sign, whose trace norm tends to zero there by the same summable untwisted outputs. For any fixed *finite* set of circle modes the band argument gives $O(Y^{-K})$ at every $K$ (use $K$ extra weights instead of one), so on that finite subspace no position-to-level rate condition is needed. For the full trace-norm comparison the summed rate above need not beat $Y^a$; modewise rapid convergence does not provide the summable estimate uniform in $Y$ required by that argument. No unrestricted joint limit or equality with the partitioned global diagonal follows. The non-descent and auxiliary-unit issues remain unchanged.
+
+**Review status:** Independent Yah review checked the rate, the finite-mode support argument, and the digest-matched extraction at the cited locators. No visual review or Lean check was performed.
