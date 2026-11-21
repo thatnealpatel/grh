@@ -2295,34 +2295,63 @@ moment assumptions. Independent Yah statement review checked the
 operator weight, sign, real casts of the indices, and both signs of
 $s$ against this calculation and the digest-matched source extraction.
 
-### Next Fourier step: Bounded-set convergence in the rational LF topology
+## Checked bounded-set Fourier dilation differentiation
 
-State the target with `TendstoUniformlyOn` on each complex von Neumann
-bounded input set and punctured real scale filter at $1$. The family
-is the weighted inverse-dilation quotient of the forward transform,
-and the limit is the forward transform of $Df$. A runnable first
-subgoal is `TendstoUniformlyOn (fun s b ↦ s⁻¹ • (U s b - b)) G
-(𝓝[≠] 0) B` on a bounded real-profile family $B$. Use the checked
-estimate and `WithSeminorms.isVonNBounded_iff_seminorm_bounded` on
-$G^2(B)$, which is bounded by continuity and linearity. The neighborhood
-basis given by the Schwartz seminorms and `uniformity_eq_comap_nhds_zero`
-turn the simultaneous finite seminorm bounds into uniform convergence.
+[RationalAdeleLFFourierUniformDilation.lean](../../Proofs/Theorems/RationalAdeleLFFourierUniformDilation.lean)
+proves `Masullo.tendstoUniformlyOn_rationalAdeleLFFourier_dilation` and
+`Masullo.tendstoUniformlyOn_rationalAdeleLFFourier_logDilation`. For every
+complex von Neumann bounded family in the rational LF space, the weighted
+inverse Fourier dilation quotient tends uniformly to $\widehat{Df}$ in the
+additive uniformity of that LF topology. In scale $t$ near one the weight
+and real frequency multiplier are both $t^{-1}$, and the denominator is
+$t-1$. In log scale the denominator is $s$. Neither endpoint needs moment
+vanishing, inverse Fourier continuity, or an inversion theorem.
 
-For a bounded rational LF family, `rationalAdeleLF_bounded_iff` supplies
-one factorial stage with bounded coordinate tuples. Apply its forward
-Fourier CLM, take the profile limits in the finite product, and pass
-through continuous linear stage assembly, which is uniformly
-continuous. Pointwise derivative uniqueness using
-`hasDerivAt_rationalAdeleFourier_LFDilation` identifies the assembled
-limit with $\widehat{Df}$. For scale $t$ near $1$, use $s=\log t$
-and $q=\log t/(t-1)$: The error is $q$ times the log-scale error plus
-$(q-1)Gb$. `Real.hasDerivAt_log` gives $q\to1$ and boundedness of
-$G(B)$ controls the extra term.
+The [stage operators](../../Proofs/Lemmas/RationalAdeleLFStageOperators.lean)
+assemble the normalized forward Fourier integral and the weighted inverse
+log dilation as global continuous linear maps preserving each stage. The
+[profile argument](../../Proofs/Lemmas/SchwartzUniformDilation.lean) bounds
+the seminorms on the images under $G$ and $G^2$, with $G=-1-x\partial_x$.
+For $q=\log t/(t-1)$, the scale error is $q$ times the log error plus
+$(q-1)Gb$; the log slope limit is one. Common-stage boundedness reduces
+the adelic claim to finitely many such profile limits, and continuous
+linear assembly transports the limit. Pointwise derivative uniqueness
+identifies it via $\widehat{Df}=-\widehat f-D\widehat f$.
 
-The bounded-set limit itself is not yet checked. It needs no inverse
-Fourier continuity. The explicit phase convention in (2.2.4.30),
-Fourier inversion, the comparison to the manuscript's tensor topology,
-and extension to general number fields are separate obligations.
+Independent Yah statement review (`statement-review`, base
+`ab734c259dd2dcced1be79605ebeb47d73261262`) checked the two filters, both
+signs, the Haar weight, the fixed-stage argument, and the LF uniformity
+against the pinned text extraction of pp. 91–95. Remark 2.2.4.6 requests
+bounded-set convergence in the target Schwartz topology, but its compact
+image argument needs continuity of the extended quotient orbit in that
+topology, not just the pointwise derivative from (2.2.4.28)–(2.2.4.29).
+Even equicontinuity would not by itself give uniform convergence on
+bounded sets. Lemma D.1.6.19(2), pp. 773–775, gives a continuous Fourier
+isomorphism between Schwartz spaces, not continuity of the dilation
+quotient at the puncture. The seminorm remainder is our repair. The
+phase-only bound following (2.2.4.42), p. 94, also misses the contribution
+from the reciprocal norm: At frequency zero the scale quotient is
+$-t^{-1}\widehat f(0)$, not zero. These manuscript observations are
+provisional text readings, not rendered-page verification. The theorem
+does not identify the two Schwartz topologies, validate the explicit
+phase in (2.2.4.30), or treat general number fields.
+
+### Next Fourier step: Normalize the finite matrix for inversion
+
+Lemma D.1.6.19(2), pp. 773–775, also claims the inverse is continuous.
+Start with a runnable finite-matrix obligation: For $M>0$ and $j,k$ in
+`Fin (M ^ 2)`, compare the conjugated character in
+`rationalAdeleStageFourier_apply` with `ZMod.stdAddChar (j * k)` after
+transport to `ZMod (M ^ 2)`. Each representative is the finite diagonal
+of $j/M$. Use `rationalAdeleAddChar_algebraMap` at $jk/M^2$ to show the
+unconjugated finite phase has the negative sign. Check the comparison
+against `ZMod.invDFT_apply` in `Mathlib.Analysis.Fourier.ZMod`: Its positive
+phase has weight $1/M^2$, so the finite stage transform contributes $M$
+times that inverse DFT (equivalently $1/M$ times the positive-phase sum).
+Then real Schwartz inversion and the finite DFT inverse give a candidate
+stage inverse; its realization and passage to the rational LF space remain
+separate from the matrix normalization. This does not require identifying
+the manuscript tensor topology.
 
 ## Checked real-lattice inversion
 
