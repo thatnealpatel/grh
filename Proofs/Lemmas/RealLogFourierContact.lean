@@ -9,8 +9,8 @@ import Mathlib.MeasureTheory.Measure.Lebesgue.Integral
 
 /-! # Scalar calibration for the real logarithmic Fourier distribution -/
 
-open MeasureTheory Set
-open scoped FourierTransform
+open Filter MeasureTheory Set
+open scoped FourierTransform Topology
 
 namespace Masullo.RealLogFourier
 
@@ -325,5 +325,73 @@ public theorem unitSubtraction_eq_remainder (u : ℝ → ℂ) (z : ℝ) :
   simp only [unitSubtraction, hG0, ← mul_div_assoc, ← add_div]
   congr 1
   split <;> ring
+
+/-- A positive deleted radius bounds the reciprocal kernel by `1 / ε`. -/
+public theorem integrableOn_div_abs_cutoff {u : ℝ → ℂ} (hu : Integrable u)
+    {ε : ℝ} (hε : 0 < ε) :
+    IntegrableOn (fun z ↦ u z / ((|z| : ℝ) : ℂ)) {z | ε ≤ |z|} := by
+  have hm : MeasurableSet {z : ℝ | ε ≤ |z|} := measurableSet_le measurable_const continuous_abs.measurable
+  have hf := hu.aestronglyMeasurable.mono_measure (Measure.restrict_le_self (s := {z | ε ≤ |z|}))
+  refine (hu.norm.div_const ε).integrableOn.mono' (hf.div₀ (by fun_prop)) ?_
+  filter_upwards [ae_restrict_mem hm] with z hz
+  have hz' : ε ≤ |z| := hz
+  rw [norm_div, Complex.norm_real, Real.norm_eq_abs, abs_abs]
+  exact div_le_div_of_nonneg_left (norm_nonneg _) hε hz'
+
+private theorem annulus_integral_inv_abs {ε : ℝ} (hε : 0 < ε) (hε₁ : ε ≤ 1) :
+    (∫ z in {z : ℝ | ε ≤ |z|}, if |z| ≤ 1 then |z|⁻¹ else 0) = -2 * Real.log ε := by
+  have hm : MeasurableSet {z : ℝ | ε ≤ |z|} := measurableSet_le measurable_const continuous_abs.measurable
+  let g := (Icc ε 1).indicator (fun x : ℝ ↦ x⁻¹)
+  have hg (x : ℝ) : g |x| =
+      ({z : ℝ | ε ≤ |z|}).indicator (fun z ↦ if |z| ≤ 1 then |z|⁻¹ else 0) x := by
+    by_cases h₁ : ε ≤ |x| <;> by_cases h₂ : |x| ≤ 1 <;>
+      simp [g, indicator, h₁, h₂]
+  rw [← integral_indicator hm, ← (funext hg), integral_comp_abs]
+  have hsub : Icc ε 1 ⊆ Ioi 0 := fun x hx ↦ hε.trans_le hx.1
+  rw [show g = _ from rfl, setIntegral_indicator measurableSet_Icc, inter_eq_right.mpr hsub,
+    integral_Icc_eq_integral_Ioc, ← intervalIntegral.integral_of_le hε₁,
+    integral_inv_of_pos hε one_pos, one_div, Real.log_inv]
+  ring
+
+/-- On a finite-radius cutoff the unit subtraction is precisely the logarithmic correction. -/
+public theorem cutoff_eq_unitSubtraction {u : ℝ → ℂ} (hu : Integrable u)
+    (hs : Integrable (unitSubtraction u)) {ε : ℝ} (hε : 0 < ε) (hε₁ : ε ≤ 1) :
+    (1 / 2 : ℂ) * (∫ z in {z | ε ≤ |z|}, u z / ((|z| : ℝ) : ℂ)) +
+      (Real.log ε : ℂ) * u 0 =
+      (1 / 2 : ℂ) * ∫ z in {z | ε ≤ |z|}, unitSubtraction u z := by
+  let A : Set ℝ := {z | ε ≤ |z|}
+  let k (z : ℝ) : ℝ := if |z| ≤ 1 then |z|⁻¹ else 0
+  have he (z : ℝ) : u z / ((|z| : ℝ) : ℂ) - unitSubtraction u z = u 0 * (k z : ℂ) := by
+    by_cases hz : |z| ≤ 1 <;> simp [unitSubtraction, k, hz, div_eq_mul_inv, sub_mul]
+  have hf : IntegrableOn (fun z ↦ u z / ((|z| : ℝ) : ℂ)) A := integrableOn_div_abs_cutoff hu hε
+  have hdiff : (∫ z in A, u z / ((|z| : ℝ) : ℂ)) - (∫ z in A, unitSubtraction u z) =
+      u 0 * ((-2 * Real.log ε : ℝ) : ℂ) := by
+    rw [← integral_sub hf hs.integrableOn, show _ = _ from funext he, integral_const_mul,
+      integral_complex_ofReal, annulus_integral_inv_abs hε hε₁]
+  push_cast at hdiff
+  change (1 / 2 : ℂ) * (∫ z in A, u z / ((|z| : ℝ) : ℂ)) + (Real.log ε : ℂ) * u 0 =
+    (1 / 2 : ℂ) * ∫ z in A, unitSubtraction u z
+  linear_combination hdiff / 2
+
+/-- Deleting a neighborhood of shrinking radius does not change the limit of an
+absolutely integrable spatial pairing. -/
+public theorem tendsto_integral_abs_cutoff {v : ℝ → ℂ} (hv : Integrable v) :
+    Tendsto (fun ε : ℝ ↦ ∫ z in {z | ε ≤ |z|}, v z) (𝓝[Ioi 0] 0) (𝓝 (∫ z, v z)) := by
+  let A (ε : ℝ) : Set ℝ := {z | ε ≤ |z|}
+  have hm (ε : ℝ) : MeasurableSet (A ε) := measurableSet_le measurable_const continuous_abs.measurable
+  change Tendsto (fun ε ↦ ∫ z in A ε, v z) _ _
+  simp_rw [← integral_indicator (hm _)]
+  apply tendsto_integral_filter_of_dominated_convergence (fun z ↦ ‖v z‖)
+  · exact .of_forall fun ε ↦ hv.aestronglyMeasurable.indicator (hm ε)
+  · refine .of_forall fun ε ↦ .of_forall fun z ↦ ?_
+    by_cases hz : z ∈ A ε <;> simp [hz]
+  · exact hv.norm
+  · have hne : ∀ᵐ z : ℝ ∂volume, z ∈ ({0} : Set ℝ)ᶜ :=
+      ae_iff.mpr (by simp)
+    filter_upwards [hne] with z hz
+    have hz' : z ≠ 0 := by simpa using hz
+    refine tendsto_const_nhds.congr' ?_
+    filter_upwards [nhdsWithin_le_nhds (eventually_lt_nhds (abs_pos.mpr hz'))] with ε hε
+    exact indicator_of_mem hε.le _ |>.symm
 
 end Masullo.RealLogFourier

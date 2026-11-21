@@ -15,8 +15,8 @@ is the remainder after subtraction of a test with value one at the identity.
 The unit-radius subtraction below calibrates that scalar contribution.
 -/
 
-open MeasureTheory Set
-open scoped ContDiff FourierTransform SchwartzMap
+open Filter MeasureTheory Set
+open scoped ContDiff FourierTransform SchwartzMap Topology
 
 namespace Masullo
 
@@ -106,5 +106,26 @@ public theorem real_log_fourier_unit_subtraction (u : 𝓢(ℝ, ℂ)) :
   rw [mul_add, mul_left_comm (1 / 2 : ℂ), hPGval]
   push_cast
   ring
+
+/-- The shrinking-cutoff form of the real additive principal value, with the
+standard `2π` Fourier transform. Connes (34)–(35) supplies the normalized
+cutoff; the extracted Masullo (B.4.3.13) instead has twice its magnitude.
+The annulus correction and absolute unit-subtracted identity give the
+limit without changing the additive pairing of (B.4.4.1). -/
+public theorem real_log_fourier_cutoff (u : 𝓢(ℝ, ℂ)) :
+    (∀ ε : ℝ, 0 < ε → IntegrableOn (fun z ↦ u z / ((|z| : ℝ) : ℂ)) {z | ε ≤ |z|}) ∧
+      Tendsto (fun ε : ℝ ↦ (1 / 2 : ℂ) * (∫ z in {z | ε ≤ |z|}, u z / ((|z| : ℝ) : ℂ)) +
+        (Real.log ε : ℂ) * u 0) (𝓝[Ioi 0] 0)
+        (𝓝 (-(∫ ξ, (Real.log |ξ| : ℂ) * 𝓕 (u : ℝ → ℂ) ξ) -
+          ((Real.log (2 * Real.pi) + Real.eulerMascheroniConstant : ℝ) : ℂ) * u 0)) := by
+  obtain ⟨_, hsub, hvalue⟩ := real_log_fourier_unit_subtraction u
+  refine ⟨fun ε hε ↦ RealLogFourier.integrableOn_div_abs_cutoff u.integrable hε, ?_⟩
+  rw [hvalue, add_sub_cancel_right]
+  -- The removed part of the absolute density tends to zero.
+  refine ((RealLogFourier.tendsto_integral_abs_cutoff hsub).const_mul (1 / 2 : ℂ)).congr' ?_
+  filter_upwards [eventually_mem_nhdsWithin, nhdsWithin_le_nhds (eventually_lt_nhds zero_lt_one)]
+    with ε hε hε₁
+  -- The inverse-radius integral on the annulus is `-2 log ε`.
+  exact (RealLogFourier.cutoff_eq_unitSubtraction u.integrable hsub hε hε₁.le).symm
 
 end Masullo

@@ -778,30 +778,75 @@ extraction and Connes (30), (32)–(37). The printed displays have not
 been visually verified. The three changed Lean modules and the scalar
 and Schwartz endpoints are the scope of `audit-local`.
 
-## Next runnable obligation: Prove the shrinking-cutoff form
+<a id="next-runnable-obligation-prove-the-shrinking-cutoff-form"></a>
 
-For $0<\varepsilon\le1$, integrate the absolute subtracted density on
-$|z|\ge\varepsilon$. The difference from the unsubtracted cutoff
-is exactly $u(0)\log\varepsilon$ after the factor $1/2$, by evaluating
-$\int_{\varepsilon\le|z|\le1} dz/(2|z|)=-\log\varepsilon$.
-Use dominated convergence on the already integrable subtracted density
-as $\varepsilon\to0^+$, giving Connes (34)–(35) and the corrected
-additive reading of Masullo (B.4.3.13). This cutoff limit is not part
-of the checked unit-subtraction statement.
+## Checked real shrinking-cutoff principal value
 
-For the subsequent idelic identity term, Connes (36)–(37) retains $\lambda$.
-The checked additive functional is already normalized: If retaining the
-external $1/M_\infty$ from (B.4.4.16), p. 623, the raw-Haar functional
-it multiplies must be twice the additive functional, not the literal
-(B.4.4.1). The translated test in (B.4.4.2) is extended by zero near
-$z=-1$ using compact support in $\mathbb R^\times$.
-Use [`map_realMultiplicativeHaar_val`](../../Proofs/Theorems/RealMultiplicativeHaar.lean)
-to track both signs and the division by two when starting with full Haar.
-Folding $y=\pm e^{\pm x}$ gives the nonlocal weight
-$e^{-x/2}/(1-e^{-2x})$. The physical cutoff $|1-y|\ge\varepsilon$
-and the symmetric log cutoff differ by vanishing annular errors after
-the cutoff radii are compared. The identity subtraction contributes
-$-\log(1-e^{-2\varepsilon})+\log\varepsilon\to-\log 2$,
-leaving $\log\pi+\gamma$. The full Fourier cutoff identity, the
-finite-place idelic comparison, and the Chapter 12 global geometric
-comparison are not checked by the rational explicit formula.
+[`Masullo.real_log_fourier_cutoff`](../../Proofs/Props/RealPrincipalValue.lean)
+proves for every complex Schwartz test $u$ that the spatial pairing is
+absolutely integrable on each $|z|\ge\varepsilon>0$, and that
+
+$$
+\lim_{\varepsilon\to0^+}
+\left(\frac12\int_{|z|\ge\varepsilon}\frac{u(z)}{|z|}\,dz
+      +u(0)\log\varepsilon\right)
+= -\int_{\mathbb R}\log|\xi|\,\widehat u(\xi)\,d\xi
+  -(\log(2\pi)+\gamma)u(0).
+$$
+
+This is Connes (34)–(35), p. 74, with the contact term moved to the
+right-hand side. It gives the cutoff for Masullo's additive pairing
+(B.4.4.1), pp. 619–620, not the magnitude in the extracted (B.4.3.13).
+For $0<\varepsilon\le1$, folding both rays gives
+$\int_{\varepsilon\le|z|\le1}dz/|z|=-2\log\varepsilon$. Thus the
+expression inside the limit equals half the integral of the absolute
+unit-subtracted density over the same cutoff, with no leftover boundary
+term. Dominated convergence applies to the cutoff indicators off the
+null singleton. The Fourier pairing retains the sign and normalization
+already checked above. Independent Yah review (`real-cutoff-review`)
+matched the sign, measures, right-sided limit, and absolute integrability
+against the digest-verified Masullo extraction and Connes (30), (34)–(37).
+Only the text extraction, not the printed display, was checked. The local
+integration audit covers `Lemmas.RealLogFourierContact`,
+`Props.RealPrincipalValue`, and the new cutoff endpoint.
+
+## Next runnable obligation: Translate the cutoff to real multiplicative Haar
+
+Let $F$ be a smooth compactly supported log profile, $f(y)=F(\log|y|)$
+on $\mathbb R^\times$, and $u(z)=|1+z|^{-1/2}f(1+z)$, extended by zero
+near $z=-1$. First show that $u$ is a smooth compactly supported additive
+test. For each $\varepsilon>0$, prove that its half-weighted spatial
+cutoff equals
+
+$$
+\int_{\{y\in\mathbb R^\times:\,|1-y|\ge\varepsilon\}}
+     f(y)\frac{|y|^{1/2}}{|1-y|}\,\frac{dy}{2|y|}.
+$$
+
+This is a fixed-cutoff identity with absolute integrability, not a
+comparison of limits. Use translation of Lebesgue measure, then
+[`map_realMultiplicativeHaar_val`](../../Proofs/Theorems/RealMultiplicativeHaar.lean)
+to compare to half the full Haar on the actual real units. Connes
+Appendix II (36)–(37) supplies the translation. Masullo (B.4.4.2)
+specifies $u$; if retaining the external
+$1/M_\infty$ of (B.4.4.16), p. 623, the raw-Haar functional it multiplies
+must be twice the additive functional, not the literal (B.4.4.1).
+This is also the coefficient used in the Chapter 12 source comparison:
+(12.4.1.25) cites Lemma B.4.3.2, and (12.5.1.1) uses $1/2$ on the real
+term, p. 519. The fixed-cutoff identity cannot justify the preceding
+Chapter 12 operator limit or its identification with the global $S$-piece.
+
+**After translation:** Compare the physical cutoff with the symmetric
+log cutoff $|\log|y||\ge\varepsilon$. At $y>0$ the physical log thresholds
+are $\log(1+\varepsilon)$ and $-\log(1-\varepsilon)$, whose ratios to
+$\varepsilon$ tend to one; bound the discrepancies by the resulting
+log-ratios using an $O(1/|\log y|)$ majorant. At $y<0$ the deleted log
+interval has length $2\varepsilon$ and bounded density. Folding
+$y=\pm e^{\pm x}$ gives the weight $e^{-x/2}/(1-e^{-2x})$ for $x>0$.
+The identity subtraction contributes
+$-\log(1-e^{-2\varepsilon})+\log\varepsilon\to-\log 2$, leaving
+$\log\pi+\gamma$. Compare with the negative of the checked
+[`compactLogMellin_GammaReal_evaluation`](../../Proofs/Props/GammaRealMellin.lean)
+using $g(t)=e^{-t/2}F(t)$, so that $g(x)+e^{-x}g(-x)$ becomes
+$e^{-x/2}(F(x)+F(-x))$. Finite-place idelic comparison and the global
+geometric comparison remain separate obligations.
