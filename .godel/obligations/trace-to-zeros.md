@@ -132,9 +132,12 @@ and fixed position truncation does give a nuclear forward leg. The
 [Poisson edge](trace-level-transport-q.md#the-poisson-edge-separates-the-cutoff-traces)
 shows that two moving lower cutoffs at scale $1/B$ can keep the local
 traces uniformly separated with identical global compressions in that
-model. The [reverse lift test](trace-level-transport-q.md#next-fixed-cutoff-test-lift-the-compressed-global-operator)
-remains open for overlapping windows; its finite Möbius inverse gives a
-necessary $L^2$ condition, not an identification of the Mellin terms.
+model. For an overlapping position window, the [unit-band, degree-zero reverse
+lift criterion](trace-reverse-lift-q.md) now makes the obstruction exact:
+Lifting all compressed outputs in this model requires a weighted
+reciprocal-zeta integral. No unconditional bound or identification of
+the Mellin terms follows. The quotient projection can instead be used
+directly without dividing by zeta.
 
 ## Fixed-parameter subtraction over the rationals
 

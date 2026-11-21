@@ -361,10 +361,12 @@ one has $D_v=g_v$. Divergence for one output rules out the graph lift.
 If finite, the inverse Fourier transform of the even extension of $D_v$
 is the only possible local input. Still check the weighted norm,
 membership in $L_B$, paired graph approximation, and nuclearity.
-This test was independently reviewed; no failure or lift for an
-overlapping window is claimed. The projector must be applied before
-testing: Compact support of $M_\rho A_f V_b$ does not imply compact
-support of $v$.
+This necessary test was independently reviewed. The projector must be
+applied before testing: Compact support of $M_\rho A_f V_b$ does not
+imply compact support of $v$. The [unit-band, degree-zero successor](trace-reverse-lift-q.md)
+implements this test using the Hardy representation of the projected
+output. It gives an exact inverse criterion in that scope, with an open
+reciprocal-zeta estimate at a general zero-free boundary width.
 
 Neither leg has found the missing $+1/2$ Mellin subtraction. The actual
 global $S$-piece comparison, the orbital identification, the full
