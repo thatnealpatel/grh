@@ -28,6 +28,8 @@ Independently of that gate, the [subtracted-resolvent lemma](obligations/trace-d
 
 The [singleton local control](obligations/trace-divisor-singleton-diagonal.md#a-singleton-test-of-the-local-replacement) matches the weight $s=2$ at width zero: On radial tests strictly between norms $1$ and $2$, the specified joint-cutoff local projection already subtracts the Mellin moment at $-1/2$. A direct replacement would still be missing the moment at $+1/2$, even on the Chapter 13 mass-zero tests. Use this control when comparing the actual global operator with the local and orbital contributions. The global comparison and shell identification remain open, and Hilbert–Schmidt convergence alone does not supply them.
 
+For the full Chapter 13 test class, the [identity-term audit](obligations/trace-divisor-singleton-diagonal.md#passing-from-norm-one-vanishing-to-zero-mass-requires-subtraction) shows that zero mass does not give norm-one vanishing. The rational singleton trace has an explicit divergent identity term on such tests. Subtract it before comparing finite parts, or track its cutoff against the local logarithmic term. This additional obligation does not affect the common positive-log tests used for conditional uniqueness.
+
 ## External gates
 
 - **Visual source review:** No new visual reading from the attempted routes. Reopen only with image-capable Yah and working credentials; first run one fresh p. 514 control. This gate does not prevent provisional extracted-text work or labeled project reasoning.
