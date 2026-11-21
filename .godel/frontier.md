@@ -1,8 +1,12 @@
 # Proof frontier
 
-This is a working map of the trace-to-zeros argument, not a complete inventory of the paper. Paragraphs and page numbers are navigation into the [pinned edition](sources/masullo/README.md); follow the handoffs for the evidence and its limitations. The finite-place, compact-test, and abstract cutoff-majorant branches have Lean declarations; the trace and divisor endpoints remain open.
+This is a working map of manuscript obligations, currently concentrated on the trace-to-zeros argument, not a complete inventory of the paper. Paragraphs and page numbers are navigation into the [pinned edition](sources/masullo/README.md); follow the handoffs for the evidence and its limitations. The finite-place, compact-test, and abstract cutoff-majorant branches have Lean declarations; the trace and divisor endpoints remain open.
 
 The geometric and divisor branches have independent runnable obligations. The finite-place support branch now supplies the vanishing of the omitted linear restrictions. On the geometric branch, the [fixed-annulus nuclear factorization](obligations/trace-polar-free-q.md#a-fixed-smooth-annulus-gives-a-nuclear-lift) now transfers the trace of the actual local level operator through a fixed-support polar-free space in the rational real model. A global comparison still needs to account for the non-Mellin defect of the local multiplier replacement on tests below norm one. On the divisor branch, the [conditional uniqueness proposition](obligations/trace-divisor-resolvent.md#assembled-conditional-uniqueness) now gives noncentral vanishing in Lean from annihilation on the common tests. The [shifted zeta family now satisfies the geometric hypotheses](obligations/trace-divisor-uniqueness.md#checked-separation-of-the-shifted-zeta-zeros) in Lean. The next independent arithmetic step is to transfer orders to an entire function for Jensen counting. Equality of the full and capped distributions is still open.
+
+## Global theta inversion (Theorem 2.2.3.2, p. 82)
+
+The [rational unramified lattice target](obligations/theta-inversion-q.md#next-runnable-step-split-the-zero-modes-in-scaled-poisson-summation) specializes the global theta inversion to the real norm section with the standard integer-ring factors. Mathlib's real Poisson summation supplies the lattice formula after dilation; the nonzero sum must retain both zero-mode corrections. This is a Chapter 2 endpoint independent of the trace comparisons and a foundation for the two-tail estimates used by the rational theta lifts. It does not establish the adelic theorem or the trace's Mellin subtractions.
 
 ## Toward the trace identity (Theorem 12.5.1.1, pp. 519–520)
 
