@@ -380,31 +380,66 @@ The additive-density identity (A.3.2.3), the global restricted product
 (A.3.2.5), and the resulting upstairs strip mass are not proved here.
 There has been no rendered-page review of these passages.
 
-## Next Haar step: Identify the positive real multiplicative measure
+## Checked positive real multiplicative measure
 
-Definition A.3.2.2(1), p. 560, uses $|t|^{-1}$ times the additive measure
-on the real field units. The rational window in (A.2.3.14), p. 549,
-selects the positive component, so the input to (A.3.3.1), p. 561, is
-$dt/t$ there, not the folded measure of both real components. These are
-readings of the pinned text extraction. With additive real Lebesgue
-measure, prove the measure identity on $\mathbb R$:
+`Masullo.map_volume_exp_eq_restrict_realMultiplicative` in
+[RealMultiplicativeMeasure.lean](../../Proofs/Theorems/RealMultiplicativeMeasure.lean)
+proves $\exp_*dx=\mu_\infty|_{(0,\infty)}$ as measures on $\mathbb R$.
+Here $\mu_\infty$ is Lebesgue measure restricted to $\mathbb R\setminus\{0\}$
+and weighted by $|t|^{-1}$. On a Borel set $s$, the proof applies
+Mathlib's one-variable Jacobian theorem to $\log$ on $s\cap(0,\infty)$;
+its image is precisely $\exp^{-1}(s)$. The corollary
+`Masullo.restrict_realMultiplicative_Icc_one` gives mass $\log T$ on
+$[1,T]$ for $T\ge1$, so the real strip $[1,e]$ has mass one.
 
-$$
-\exp_* dx = (dt\!\mid_{(0,\infty)})/t.
-$$
+The source is Definition A.3.1.2(1), p. 556, for real additive Lebesgue
+measure, and A.3.2.2(1), p. 560, for the density on the field units.
+The real-place domain in (A.2.3.14), p. 549, is positive, so the strip
+in A.3.3.1, p. 561, uses just this component. Pushing forward the
+whole real multiplicative measure by absolute value instead would add
+the negative ray. This is a local measure identity, not an upstairs
+Tamagawa measure construction. Source evidence is the digest-matched
+layout extraction, not the rendered pages.
 
-The right side in Lean is `(volume.restrict (Set.Ioi (0 : ℝ))).withDensity
-(fun t : ℝ ↦ ENNReal.ofReal t⁻¹)`. For a Borel set $s$, apply
-`MeasureTheory.lintegral_image_eq_lintegral_abs_deriv_mul` to `Real.log`
-on $s\cap(0,\infty)$ with integrand one. Use `Real.hasDerivAt_log` and
-exp/log inversion to identify the image with $\exp^{-1}(s)$. The identity
-would give real mass one on $[1,e]$, with no extra factor of two. Together
-with the checked finite local restrictions this supplies the factors
-for the all-integral finite window, but does not itself identify that
-window with a restriction of the upstairs measure. The remaining global
-obligation is to compare the measures on restricted-product stages with
-arbitrary finite exceptional sets and assemble the upstairs measure. The
-additive finite Fourier self-duality problem is independent.
+## Next Haar step: Normalize upstairs, then compare on the finite stages
+
+(A.3.2.5), p. 560, invokes the restricted product prescription
+recalled above Definition A.3.1.2, p. 556: Agreement of the restriction
+on **every** finite stage, not just on the integral-unit window.
+The positive strip supplies a common calibration set and suggests
+proving those equalities by Haar uniqueness rather than first gluing
+measures along a stage exhaustion.
+
+First make $K=W\cap\{a:1\le |a|\le e\}$ a `PositiveCompacts` of
+actual rational ideles. The existing window homeomorphism identifies
+$K$ with the compact quotient strip (see the compactness proof in
+`Lemmas.RationalIdeleWindowMeasure`), and the open window intersected
+with $1<|a|<e$ is a nonempty open subset of $K$ by the canonical norm
+section. `Measure.haarMeasure K` then has the strip mass needed by
+`map_restrict_rationalIdeleUnitWindow_eq_rationalIdeleClassHaar`. This
+would remove the existence and normalization premise for a constructed
+upstairs Haar measure, **not** yet identify it with (A.3.2.5).
+
+For that identification, for each finite set $S$ of finite places,
+use an open group embedding of
+$\mathbb R^\times\times\prod_{v\in S}\mathbb Q_v^\times\times
+\prod_{v\notin S}\mathcal O_v^\times$ into the actual idele group, with
+its coordinatewise stage image. In pinned Mathlib,
+`RestrictedProduct.unitsEquiv` is algebraic, while
+`RestrictedProduct.isOpenEmbedding_inclusion_principal` is topological
+on a restricted product with open local subgroups. Neither alone
+identifies the topology on the units of the adele ring. Once the stage
+embedding is checked, pull back the upstairs Haar to it. The proposed
+stage product is the real multiplicative Haar times the finite product
+of local field-unit Haar measures times the compact product of the
+remaining integral-unit probabilities. Both measures are Haar there.
+The coordinates of $K$ are $[1,e]$ at the real place and integral units
+at **all** finite places, including those in $S$. The checked real mass
+and finite unit masses give product mass one on $K$. Haar uniqueness
+on the stage would give the required equality without a measure-gluing
+construction. Still to check are the stage embeddings, the real-unit
+and product Borel interfaces, and the stage equalities. The additive
+finite Fourier self-duality problem is independent.
 
 ## Checked real-lattice inversion
 
@@ -859,5 +894,6 @@ assumes a nondegenerate interval, while the checked result does not.
 The independent Haar branch now has a [checked window comparison](#checked-haar-comparison-for-a-normalized-upstairs-window)
 and a [checked finite-unit identification](#checked-finite-unit-identification-of-the-norm-one-classes).
 The [local restriction comparison](#checked-local-multiplicative-haar-and-its-restriction-to-integral-units)
-is now checked. The [positive real multiplicative measure](#next-haar-step-identify-the-positive-real-multiplicative-measure)
+is now checked. The [positive real multiplicative measure](#checked-positive-real-multiplicative-measure)
+is also checked. [Upstairs normalization and the stage comparison](#next-haar-step-normalize-upstairs-then-compare-on-the-finite-stages)
 can run separately from checking the printed endpoint at the visual gate.
