@@ -1324,33 +1324,64 @@ Audit scope: `Lemmas.RationalLocalShiftedTest`,
 `Lemmas.RationalLocalRadialTest`, and
 `Theorems.RationalLocalRadialPrimeSamples`.
 
-### Next: Sum the radial finite-place terms against von Mangoldt
+## Checked sum of the rational radial finite-place terms
 
-For a single compactly supported profile $F$, prove finite support and
-absolute summability over the **pairs** $(v,k)$, $k\ge1$, of the
-samples in `rationalLocalRadialFourier_eq_primeSamples`. If
-$\operatorname{supp}(F)\subset[-R,R]$, a nonzero pair requires
-$p_v^k\le e^R$. Use `Rat.HeightOneSpectrum.primesEquiv` and
-`Nat.Prime.pow_inj` to inject these pairs into the bounded natural
-interval. The same control gives vanishing of the entire local term
-when $\log p_v>R$, as in (B.4.4.22). Reindex through the subtype of
-natural prime powers using `isPrimePow_nat_iff`; off this subtype
-`ArithmeticFunction.vonMangoldt_ne_zero_iff` gives zero, and on it
-`vonMangoldt_apply_pow` and `vonMangoldt_apply_prime` give $\log p_v$.
-Prove that the sum of the canonical finite-place Fourier values equals
-the positive von Mangoldt sample sum in `completedZeta_contour_finite_places`
-with $g(t)=e^{-t/2}F(t)$, before inserting the outer minus sign of
-(B.4.4.16). For smooth $F$, that sum and
-`real_log_profile_fourier_eq_neg_gamma` can then supply the local
-terms of the rational radial, trivial-character idelic explicit formula
-with its two poles and full zero orders.
+[`rationalLocalRadialFourier_tsum_eq_vonMangoldt`](../../Proofs/Theorems/RationalLocalRadialSum.lean)
+reindexes the entire family of canonical finite-place Fourier values by
+natural prime powers for a single compact log profile $F$. It needs
+neither smoothness nor $F(0)=0$. With $g(t)=e^{-t/2}F(t)$ the value is
 
-The support argument on p. 625 does not by itself prove the analogous
-vanishing for nonradial restrictions: It rules out nonzero shells,
-but cancellation on the norm-one shell needs constancy there. A test
-invariant under a fixed open compact subgroup of the norm-one classes
-is constant on integral units at all but finitely many rational
-places. Do not use radial cancellation for a general local test.
+$$
+\sum_{n\ge 0}\Lambda(n)\left(g(\log n)+\frac{g(-\log n)}{n}\right),
+$$
+
+with zero summand at $n=0$ (and at $n=1$). Both the place-exponent samples
+and the whole local values have finite support, hence are absolutely
+summable. Local absolute integrability is in
+`rationalLocalRadialFourier_eq_primeSamples`; the sum uses exactly its
+negative logarithmic Fourier pairing, including $\log p$.
+
+Masullo gives the uniformizer expansion and the large-place support
+argument in (B.4.4.22), p. 625. Footnote 27 there asks to explain the
+comparison with B.4.2.2. Lean supplies the rational radial reindexing:
+The bound $|t|\le R$ on log support kills both samples if $n>e^R$.
+Unique positive prime-power representation identifies the pairs
+$(v,m)$ with the integers $p_v^{m+1}$, where $m\ge0$. On that image
+$\Lambda(p_v^{m+1})=\log p_v$, and off it the coefficient vanishes.
+The resulting positive sample sum matches
+`completedZeta_contour_finite_places`, using the checked inversion
+normalization for (B.4.2.10)–(11), p. 615. It appears with an **outer
+minus** in (B.4.4.16), p. 623. These locators are based on a
+digest-verified extraction, not a rendered-page reading. Independent
+Yah review `radial-sum-statement-review` checked the draft statement
+against those three pages and the two Lean inputs, and confirmed the
+normalization, the outer sign, and the scope of the support argument.
+
+For the radial case, subtraction cancels the whole norm-one shell,
+including when $F(0)\ne0$. The large-place bound in (B.4.4.22) only
+controls nonzero exponents. Applying it to a nonradial test would
+separately require constancy on the integral units outside finitely many
+places. Neither the general idelic distributional convergence nor the
+Chapter 12 global geometric trace follows from this finite sum.
+
+Audit scope: `Theorems.RationalLocalRadialSum`, endpoints
+`rationalLocalRadialFourier` and `rationalLocalRadialFourier_tsum_eq_vonMangoldt`.
+
+### Next: Assemble the rational radial idelic explicit formula
+
+For smooth compact $F$, use $g(t)=e^{-t/2}F(t)$ in
+`completedZeta_contour_finite_places`. Replace the finite sample series
+by the canonical local Fourier sum and the reflected Gamma integral by
+minus the real local Fourier term via `real_log_profile_fourier_eq_neg_gamma`.
+Move both pole terms to the local side. Check that the Mellin pole values
+are the two log moments with weights $e^{\mp t/2}$, and transport them
+by `integral_rationalIdeleClass_logNorm` to the normalized idelic Haar
+measure. Retain the full open-strip analytic zero orders. State the
+identity with the exact real
+Fourier pairing and the finite terms, their convergence, and no further
+factor of $1/2$ on the real additive pairing. This gives the scalar
+rational, trivial-character case of (B.4.4.16), not the general
+number-field formula or a distribution-topology limit.
 
 ### Separate open obligation: Ramified calibration
 
