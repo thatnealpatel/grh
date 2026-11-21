@@ -15,17 +15,19 @@ On each no-flag entry, the bootstrap reads the exact local target (`main` by def
 
 The Gödel runner changes to the launch workspace's stable `cmd/godel` directory for registration, not the temporary build directory. Work receives the objective on stdin; improvement receives run context, including the registered source path and run record. When `Params.Loop` continues, the driver replaces itself with `go run .` **there**, passing work stdout as stdin. This starts the next iteration after work and improvement finish; neither node calls the driver. That launch resolves the target again, so a checked and adopted edit runs without refreshing the checkout. `go run ./cmd/godel </dev/null` from the same workspace root uses the latest nonblank Gödel handoff. Keep the launch path intact between runs. Use a time limit for unattended work and send INT/TERM to the job (process group), not just its outer `go run` wrapper. The old pilot attempt allowance does not meter this loop.
 
-Work reports an observable result or stall; improvement can test and change any part of the program, including itself. Inspect the campaign’s **accepted revision** and Gödel run history, not the files at the registered source path, to see what changed. Start edits in `tool_campaign new` or a campaign writer workspace based on accepted source. Integrate, check, and adopt through the owning campaign; there is no routine parent/operator handoff. If campaign tools are unavailable, report the blocker. Do not manage the graph directly or publish changes. Gödel v0.0.5 records work failures and can run improvement, but does not automatically relaunch after process failure. Neither adoption nor model output certifies a mathematical result: Lean builds and audits require the designated proof worker. Program-only changes need relevant ordinary tests.
+Work reports an observable result or stall; improvement can test and change any part of the program, including itself. Inspect the campaign’s **accepted revision** and Gödel run history, not the files at the registered source path, to see what changed. Start edits in `tool_campaign new` or a campaign writer workspace based on accepted source. Integrate, check, and adopt through the owning campaign; there is no routine parent/operator handoff. If campaign tools are unavailable, report the blocker. Do not manage the graph directly or publish changes. Gödel v0.0.5 records work failures and can run improvement, but does not automatically relaunch after process failure. Neither adoption nor model output certifies a mathematical result: Check proof candidates locally as described below. Program-only changes need relevant ordinary tests.
 
 ## Checking a proof candidate
 
-From the root of an isolated workspace whose program includes the `check` command, run:
+Use this machine. Have a second agent review the proposed statement against the mathematical obligation. Elaborate drafts in the writer workspace, then use `tool_campaign integrate`. In the **workspace returned by integration**, build the candidate and audit each reviewed declaration. For example, substitute the actual module and declaration in:
 
 ```sh
-go run ./cmd/godel check "$candidate" Masullo.Example.checkedLemma
+lake --wfail build Proofs
+lake env leanchecker Lemmas.Example
+printf '%s\n' 'import Lemmas.Example' '#check Masullo.exampleLemma' '#print axioms Masullo.exampleLemma' | lake env lean --stdin
 ```
 
-Use the full immutable campaign candidate ID and list all reviewed endpoint declarations by qualified name. The command uses the operator-provisioned `GRH_PROOF_WORKER` executable to build and audit the exact revision, not the current working files. It neither opens a Gödel run nor adopts anything, and it does not use the pilot's campaign adapter. With no designated transport, it fails without a local Lean fallback. Do not adopt a Lean candidate without the successful check and independent review of its statement.
+Check each exit status and inspect the output: The public theorem must have the reviewed type, be proved in the project, and use no axioms beyond `propext`, `Classical.choice`, and `Quot.sound`. Inspect changed Lean sources for new axioms, proof placeholders, or unsafe substitutes. Use the pinned project toolchain and dependencies. Record the candidate ID, declarations, and results. Adopt that exact ID only on success. If a proof needs repair, edit in a writer workspace, integrate, and repeat the checks on the new candidate, including after a stale adoption attempt. No remote worker or `cmd/godel check` is needed for this workflow.
 
 ## Bounded pilot
 
