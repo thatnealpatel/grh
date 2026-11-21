@@ -481,32 +481,60 @@ calibration for the comparison below, not a normalization prescribed by
 that definition. The source reading is provisional, with no rendered-page
 inspection. This verifies the real local factor only, not (A.3.2.5).
 
-## Next Haar step: Compare the finite-stage measures
+## Checked finite-stage product of local Haar measures
 
-For each finite set of rational finite places $S$, define the product on
-`RationalIdeleFiniteStage S` and prove that it equals the comap of
-`rationalIdeleHaar` along `rationalIdeleFiniteStageEmbedding S`. The product
-is `realMultiplicativeHaar` times `Measure.pi` of the local field-unit Haar
-measures in $S$ times `Measure.infinitePi` of the local integral-unit Haar
-probabilities off $S$. This is the stage restriction described on p. 556
-and used in Lemma A.3.2.4, p. 560 (A.3.2.5). It must hold also for empty
-$S$, with the whole signed real group still present.
+[The finite-stage Haar theorem](../../Proofs/Theorems/RationalIdeleFiniteStageHaar.lean)
+`Masullo.comap_rationalIdeleHaar_finiteStage` identifies the restriction of
+`rationalIdeleHaar` to the open image of `rationalIdeleFiniteStageEmbedding S`,
+expressed by comap in stage coordinates. For every finite set $S$ of
+rational finite places, the result is exactly
 
-Use the open embedding to comap upstairs Haar. For the product side,
-`Measure.pi.isHaarMeasure` and the binary product instance handle the
-finite factors. For the infinite factor, the proof in
-[Lemmas/RationalLocalUnitHaar.lean](../../Proofs/Lemmas/RationalLocalUnitHaar.lean)
-uses `Measure.infinitePi_map_pi` and compactness; adapt it to the subtype of
-places outside $S$. Use the product sigma-algebra, with `Pi.borelSpace`
-from countability of the index set and second countability of the local
-factors. Calibrate on the preimage of `rationalIdeleWindowUnitStrip`:
-The real value is in $[1,e]$, the coordinates in $S$ are in the ranges of
-the local integral-unit inclusions, and the entire off-$S$ factor is
-allowed. The checked norm formula for finite units removes the norm
-condition there, and the three product factors all give mass one. This
-stage equality is still open, as is any subsequent global uniqueness
-step using the stages to exhaust the actual idele group. Additive finite
-Fourier self-duality is independent.
+$$
+\mu_\infty\otimes\left(\bigotimes_{v\in S}\mu_v\right)
+\otimes\left(\bigotimes_{v\notin S}h_v\right),
+$$
+
+where $\mu_\infty=dt/|t|$ on all of $\mathbb R^\times$, $\mu_v$ is
+Haar on the full local field units with integral-unit mass one, and
+$h_v$ is the integral-unit Haar probability. The off-$S$ product uses
+`Measure.infinitePi`, not the finite `Measure.pi` used in $S$. The
+ambient measurable space is assumed Borel; in the stage coordinates,
+the product measurable space is proved Borel. The result holds for
+$S=\varnothing$ and still retains both real signs.
+
+The [supporting lemmas](../../Proofs/Lemmas/RationalIdeleFiniteStageMeasure.lean)
+prove coordinatewise invariance of the probability product off $S$.
+The stage product is Haar, as is the comap along the open embedding.
+The preimage of the upstairs positive finite-unit strip is the product
+of the signed-coordinate set $[1,e]$, the ranges of the local unit
+inclusions in $S$, and the whole off-$S$ factor. Finite unit valuations
+are one there, so the idelic norm equals the positive real value.
+Both measures give this compact set with interior mass one, and Haar
+uniqueness gives equality on the whole stage.
+
+Independent Yah statement review matched the stage restriction on p. 556
+with Lemma A.3.2.4, (A.3.2.5), p. 560, in the SHA-256-matched layout
+extraction. Definition A.1.3.1 and Lemma A.1.3.3, p. 541, specify the
+ideles and their norm. Definition A.3.2.2, p. 560, specifies the full
+signed real factor and the finite unit mass, which is one over $\mathbb Q$.
+The positive strip fixes the scalar by (A.3.2.1) and A.3.3.1, pp. 560–561;
+it does not cut down the real factor in (A.3.2.5). This is a rational
+result, with provisional extracted-text readings, not rendered-page review.
+
+## Next Haar step: Characterize the global restricted product
+
+Prove that the stage identities characterize `rationalIdeleHaar` among
+all Borel measures on the actual rational idele group. Existence is now
+witnessed by `rationalIdeleHaar` itself, so there is no need to construct a
+second global measure for this characterization. For each idele, take
+$S$ to contain the union of the exceptional finite places for its value
+and inverse; the restricted-product membership and `Filter.eventually_cofinite`
+make this a finite set. The stage range theorem then gives a cover by the
+countable family indexed by `Finset` of rational finite places. Use
+`MeasurableEmbedding.map_comap` to turn agreement in stage coordinates into
+agreement on the restrictions, and `Measure.ext_of_iUnion_eq_univ` to pass
+to global equality. This would realize (A.3.2.5) over $\mathbb Q$ by the
+p. 556 characterization. Additive finite Fourier self-duality is independent.
 
 ## Checked real-lattice inversion
 
@@ -965,5 +993,6 @@ is now checked. The [positive real multiplicative measure](#checked-positive-rea
 is also checked. [Upstairs normalization and window strip mass](#checked-upstairs-haar-and-window-strip-mass)
 are checked for the constructed measure. The [finite-stage embeddings](#checked-open-embedding-of-every-rational-idele-stage)
 are checked. The [full real local measure](#checked-full-real-local-multiplicative-haar-measure)
-is checked. The [finite-stage measure comparison](#next-haar-step-compare-the-finite-stage-measures)
-can run separately from checking the printed endpoint at the visual gate.
+is checked. The [finite-stage Haar comparison](#checked-finite-stage-product-of-local-haar-measures)
+is checked. The [global characterization](#next-haar-step-characterize-the-global-restricted-product)
+can run separately from visual review.
