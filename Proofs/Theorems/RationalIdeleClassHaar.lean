@@ -42,7 +42,7 @@ public theorem isProbabilityMeasure_rationalNormOneHaar : IsProbabilityMeasure r
 
 /-- Quotient Haar measure with Lebesgue log norm and Haar probability on
 norm-one classes, transported along the canonical splitting. -/
-public noncomputable def rationalIdeleClassHaar : Measure RationalIdeleClasses :=
+@[expose] public noncomputable def rationalIdeleClassHaar : Measure RationalIdeleClasses :=
   (logVolume.prod rationalNormOneHaar).map rationalIdeleClassLogSplit
 
 public theorem isHaarMeasure_rationalIdeleClassHaar : rationalIdeleClassHaar.IsHaarMeasure := by

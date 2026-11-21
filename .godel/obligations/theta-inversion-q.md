@@ -322,32 +322,57 @@ Together with `rationalIdeleClassLogSplit`, this identifies the two
 factors of (A.2.2.3) in logarithmic coordinates. This is the group
 identification, not a measure comparison or a rendered-page reading.
 
-## Next Haar step: Identify the compact Haar probability
+## Checked product of local Haar probabilities on the rational quotient
 
-Prove that `Measure.infinitePi` of the local integral-unit Haar
-probabilities pushes forward by `rationalFiniteUnitClassEquiv` to
-`rationalNormOneHaar`. The sigma-algebra on the source must be both the
-product and the Borel one. For `Pi.borelSpace`, use
-`Rat.HeightOneSpectrum.primesEquiv` for countability of the index. For
-local second countability, use `padicIntEquiv` and the
-`Units.isInducing_embedProduct` embedding of units into the
-integer ring times its multiplicative opposite. Transport second
-countability to the opposite by `MulOpposite.opHomeomorph.symm`.
-The index countability and local second countability elaborate in a
-standalone probe; the measure equality is still open. The existing
-compactness proof supplies compactness of each local unit group; use
-Haar measure normalized on the entire compact group. Check translation
-invariance with `Measure.infinitePi_map_pi`, and apply uniqueness of
-Haar probability on the compact factor. `Measure.infinitePi_pi` then
-gives the finite-cylinder masses.
+In [RationalIdeleFiniteUnitHaar.lean](../../Proofs/Theorems/RationalIdeleFiniteUnitHaar.lean),
+`Masullo.measurePreserving_rationalFiniteUnitClassEquiv` sends
+`rationalFiniteUnitHaar`, the `Measure.infinitePi` of the local
+integral-unit Haar probabilities, to `rationalNormOneHaar` via
+$u\mapsto [(1,u)]$. This is Haar probability *on* the compact subgroup,
+not restriction of full quotient Haar to the norm-one fiber.
+`Masullo.rationalIdeleClassHaar_eq_logVolume_prod_finiteUnitHaar` then
+expresses the full quotient Haar measure as the pushforward of Lebesgue
+log measure times that compact product by the canonical class splitting,
+$(x,u)\mapsto[(e^x,u)]$. There is no extra factor of two.
 
-This would describe the quotient measure as Lebesgue log measure times
-the local unit probabilities. To compare to (A.3.2.5), p. 560, still
-identify those probabilities with the restrictions from (A.3.2.2)
-over $\mathbb Q$, and verify that the upstairs product restricts on
-the positive window to the corresponding product with $dt/t$.
-A result on the window alone does not construct the full upstairs
-restricted product.
+[RationalLocalUnitHaar.lean](../../Proofs/Lemmas/RationalLocalUnitHaar.lean)
+identifies the countable product sigma-algebra with the Borel one,
+using the primes index and the second countable $p$-adic unit groups.
+It proves the finite-cylinder formula and invariance of the product by
+coordinatewise translations. Haar uniqueness and probability
+normalization then identify the transported measure.
+
+Independent Yah statement review checked the SHA-256-matched layout
+extraction of (A.2.2.3), p. 546, (A.3.2.1)–(A.3.2.5), pp. 559–560,
+and A.3.3.1, p. 561. The rational unit mass prescribed in (A.3.2.2)
+is one, and the radial factor $dt/t$ becomes $dx$ for $x=\log t$.
+The extracted A.3.3.1 decomposition is **upstairs**; the compact
+factor here comes from the induced splitting **on classes**. This
+is not a rendered-page check, a formal calculation of discriminants,
+or a construction of (A.3.2.5) on the upstairs restricted product.
+
+## Next Haar step: Identify the restrictions of the local multiplicative measures
+
+For each finite place $v$ of $\mathbb Q$, use the natural monoid map
+$j_v:\mathcal O_v^\times\hookrightarrow\mathbb Q_v^\times$ induced by
+inclusion. With Borel spaces, prove that for a Haar measure $\nu_v$ on
+$\mathbb Q_v^\times$ satisfying $\nu_v(\operatorname{range}j_v)=1$, its
+comap along $j_v$ is `rationalLocalUnitHaar v`. This isolates the rational
+normalization in (A.3.2.2) from the upstairs restricted-product assertion
+(A.3.2.5), both on p. 560. The comap is restriction expressed in the
+coordinates of the integral unit group, not pushforward to the ambient
+local field.
+
+In pinned Mathlib, use `Submonoid.unitsEquivUnitsType` to identify the
+range with the subgroup of units having value and inverse in $\mathcal O_v$.
+`Valued.isOpen_valuationSubring` and `Submonoid.isOpen_units` make the
+range open. Continuity and injectivity of `Units.map` on this inclusion,
+compactness of the source, and Hausdorffness of the target give the
+embedding. Apply `Measure.IsHaarMeasure.comap` to the open embedding
+and `Measure.isHaarMeasure_eq_of_isProbabilityMeasure` after evaluating
+on `univ`. The local equality does not yet identify the positive window
+product or all upstairs cylinder masses. The corresponding additive
+finite Fourier self-duality problem is independent.
 
 ## Checked real-lattice inversion
 
@@ -801,5 +826,6 @@ assumes a nondegenerate interval, while the checked result does not.
 
 The independent Haar branch now has a [checked window comparison](#checked-haar-comparison-for-a-normalized-upstairs-window)
 and a [checked finite-unit identification](#checked-finite-unit-identification-of-the-norm-one-classes).
-The [compact Haar probability comparison](#next-haar-step-identify-the-compact-haar-probability)
-can now run separately from checking the printed endpoint at the visual gate.
+The [product formula for quotient Haar](#checked-product-of-local-haar-probabilities-on-the-rational-quotient)
+is now checked. The [local restriction comparison](#next-haar-step-identify-the-restrictions-of-the-local-multiplicative-measures)
+can run separately from checking the printed endpoint at the visual gate.
