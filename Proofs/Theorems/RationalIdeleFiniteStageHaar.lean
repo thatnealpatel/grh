@@ -3,16 +3,17 @@ module
 public import Lemmas.RationalIdeleFiniteStageMeasure
 public import Theorems.RationalIdeleHaarComparison
 import Mathlib.MeasureTheory.Measure.Haar.Unique
+import Mathlib.NumberTheory.Padics.HeightOneSpectrum
 
 /-!
-# The rational finite-stage product formula for Haar measure
+# Rational idele Haar as a restricted product
 
-This is the stage restriction in the restricted product (A.3.2.5), p. 560,
-in the sense of the prescription on p. 556. The positive finite-unit strip
-fixes the scale on the whole signed stage.
+The stage restrictions from p. 556 determine the normalized Haar measure in
+(A.3.2.5), p. 560. The positive finite-unit strip fixes the scale on each
+whole signed stage.
 -/
 
-open IsDedekindDomain NumberField MeasureTheory
+open IsDedekindDomain NumberField MeasureTheory Set
 
 namespace Masullo
 
@@ -40,5 +41,24 @@ public theorem comap_rationalIdeleHaar_finiteStage (S : Finset (HeightOneSpectru
     exact rationalIdeleHaar_unitStrip
   exact ((Measure.haarMeasure_eq_iff K μ).mpr hμ).symm.trans
     ((Measure.haarMeasure_eq_iff K _).mpr (rationalIdeleFiniteStageHaar_unitStrip S))
+
+/-- The finite-stage product formulas characterize normalized rational idele
+Haar among all Borel measures, not just among Haar measures. -/
+public theorem rationalIdeleHaar_eq_iff_finiteStage (μ : Measure Ideles) :
+    μ = rationalIdeleHaar ↔ ∀ S : Finset (HeightOneSpectrum (𝓞 ℚ)),
+      μ.comap (rationalIdeleFiniteStageEmbedding S) = rationalIdeleFiniteStageHaar S := by
+  constructor
+  · rintro rfl S
+    exact comap_rationalIdeleHaar_finiteStage S
+  · intro h
+    let : Countable (HeightOneSpectrum (𝓞 ℚ)) :=
+      Function.Injective.countable Rat.HeightOneSpectrum.primesEquiv.injective
+    apply Measure.ext_of_iUnion_eq_univ iUnion_range_rationalIdeleFiniteStageEmbedding
+    intro S
+    let j := rationalIdeleFiniteStageEmbedding S
+    have hj := (isOpenEmbedding_rationalIdeleFiniteStageEmbedding S).measurableEmbedding
+    rw [← hj.map_comap μ, ← hj.map_comap rationalIdeleHaar]
+    change (μ.comap j).map j = (rationalIdeleHaar.comap j).map j
+    rw [h S, comap_rationalIdeleHaar_finiteStage]
 
 end Masullo

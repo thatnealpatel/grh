@@ -22,12 +22,13 @@ vanishing at every zeta zero in the open critical strip. The
 now gives the algebraic normalization needed to leave the real section.
 The [log-norm section and splitting](../../Proofs/Theorems/RationalIdeleLogSection.lean)
 construct the canonical continuous section and separate log norm from
-the norm-one class as a topological product. Neither this product nor
-the pointwise sum reduction identifies the quotient Haar measure.
+the norm-one class as a topological product. The separate Haar branch
+now identifies the [normalized quotient measure](#checked-product-of-local-haar-probabilities-on-the-rational-quotient)
+and the [upstairs restricted product](#checked-global-restricted-product-characterization).
 Independent Yah statement reviews used text extracted from the
 digest-matched [pinned edition](../sources/masullo/README.md). The readings
-are provisional, not visual. Finite Fourier self-duality and measure
-comparison are not formalized.
+are provisional, not visual. The additive Fourier identification of the
+unramified tensor is not formalized.
 
 ## Manuscript statement and rational reduction
 
@@ -521,20 +522,95 @@ The positive strip fixes the scalar by (A.3.2.1) and A.3.3.1, pp. 560–561;
 it does not cut down the real factor in (A.3.2.5). This is a rational
 result, with provisional extracted-text readings, not rendered-page review.
 
-## Next Haar step: Characterize the global restricted product
+## Checked global restricted-product characterization
 
-Prove that the stage identities characterize `rationalIdeleHaar` among
-all Borel measures on the actual rational idele group. Existence is now
-witnessed by `rationalIdeleHaar` itself, so there is no need to construct a
-second global measure for this characterization. For each idele, take
-$S$ to contain the union of the exceptional finite places for its value
-and inverse; the restricted-product membership and `Filter.eventually_cofinite`
-make this a finite set. The stage range theorem then gives a cover by the
-countable family indexed by `Finset` of rational finite places. Use
-`MeasurableEmbedding.map_comap` to turn agreement in stage coordinates into
-agreement on the restrictions, and `Measure.ext_of_iUnion_eq_univ` to pass
-to global equality. This would realize (A.3.2.5) over $\mathbb Q$ by the
-p. 556 characterization. Additive finite Fourier self-duality is independent.
+`Masullo.iUnion_range_rationalIdeleFiniteStageEmbedding` in
+[the stage module](../../Proofs/Theorems/RationalIdeleFiniteStage.lean)
+shows that the open stage images cover the full rational idele group.
+For a given idele, its value and inverse are both adeles, so their
+exceptional places have finite union. Taking that union as $S$ puts
+it in the image, without a restriction on its real sign.
+
+`Masullo.rationalIdeleHaar_eq_iff_finiteStage` in
+[the Haar module](../../Proofs/Theorems/RationalIdeleFiniteStageHaar.lean)
+characterizes `rationalIdeleHaar` among Borel measures on the actual
+idele group. The characterization is agreement of the comaps along
+all stage embeddings with the local product measures above. The
+finite places inject into the primes, so the finite sets of places form
+a countable index. Mapping each stage comap back upstairs recovers the
+restriction to its image. Countable restriction extensionality then
+gives global equality, with no Haar or finiteness assumption on the
+competing measure. The previous finite-stage theorem shows that
+`rationalIdeleHaar` realizes the prescription. This proves (A.3.2.5)
+over $\mathbb Q$ in the sense of the prescribed restrictions on p. 556.
+Independent Yah review checked pp. 556 and 560 against the SHA-256-matched
+layout extraction. The source prescribes uniqueness among Haar measures;
+uniqueness among all Borel measures is the checked strengthening. The
+review confirmed the signed real factor and the off-$S$ compact factors,
+not a comparison with the smaller $S$-idele group alone. Rendered-page
+verification remains open.
+
+For verification, build `Proofs` with warnings as errors, run
+`leanchecker` on `Theorems.RationalIdeleFiniteStage` and
+`Theorems.RationalIdeleFiniteStageHaar`, and audit the types and axioms
+of both new declarations. The claim is multiplicative, and establishes
+neither the additive Haar formula nor the general number-field formula.
+
+## Next Fourier step: The local integral indicator over Qp
+
+The multiplicative measure comparison does not identify the Fourier
+factor needed for adelic theta inversion. Work upstream of Theorem
+2.2.3.2: Definition A.3.1.2(3), p. 556, gives the rational local
+**additive** normalization $\nu_p(\mathbb Z_p)=1$, and Examples
+A.3.1.6–7, pp. 557–558, use the standard character of conductor
+$\mathbb Z_p$ to compute the transform of $\mathbf 1_{\mathbb Z_p}$.
+Example A.3.1.10 and Remark A.3.4.2, pp. 558 and 562, distinguish this
+unramified identity from the inverse-different formula. The following
+target uses the centered indicator only, so conjugating the character
+makes no difference. These locators are from the SHA-256-matched layout
+extraction, not rendered-page inspection.
+
+Prove for every prime $p$, with the standard continuous additive
+character $\psi_p$ on $\mathbb Q_p$ and additive Haar of unit-ball mass
+one,
+
+$$
+\int_{\mathbb Z_p}\overline{\psi_p(xy)}\,d\nu_p(x)
+=\mathbf 1_{\mathbb Z_p}(y)\qquad(y\in\mathbb Q_p).
+$$
+
+Start by constructing `AddChar ℚ_[p] ℂ` with unit modulus and proving
+`ψp x = 1 ↔ ‖x‖ ≤ 1`. At each $x$ choose $n\ge0$ such that $p^n x$
+is integral (`Padic.norm_eq_zpow_neg_valuation`, `Padic.norm_p_pow`).
+Apply `ZMod.stdAddChar` to `PadicInt.toZModPow n` of $p^n x$. For a
+larger denominator, the numerator residue is multiplied by the same
+power of $p$ as the denominator: Use `PadicInt.appr_spec` to compare
+representatives modulo the larger power and the exponential expression
+for `ZMod.stdAddChar` on natural casts. A common denominator handles
+additivity. `PadicInt.ker_toZModPow` and `ZMod.injective_stdAddChar`
+give the exact kernel. The open embedding `PadicInt.isOpenEmbedding_coe`
+then makes the character locally constant. The pinned Mathlib file
+`Mathlib.NumberTheory.Padics.AddChar` constructs characters of
+$\mathbb Z_p$ with an ultrametric coefficient ring, not this character
+on $\mathbb Q_p$ with complex coefficients.
+
+For the integral, use the compact open unit ball as `PositiveCompacts`
+for `Measure.addHaarMeasure`. On the ball, if $y$ is integral the
+integrand is one. Otherwise translation by $1$ preserves the ball and
+its Haar restriction, but multiplies the integral by
+$\overline{\psi_p(y)}\ne1$. The relevant Mathlib interfaces are
+`integral_add_left_eq_self` and `integral_const_mul`; alternatively
+integrate in the $\mathbb Z_p$ coordinates with its additive Haar
+probability and compare it to the ambient restriction by comap. Check
+the Borel spaces and the normalization separately from the character
+construction. This is a local Fourier identity, not a proof of local
+Plancherel or adelic Poisson summation. Before taking a global product,
+verify the relative real and finite character signs. With the positive
+exponential at both places as extracted in Examples A.3.1.5–6, the
+product in Example A.3.1.8 at diagonal $1/p$ is $e^{4\pi i/p}$ for odd
+$p$, since every other finite component is integral. Triviality on
+$\mathbb Q$ would instead require opposite signs. This is a provisional
+sign check, not an obstacle to the centered local calculation.
 
 ## Checked real-lattice inversion
 
@@ -994,5 +1070,6 @@ is also checked. [Upstairs normalization and window strip mass](#checked-upstair
 are checked for the constructed measure. The [finite-stage embeddings](#checked-open-embedding-of-every-rational-idele-stage)
 are checked. The [full real local measure](#checked-full-real-local-multiplicative-haar-measure)
 is checked. The [finite-stage Haar comparison](#checked-finite-stage-product-of-local-haar-measures)
-is checked. The [global characterization](#next-haar-step-characterize-the-global-restricted-product)
-can run separately from visual review.
+is checked. The [global restricted-product characterization](#checked-global-restricted-product-characterization)
+is checked over $\mathbb Q$. The [local Fourier indicator](#next-fourier-step-the-local-integral-indicator-over-qp)
+is a separate additive obligation, not a consequence of multiplicative Haar.

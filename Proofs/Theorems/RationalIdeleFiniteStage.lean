@@ -12,7 +12,7 @@ The restricted product in (A.3.2.5), p. 560, uses the finite stages recalled
 on p. 556. Over `ℚ` each stage includes all of `ℝˣ`, not just the positive ray.
 -/
 
-open NumberField IsDedekindDomain Set Topology
+open Filter NumberField IsDedekindDomain Set Topology
 open scoped RestrictedProduct
 
 namespace Masullo
@@ -94,5 +94,21 @@ public theorem isOpenEmbedding_rationalIdeleFiniteStageEmbedding (S : Finset V) 
     continuous_snd.comp Units.continuous_val
   simp only [imp_and, forall_and, ofPred_and]
   exact (h.preimage hfin).inter (h.preimage (hfin.comp continuous_inv))
+
+/-- Every rational idele belongs to a finite stage: Enlarge the stage to include
+all places at which its value or its inverse fails to be integral. -/
+public theorem iUnion_range_rationalIdeleFiniteStageEmbedding :
+    (⋃ S : Finset V, range (rationalIdeleFiniteStageEmbedding S)) = univ := by
+  refine eq_univ_of_forall fun a ↦ ?_
+  let b := (a : AdeleRing (𝓞 ℚ) ℚ).2
+  let c := (↑(a⁻¹) : AdeleRing (𝓞 ℚ) ℚ).2
+  have h : (∀ᶠ v in cofinite, b v ∈ (O v) ∧ c v ∈ O v) := b.property.and c.property
+  let exceptions := {v : V | ¬(b v ∈ (O v) ∧ c v ∈ O v)}
+  have hfinite : exceptions.Finite := eventually_cofinite.mp h
+  refine mem_iUnion.mpr ⟨hfinite.toFinset, ?_⟩
+  rw [range_rationalIdeleFiniteStageEmbedding]
+  intro v hv
+  by_contra hnot
+  exact hv (hfinite.mem_toFinset.mpr hnot)
 
 end Masullo
