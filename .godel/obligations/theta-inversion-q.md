@@ -2573,22 +2573,74 @@ lemma used to reach that interface on the rational frequency model,
 not a density assertion read off the manuscript. The source check
 used extracted text, not rendered pages.
 
-### Next Fourier step: Agreement with the integral on integrable L² inputs
+## Checked agreement of the rational L² unitary with the Fourier integral
 
-Choose one sequence of Schwartz tests with both errors tending to zero
-using the simultaneous approximation theorem. Next prove a pointwise
-error inequality uniform in frequency: Expand `rationalAdeleFourier`
-(the normalized integral against the conjugated character) and use
-`norm_rationalAdeleAddChar` and the integral norm bound to control the
-error by `eLpNorm (f - g) 1 μA`. In parallel, the Schwartz classes
-converge in $L^2$ and the unitary preserves that convergence. Mathlib's
-`tendstoInMeasure_of_tendsto_Lp` and `TendstoInMeasure.exists_seq_tendsto_ae`
-give an a.e.-convergent subsequence of output representatives. Intersect
-its a.e. limit event with the countably many a.e. Schwartz agreement
-events and use uniqueness of the pointwise limit. The target is
-`MemLp (rationalAdeleFourier f) 2 μA` and a.e. agreement with
-`rationalAdeleL2Fourier (hf₂.toLp f)` for each integrable $L^2$ input.
-The compact-open dual identification and Haar comparison remain separate.
+[The intersection theorem](../../Proofs/Theorems/RationalAdeleL1L2Fourier.lean)
+proves `Masullo.rationalAdeleL2Fourier_ae_eq_integral` for every
+integrable $L^2$ representative: The normalized pointwise Fourier
+integral represents the unitary output almost everywhere.
+`Masullo.rationalAdeleFourier_memLp_two` gives square integrability, and
+`Masullo.eLpNorm_rationalAdeleFourier_two` gives equality of the $L^2$
+seminorms. Neither pointwise Borel measurability of the input nor any
+moment hypothesis is required.
+
+`Masullo.eNorm_rationalAdeleFourier_sub_le` bounds the pointwise error
+at every frequency by the $L^1$ error for two integrable inputs. The
+kernel has modulus one, so the integrable twists preserve the pointwise
+norm of their difference. The joint density theorem supplies one
+sequence of Schwartz tests for both errors. On the output side, $L^2$
+convergence implies convergence in measure and hence a subsequence
+converging almost everywhere. The $L^1$ error forces convergence to
+the Fourier integral along that same subsequence. Countable a.e.
+agreement on the Schwartz core allows the two limits to be compared.
+
+Independent Yah statement review (`integral-agreement-review`, base
+`2d5e1e990ddcf924345f24ac8abba940b4593d15`) checked the hypotheses and
+scope against the SHA-256-matched layout extraction of (D.1.1.7),
+p. 746, and (D.1.1.9)–(D.1.1.10), p. 747. The prose on p. 773 confirms
+conjugation in (D.1.1.4); the chosen character uses the project's rational
+diagonal sign correction. Both spaces here use the same normalized
+additive Haar on rational adeles. This does not prove the $C_0$ or
+injectivity assertions of D.1.1.2(1)–(2), identify the full compact-open
+dual, or compare its Haar measure. The source reading is extraction-based.
+
+### Next Fourier step: Restriction to the discrete rational dual
+
+Example A.3.1.8, p. 558, uses the rational pairing to identify the
+full adelic dual, and appeals to [CF, Ch. XV, Cor. 3.3.1] for the
+self-dual measure. The diagonal annihilator theorem by itself does
+not show that every character of the ambient adeles is a pairing
+character. A project route reuses the checked compact quotient and
+its character basis, without first classifying all local characters.
+
+First prove that $A/\mathbb Q \to \widehat{\mathbb Q_{\rm disc}}$,
+$[y]\mapsto (r\mapsto\psi(y r))$, is surjective. Use Mathlib's
+`PontryaginDual` on a multiplicative type tag with discrete topology
+for the rational domain. `rationalAdeleAddChar_algebraMap` gives
+descent, `rationalAdele_orthogonal_iff` gives injectivity, and
+`ContinuousMonoidHom.continuous_of_continuous_uncurry` gives continuity
+before descent. For a finite collection of test rationals, take a
+common denominator $d>0$. Every test is an integer multiple of $1/d$,
+so it suffices to match the requested character at $1/d$. Use
+`Circle.exp_surjective` and `rationalAdeleAt t 0`: The real phase at
+$1/d$ can be prescribed, with no finite phase. Compact subsets of the
+discrete domain are finite, so these finite matches give density in
+the compact-open topology. The quotient is compact and the target
+Hausdorff, which upgrades density to surjectivity. This is a runnable
+first obligation; no part of this proposed dual map is yet checked.
+
+For the ambient dual, remove from an arbitrary character a pairing
+character with the same restriction to $\mathbb Q$. The ratio now
+descends to $A/\mathbb Q$. If it differs from every rational frequency,
+its pairing with each rational character vanishes by Haar translation.
+Uniform density of the rational span then contradicts norm one of the
+ratio in quotient $L^2$. This gives ambient surjectivity. To finish the
+topology, use the sigma-compact open mapping theorem
+`MonoidHom.isOpenMap_of_sigmaCompact` once the map is continuous and
+bijective, using the Mathlib locally compact Hausdorff dual instance.
+Only after that identification transport normalized additive Haar
+and use the checked unitary (or one nonzero test for the scalar) to
+address the Plancherel normalization.
 
 ## Checked real-lattice inversion
 
