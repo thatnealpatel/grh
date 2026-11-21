@@ -2783,52 +2783,82 @@ $1/M$. The reviewer verified the [DE] citation, not the cited theorem's
 wording: The publisher route returned HTML, not chapter text. The stage
 proof does not rely on that cited result.
 
-### Next Fourier step: Inversion on representatives
+## Checked full-dual Fourier inversion and injectivity
 
-The digest-matched layout extraction of (D.1.1.11), p. 747, says that
-an integrable input with integrable transform **is** continuous and
-asserts pointwise equality. Lemma D.1.5.2(3), p. 761, cites this to
-transfer annihilator support on the dual to pointwise invariance of
-arbitrary integrable inputs. For literal representatives this is false:
-On the rational adeles the Borel function $1_{\{0\}}$ is integrable and
-has zero transform since the normalized Haar measure of $\{0\}$ is
-zero (by the integral-finite stage product formula and real Lebesgue
-measure). Its inverse integral is identically zero, and the input is
-not invariant under all of $A$, though the zero transform is supported
-on the annihilator of $A$. Independent Yah review confirmed this scope
-in the extraction. This counterexample is project reasoning, not yet a
-Lean declaration. The later Schwartz application already uses continuous
-inputs and is unaffected by the representative issue.
+The digest-matched layout extraction of Lemma D.1.1.2(5), (D.1.1.11),
+p. 747, cites Deitmar–Echterhoff [DE, Thm. 3.5.8]. It says an integrable
+input with integrable transform is continuous and gives pointwise
+inversion. Lemma D.1.5.2(3), p. 761, uses this in transferring annihilator
+support to pointwise invariance. For literal representatives this is
+false: On the rational adeles the Borel function $1_{\{0\}}$ is integrable
+and has zero transform, since Haar assigns zero mass to singletons
+(by the integral-finite stage product formula and real Lebesgue measure).
+Its inverse is identically zero, and the input is not invariant under
+all of $A$ despite its zero transform. This is a project counterexample,
+not a Lean declaration. The already continuous Schwartz inputs are
+unaffected by this representative issue.
 
-The repaired target has a dual Borel measure: For $f\in L^1(A)$ and
-$\widehat f\in L^1(\widehat A,\mu_D)$ with the checked Plancherel measure,
-$u(x)=\int_{\widehat A}\widehat f(\chi)\chi(x)\,d\mu_D(\chi)$ is continuous
-and equals $f$ almost everywhere. For continuous $f$ it equals $f$
-everywhere by `MeasureTheory.eq_of_ae_eq` and open-positive Haar.
-No pointwise assertion is valid for an arbitrary representative.
+[Theorem module](../../Proofs/Theorems/RationalAdeleFourierInversion.lean):
+`Masullo.rationalAdeleDualFourier_inversion` gives the repaired rational
+statement for $f\in L^1(A,\mu_A)$ and $\widehat f\in L^1(\widehat A,\mu_D)$.
+For $u(x)=\int_{\widehat A}\widehat f(\chi)\chi(x)\,d\mu_D(\chi)$,
+$u$ is continuous, $u=f$ a.e., and $u=f$ everywhere if $f$ is continuous.
+`Masullo.rationalAdeleDualFourier_injective` proves D.1.1.2(2), pp. 746–747,
+over $\mathbb Q$: Two integrable inputs with equal Fourier integrals on
+the full dual agree a.e., without any integrability hypothesis on their
+common transform. Masullo cites [DE, Cor. 3.3.4] for injectivity; Lean
+applies inversion to the difference, whose transform is identically zero.
 
-**Runnable next step:** Establish the bilinear test identity in the
-pairing coordinates. Write $F$ for the normalized forward adelic integral
-and $u(x)=F(Ff)(-x)$, with $f,Ff\in L^1(A,\mu_A)$. First prove the
-transpose identity $\int (Fp)q\,d\mu_A=\int p(Fq)\,d\mu_A$
-for integrable $p,q$, and its reflected-kernel version. In pinned
-Mathlib, use `Integrable.mul_prod`, multiply by the continuous character
-of modulus one, and apply `integral_integral_swap` and `mul_comm`.
-For Schwartz $g$, the reflected identity gives
-$\int ug=\int (Ff)h$ with $h(x)=Fg(-x)$, and the checked LF inverse
-identifies $h$ as an integrable Schwartz input with $Fh=g$, so the second
-identity gives $\int ug=\int fg$. The Plancherel measure is the pushforward
-by the pairing, so `MeasurePreserving.integral_comp` can then transport
-the inverse integral to the full dual without a new normalization.
+The [bilinear test identity](../../Proofs/Theorems/RationalAdeleFourierTestInversion.lean)
+uses the [Fubini transpose](../../Proofs/Lemmas/RationalAdeleFourierFubini.lean)
+for the conjugated character (D.1.1.4), p. 746, and its reflection. For
+Schwartz $g$, the checked LF inverse gives Schwartz $h(x)=Fg(-x)$ with
+$Fh=g$, so $\int ug=\int (Ff)h=\int fg$. This is a project proof using the
+normalized rational stage inversion; the manuscript cites the general
+inversion theorem rather than proving it this way. The pairing pushes
+$\mu_A$ to $\mu_D$, and changing the sign of the adelic frequency changes
+the conjugated character to the positive kernel, so $u(x)=F(Ff)(-x)$
+with no measure factor. Riemann–Lebesgue gives continuity.
 
-The remaining separation step needs to detect locally integrable $u-f$:
-Construct $[0,1]$ rational Schwartz cutoffs equal to one on a given
-compact set and supported in prescribed shrinking open neighborhoods,
-then use dominated convergence and
-`ae_eq_zero_of_forall_setIntegral_isCompact_eq_zero'`. The existing
-Schwartz cutoff without a prescribed neighborhood does not yet supply
-that step. Neither the bilinear inversion argument nor part (2)
-injectivity is claimed here.
+The [separation lemma](../../Proofs/Lemmas/RationalAdeleSchwartzSeparation.lean)
+passes testing of the locally integrable difference $u-f$ to continuous
+compactly supported functions by [uniform finite-stage approximation](../../Proofs/Lemmas/RationalAdeleSchwartzUniformApprox.lean).
+Mathlib smooths each finite-stage real profile without enlarging its
+support, so the approximants have a common compact bound. On any compact
+set a compactly supported Urysohn function $b$ with $\{b=1\}$ exactly that
+set has powers $b^{n+1}$ converging to its indicator. Dominated convergence
+and locally integrable uniqueness then give a.e. equality. Open-positive
+Haar upgrades equality of continuous representatives to pointwise equality.
+
+Independent text-based Yah review checked the Fubini signs, integrability,
+pointwise Schwartz inverse, representative mismatch, and separation route
+against the pinned Mathlib interfaces. The manuscript citations were
+verified in extraction, not by visual reading or by reading the cited DE
+statements verbatim. The general number-field endpoints are not implied.
+
+### Next Fourier step: Annihilator support and invariance
+
+In Lemma D.1.5.2(3), p. 761 (provisional text extraction), Masullo proves
+invariance implies annihilator support by translating the Fourier integral;
+for the converse he uses the inverse integral restricted to the annihilator.
+Use an additive subgroup $H$ of $A$ and state support as $\widehat f(\chi)=0$
+whenever $\chi$ is not trivial on $H$. The pointwise statement is equivalent
+to containment of topological support because the annihilator is closed.
+
+**Runnable next step:** Import `Theorems.RationalAdeleFourierInversion` and
+prove that, for $f,\widehat f$ integrable and $\widehat f$ vanishing off the
+annihilator, `rationalAdeleDualFourierInverse (rationalAdeleDualFourier f)`
+is pointwise $H$-invariant: For $h\in H$, compare the integrands at $x+h$
+and $x$ by `map_mul`, splitting on whether $\chi$ is trivial on $H$. Then
+use `rationalAdeleDualFourier_inversion` to get pointwise $H$-invariance of
+continuous $f$. For arbitrary $f$ the correct consequence is invariance of
+its canonical continuous representative, or a.e. equality of each translate
+with $f$ using `MeasureTheory.measurePreserving_add_right`. The reverse
+implication uses Haar translation and cancellation of the nontrivial
+character, via `MeasureTheory.integral_add_right_eq_self`; it needs only
+$f\in L^1$. The second, structural-pair assertion also uses the reverse
+Fourier direction and a double-annihilator identification; it is not
+established by the inversion theorem alone.
 
 ## Checked real-lattice inversion
 
