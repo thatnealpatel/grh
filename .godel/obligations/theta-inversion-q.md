@@ -654,18 +654,54 @@ The closed-kernel inclusion uses neither that limit nor a converse
 inclusion. It does not identify the adelic completion or settle the
 printed cap at equality; the source reading is provisional.
 
-## Next runnable analytic step: Rule out a bounded extension of excluded boundary jets
+## Checked obstruction to bounded extension on compact tests
 
-Use a specified ambient test domain. With $k$ the divided boundary
-kernel, test on $U_n=\mathbf{1}_{[-n,n]}\overline{k}$ in the $U=Wu$
-coordinate. These tests belong to $L^2$ by local continuity of the
-kernel and compactness of the interval. The bilinear integral is
-$\int_{[-n,n]} |k|^2\,dx=\|U_n\|_2^2$, so any continuous linear
-functional agreeing on them gives $\|U_n\|_2\le\|F\|$.
-Use `MeasureTheory.lintegral_iSup` on the increasing truncated squared
-norms to deduce $k\in L^2$, and then the checked strict criterion.
-Formalize this implication for the compact truncations first; this
-is not an obstruction to agreement on the theta inputs alone.
-If the test domain is later restricted to smooth compactly supported
-profiles, separately justify smooth truncations away from zero on the
-nondecaying tail. No bounded-extension obstruction is checked yet.
+In [BoundaryLogJet.lean](../../Proofs/Props/BoundaryLogJet.lean),
+`Masullo.boundaryLogJet_exists_extension_iff` proves that a continuous
+complex-linear functional on the ambient weighted log line can agree with
+the Mellin pairing on the compact conjugate-kernel tests if and only if
+$2m+1<s$. This holds for $s\ge 0$, $|\Re z|=\alpha$, and every natural
+$m$, including at width zero and without any zero or multiplicity premise.
+
+Write $k=x^m e^{zx}/W$ for the divided kernel.
+`Masullo.boundaryLogJetTest_ae_eq` identifies the test with
+$U_n=\mathbf 1_{[-n,n]}\overline k$ in the $U=Wu$ coordinate. The
+literal pairing for $u=U_n/W$ is the absolutely convergent integral
+$\int_{[-n,n]}\overline k k\,dx=\|U_n\|_2^2$.
+[CompactKernelPairing.lean](../../Proofs/Lemmas/CompactKernelPairing.lean)
+shows that the operator-norm bound forces $\|U_n\|_2\le\|F\|$.
+Monotone convergence on the increasing intervals gives $k\in L^2$;
+conversely, the conjugate of an $L^2$ kernel represents the functional.
+Thus no such extension exists for excluded orders, even if one only asks
+for agreement on this explicit sequence. This does not rule out agreement
+on the theta inputs alone, or assert a smooth test-domain result.
+
+Independent Yah statement review checked the scope and pairing against
+(9.2.2.4), p. 412, (9.2.2.40)–(9.2.2.41), p. 417, and
+(10.2.2.3)–(10.2.2.5), pp. 445–446, in the digest-matched layout
+extraction. The strict criterion is a project repair to the apparent
+non-strict bracket cutoff, also appearing in Corollary 9.2.2.5(2), p. 414.
+Proposition 9.2.2.11 assumes a nondegenerate interval. Its extracted
+reciprocal weight informs the calculation but does not supply the
+width-zero proof. The printed cap still needs a rendered-page check.
+
+## Next runnable analytic step: Use smooth tests on the nondecaying tail
+
+Definition 9.2.2.1, p. 412, starts the real multiplicative completion on
+$S_E(\mathbb R_{>0})$. In the digest-matched extraction of Definition
+B.2.1.1, p. 593, the decay conditions allow smooth compactly supported
+profiles, but the indicator cuts above need not be smooth. Prove the
+same obstruction on smooth compactly supported log profiles, which give
+inputs to that real-line starting space after $t=e^x$.
+
+For $n\ge 2$, use `ContDiffBump` centered at $(n+1)/2$ with inner radius
+$(n-1)/2$ and outer radius $n/2$. It is one on $[1,n]$, takes values in
+$[0,1]$, and is supported in $[1/2,n+1/2]$. Reflect the bump when
+$\Re z<0$; use the positive side at width zero. Set $u_n=\chi_n
+\overline k/W$, using the smooth signed formula for $W$ on that side
+(`Real.rpow` has a strictly positive base). Then $u_n$ is globally smooth
+and compactly supported, and agreement forces
+$\int\chi_n|k|^2\ge\int\chi_n^2|k|^2=\|Wu_n\|_2^2$.
+The bound on $\|Wu_n\|_2$ bounds the nondecaying tail mass on the inner
+intervals, contradicting the checked power test. This route does not
+need density or an identification of the adelic completion.

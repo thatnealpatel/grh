@@ -1,5 +1,6 @@
 module
 
+public import Lemmas.CompactKernelPairing
 public import Lemmas.InteriorLogJet
 import Lemmas.SobolevJetTail
 import Mathlib.MeasureTheory.Measure.Lebesgue.Integral
@@ -27,6 +28,13 @@ private theorem norm_dividedJet_sq (α s : ℝ) (z : ℂ) (m : ℕ) (x : ℝ) :
   rw [Nat.mul_comm m 2]
   ring
 
+private theorem continuous_dividedLogJetKernel (α s : ℝ) (z : ℂ) (m : ℕ) :
+    Continuous (fun x : ℝ ↦ (x : ℂ) ^ m * Complex.exp (z * x) /
+      (symmetricStripWeightRoot α s x : ℂ)) :=
+  (by fun_prop : Continuous (fun x : ℝ ↦ (x : ℂ) ^ m * Complex.exp (z * x))).div
+    (Complex.continuous_ofReal.comp (continuous_symmetricStripWeightRoot α s))
+    (fun x ↦ by exact_mod_cast (symmetricStripWeightRoot_pos α s x).ne')
+
 /-- At `|Re z| = α`, the kernel divided by the square root of the strip
 weight is in `L²(dx)` exactly for `2m + 1 < s`. This includes the width-zero
 case. The statement concerns only the log-line model, not adelic completion. -/
@@ -36,10 +44,7 @@ public theorem memLp_boundaryLogJet_iff {α s : ℝ} (hs : 0 ≤ s) {z : ℂ}
       (symmetricStripWeightRoot α s x : ℂ)) 2 volume ↔ 2 * (m : ℝ) + 1 < s := by
   let k := fun x : ℝ ↦ (x : ℂ) ^ m * Complex.exp (z * x) /
     (symmetricStripWeightRoot α s x : ℂ)
-  have hcont : Continuous k := by
-    exact (by fun_prop : Continuous (fun x : ℝ ↦ (x : ℂ) ^ m * Complex.exp (z * x))).div
-      (Complex.continuous_ofReal.comp (continuous_symmetricStripWeightRoot α s))
-      (fun x ↦ by exact_mod_cast (symmetricStripWeightRoot_pos α s x).ne')
+  have hcont : Continuous k := continuous_dividedLogJetKernel α s z m
   change MemLp k 2 volume ↔ _
   rw [memLp_two_iff_integrable_sq_norm hcont.aestronglyMeasurable]
   constructor
@@ -83,5 +88,34 @@ public theorem boundaryLogJet_toLp {α s : ℝ} (hs : 0 ≤ s) {z : ℂ}
     boundaryLogJet hs hz hm (hu.toLp _) =
       ∫ x : ℝ, u x * ((x : ℂ) ^ m * Complex.exp (z * x)) :=
   weightedLogJet_toLp ((memLp_boundaryLogJet_iff hs hz m).2 hm) u hu
+
+/-- The weighted `L²(dx)` test for a log-line jet: The conjugate of the
+kernel divided by the weight root, cut off on `[-n,n]`. -/
+public noncomputable def boundaryLogJetTest (α s : ℝ) (z : ℂ) (m n : ℕ) :
+    Lp ℂ 2 (volume : Measure ℝ) :=
+  compactConjKernel (continuous_dividedLogJetKernel α s z m) n
+
+/-- In weighted coordinates, the chosen test is the truncated conjugate
+divided kernel, almost everywhere. -/
+public theorem boundaryLogJetTest_ae_eq (α s : ℝ) (z : ℂ) (m n : ℕ) :
+    (boundaryLogJetTest α s z m n : ℝ → ℂ) =ᵐ[volume]
+      (Icc (-(n : ℝ)) n).indicator (fun x : ℝ ↦ star ((x : ℂ) ^ m * Complex.exp (z * x) /
+        (symmetricStripWeightRoot α s x : ℂ))) :=
+  compactConjKernel_ae_eq (continuous_dividedLogJetKernel α s z m) n
+
+/-- A boundary jet has a bounded extension agreeing with its bilinear Mellin
+pairing on the compact conjugate-kernel tests exactly for `2m + 1 < s`.
+Here `k = x^m exp(zx)/W` and the test stands for the reweighted profile
+`W*u = 1_{[-n,n]} conj(k)`. The right-hand integral is `∫ u(x) x^m exp(zx) dx`.
+This concerns the ambient rational log line, not just the theta inputs. -/
+public theorem boundaryLogJet_exists_extension_iff {α s : ℝ} (hs : 0 ≤ s) {z : ℂ}
+    (hz : |z.re| = α) (m : ℕ) :
+    let k := fun x : ℝ ↦ (x : ℂ) ^ m * Complex.exp (z * x) /
+      (symmetricStripWeightRoot α s x : ℂ)
+    (∃ F : Lp ℂ 2 (volume : Measure ℝ) →L[ℂ] ℂ, ∀ n : ℕ,
+      F (boundaryLogJetTest α s z m n) = ∫ x in Icc (-(n : ℝ)) n, star (k x) * k x) ↔
+      2 * (m : ℝ) + 1 < s := by
+  exact (exists_compactKernelPairing_iff (continuous_dividedLogJetKernel α s z m)).trans
+    (memLp_boundaryLogJet_iff hs hz m)
 
 end Masullo
