@@ -1,6 +1,6 @@
 # From the zero-mean tests to a subtracted resolvent
 
-**Status: Checked Lean cutoff step.** This is the $D=1$ cutoff step of the [Chapter 13 uniqueness repair](trace-divisor-uniqueness.md#a-one-sided-moment-uniqueness-lemma). The output feeds the [subtracted-resolvent draft](trace-divisor-resolvent.md). No part of this argument identifies the capped trace with the classical explicit distribution. The [pointwise](trace-divisor-cutoff-pointwise.md) and [integration](trace-divisor-cutoff-integral.md) estimates are checked Lean endpoints. Their [smooth profile specialization](trace-divisor-cutoff-profiles.md) is also in Lean. The scalar and mass limits are in the same module. [CutoffSeries.lean](../../Proofs/Lemmas/CutoffSeries.lean) proves the mass-corrected series identity.
+**Status: Checked Lean cutoff step.** This is the $D=1$ cutoff step of the [Chapter 13 uniqueness repair](trace-divisor-uniqueness.md#a-one-sided-moment-uniqueness-lemma). The output feeds the [subtracted-resolvent lemma](trace-divisor-resolvent.md). No part of this argument identifies the capped trace with the classical explicit distribution. The [pointwise](trace-divisor-cutoff-pointwise.md) and [integration](trace-divisor-cutoff-integral.md) estimates are checked Lean endpoints. Their [smooth profile specialization](trace-divisor-cutoff-profiles.md) is also in Lean. The scalar and mass limits are in the same module. [CutoffSeries.lean](../../Proofs/Lemmas/CutoffSeries.lean) proves the mass-corrected series identity.
 
 The provisional extraction of (13.3.1.2), p. 522 of the [pinned edition](../sources/masullo/README.md), gives only $k=0$ over $\mathbb Q$. For the trivial compact isotype the norm-section character cancels at the specified parameter, so the condition on the log test is zero integral. The radial measure is $dt/t=dx$ with compact volume one, by Definition A.3.2.1 and (A.3.2.1), pp. 559–560. The capped sum (13.3.1.3) and the full multiplicities specified near (B.4.2.2), p. 614, give the two distributions to compare. Their equality on this test class is a **premise**, not a conclusion transferred from the manuscript. The raw-Haar issue in (13.3.1.4) remains as described in the [pole test](trace-divisor-uniqueness.md#a-pole-test-for-the-raw-haar-reading).
 
@@ -86,9 +86,7 @@ coefficient, and explicit status of the annihilation premise. Release checks:
 `lake --wfail build Proofs`, `lake env leanchecker Lemmas.CutoffSeries`, and
 `#check` and `#print axioms` for the public endpoint.
 
-**Next:** Elaborate the [residue draft](trace-divisor-resolvent.md#candidate)
-locally, retaining its hypotheses. For the later assembly, use the open
-half-plane to give eventual equality at the anchor and rewrite the difference
-of reciprocals to the single subtracted term before summing. The rational
-full-versus-capped comparison and its normalization are still open; no new
-reading of the manuscript was needed for the series proof.
+**Next:** [Assemble the conditional uniqueness proposition](trace-divisor-resolvent.md#next-runnable-step-assemble-the-conditional-uniqueness-proposition).
+Use the open half-plane to give eventual equality at the anchor and rewrite
+each reciprocal difference to the single subtracted term before summing. The
+rational full-versus-capped comparison and its normalization are still open.
