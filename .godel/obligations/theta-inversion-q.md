@@ -271,33 +271,56 @@ This constructs the normalization specified on the quotient. It does
 not construct the upstairs restricted-product measure or prove that its
 quotient measure is the one just constructed.
 
-## Next Haar step: Compare the upstairs window measure
+## Checked Haar comparison for a normalized upstairs window
 
-Lemma A.3.2.4, (A.3.2.5), p. 560, describes the restricted product of
-local multiplicative Haar measures upstairs. The rational local unit
-masses are one in (A.3.2.2); the positive real coordinate has density
-$dt/t$. The comparison is $\pi_*(\nu|_W)=\mu$, **not** $\pi_*\nu$:
-$W$ is the checked positive-real, finite-unit window, $\nu$ is the
-upstairs measure, and $\mu$ is `rationalIdeleClassHaar`.
+In [RationalIdeleHaarComparison.lean](../../Proofs/Theorems/RationalIdeleHaarComparison.lean),
+`Masullo.map_restrict_rationalIdeleUnitWindow_eq_rationalIdeleClassHaar`
+proves $\pi_*(\nu|_W)=\mu$ for a Borel Haar measure $\nu$ upstairs
+with $\nu(W\cap\{a:1\le |a|\le e\})=1$. Here $W$ is the checked
+positive-real, finite-unit window, $\pi$ is the actual class quotient,
+and $\mu$ is `rationalIdeleClassHaar`. The measure is restricted to the
+whole window, not to the strip. The strip only fixes the scalar.
 
-A runnable intermediate target is this equality conditional on Borel
-Haar measure $\nu$ and mass one for the intersection of $W$ with the
-upstairs norm strip $[1,e]$. Bundle $W$ as an open subgroup using
-`one_mem_rationalIdeleUnitWindow`, `mul_mem_rationalIdeleUnitWindow`,
-and `inv_mem_rationalIdeleUnitWindow`. Use the checked window
-homeomorphism (the actual quotient map, hence a homomorphism) to
-transport the restricted Haar measure. In pinned Mathlib,
-`Measure.measure_isMulInvariant_eq_smul_of_isCompact_closure` compares
-Haar measures on relatively compact sets without assuming second
-countability. Apply it to the compact strip $[1,e]$ to fix the scalar,
-then to intersections with a countable compact exhaustion supplied by
-the log split. `Measure.ext_of_iUnion_eq_univ` is the corresponding
-measure extensionality interface. This route has not yet been elaborated.
-After establishing window equality,
-`IsFundamentalDomain.quotientMeasureEqMeasurePreimage` accesses the
-quotient integral interface. The decisive premise for the manuscript
-measure is still to construct or identify $\nu$ from its local factors
-and prove the upstairs strip normalization, rather than assume it.
+The inverse of the window homeomorphism followed by inclusion is an
+open group embedding. The pushforward of the restricted measure is the
+comap along this embedding, so it is Haar. On the quotient the strip
+$[1,e]$ is compact by the log split and has mass one under $\mu$.
+Haar uniqueness on sets with compact closure fixes the scalar there.
+The log split also yields a countable compact cover, extending equality
+to all Borel sets without a second-countability premise.
+
+Independent Yah statement review checked Definition A.3.2.1,
+(A.3.2.1)–(A.3.2.2) and (A.3.2.5), pp. 559–560, and A.3.3.1, p. 561,
+against the SHA-256-matched layout extraction. The quoted formula in
+A.3.3.1 places the strip on the upstairs radial extension of the
+norm-one fundamental domain. The rational norm-one mass is one, and
+the positive real density $dt/t$ gives strip mass one, with no factor
+from the negative real coordinate. This reading is provisional, not a
+rendered-page check. The theorem assumes that strip mass for $\nu$;
+it does not construct or identify the manuscript's restricted product.
+
+## Next Haar step: Identify the finite-unit factor
+
+Prove that `rationalFiniteUnitClass` from `RationalFiniteUnits` to
+`rationalIdeleClassNormOne` is an injective homomorphism as well as the
+already checked continuous surjection. The representatives $(1,u)$
+lie in $W$: Their real coordinate is one and every finite valuation
+is one. If two such classes coincide, injectivity of the checked window
+homeomorphism gives equality upstairs; evaluate at each finite place
+to recover equality of the local units. Multiplication can be checked
+coordinatewise. Pinned Mathlib's `Continuous.homeoOfEquivCompactToT2`
+then gives the continuous group identification, since the source is
+compact and the target is Hausdorff. This interface has not yet been
+elaborated.
+
+Use that identification with the log split to address the remaining
+measure premise of (A.3.2.5), p. 560: Compare the window restriction
+with Lebesgue log measure times the product of the local unit Haar
+probabilities. Pinned Mathlib has `Measure.infinitePi_map_pi` for
+coordinatewise translations and `Measure.infinitePi_pi` for the
+finite-cylinder masses. A proof on the window does not by itself
+construct the full upstairs restricted product; compatibility on
+translated windows still needs justification if used.
 
 ## Checked real-lattice inversion
 
@@ -749,6 +772,6 @@ of the printed cap, a claim about testing on theta inputs alone, or an
 identification of the adelic completion. The p. 417 duality proposition
 assumes a nondegenerate interval, while the checked result does not.
 
-The independent [Haar window comparison](#next-haar-step-compare-the-upstairs-window-measure)
-remains runnable. Verification of the exact printed endpoint still
+The independent Haar branch now has a [checked window comparison](#checked-haar-comparison-for-a-normalized-upstairs-window)
+and a runnable [finite-unit identification](#next-haar-step-identify-the-finite-unit-factor). Verification of the exact printed endpoint still
 requires the visual gate recorded in the frontier.
