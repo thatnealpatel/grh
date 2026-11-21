@@ -1121,32 +1121,81 @@ constant. Its integral is therefore zero for any larger cutoff. This
 proves the value with absolute integrability of the inner ball and
 tail separately, not by conditional cancellation at infinity.
 
-### Next: Assemble the off-zero pairing on locally constant compact tests
+## Logarithmic Fourier pairing on all rational off-zero tests
 
-Prove that every locally constant, compactly supported
-$u:\mathbb Q_p\to\mathbb C$ with $u(0)=0$ is a finite linear combination
-of indicators of balls $a_i+p^n\mathbb Z_p$ with $|a_i|_p>p^{-n}$.
-Use a finite clopen ball cover of the compact support and a common
-fine radius (or remove contained balls in a finite ultrametric cover).
-Apply the checked ball endpoint by linearity to get absolute
-integrability and
+[`padicTest_log_fourier_off_zero`](../../Proofs/Theorems/PadicLogTestFourier.lean)
+proves for every locally constant, compactly supported
+$u:\mathbb Q_p\to\mathbb C$ with $u(0)=0$ that both integrands are
+absolutely integrable and
 
 $$
 \int J(\xi)\widehat u(\xi)\,d\nu(\xi)
  = -\frac{1}{1-p^{-1}}\int\frac{u(x)}{|x|_p}\,d\nu(x).
 $$
 
-The spatial norm is constant on each ball, and its additive Haar mass
-follows by translation from `padic_measure_dilatedBall`. This gives
-the rational additive-density version of (B.4.3.5) before changing
-variables to the multiplicative Haar measure. The subsequent task is
-to use it on $u(x)=f(1+x)|1+x|_p^{-1/2}$, extended by zero at $x=-1$,
-when $f(1)=0$. Then subtract $f(1)\mathbf1_{\mathbb Z_p^\times}$ and
-use the checked translated unit-indicator pairing. This does not
-identify the global geometric trace. For ramified continuation,
-separately check the second frequency ball in the display after
-(B.4.4.15): The extracted subscript appears to have
-$\mathfrak m_v^{-1}\mathfrak d$, whereas the annihilator of
-$\mathfrak m_v$ for the trace character is
+This is the additive-density form of (B.4.3.5), pp. 617–618. Masullo's
+(B.4.3.3)–(4), (B.4.3.9)–(11) use covariance, uniqueness of the
+invariant functional, and the unit calibration. The Lean proof replaces
+that route for this restriction. `padicTest_eq_sum_closedBalls` takes a
+common radius from a Lebesgue number for the open fibers on the compact
+support. It deduplicates the finite cover and uses the ultrametric
+property to get pairwise disjoint balls. The zero fiber is open and a
+ball contained in a nonzero fiber does not contain zero, giving the
+strict radius inequality including at $p=2$. `padicClosedBall_log_pair`
+uses the checked off-zero ball evaluation and rewrites its value as the
+integral of the inverse-norm density: The norm is constant on each ball
+and its additive Haar mass follows by translation from
+`padic_measure_dilatedBall`. Finite Bochner linearity gives the test
+identity and the integrability statements. The empty support is covered
+by the empty sum.
+
+The kernel in Lean is conjugated, whereas (A.3.1.5), p. 557, displays
+positive character evaluation in its final expression. At the level of
+the logarithmic pairing this sign choice is immaterial: Negating
+frequency preserves the weight and additive Haar. The proof does not
+claim a positive-sign pointwise Fourier identity. The comparison is
+based on the digest-verified PDF text extraction, not a rendered-page
+review. Independent Yah statement review `review-off-zero-assembly`
+checked the endpoint and its two helpers, including the normalization,
+finite-ball argument, and scope.
+
+### Next: Identify the density with rational multiplicative Haar
+
+Lemma A.3.2.3, (A.3.2.3)–(4), p. 560, uses additive dilation to cancel
+the factor $|x|^{-1}$ and the difference of the integral and maximal
+ideal balls to calibrate the units. Prove the following exact Borel
+measure equality at every rational finite place $v$:
+
+$$
+  \operatorname{map}(\mathrm{Units.val},\mu_v)
+    = (1-p^{-1})^{-1}\,
+      (\nu_v|_{K_v\setminus\{0\}}).\mathrm{withDensity}(|\cdot|_v^{-1}),
+$$
+
+where $K_v=\mathbb Q_v$, $p$ is its rational residue prime,
+$\mu_v=\texttt{rationalLocalMultiplicativeHaar}\ v$, and
+$\nu_v=\texttt{rationalLocalFieldAddHaar}\ v$. Use
+`norm_rationalLocal_padicEquiv` and
+`rationalLocalFieldAddHaar_dilate_integers` to obtain the arbitrary
+nonzero dilation law by additive Haar uniqueness. Pull the normalized
+density back to units along the open embedding `Units.val`; verify
+left invariance by the dilation law and `lintegral` change of variables.
+Calibrate its mass on `range (rationalLocalUnitInclusion v)` by
+subtracting the radius-$p^{-1}$ ball from the integral ball. Apply
+`rationalLocalMultiplicativeHaar_eq` after proving that the pulled-back
+measure is Haar. `map_realMultiplicativeHaar_val` illustrates the
+`MeasurableEmbedding.map_comap` pattern, but its real Jacobian proof
+is not an input at finite places.
+
+The subsequent obligation is (B.4.4.7)–(8), p. 621: Use the pairing on
+$u(x)=f(1+x)|1+x|_p^{-1/2}$, extended by zero at $x=-1$, when $f(1)=0$.
+Show local constancy and compact support after extension, and justify
+the additive translation and the two density conversions. For general
+$f$, subtract $f(1)\mathbf1_{\mathbb Z_p^\times}$ and use the checked
+translated unit-indicator pairing. This does not identify the global
+geometric trace. For ramified continuation, separately check the second
+frequency ball in the display after (B.4.4.15): The extracted subscript
+appears to have $\mathfrak m_v^{-1}\mathfrak d$, whereas the annihilator
+of $\mathfrak m_v$ for the trace character is
 $\mathfrak m_v^{-1}\mathfrak d^{-1}$. The two agree over $\mathbb Q_p$.
 The subscript reading is provisional pending rendered-page review.
