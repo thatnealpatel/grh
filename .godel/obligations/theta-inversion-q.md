@@ -2336,22 +2336,74 @@ provisional text readings, not rendered-page verification. The theorem
 does not identify the two Schwartz topologies, validate the explicit
 phase in (2.2.4.30), or treat general number fields.
 
-### Next Fourier step: Normalize the finite matrix for inversion
+<a name="next-fourier-step-normalize-the-finite-matrix-for-inversion"></a>
 
-Lemma D.1.6.19(2), pp. 773–775, also claims the inverse is continuous.
-Start with a runnable finite-matrix obligation: For $M>0$ and $j,k$ in
-`Fin (M ^ 2)`, compare the conjugated character in
-`rationalAdeleStageFourier_apply` with `ZMod.stdAddChar (j * k)` after
-transport to `ZMod (M ^ 2)`. Each representative is the finite diagonal
-of $j/M$. Use `rationalAdeleAddChar_algebraMap` at $jk/M^2$ to show the
-unconjugated finite phase has the negative sign. Check the comparison
-against `ZMod.invDFT_apply` in `Mathlib.Analysis.Fourier.ZMod`: Its positive
-phase has weight $1/M^2$, so the finite stage transform contributes $M$
-times that inverse DFT (equivalently $1/M$ times the positive-phase sum).
-Then real Schwartz inversion and the finite DFT inverse give a candidate
-stage inverse; its realization and passage to the rational LF space remain
-separate from the matrix normalization. This does not require identifying
-the manuscript tensor topology.
+## Checked rational LF Fourier inversion
+
+[RationalAdeleLFFourierInversion.lean](../../Proofs/Theorems/RationalAdeleLFFourierInversion.lean)
+constructs `Masullo.rationalAdeleLFFourierEquiv`, a complex continuous
+linear self-equivalence of `RationalAdeleSchwartzLF`, with the Borel
+measurable-space assumptions on the full rational adeles. Its forward map
+is exactly `rationalAdeleLFFourier` and agrees pointwise with the normalized
+adelic integral at every adelic frequency. Its inverse commutes with
+assembly at each factorial level and acts there by the explicit stage
+inverse.
+
+For positive $M$, the [cyclic stage calculation](../../Proofs/Lemmas/RationalAdeleCyclicFourier.lean)
+identifies the phase at cells $j,k$ as $e^{2\pi i jk/M^2}$. The finite
+character on the rational diagonal $jk/M^2$ has the negative sign
+because the full character is trivial there and the real component has
+the positive sign. Conjugating gives the positive cyclic phase. Under
+`ZMod.finEquiv`, the finite operator is $M$ times Mathlib's inverse DFT
+at modulus $M^2$, hence has coefficients of magnitude $1/M$. Its inverse
+is $M^{-1}$ times the forward DFT, followed by inverse real Schwartz
+Fourier on each profile. Both cyclic operators are continuous on the
+Schwartz-valued product by finite sums of continuous evaluations, not
+because the space of profiles is finite-dimensional. Global injectivity
+uses a common factorial stage for two inputs. Stagewise inversion supplies
+surjectivity and gives the restrictions of the global inverse, so the LF
+continuity criterion applies to the inverse as well.
+
+This realizes the structural-pair reduction of Lemma D.1.6.19(2), pp.
+773–775, in the rational model. Footnotes 5–6 leave the level scalar
+unspecified; here the existing normalized Haar integral fixes it. On
+p. 775 the proof cites D.1.1.2(5), p. 747, after obtaining integrability
+of the input and transform. The cited inversion formula (D.1.1.11)
+uses reflection for the double forward transform; its literal claim of
+pointwise continuity of an arbitrary measurable representative cannot
+follow from the two $L^1$ hypotheses (changing one point on $\mathbb R$
+leaves the Fourier integral unchanged). Our continuous Schwartz inputs
+and real-plus-cyclic equivalences do not require that assertion. These
+are provisional text-extraction readings of the digest-pinned PDF, not
+visual review. The result does not identify the model topology with the
+manuscript tensor topology, parametrize all dual characters, or prove
+Plancherel or D.1.6.19(3).
+
+Independent Yah review (`inversion-endpoint-review`, base
+`d8aec550372603be45ca566c91c47fd96b2870ff`) checked the stage phase,
+normalization, forward-integral identification, inverse assembly, and
+LF topology against the drafted statements and the pinned passage.
+
+### Next Fourier step: Schwartz Parseval for normalized rational Haar
+
+Prove the rational Schwartz restriction of (D.1.1.9), Lemma D.1.1.2(4),
+p. 747. For $f$ in `RationalAdeleSchwartzLF`, show integrability of
+$|f|^2$ and $|\widehat f|^2$ and equality of their integrals against
+`rationalAdeleAddHaar` on both sides, using the checked rational frequency
+parameterization of the integral, without claiming it exhausts the dual.
+Start by proving the stage identity
+$\int |f|^2\,d\mu_A = M^{-1}\sum_j\int_{\mathbb R}|b_j|^2$:
+`rationalAdeleBox_stageCell` and the unique cell partition eliminate
+cross terms, and the affine Haar change of variables reduces each cell to
+the unit integral cylinder with real Lebesgue measure. Then use
+`SchwartzMap.integral_norm_sq_fourier` and cyclic character orthogonality.
+For the latter, the proof of `ZMod.dft` in
+`Mathlib.Analysis.Fourier.ZMod` uses `sum_eq_zero_of_ne_one` with
+`isPrimitive_stdAddChar` at nonzero frequency. The normalized finite
+matrix has squared coefficient $1/M^2$, canceling the $M^2$ on the
+orthogonality diagonal. The isometric extension to all of $L^2$, its
+surjectivity, and any identification with the dual Plancherel measure
+are separate obligations.
 
 ## Checked real-lattice inversion
 

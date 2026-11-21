@@ -105,4 +105,18 @@ public theorem rationalAdeleAddChar_algebraMap (r : ℚ) :
     intro hd
     exact hv (Finset.mem_map.mpr ⟨pOf v, hT _ hd, (pOf).symm_apply_apply v⟩)
 
+/-- On a rational diagonal the conjugated finite phase equals the positive
+real phase, since the full adelic character is trivial there. -/
+public theorem conj_rationalFiniteAdeleAddChar_algebraMap (r : ℚ) :
+    conj (rationalFiniteAdeleAddChar (algebraMap ℚ (FiniteAdeleRing (𝓞 ℚ) ℚ) r)) =
+      Complex.exp (2 * Real.pi * Complex.I * ((r : ℝ) : ℂ)) := by
+  have h := rationalAdeleAddChar_algebraMap r
+  change Complex.exp (2 * Real.pi * Complex.I * (rationalAdeleReal (algebraMap ℚ A r) : ℂ)) *
+      rationalFiniteAdeleAddChar (algebraMap ℚ A r).2 = 1 at h
+  rw [rationalAdeleReal_algebraMap, AdeleRing.algebraMap_snd_def] at h
+  rw [mul_comm] at h
+  rw [eq_inv_of_mul_eq_one_left h, ← Complex.exp_neg, ← Complex.exp_conj]
+  congr 1
+  simp [map_ofNat]
+
 end Masullo
