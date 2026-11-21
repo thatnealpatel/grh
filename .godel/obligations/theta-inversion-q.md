@@ -2604,43 +2604,56 @@ additive Haar on rational adeles. This does not prove the $C_0$ or
 injectivity assertions of D.1.1.2(1)–(2), identify the full compact-open
 dual, or compare its Haar measure. The source reading is extraction-based.
 
-### Next Fourier step: Restriction to the discrete rational dual
+## Checked restriction to the discrete rational dual
 
-Example A.3.1.8, p. 558, uses the rational pairing to identify the
-full adelic dual, and appeals to [CF, Ch. XV, Cor. 3.3.1] for the
-self-dual measure. The diagonal annihilator theorem by itself does
-not show that every character of the ambient adeles is a pairing
-character. A project route reuses the checked compact quotient and
-its character basis, without first classifying all local characters.
+[`Masullo.bijective_rationalAdeleClassToDiagonalDual`](../../Proofs/Theorems/RationalDiagonalDual.lean)
+identifies the compact additive adele classes $A/\mathbb Q$ with the
+compact-open character group of the **discrete additive diagonal**, by
+$[y] \mapsto (r \mapsto \psi(yr))$. The Lean domain of each character
+is `Multiplicative rationalDiagonal`, the actual diagonal subgroup with
+its inherited discrete topology, not $\mathbb Q^\times$.
+`rationalAdeleClassToDiagonalDual_mk_apply` gives the pointwise formula,
+and `continuous_rationalAdeleClassToDiagonalDual` gives continuity in
+the compact-open topology from joint continuity of the pairing and
+the quotient topology. The checked diagonal annihilator is exactly the
+kernel of the upstairs restriction map, giving descent and injectivity.
 
-First prove that $A/\mathbb Q \to \widehat{\mathbb Q_{\rm disc}}$,
-$[y]\mapsto (r\mapsto\psi(y r))$, is surjective. Use Mathlib's
-`PontryaginDual` on a multiplicative type tag with discrete topology
-for the rational domain. `rationalAdeleAddChar_algebraMap` gives
-descent, `rationalAdele_orthogonal_iff` gives injectivity, and
-`ContinuousMonoidHom.continuous_of_continuous_uncurry` gives continuity
-before descent. For a finite collection of test rationals, take a
-common denominator $d>0$. Every test is an integer multiple of $1/d$,
-so it suffices to match the requested character at $1/d$. Use
-`Circle.exp_surjective` and `rationalAdeleAt t 0`: The real phase at
-$1/d$ can be prescribed, with no finite phase. Compact subsets of the
-discrete domain are finite, so these finite matches give density in
-the compact-open topology. The quotient is compact and the target
-Hausdorff, which upgrades density to surjectivity. This is a runnable
-first obligation; no part of this proposed dual map is yet checked.
+For surjectivity, fix a character of the diagonal. For any finite set
+of test rationals, choose a common positive denominator $d$. Every test
+is an integer multiple of $1/d$, so it suffices to match at $1/d$.
+A real-only adele realizes the prescribed phase there, since the circle
+exponential is onto. Each value constraint is closed on $A/\mathbb Q$.
+The finite intersection property on the compact quotient gives one
+class satisfying all the constraints, not just one adele per finite set.
+No abstract character extension or dual exactness theorem is assumed.
 
-For the ambient dual, remove from an arbitrary character a pairing
-character with the same restriction to $\mathbb Q$. The ratio now
-descends to $A/\mathbb Q$. If it differs from every rational frequency,
-its pairing with each rational character vanishes by Haar translation.
-Uniform density of the rational span then contradicts norm one of the
-ratio in quotient $L^2$. This gives ambient surjectivity. To finish the
-topology, use the sigma-compact open mapping theorem
-`MonoidHom.isOpenMap_of_sigmaCompact` once the map is continuous and
-bijective, using the Mathlib locally compact Hausdorff dual instance.
-Only after that identification transport normalized additive Haar
-and use the checked unitary (or one nonzero test for the scalar) to
-address the Plancherel normalization.
+Independent Yah statement review (`diagonal-dual-review`, base
+`5c6d68c54180748f8dbe5ac71a04f7385f3e6dac`) confirmed this is a project
+bridge, not the manuscript's full self-duality theorem. The digest-matched
+layout extraction gives discreteness and compactness in Lemma A.1.2.1,
+pp. 540–541, the full rational pairing and a reference for its measure in
+Example A.3.1.8, p. 558, the separate $S$-local pairing in (A.3.1.9)–(A.3.1.13),
+pp. 558–559, and the compact-open dual in D.1.1.1, p. 746. The checked
+pairing retains the project's conjugated finite phases. This reading is
+extraction-based. The theorem gives neither full adelic self-duality nor
+any Haar comparison.
+
+### Next Fourier step: Surjectivity onto the full adelic dual
+
+Given a continuous circle character of $A$, use the diagonal theorem to
+remove a pairing character with the same restriction to $\mathbb Q$.
+The ratio now descends to $A/\mathbb Q$. If it differs from every rational
+frequency, its inner product with each rational character vanishes by
+Haar translation. The checked uniform density of the rational span then
+contradicts norm one of the ratio in quotient $L^2$. This is the next runnable
+obligation. For full injectivity, the diagonal test first forces an element
+of the kernel to be rational. A nonzero rational is invertible in $A$,
+so it cannot pair trivially against all adeles, by the nontrivial real phase.
+For the topology, use `MonoidHom.isOpenMap_of_sigmaCompact` once the
+ambient pairing map is continuous and bijective, using the locally
+compact Hausdorff dual instance. Only after that identification transport
+normalized additive Haar and use the checked unitary (or one nonzero test
+for the scalar) to address the Plancherel normalization.
 
 ## Checked real-lattice inversion
 
