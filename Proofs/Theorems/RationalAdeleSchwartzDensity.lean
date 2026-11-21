@@ -8,12 +8,13 @@ import Lemmas.RationalAdeleSchwartzCutoff
 import Mathlib.MeasureTheory.Function.ContinuousMapDense
 import Mathlib.MeasureTheory.Function.LpSeminorm.CompareExp
 
-/-! # Density of rational adelic Schwartz tests in normalized L²
+/-! # Density of rational adelic Schwartz tests in normalized L¹ and L²
 
 For a compactly supported continuous test, sample first on a finite
 quotient stage, then approximate the finitely many real profiles on that
-same stage. Regularity of Haar gives density for arbitrary `L²` inputs.
-This is a project step toward (D.1.1.10), p. 747, not the unitary extension.
+same stage. Regularity of Haar gives density for arbitrary `L¹` and `L²`
+inputs, with simultaneous approximation when both conditions hold.
+This supports (D.1.1.7) and (D.1.1.10), pp. 746–747.
 -/
 
 open NumberField MeasureTheory Set
@@ -114,5 +115,22 @@ public theorem exists_rationalAdeleSchwartzLF_L1_L2_approx {f : A → ℂ}
   · exact hadd₁ _ _ ((htail u₁ subset_union_left 1).trans hu₁) hw₁
   · exact hadd₂ _ _ ((htail u₂ subset_union_right 2).trans hu₂)
       (hw₂.trans (hfg.le.trans (min_le_right _ _)))
+
+/-- Rational adelic Schwartz tests approximate every `L¹` input, including
+those which are not square-integrable. -/
+public theorem exists_rationalAdeleSchwartzLF_L1_approx {f : A → ℂ}
+    (hf : Integrable f μA) {ε : ℝ≥0∞} (hε : 0 < ε) :
+    ∃ g : RationalAdeleSchwartzLF, eLpNorm (f - g.toUnion.val) 1 μA < ε := by
+  let : T2Space A := t2Space_rationalAdeles
+  let : LocallyCompactSpace A := rationalAdeleClosedUnitStrip.locallyCompactSpace_of_addGroup
+  let : SecondCountableTopology A := secondCountableTopology_rationalAdeles
+  obtain ⟨δ, hδ, hadd⟩ := exists_Lp_half ℂ μA 1 hε.ne'
+  obtain ⟨u, hus, hfu, huc, hu₁⟩ := (memLp_one_iff_integrable.mpr hf)
+    |>.exists_hasCompactSupport_eLpNorm_sub_le (by simp) hδ.ne'
+  obtain ⟨g, hug, _⟩ := exists_rationalAdeleSchwartzLF_L1_L2_approx
+    hu₁ (huc.memLp_of_hasCompactSupport hus) hδ zero_lt_one
+  refine ⟨g, ?_⟩
+  rw [show f - g.toUnion.val = (f - u) + (u - g.toUnion.val) by abel]
+  exact hadd _ _ hfu hug.le
 
 end Masullo

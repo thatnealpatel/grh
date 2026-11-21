@@ -2719,20 +2719,77 @@ visual review. The finite-place sign repair for diagonal cancellation
 is unchanged. The $S$-local normalization, general number fields, and
 identification of the manuscript Schwartz topology are not covered.
 
-### Next Fourier step: Vanishing at infinity on the full dual
+## Checked Riemann–Lebesgue on the full rational adelic dual
 
-Prove Lemma D.1.1.2(1), p. 747, for arbitrary integrable rational adelic
-input. Use `MemLp.exists_hasCompactSupport_eLpNorm_sub_le` at exponent
-one to approximate by continuous compactly supported tests; these also
-belong to $L^2$ by finite Haar mass on compact sets. The checked
-simultaneous approximation then gives an $L^1$ approximation by rational
-Schwartz tests, with no $L^2$ restriction on the original input. For
-Schwartz tests, the checked stage Fourier theorem keeps the output in
-the stage, a finite sum of real Schwartz profiles on compact clopen
-finite cells. `SchwartzMap.tendsto_cocompact` gives real decay there.
-Use the checked uniform $L^1$ Fourier error bound, transported via the
-pairing homeomorphism, to get continuity and vanishing at infinity on
-the full dual. This does not assert the $L^1$ injectivity of part (2).
+[The theorem](../../Proofs/Theorems/RationalAdeleRiemannLebesgue.lean)
+`Masullo.rationalAdeleDualFourier_continuous_vanishing` proves that for
+any `Integrable f rationalAdeleAddHaar`, the existing conjugated Fourier
+integral is continuous and tends to zero along the cocompact filter of
+the **full compact-open dual**. The input need not belong to $L^2$ or be
+pointwise Borel, and no measure on the dual is needed for this statement.
+This is Lemma D.1.1.2(1), pp. 746–747, over $\mathbb Q$ with the checked
+unit-strip normalization and finite-place sign repair. It does not assert
+the $L^1$ injectivity in part (2).
+
+`Masullo.exists_rationalAdeleSchwartzLF_L1_approx` first approximates by a
+continuous compactly supported function. Only that approximant is required
+to be in $L^2$ for the checked joint density theorem.
+`Masullo.rationalAdeleSchwartzLF_continuous_vanishing` uses the level's
+compact finite support times a compact real set enlarged to work for all
+finitely many real Schwartz profiles. It does not assume that an escaping
+adele has an escaping real coordinate. The stage Fourier map preserves
+these Schwartz tests. The checked pointwise $L^1$ error bound gives a
+uniform limit on adelic frequencies, and the pairing homeomorphism
+transports continuity and cocompact convergence to the dual.
+
+Independent Yah statement review (`riemann-lebesgue-statement`, base
+`6e2c47a600157c8fd6bf3af4438d8694e6cbf0db`) checked the exact source pin,
+normalization, compact-open topology, and absence of any $L^2$ premise.
+The layout extraction starts Lemma D.1.1.2 on p. 746; it continues on
+p. 747. As for Plancherel above, the extraction loses the conjugation in
+(D.1.1.4), but the proof of Lemma D.1.6.19, p. 773, names it explicitly.
+These are extracted-text readings, not independent visual checks.
+
+### Next Fourier step: Inversion on representatives
+
+The digest-matched layout extraction of (D.1.1.11), p. 747, says that
+an integrable input with integrable transform **is** continuous and
+asserts pointwise equality. Lemma D.1.5.2(3), p. 761, cites this to
+transfer annihilator support on the dual to pointwise invariance of
+arbitrary integrable inputs. For literal representatives this is false:
+On the rational adeles the Borel function $1_{\{0\}}$ is integrable and
+has zero transform since the normalized Haar measure of $\{0\}$ is
+zero (by the integral-finite stage product formula and real Lebesgue
+measure). Its inverse integral is identically zero, and the input is
+not invariant under all of $A$, though the zero transform is supported
+on the annihilator of $A$. Independent Yah review confirmed this scope
+in the extraction. This counterexample is project reasoning, not yet a
+Lean declaration. The later Schwartz application already uses continuous
+inputs and is unaffected by the representative issue.
+
+The repaired target has a dual Borel measure: For $f\in L^1(A)$ and
+$\widehat f\in L^1(\widehat A,\mu_D)$ with the checked Plancherel measure,
+$u(x)=\int_{\widehat A}\widehat f(\chi)\chi(x)\,d\mu_D(\chi)$ is continuous
+and equals $f$ almost everywhere. For continuous $f$ it equals $f$
+everywhere by `MeasureTheory.eq_of_ae_eq` and open-positive Haar.
+No pointwise assertion is valid for an arbitrary representative.
+
+**Runnable first step:** Identify the checked inverse on rational
+Schwartz LF tests pointwise with $g\mapsto [x\mapsto \widehat g(-x)]$
+in the pairing coordinates. In the stage model, use `ZMod.dft_dft` (the
+scalar $M^2$ cancels the two factors of $1/M$), real Schwartz inversion,
+and identify finite residue negation with the cell of $-x$. Then
+`integral_integral_swap` on the product of two $L^1$ inputs gives the
+bilinear test identities: Pairing $u$ against a test $g$ equals pairing
+$\widehat f$ against $\widehat g(-\cdot)$, hence pairing $f$ against $g$.
+A separate separation step is needed for locally integrable $u-f$:
+Construct $[0,1]$ rational Schwartz cutoffs equal to one on a given
+compact set and supported in prescribed shrinking open neighborhoods,
+then use dominated convergence and
+`ae_eq_zero_of_forall_setIntegral_isCompact_eq_zero'`. The existing
+Schwartz cutoff without a prescribed neighborhood does not yet supply
+that step. Neither the bilinear inversion argument nor part (2)
+injectivity is claimed here.
 
 ## Checked real-lattice inversion
 
