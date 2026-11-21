@@ -1427,22 +1427,60 @@ project derivation from the finite-stage product. It does not prove the
 general number-field case or use additive self-duality. Source readings
 are provisional text readings, not rendered-page verification.
 
-## Next additive step: Fourier transform of translated finite boxes
+## Checked Fourier transform of translated finite boxes
 
-For a real Schwartz function $b$, let $U_b$ denote
-`rationalAdeleUnramified b`. Prove the adelic Fourier integral of
-$x\mapsto U_b(g^{-1}(x-a))$ at every $y$ for $a\in A_{\mathbb Q}$ and
-$g\in A_{\mathbb Q}^{\times}$ is
-$|g|_{\mathbb Q}\overline{\psi(ay)}\,U_{\mathcal F b}(gy)$, with the
-same character and Haar as `integral_rationalAdeleUnramified_mul_conj_char`.
-Choose the substitution $x=a+gz$; Haar translation and the checked
-comap reduce it to the unramified integral. The phase is a multiplier,
-not a shift of frequency support. Check the $L^1$ transport alongside
-the integral using Mathlib's measurable-equivalence change of variables.
-This is a project extension of the tensor calculation in Example
-A.3.1.8, p. 558, with the negative real Fourier convention of Example
-A.3.1.5, p. 557. This result alone would not establish ambient self-duality
-or Poisson summation on the full Schwartz–Bruhat space in Theorem 2.2.3.2.
+For $b\in\mathcal S(\mathbb R,\mathbb C)$ write $U_b$ for
+`rationalAdeleUnramified b`. In
+[RationalAdeleBoxFourier.lean](../../Proofs/Theorems/RationalAdeleBoxFourier.lean),
+`Masullo.rationalAdeleBox b a g` is $F(x)=U_b(g^{-1}(x-a))$ for an
+adele $a$ and an idele $g$. Lean proves continuity and $L^1$ integrability
+for this box, and $L^1$ integrability after multiplying by the Fourier
+kernel at each $y$.
+`Masullo.integral_rationalAdeleBox_mul_conj_char` proves, for every
+adelic frequency,
+
+$$
+\int F(x)\overline{\psi(xy)}\,d\mu(x)
+= |g|_{\mathbb Q}\,\overline{\psi(ay)}\,U_{\mathcal F b}(gy).
+$$
+
+The [affine substitution lemmas](../../Proofs/Lemmas/RationalAdeleAffineIntegral.lean)
+use translation invariance and the checked comap law to substitute
+$x=a+gz$. The character takes sums to products. Translation gives a phase,
+not a shift of the frequency support, and the dilation factor is the
+**direct** idelic norm. The last integral is the checked unramified one.
+
+Independent Yah statement review checked these conventions against the
+SHA-256-matched layout extraction of Examples A.3.1.5–A.3.1.8,
+pp. 557–558, and the accepted unramified transform and dilation declarations.
+This is a project extension of the tensor calculation in A.3.1.8, with the
+negative real sign from A.3.1.5 and the corrected conjugated translation
+phase from the local ball theorem. It does not assume or prove ambient
+self-duality or Plancherel. The source reading is provisional, not visual.
+
+## Next additive step: Pointwise Poisson summation for finite boxes
+
+Use `exists_rational_principal_mul_norm_section g` to choose $r\in\mathbb Q^\times$
+with $h=\iota^\times(r)g$ a unit at all finite places and real coordinate
+$t=|g|_{\mathbb Q}>0$. Multiplication by $h^{-1}$ preserves the
+integral-finite stage. Since $g^{-1}=h^{-1}\iota(r)$, write the box as
+$U_c(\iota(r)(x-a))$ for $c(u)=b(t^{-1}u)$, implemented by
+`dilateSchwartz`. Rational multiplication by $r$ permutes
+`rationalDiagonal`; reindex to get the checked unramified periodization
+at $\iota(r)(x-a)$, including fiberwise absolute summability. Its
+continuity on the quotient follows by testing the composite with the
+quotient map, using `QuotientAddGroup.isQuotientMap_mk`.
+
+On the Fourier side, at $y=\iota(q)$ the box formula uses
+$g\iota(q)=h\iota(q/r)$. The support constraint is $q/r\in\mathbb Z$
+by `algebraMap_mem_rationalIntegralAdeles_iff`; on $q=rn$ the real
+sample is $(\mathcal F b)(tn)$. The phase has unit modulus, so
+`summable_norm_schwartz_int_mul` gives absolute summability of Fourier
+samples on $\mathbb Q$. These are the outstanding premises of
+`hasSum_rationalAdele_poisson`, the project's rational version of
+Theorem D.1.2.7(3), p. 749, with the zero summands retained. Finite
+linear combinations can then be treated by linearity; no density or
+identification with a completed Schwartz–Bruhat space is implied.
 
 ## Checked real-lattice inversion
 
@@ -1919,4 +1957,4 @@ The [complex Borel $L^1$ version](#checked-complex-weil-formula-and-absolute-sum
 is checked, as are the [quotient Fourier coefficient comparison and point
 separation](#checked-unfolding-of-the-quotient-fourier-coefficients) and
 [uniform density and Haar orthogonality](#checked-density-and-orthogonality-of-the-rational-quotient-characters).
-The [pointwise reconstruction and rational counting-series formula](#checked-pointwise-poisson-summation-with-explicit-convergence-hypotheses) are checked under explicit convergence hypotheses. The [unramified tensor periodization](#checked-periodization-of-the-rational-unramified-tensor) is now absolutely convergent at every lift and continuous on the quotient, with the input integrable upstairs. The [unramified transform and pointwise Poisson formula](#checked-fourier-transform-and-pointwise-poisson-for-the-unramified-tensor) now discharge Fourier-side summability. The [adelic theta inversion theorem](#checked-adelic-theta-inversion-for-the-unramified-tensor) now applies to the actual tensor sums at every idele. The [integral-stage additive product formula](#checked-local-product-on-the-integral-finite-additive-stage) now identifies the compact factor as a product of local Haar probabilities. The [all-stage product theorem and global characterization](#checked-restricted-product-formula-for-rational-additive-haar) now give the rational global formula (A.3.1.3). The [global additive dilation law](#checked-rational-additive-haar-scaling-under-idele-dilation) is checked over $\mathbb Q$. Next [transform translated finite boxes](#next-additive-step-fourier-transform-of-translated-finite-boxes).
+The [pointwise reconstruction and rational counting-series formula](#checked-pointwise-poisson-summation-with-explicit-convergence-hypotheses) are checked under explicit convergence hypotheses. The [unramified tensor periodization](#checked-periodization-of-the-rational-unramified-tensor) is now absolutely convergent at every lift and continuous on the quotient, with the input integrable upstairs. The [unramified transform and pointwise Poisson formula](#checked-fourier-transform-and-pointwise-poisson-for-the-unramified-tensor) now discharge Fourier-side summability. The [adelic theta inversion theorem](#checked-adelic-theta-inversion-for-the-unramified-tensor) now applies to the actual tensor sums at every idele. The [integral-stage additive product formula](#checked-local-product-on-the-integral-finite-additive-stage) now identifies the compact factor as a product of local Haar probabilities. The [all-stage product theorem and global characterization](#checked-restricted-product-formula-for-rational-additive-haar) now give the rational global formula (A.3.1.3). The [global additive dilation law](#checked-rational-additive-haar-scaling-under-idele-dilation) is checked over $\mathbb Q$. The [translated finite-box transform](#checked-fourier-transform-of-translated-finite-boxes) is now checked at all adelic frequencies. Next [prove pointwise Poisson summation for these boxes](#next-additive-step-pointwise-poisson-summation-for-finite-boxes).
