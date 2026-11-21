@@ -656,7 +656,7 @@ only `propext`, `Classical.choice`, and `Quot.sound`. The helper fails on
 any individual replay error. This is a checking workflow change, not a
 new statement review or proof.
 
-## Next runnable obligation: Check the Fourier normalization of the real principal value
+## Checked real logarithmic Fourier kernel off the identity
 
 In the pinned extraction, (B.4.4.1)–(B.4.4.2), pp. 619–620, define the
 unnormalized-looking real term using the **negative** Fourier pairing
@@ -674,25 +674,61 @@ including the constant $\lambda=\log(2\pi)+\gamma$. This is a
 provisional text-based factor-of-two mismatch, already off the identity;
 rescaling a measure in the cutoff does not rescale the additive pairing.
 
-First prove the normalization control in Lean: For smooth compactly
-supported $u$ vanishing near $0$,
+[`Masullo.real_log_fourier_off_zero`](../../Proofs/Props/RealPrincipalValue.lean)
+proves, for smooth compactly supported complex $u$ vanishing near $0$,
 
 $$
  -\int_{\mathbb R}\log|\xi|\,\widehat u(\xi)\,d\xi
-   = \frac12\int_{\mathbb R}\frac{u(z)}{|z|}\,dz.
+   = \frac12\int_{\mathbb R}\frac{u(z)}{|z|}\,dz,
 $$
 
-A runnable route uses the Laplace difference for $-\log|\xi|$:
-Integrate $(e^{-a|\xi|}-e^{-a})/a$ over truncated $a$ intervals, extend
-by dominated convergence using $|\log|\xi||$, and discard the constant
-on each truncated interval by $\int\widehat u=u(0)=0$. The Fourier
-integral of $e^{-a|\xi|}$ is $2a/(a^2+4\pi^2z^2)$ by integrating
-both half-lines. Off the support gap, Fubini and the elementary
-$a$ integral give the displayed coefficient $1/2$. Test it on nonzero
-nonnegative $g$ supported in $(0,\log 2)$; the inferred half-factor
-discrepancy cannot be an identity-supported correction. Treat the
-full cutoff normalization and its Fourier pairing as distinct until
-this control is checked.
+including absolute integrability on both sides. Masullo supplies the
+additive pairing and its transform convention; the Lean endpoint supplies
+the corrected off-identity kernel. It keeps the subtraction together in
+$k_a(\xi)-k_a(1)$, where $k_a(x)=a/(a^2+x^2)$, to represent the negative
+log by an absolutely integrable scale exchange. At each positive scale,
+Fourier inversion at zero cancels the subtracted term. The Fourier
+transform of $e^{-2\pi a|z|}$ is $k_a(z)/\pi$; the bilinear Fourier
+exchange uses $\mathcal F^2u(z)=u(-z)$ and the evenness of the exponential.
+An independent spatial Fubini argument gives $1/(2|z|)$.
+
+Independent Yah review matched the endpoint and both exchanges to
+Connes (30), (34), reading the pinned Masullo PDF by text extraction.
+Equation (B.4.3.13) instead appears to have twice the off-identity
+magnitude; (B.4.4.20) may also omit the sign reversal required by
+(B.4.4.1). The Lean theorem settles the coefficient of the additive
+pairing, not the typography of those pages. A nonzero nonnegative log
+bump supported in $(0,\log 2)$ detects the discrepancy, since the
+identity term vanishes. Visual verification remains open. The two new
+modules built with `lake --wfail build Props.RealPrincipalValue`; the
+integration audit checks both modules and this endpoint with `audit-local`.
+
+## Next runnable obligation: Extend the real kernel to tests vanishing at zero
+
+Generalize the Cauchy exchange in the two modules above to a continuous
+$u$ with $u(0)=0$ and integrable $u$, $\widehat u$,
+$\log|\xi|\,\widehat u(\xi)$, and $u(z)/|z|$. Prove the same equality
+without the support gap or the Schwartz assumptions. This is the
+zero-value remainder needed to calibrate Connes Appendix II (34).
+The current scalar Cauchy and spatial Fubini proofs already use the
+exact absolute slices, so only the uses of Schwartz regularity in the
+frequency argument, Fourier inversion, and measurability need adapting.
+Continuity of the Fourier transform follows from $u\in L^1$.
+
+Then let $T$ denote the additive Fourier pairing in (B.4.4.1) and put
+$P(u)=\tfrac12\int (u(z)-u(0)\mathbf1_{\{|z|\le1\}})/|z|\,dz$.
+For the remainder $r=u-u(0)G$, a Lipschitz bound at zero and integrable
+tails suffice for $r/|\cdot|\in L^1$. The exact remaining scalar target
+is $T(G)-P(G)=\log(2\pi)+\gamma$ with $G(0)=1$. Connes (32)–(35) uses
+a self-dual Gaussian; `Complex.digamma_one_half` is in pinned Mathlib.
+A smaller alternative comparator permitted by the generalized endpoint is
+$G(z)=e^{-2\pi|z|}$: The already computed transform is $1/(\pi(1+\xi^2))$,
+so $T(G)=0$ by inversion $\xi\mapsto1/\xi$ on the positive half-line and
+evenness. Integration by parts gives $P(G)=-\log(2\pi)-\gamma$ using
+`Real.deriv_Gamma_one_eq_integral_log` and `Real.hasDerivAt_Gamma_one`.
+Neither calibration is checked yet. Prove the cutoff limit from $P$ by
+absolute convergence of the subtracted integrand and the elementary
+annular integral $\int_{\varepsilon\le|z|\le1} dz/(2|z|)=-\log\varepsilon$.
 
 For the subsequent identity term, Connes (36)–(37) retains $\lambda$.
 Use [`map_realMultiplicativeHaar_val`](../../Proofs/Theorems/RealMultiplicativeHaar.lean)
