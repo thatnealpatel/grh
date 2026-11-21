@@ -1055,11 +1055,17 @@ measure on the rational diagonal.
 Independent Yah review of the digest-matched layout extraction confirmed
 that Theorem D.1.2.7(1), p. 749, is the coefficient restriction. It
 checked the quotient measure, the twist, and point separation against
-the accepted dependencies. Our negative sign agrees with the real
-example A.3.1.5, p. 557; the review does not certify the printed
-conjugation in (D.1.1.4), p. 746, visually. Using $-r$ gives the opposite
-convention. The Lean theorem is only at the displayed characters;
-it does not identify the full dual or invoke Plancherel.
+the accepted dependencies. The negative sign agrees with Example
+A.3.1.5, p. 557. The overbar in (D.1.1.4), p. 746, is ambiguous in the
+layout extraction, but the proof on p. 773 explicitly says the
+convention in (D.1.1.4) conjugates the character. The discussion on
+p. 813 likewise attributes evaluation at the inverse character to this
+conjugation. This is textual corroboration, not a rendered-page check.
+It concerns the Fourier kernel, not the separate [repair of the global
+character](#checked-cancellation-of-the-rational-diagonal-phases).
+Using $-r$ gives the opposite convention. The Lean theorem is only at
+the displayed characters; it does not identify the full dual or invoke
+Plancherel.
 
 Verification: Build `Proofs` with `lake --wfail`, run `lake env
 leanchecker Theorems.RationalAdeleClassFourier`, and `#print axioms`
