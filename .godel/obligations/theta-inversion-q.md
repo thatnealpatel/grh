@@ -296,8 +296,10 @@ A.3.3.1 places the strip on the upstairs radial extension of the
 norm-one fundamental domain. The rational norm-one mass is one, and
 the positive real density $dt/t$ gives strip mass one, with no factor
 from the negative real coordinate. This reading is provisional, not a
-rendered-page check. The theorem assumes that strip mass for $\nu$;
-it does not construct or identify the manuscript's restricted product.
+rendered-page check. This comparison theorem assumes that strip mass
+for $\nu$; the [constructed upstairs Haar](#checked-upstairs-haar-and-window-strip-mass)
+now supplies it for a particular measure. Neither result identifies the
+manuscript's restricted product.
 
 ## Checked finite-unit identification of the norm-one classes
 
@@ -401,45 +403,61 @@ the negative ray. This is a local measure identity, not an upstairs
 Tamagawa measure construction. Source evidence is the digest-matched
 layout extraction, not the rendered pages.
 
-## Next Haar step: Normalize upstairs, then compare on the finite stages
+## Checked upstairs Haar and window strip mass
 
-(A.3.2.5), p. 560, invokes the restricted product prescription
-recalled above Definition A.3.1.2, p. 556: Agreement of the restriction
-on **every** finite stage, not just on the integral-unit window.
-The positive strip supplies a common calibration set and suggests
-proving those equalities by Haar uniqueness rather than first gluing
-measures along a stage exhaustion.
+In [RationalIdeleHaarComparison.lean](../../Proofs/Theorems/RationalIdeleHaarComparison.lean),
+`Masullo.rationalIdeleHaar` is Haar on the **actual** rational idele
+group with its Borel sigma-algebra. The calibration set is
+$K=W\cap\{a:1\le |a|\le e\}$ upstairs. It is compact as the image of
+the compact quotient strip under the inverse window homeomorphism
+followed by inclusion. It has nonempty interior: The open window
+intersected with $1<|a|<e$ contains the canonical log section at $1/2$.
+Thus `Measure.haarMeasure` gives $K$ mass one without assuming the
+restricted-product measure formula.
 
-First make $K=W\cap\{a:1\le |a|\le e\}$ a `PositiveCompacts` of
-actual rational ideles. The existing window homeomorphism identifies
-$K$ with the compact quotient strip (see the compactness proof in
-`Lemmas.RationalIdeleWindowMeasure`), and the open window intersected
-with $1<|a|<e$ is a nonempty open subset of $K$ by the canonical norm
-section. `Measure.haarMeasure K` then has the strip mass needed by
-`map_restrict_rationalIdeleUnitWindow_eq_rationalIdeleClassHaar`. This
-would remove the existence and normalization premise for a constructed
-upstairs Haar measure, **not** yet identify it with (A.3.2.5).
+`Masullo.map_restrict_rationalIdeleHaar` identifies the pushforward of
+the **whole** window restriction with `rationalIdeleClassHaar`.
+`Masullo.rationalIdeleHaar_normStrip` consequently gives the constructed
+upstairs Haar mass $\log T$ on $W\cap\{a:1\le |a|\le T\}$ for all
+$T\ge1$, without a normalization premise. This is the rational strip
+formula of A.3.3.1, p. 561, for the canonical section and the positive
+window from (A.2.3.14), p. 549, using unit norm-one mass from
+(A.3.2.1), p. 560. The identification of those source sets and the
+scale uses the SHA-256-matched layout extraction, not rendered pages.
+This does not prove the counting-measure integration formula on
+arbitrary upstairs tests or the product characterization (A.3.2.5).
 
-For that identification, for each finite set $S$ of finite places,
-use an open group embedding of
+## Next Haar step: Embed each finite stage upstairs
+
+(A.3.2.5), p. 560, invokes the restricted-product prescription recalled
+above Definition A.3.1.2, p. 556: Agreement on **every** finite stage,
+not just on the integral-unit window. For a finite set $S$ of finite
+places, the next Lean obligation is an open group embedding of
 $\mathbb R^\times\times\prod_{v\in S}\mathbb Q_v^\times\times
-\prod_{v\notin S}\mathcal O_v^\times$ into the actual idele group, with
-its coordinatewise stage image. In pinned Mathlib,
-`RestrictedProduct.unitsEquiv` is algebraic, while
-`RestrictedProduct.isOpenEmbedding_inclusion_principal` is topological
-on a restricted product with open local subgroups. Neither alone
-identifies the topology on the units of the adele ring. Once the stage
-embedding is checked, pull back the upstairs Haar to it. The proposed
-stage product is the real multiplicative Haar times the finite product
-of local field-unit Haar measures times the compact product of the
-remaining integral-unit probabilities. Both measures are Haar there.
-The coordinates of $K$ are $[1,e]$ at the real place and integral units
-at **all** finite places, including those in $S$. The checked real mass
-and finite unit masses give product mass one on $K$. Haar uniqueness
-on the stage would give the required equality without a measure-gluing
-construction. Still to check are the stage embeddings, the real-unit
-and product Borel interfaces, and the stage equalities. The additive
-finite Fourier self-duality problem is independent.
+\prod_{v\notin S}\mathcal O_v^\times$ into actual rational ideles,
+with image the ideles whose value and inverse are integral outside $S$.
+There is no positivity constraint in this image.
+
+In pinned Mathlib, `RestrictedProduct.unitsEquiv` is algebraic. For a
+single stage one can use `RestrictedProduct.continuous_rng_of_principal`
+to prove continuity of its finite adele value and inverse coordinatewise,
+then `RestrictedProduct.continuous_inclusion` and `Units.continuous_iff`
+to get continuity into the full idele group. The image is open by
+`RestrictedProduct.isOpen_forall_imp_mem` on both value and inverse.
+For continuity of the inverse parametrization, use local evaluation on
+both value and inverse, the induced units topology, and the subtype
+topology on integral coordinates. This avoids first proving a global
+homeomorphism for `RestrictedProduct.unitsEquiv`.
+
+After that topology step, pull back `rationalIdeleHaar` to each stage.
+The proposed stage product is real multiplicative Haar times the finite
+product of field-unit Haar times the compact product of the remaining
+integral-unit probabilities. Compare the two Haar measures by their
+mass on the inverse image of $K$: The real coordinate lies in $[1,e]$
+and all finite coordinates are integral units, including the ones in
+$S$. The checked local masses give product mass one there. The real-unit
+and product Borel interfaces and the stage equalities remain open.
+The additive finite Fourier self-duality problem is independent.
 
 ## Checked real-lattice inversion
 
@@ -895,5 +913,6 @@ The independent Haar branch now has a [checked window comparison](#checked-haar-
 and a [checked finite-unit identification](#checked-finite-unit-identification-of-the-norm-one-classes).
 The [local restriction comparison](#checked-local-multiplicative-haar-and-its-restriction-to-integral-units)
 is now checked. The [positive real multiplicative measure](#checked-positive-real-multiplicative-measure)
-is also checked. [Upstairs normalization and the stage comparison](#next-haar-step-normalize-upstairs-then-compare-on-the-finite-stages)
+is also checked. [Upstairs normalization and window strip mass](#checked-upstairs-haar-and-window-strip-mass)
+are checked for the constructed measure. The [finite-stage embedding](#next-haar-step-embed-each-finite-stage-upstairs)
 can run separately from checking the printed endpoint at the visual gate.

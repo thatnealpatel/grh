@@ -6,7 +6,7 @@ import Mathlib.MeasureTheory.Measure.Haar.Unique
 
 /-! # Measure of the rational idele window -/
 
-open NumberField MeasureTheory Set Topology
+open NumberField MeasureTheory Set Topology TopologicalSpace
 open scoped ENNReal
 
 namespace Masullo
@@ -99,6 +99,56 @@ private theorem isCompact_rationalIdeleClass_normStrip :
   rw [Multiplicative.ofAdd.injective.mem_set_image, mem_Icc,
     Real.le_log_iff_exp_le (ideleClassNorm_pos c), Real.exp_zero,
     Real.log_le_iff_le_exp (ideleClassNorm_pos c)]
+
+private theorem continuous_rationalIdeleNorm : Continuous (ideleNorm : Ideles → ℝ) := by
+  simpa only [Function.comp_def, ideleClassNorm_mk] using
+    (continuous_ideleClassNorm : Continuous (ideleClassNorm : RationalIdeleClasses → ℝ)).comp
+      QuotientGroup.continuous_mk
+
+/-- The positive finite-unit window between norms `1` and `e` is compact
+with nonempty interior in the full rational idele group. -/
+@[expose] public noncomputable def rationalIdeleWindowUnitStrip : PositiveCompacts Ideles where
+  carrier := rationalIdeleUnitWindow ∩ {a | ideleNorm a ∈ Icc 1 (Real.exp 1)}
+  isCompact' := by
+    let e := rationalIdeleUnitWindowHomeomorph
+    have h := isCompact_rationalIdeleClass_normStrip.image
+      (continuous_subtype_val.comp e.symm.continuous)
+    convert h using 1
+    ext a
+    constructor
+    · rintro ⟨ha, hn⟩
+      refine ⟨QuotientGroup.mk a, ?_, ?_⟩
+      · simpa only [mem_ofPred_eq, ideleClassNorm_mk] using hn
+      · change (rationalIdeleUnitWindowHomeomorph.symm (QuotientGroup.mk a)).val = a
+        rw [← rationalIdeleUnitWindowHomeomorph_apply ⟨a, ha⟩, Homeomorph.symm_apply_apply]
+    · rintro ⟨c, hc, rfl⟩
+      refine ⟨(e.symm c).property, ?_⟩
+      change ideleNorm (e.symm c).val ∈ Icc 1 (Real.exp 1)
+      rw [← ideleClassNorm_mk, ← rationalIdeleUnitWindowHomeomorph_apply,
+        Homeomorph.apply_symm_apply]
+      exact hc
+  interior_nonempty' := by
+    let U : Set Ideles := rationalIdeleUnitWindow ∩ (ideleNorm ⁻¹' Ioo 1 (Real.exp 1))
+    have hU : IsOpen U := isOpen_rationalIdeleUnitWindow.inter
+      (isOpen_Ioo.preimage continuous_rationalIdeleNorm)
+    refine Set.Nonempty.mono (interior_maximal ?_ hU) ?_
+    · exact inter_subset_inter_right _ (preimage_mono Ioo_subset_Icc_self)
+    let x := Multiplicative.ofAdd (1 / 2 : ℝ)
+    refine ⟨rationalIdeleLogSection x, ⟨?_, ?_⟩⟩
+    · apply mem_rationalIdeleUnitWindow_of_finiteValuation_eq_one
+      · rw [rationalIdeleReal_logSection]
+        exact Real.exp_pos _
+      · intro v
+        rw [rationalIdeleLogSection_finite, map_one]
+    · change ideleNorm (rationalIdeleLogSection x) ∈ Ioo 1 (Real.exp 1)
+      rw [ideleNorm_logSection, mem_Ioo]
+      constructor
+      · rw [← Real.exp_zero, Real.exp_lt_exp]
+        change 0 < (1 / 2 : ℝ)
+        norm_num
+      · rw [Real.exp_lt_exp]
+        change (1 / 2 : ℝ) < 1
+        norm_num
 
 variable [MeasurableSpace RationalIdeleClasses] [BorelSpace RationalIdeleClasses]
 
