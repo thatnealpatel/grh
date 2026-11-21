@@ -6,7 +6,7 @@ The geometric and divisor branches have independent runnable obligations. The fi
 
 ## Global theta inversion (Theorem 2.2.3.2, p. 82)
 
-The [rational unramified lattice target](obligations/theta-inversion-q.md#next-runnable-step-split-the-zero-modes-in-scaled-poisson-summation) specializes the global theta inversion to the real norm section with the standard integer-ring factors. Mathlib's real Poisson summation supplies the lattice formula after dilation; the nonzero sum must retain both zero-mode corrections. This is a Chapter 2 endpoint independent of the trace comparisons and a foundation for the two-tail estimates used by the rational theta lifts. It does not establish the adelic theorem or the trace's Mellin subtractions.
+The [rational unramified lattice theorem](../Proofs/Theorems/RationalThetaInversion.lean) proves theta inversion on the real norm section, including both zero-mode corrections for arbitrary complex Schwartz input. The [next runnable step](obligations/theta-inversion-q.md#next-runnable-step-prove-the-fixed-function-two-tail-estimates) is to bound the outer tail by Schwartz decay and use inversion to bound the small-scale remainder. This is a Chapter 2 endpoint independent of the trace comparisons and a foundation for the two-tail estimates used by the rational theta lifts. The adelic reduction, bounded-family uniformity, and the trace's Mellin subtractions are not established here.
 
 ## Toward the trace identity (Theorem 12.5.1.1, pp. 519–520)
 
