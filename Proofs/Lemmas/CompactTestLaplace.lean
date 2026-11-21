@@ -22,7 +22,7 @@ open scoped ContDiff Topology
 namespace Masullo
 
 /-- The Laplace test transform with positive sign in the exponent. -/
-public noncomputable def positiveLaplaceTest (w : ℂ) (g : ℝ → ℂ) : ℂ :=
+@[expose] public noncomputable def positiveLaplaceTest (w : ℂ) (g : ℝ → ℂ) : ℂ :=
   ∫ x : ℝ in Ioi (0 : ℝ), Complex.exp (w * (x : ℂ)) * g x
 
 private theorem positiveLaplaceTest_deriv (w : ℂ) {g : ℝ → ℂ}

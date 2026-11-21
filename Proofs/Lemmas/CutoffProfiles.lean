@@ -1,11 +1,14 @@
 module
 
+public import Lemmas.CompactTestLaplace
 public import Lemmas.CutoffMajorant
 import Mathlib.Analysis.Calculus.Deriv.Support
 import Mathlib.Analysis.Calculus.MeanValue
 import Mathlib.Analysis.Complex.RealDeriv
 import Mathlib.Analysis.SpecialFunctions.ExpDeriv
+import Mathlib.Analysis.SpecialFunctions.ImproperIntegrals
 public import Mathlib.Analysis.SpecialFunctions.SmoothTransition
+import Mathlib.MeasureTheory.Integral.DominatedConvergence
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Ring
 
@@ -19,8 +22,8 @@ not yet have zero mass: The application at Masullo's (13.3.1.2), p. 522 of the
 pinned edition, needs a separate mass correction and a distribution identity.
 -/
 
-open Function MeasureTheory Set
-open scoped ContDiff
+open Filter Function MeasureTheory Set
+open scoped ContDiff Topology
 
 namespace Masullo
 
@@ -46,6 +49,9 @@ private theorem cutoffChi_smooth : ContDiff ℝ ∞ cutoffChi :=
 
 private theorem cutoffChi_range (x : ℝ) : cutoffChi x ∈ Icc (0 : ℝ) 1 :=
   ⟨Real.smoothTransition.nonneg _, Real.smoothTransition.le_one _⟩
+
+private theorem cutoffUpper_range (N x : ℝ) : cutoffUpper N x ∈ Icc (0 : ℝ) 1 :=
+  ⟨sub_nonneg.mpr (cutoffChi_range _).2, sub_le_self _ (cutoffChi_range _).1⟩
 
 private theorem cutoffChi_zero {x : ℝ} (hx : x ≤ 1) : cutoffChi x = 0 :=
   Real.smoothTransition.zero_of_nonpos (sub_nonpos.mpr hx)
@@ -136,6 +142,14 @@ private theorem weighted_cutoffExp_le {a δ x : ℝ} {c : ℂ} (b : ℂ)
     _ ≤ _ := mul_le_mul_of_nonneg_left
       (Real.exp_le_exp.mpr (mul_le_mul_of_nonneg_right (by linarith) hx)) (norm_nonneg b)
 
+private theorem weighted_cutoffDiff_mul_le {a δ x : ℝ} {z q : ℂ}
+    (hx : 0 ≤ x) (hz : a + δ ≤ z.re) (hq : a + δ ≤ q.re) (b e : ℂ) :
+    Real.exp (a * x) * ‖cutoffExp z x * b - cutoffExp q x * e‖ ≤
+      (‖b‖ + ‖e‖) * Real.exp (-δ * x) := by
+  refine (mul_le_mul_of_nonneg_left (norm_sub_le _ _) (Real.exp_pos _).le).trans ?_
+  rw [mul_add, add_mul]
+  exact add_le_add (weighted_cutoffExp_le b hx hz) (weighted_cutoffExp_le e hx hq)
+
 private theorem weighted_cutoffDiff_linear {a x : ℝ} {z q : ℂ}
     (hx : 0 ≤ x) (hz : a ≤ z.re) (hq : a ≤ q.re) :
     Real.exp (a * x) * ‖cutoffDiff z q x‖ ≤ (‖z - (a : ℂ)‖ + ‖q - (a : ℂ)‖) * x := by
@@ -206,9 +220,6 @@ public theorem cutoffTest_uniform {a z₀ : ℝ} {z : ℂ} (hz : a < z.re) (hz�
   have hts : tsupport f ⊆ Icc (1 / N) (2 * N) := closure_minimal hsup isClosed_Icc
   have hs : HasCompactSupport f := HasCompactSupport.of_support_subset_isCompact isCompact_Icc hsup
   refine ⟨hf, hs, fun x hx ↦ (one_div_pos.mpr hNp).trans_le (hts hx).1, ?_⟩
-  have hLr (x : ℝ) : cutoffLower N x ∈ Icc (0 : ℝ) 1 := cutoffChi_range _
-  have hUr (x : ℝ) : cutoffUpper N x ∈ Icc (0 : ℝ) 1 :=
-    ⟨sub_nonneg.mpr (cutoffChi_range _).2, sub_le_self _ (cutoffChi_range _).1⟩
   obtain ⟨hL₁, hL₂⟩ := cutoff_affine_derivs 1 N 0
   obtain ⟨hU₁, hU₂⟩ := cutoff_affine_derivs (-1) N⁻¹ 1
   simp only [one_mul, zero_add] at hL₁ hL₂
@@ -250,12 +261,7 @@ public theorem cutoffTest_uniform {a z₀ : ℝ} {z : ℂ} (hz : a < z.re) (hz�
       Real.exp (a * x) * ‖deriv (cutoffDiff z q) x‖ ≤ A₁ * Real.exp (-δ * x) ∧
       Real.exp (a * x) * ‖deriv (deriv (cutoffDiff z q)) x‖ ≤ A₂ * Real.exp (-δ * x) := by
     obtain ⟨hd₁, hd₂⟩ := cutoffDiff_derivs z q
-    have hadd (b e : ℂ) :
-        Real.exp (a * x) * ‖cutoffExp z x * b - cutoffExp q x * e‖ ≤
-          (‖b‖ + ‖e‖) * Real.exp (-δ * x) := by
-      refine (mul_le_mul_of_nonneg_left (norm_sub_le _ _) (Real.exp_pos _).le).trans ?_
-      rw [mul_add, add_mul]
-      exact add_le_add (weighted_cutoffExp_le b hx.le hzδ) (weighted_cutoffExp_le e hx.le hqδ)
+    have hadd := weighted_cutoffDiff_mul_le hx.le hzδ hqδ
     refine ⟨?_, ?_, ?_⟩
     · simpa only [cutoffDiff, mul_one, norm_one, one_add_one_eq_two] using hadd 1 1
     · rw [hd₁]; simpa only [A₁, norm_neg] using hadd (-z) (-q)
@@ -266,7 +272,7 @@ public theorem cutoffTest_uniform {a z₀ : ℝ} {z : ℂ} (hz : a < z.re) (hz�
   exact cutoff_pointwise_majorant (A₀ := 2) (A₁ := A₁) (A₂ := A₂) (B := B)
     hN hδ hm₁ hm₂ (by dsimp [A₁]; positivity)
     (by dsimp [B]; positivity) (hL.of_le htwo) (hU.of_le htwo) (hΔ.of_le htwo)
-    hLr hUr (fun x _ ↦ hLb x) hLo hUb hUo hΔb
+    (fun _ ↦ cutoffChi_range _) (cutoffUpper_range N) (fun x _ ↦ hLb x) hLo hUb hUo hΔb
     (fun x hx ↦ weighted_cutoffDiff_linear hx.le hz.le hz₀.le)
 
 /-- Both cutoffs are one at a positive point once the real scale is large enough. -/
@@ -279,6 +285,75 @@ public theorem cutoffTest_eq_at_large_scale {z : ℂ} {z₀ N x : ℝ}
     exact (div_le_one hN).2 hu)
   change (cutoffLower N x * cutoffUpper N x : ℝ) • cutoffDiff z (z₀ : ℂ) x = _
   simp only [h₁, cutoffUpper, h₂, sub_zero, mul_one, one_smul, cutoffDiff, cutoffExp]
+
+/-- The undifferentiated profiles admit one integrable envelope independent of the scale. -/
+private theorem norm_exp_mul_cutoffTest_le {z w : ℂ} {z₀ δ N x : ℝ} (hx : 0 ≤ x)
+    (hz : w.re + δ ≤ z.re) (hz₀ : w.re + δ ≤ z₀) :
+    ‖Complex.exp (w * (x : ℂ)) * cutoffTest z z₀ N x‖ ≤ 2 * Real.exp (-δ * x) := by
+  have hL : cutoffLower N x ∈ Icc (0 : ℝ) 1 := cutoffChi_range _
+  have hU := cutoffUpper_range N x
+  have hfac : ‖cutoffLower N x * cutoffUpper N x‖ ≤ 1 := by
+    rw [Real.norm_of_nonneg (mul_nonneg hL.1 hU.1)]
+    simpa using mul_le_mul hL.2 hU.2 hU.1 (zero_le_one' ℝ)
+  have hδ := weighted_cutoffDiff_mul_le (q := (z₀ : ℂ)) hx hz hz₀ 1 1
+  change ‖Complex.exp (w * (x : ℂ)) *
+    ((cutoffLower N x * cutoffUpper N x : ℝ) • cutoffDiff z (z₀ : ℂ) x)‖ ≤ _
+  rw [norm_mul, norm_smul, Complex.norm_exp]
+  simp only [Complex.mul_re, Complex.ofReal_re, Complex.ofReal_im, mul_zero, sub_zero]
+  refine (mul_le_mul_of_nonneg_left (mul_le_of_le_one_left (norm_nonneg _) hfac)
+    (Real.exp_pos _).le).trans ?_
+  simpa only [cutoffDiff, mul_one, norm_one, one_add_one_eq_two] using hδ
+
+/-- The scalar transform of the smooth cutoff tends to the subtracted resolvent in the
+common half-plane of absolute convergence. The scale is `n + 2` for `n : ℕ`. -/
+public theorem tendsto_positiveLaplaceTest_cutoffTest {z w : ℂ} {z₀ : ℝ}
+    (hz : w.re < z.re) (hz₀ : w.re < z₀) :
+    Tendsto (fun n : ℕ ↦ positiveLaplaceTest w (cutoffTest z z₀ ((n : ℝ) + 2)))
+      atTop (𝓝 ((z - w)⁻¹ - ((z₀ : ℂ) - w)⁻¹)) := by
+  let δ := min z.re z₀ - w.re
+  have hδ : 0 < δ := sub_pos.mpr (lt_min hz hz₀)
+  have hzδ : w.re + δ ≤ z.re := by dsimp [δ]; linarith [min_le_left z.re z₀]
+  have hz₀δ : w.re + δ ≤ z₀ := by dsimp [δ]; linarith [min_le_right z.re z₀]
+  let F (n : ℕ) (x : ℝ) := Complex.exp (w * (x : ℂ)) * cutoffTest z z₀ ((n : ℝ) + 2) x
+  let f (x : ℝ) := Complex.exp ((w - z) * (x : ℂ)) - Complex.exp ((w - (z₀ : ℂ)) * (x : ℂ))
+  have ha : ∀ᵐ x ∂volume.restrict (Ioi (0 : ℝ)), x ∈ Ioi (0 : ℝ) :=
+    ae_restrict_mem measurableSet_Ioi
+  have hF (n : ℕ) : Continuous (F n) := by
+    unfold F cutoffTest
+    fun_prop
+  have hpt : ∀ᵐ x ∂volume.restrict (Ioi (0 : ℝ)), Tendsto (fun n ↦ F n x) atTop (𝓝 (f x)) := by
+    filter_upwards [ha] with x hx
+    apply tendsto_const_nhds.congr'
+    have hlarge : ∀ᶠ n : ℕ in atTop, max (2 / x) x ≤ (n : ℝ) :=
+      tendsto_natCast_atTop_atTop.eventually (eventually_ge_atTop _)
+    filter_upwards [hlarge] with n hn
+    have hN : max (2 / x) x ≤ (n : ℝ) + 2 := hn.trans (le_add_of_nonneg_right (by norm_num))
+    dsimp only [F]
+    rw [cutoffTest_eq_at_large_scale (by positivity) hx
+      ((le_max_left _ _).trans hN) ((le_max_right _ _).trans hN), mul_sub, ← Complex.exp_add,
+      ← Complex.exp_add]
+    simp only [f, sub_eq_add_neg, add_mul, neg_mul]
+  have hlim := MeasureTheory.tendsto_integral_of_dominated_convergence
+    (fun x ↦ 2 * Real.exp (-δ * x)) (fun n ↦ (hF n).aestronglyMeasurable)
+    ((integrableOn_exp_mul_Ioi (neg_lt_zero.mpr hδ) 0).const_mul 2)
+    (fun n ↦ ha.mono fun x hx ↦ norm_exp_mul_cutoffTest_le hx.le hzδ hz₀δ) hpt
+  have hzw : (w - z).re < 0 := sub_neg.mpr hz
+  have hz₀w : (w - (z₀ : ℂ)).re < 0 := sub_neg.mpr hz₀
+  have heval : (∫ x : ℝ in Ioi (0 : ℝ), f x) = (z - w)⁻¹ - ((z₀ : ℂ) - w)⁻¹ := by
+    rw [show f = _ from rfl, integral_sub (integrableOn_exp_mul_complex_Ioi hzw 0)
+      (integrableOn_exp_mul_complex_Ioi hz₀w 0), integral_exp_mul_complex_Ioi hzw,
+      integral_exp_mul_complex_Ioi hz₀w]
+    simp only [Complex.ofReal_zero, mul_zero, Complex.exp_zero, neg_div, one_div]
+    rw [← inv_neg, neg_sub, ← inv_neg, neg_sub]
+  rw [heval] at hlim
+  simpa only [positiveLaplaceTest, F] using hlim
+
+/-- The mass limit is the scalar transform limit at `w = 0`, with decay at that parameter. -/
+public theorem tendsto_cutoffTest_mass {z : ℂ} {z₀ : ℝ} (hz : 0 < z.re) (hz₀ : 0 < z₀) :
+    Tendsto (fun n : ℕ ↦ ∫ x : ℝ in Ioi (0 : ℝ), cutoffTest z z₀ ((n : ℝ) + 2) x)
+      atTop (𝓝 (z⁻¹ - (z₀ : ℂ)⁻¹)) := by
+  simpa only [positiveLaplaceTest, zero_mul, Complex.exp_zero, one_mul, sub_zero] using
+    (tendsto_positiveLaplaceTest_cutoffTest (w := 0) hz hz₀)
 
 end
 
