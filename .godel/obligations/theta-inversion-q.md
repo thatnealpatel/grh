@@ -12,6 +12,10 @@ proves absolute convergence and the zeta factorization in $\Re z>1$. The
 [entireness theorem](../../Proofs/Theorems/RationalThetaMellinEntire.lean)
 proves complex differentiability with both zero modes removed. The local
 two-ray factor is holomorphic on $\Re z>0$ without moment conditions.
+The [continuation theorem](../../Proofs/Theorems/RationalThetaMellinContinuation.lean)
+now identifies the two-moment theta transform with the zeta product on
+$\Re z>0$ off $1$, computes the removable value at $1$, and gives
+vanishing at every zeta zero in the open critical strip.
 Independent Yah statement reviews used text extracted from the
 digest-matched [pinned edition](../sources/masullo/README.md). The readings
 are provisional, not visual. The norm-fiber reduction, finite Fourier
@@ -266,25 +270,57 @@ statement review checked both domains, both real rays, the two zero
 modes, and the normalization against digest-matched text extraction,
 not the rendered pages.
 
-## Next runnable step: Continue the factorization into the open strip
+## Checked continuation of the zeta factorization
 
-For two-moment input, prove that the entire theta Mellin transform agrees
-with $\zeta(z)M_b(z)$ on $\Re z>0$ away from $z=1$. It should then vanish
-at every zeta zero in the open strip. The source uses an identity theorem
-immediately after (3.2.2.11), p. 127. Do not try to extend the absolute
-unfolding: If the two-ray profile is not identically zero, the sum of
-integrated norms of the paired samples diverges for $0<\Re z\le1$.
+`Masullo.rationalTheta_mellin_eq_zeta_mul_of_pos` proves
+$T_b(z)=\zeta(z)M_b(z)$ for $\Re z>0$, $z\ne1$, with both zero modes
+$b(0)=\widehat b(0)=0$. Here $T_b$ is the theta Mellin integral and
+$M_b(z)=\int_{\mathbb R}(b(e^x)+b(-e^x))e^{zx}\,dx$. The identity
+continues the absolutely unfolded formula, not the unfolding argument:
+If the two-ray profile is not identically zero, the sum of integrated
+norms of the paired samples diverges for $0<\Re z\le1$.
 
-A route that also handles the pole uses the whole connected right
-half-plane. First show $M_b(1)=\int b=0$ by the two exponential
-changes of variables and Fourier evaluation at zero. Let $G$ equal
-$\zeta M_b$ off $1$ and $M_b'(1)$ at $1$. The derivative of $M_b$ at $1$
-and `riemannZeta_residue_one` give continuity of $G$ at $1$ via
-$(z-1)\zeta(z)\cdot(M_b(z)-M_b(1))/(z-1)$. Apply
-`Complex.analyticAt_of_differentiable_on_punctured_nhds_of_continuousAt`
-at $1$, and `analyticOn_riemannZeta` with the local derivative elsewhere.
-Use `AnalyticOnNhd.eqOn_of_preconnected_of_eventuallyEq` on the convex
-right half-plane, with agreement near $2$ from the checked unfolding.
-Evaluating the totalized `riemannZeta 1` in the unmodified product is not
-the removable value. The continuation, adelic reduction, and trace's
-Mellin subtractions are not supplied by the current holomorphy proofs.
+At $1$, substituting $t=e^x$ on both rays gives
+$M_b(1)=\int_{\mathbb R}b(t)\,dt=\widehat b(0)$. The quotient
+$M_b(z)/(z-1)$ tends to $M_b'(1)$, and `riemannZeta_residue_one`
+gives limit one for $(z-1)\zeta(z)$. The proof fills the product at
+$1$ with $M_b'(1)$, applies the removable singularity theorem, and uses
+the identity theorem on the entire convex right half-plane from agreement
+near $2$. `Masullo.rationalTheta_mellin_one` gives the separate equality
+
+$$
+T_b(1)=M_b'(1)=\int_{\mathbb R}x(b(e^x)+b(-e^x))e^x\,dx.
+$$
+
+In particular, the value is not obtained by multiplying by the totalized
+`riemannZeta 1`. `Masullo.rationalTheta_mellin_eq_zero_of_zeta_zero`
+then proves point vanishing at every zero with $0<\Re z<1$.
+
+The source invokes the identity theorem immediately after (3.2.2.11),
+p. 127, to identify the global idelic transform with the analytically
+continued zeta integral. The Lean theorem applies that mechanism to a
+rational lattice model; it does not assert a new adelic identification.
+The explicit derivative value at $1$ and the zeta-zero corollary are
+project consequences, not literal statements of Theorem 3.2.2.1.
+Independent Yah review checked the domains, both rays, the pole
+cancellation, and the interpretation of pp. 124–127 against the
+digest-matched layout extraction, not rendered pages.
+
+## Next runnable step: Prove vanishing through the zeta order
+
+The [positive-width theta-density repair](trace-theta-density-q.md#source-and-claim)
+uses all interior jets below each zeta order, not just point vanishing.
+The project analogue of the consuming interface is (10.2.2.4) and
+(10.2.2.6), p. 446, with the half twist inserted once via
+$z=1/2+\mathrm i w$. First prove the unshifted statement: For two-moment
+$b$ and $0<\Re \rho<1$, the analytic order of $T_b$ at $\rho$ is at
+least that of $\zeta$. Use eventual equality from the checked product
+identity, `analyticOrderAt_congr`, and `analyticOrderAt_mul` with the
+analytic real factor. Use orders in $\mathbb N\cup\{\infty\}$ to allow
+identically zero theta input, and use
+`natCast_le_analyticOrderAt_iff_iteratedDeriv_eq_zero` to
+extract the jets below each finite index. Do not infer an exact theta
+order, since the real factor can itself vanish. This step is independent
+of the rational idele normalization above. Full weighted-closure density,
+continuation to the zero line, and the trace Mellin subtractions are not
+covered by the open-half-plane identity.
