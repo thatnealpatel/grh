@@ -962,38 +962,54 @@ inspected in the built environment.
 This closes the real local comparison only. It does not identify the
 actual global $S$-piece, its operator limit, or its Mellin subtractions.
 
-## Next runnable obligation: Evaluate the rational finite Haar shells
+## Checked rational finite Haar shells and prime-power samples
 
-Read Lemma B.4.4.5 and its proof, pp. 622–623, and (B.4.4.21)–(22),
-p. 625, in the pinned text. The lemma uses subtraction of the identity
-value on the unit group; (B.4.4.22) introduces the translates by
-uniformizer powers. Test that calculation first on the rational radial
-profile $x\mapsto F(\log|x|_p)$ with the **unit-mass** local Haar measure
-`rationalLocalMultiplicativeHaar`. The unit-subtracted integrand on the
-unit group is identically zero; the literal value at the identity does
-not require an ordinary integral of the unsubtracted singularity.
+The local subtracted Haar calculation for the trivial character over
+$\mathbb Q$ is in [`Props.RationalFiniteHaar`](../../Proofs/Props/RationalFiniteHaar.lean).
+Masullo defines the subtraction on the unit group in (B.4.4.14), pp. 622–623,
+and uses the uniformizer sum in (B.4.4.22), p. 625, citing (D.1.2.1), p. 747.
+For radial $f(x)=F(\log|x|_p)$ the subtracted kernel is zero throughout
+that group. Lean uses its zero extension there, including at the identity;
+it does not integrate the unsubtracted singularity. Formula (B.4.4.3),
+p. 620, converts unit-mass Haar to canonical Haar by multiplication by
+$\log p$; the rational different is trivial in (B.4.4.21), p. 625.
+These locators follow the digest-verified PDF text extraction, not a
+rendered-page review.
 
-For each $m\ge1$, prove that the shells $|x|_p=p^{-m}$ and
-$|x|_p=p^m$ are translates of the image of `rationalLocalUnitInclusion`
-by the appropriate powers of the image of $p$. Transfer the norm through
-`norm_rationalLocal_padicEquiv` and use
-`rationalLocalMultiplicativeHaar_unitMass` and Haar invariance. Verify
-$|1-x|_p=1$ on the first shell and $|1-x|_p=|x|_p$ on the second.
-Consequently the normalized contribution of the two shells should be
+The printed sum leaves the zero shell subtraction implicit and uses two
+measures. `RationalLocalNormShell.eq_translate` identifies the actual
+valuation shells with translates of the image of the integral units;
+`RationalLocalNormShell.measure` shows each has mass one, with no additive
+dilation factor. `rationalLocalRadialHaar_shellPair` then checks the two
+signs: The denominator is $1$ at norm $p^{-m}$ and $p^m$ at norm $p^m$.
+Both signed shells have the same weight, and the normalized pair is
 
 $$
-(\log p)p^{-m/2}\bigl(F(-m\log p)+F(m\log p)\bigr).
+(\log p)p^{-m/2}\bigl(F(-m\log p)+F(m\log p)\bigr),\qquad m\ge1.
 $$
 
-For compactly supported $F$ only finitely many of these terms are nonzero
-at fixed $p$. The expression is exactly the pair of samples in
-`compactLogMellin_prime_power_evaluation` with $n=p^m$ and the same
-$g(x)=e^{-x/2}F(x)$, times $\log p$. First check the paired shell identity
-in the actual rational local completion, not in an unconnected abstract
-valuation model. That checks the **subtracted Haar side** of (B.4.4.14).
-It does not yet identify the additive Fourier distribution on the unit
-cutoff, a separate calibration at the unramified character in the next
-section.
+`rationalLocalRadialHaar_eq_shellSum` uses the disjoint measurable shell
+cover and compact log support to prove absolute integrability and equality
+to the sum of the pairs. Each individual shell outside the support bound
+vanishes before pairing; finite support is not inferred from cancellation.
+`rationalLocalRadialHaar_eq_primeSamples` identifies the full normalized
+local integral with the eventually-zero sum of
+$(\log p)(g(\log n)+g(-\log n)/n)$, where $n=p^m$ and
+$g(x)=e^{-x/2}F(x)$. These are exactly the samples of
+`compactLogMellin_prime_power_evaluation` for smooth compact $g$
+((B.4.2.10)–(11), p. 615), with no extra $2\pi$ factor or relative minus
+sign. Only compact support is used for the Haar evaluation. The outer
+minus sign in the contour decomposition acts on the whole finite term.
+
+Independent Yah statement review `finite-shell-review` (output
+`4b6c77ebe6e6a7650a1bfdfd4745ba725952cc95`) checked both shell signs,
+normalization, compact-support assembly, and matching with the contour
+samples against the pinned text and accepted interfaces. This is a
+per-place calculation. It neither establishes the primed additive Fourier
+pairing in (B.4.4.21) nor identifies an actual global trace limit. The
+next runnable check is the translated unit-indicator calibration below:
+Begin with absolute integrability and the exact logarithmic moment on the
+additive integral ball, then use the established translated-ball formula.
 
 ## Upstream calibration test: The translated rational unit indicator
 
