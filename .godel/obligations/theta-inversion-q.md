@@ -1357,31 +1357,72 @@ on $A_{F,S}$ or the quotient by the $S$-integer lattice. It does not
 use self-duality. The locators are provisional readings of text, not
 rendered pages.
 
+## Checked local calibration for rational additive dilation
+
+[PadicAddHaar.lean](../../Proofs/Lemmas/PadicAddHaar.lean) proves
+`Masullo.padicAddHaar_dilate_integralBall`: For $a\ne0$ in $\mathbb Q_p$,
+$\mu_p(a\mathbb Z_p)=\operatorname{ofReal}(\lVert a\rVert_p)$ for the
+unit-ball-normalized additive Haar measure. The image is the ball of
+radius $\lVert a\rVert_p$, so it suffices to take $a=p^k$ for an
+integer $k$. For $k\ge0$ the mass is the reciprocal of the residue
+index. For $k=-n$, apply the checked pushforward by $p^{-n}$ to the
+expanded ball: Its preimage has mass one, and the pushforward equals
+$p^{-n}\mu_p$, giving expanded-ball mass $p^n$.
+
+[RationalLocalAdditiveModulus.lean](../../Proofs/Lemmas/RationalLocalAdditiveModulus.lean)
+proves `Masullo.norm_rationalLocal_padicEquiv` and
+`Masullo.rationalLocalFieldAddHaar_dilate_integers`. In Mathlib's actual
+finite completion $F_v$ of $\mathbb Q$, the transported measure gives
+$aO_v$ mass $\operatorname{ofReal}(\lVert a\rVert)$ for all $a\ne0$.
+To identify the norm with the one used by `ideleNorm`, the proof
+identifies the residue field with $\mathbb Z/p(v)\mathbb Z$, checks
+that $p(v)$ has norm $1/p(v)$ on both sides, and uses the integer-ring
+transport on both an element and its inverse to detect norm-one units.
+Transport of the integer rings alone would not fix the norm scale.
+
+The source basis is the digest-matched text extraction of Definition
+A.3.1.2(3), p. 556, and Example A.3.1.7, pp. 557–558: In the rational
+case the integer ball has mass one. The general local ball-dilation
+formula is a project deduction, not a displayed statement there.
+Independent Yah statement review checked the norm normalization,
+the direction of transport, and the distinction from the source claim.
+Lemma A.3.1.4 is an adelic image-set identity for arbitrary additive
+Haar, not a pushforward identity with the same scalar. Source locators
+are provisional text readings, not visual verification.
+
+Validation route: `lake --wfail build Proofs`, `lake env leanchecker`
+on `Lemmas.PadicAddHaar`, `Lemmas.RationalLocalAdditiveModulus`, and
+`Theorems.PadicIntegralBallFourier`, and external `#check` and
+`#print axioms` on the local endpoints and Fourier statements.
+
 ## Next additive step: Compute the additive modulus of idele dilation
 
 For Lemma A.3.1.4, p. 556, prove for any rational idele $g$ that the
 **comap** of `rationalAdeleAddHaar` by the continuous additive automorphism
-$x\mapsto gx$ equals $\operatorname{ofReal}(|g|)$ times that measure.
-The corresponding pushforward has the reciprocal factor. This is an
-upstream change of variables for Fourier transforms of finite-box
-Schwartz tensors, not needed by the checked unramified theta proof.
+$x\mapsto gx$ equals $\operatorname{ofReal}(\mathrm{ideleNorm}(g))$ times
+that measure. The corresponding pushforward has the reciprocal factor.
+This is an upstream change of variables for Fourier transforms of
+finite-box Schwartz tensors, not needed by the checked unramified theta
+proof.
 
-Start with the local calibration: Show
-$\mu_p(a\mathbb Z_p)=\lVert a\rVert_p$ (as an `ENNReal`) for $a\ne 0$.
-Use `Padic.norm_eq_zpow_neg_valuation` and `Padic.norm_p_zpow` to replace
-$a\mathbb Z_p$ by $p^{\operatorname{valuation}(a)}\mathbb Z_p$.
-`padic_measure_dilatedBall` gives the nonnegative-exponent masses. The
-mass of $p^{-n}\mathbb Z_p$ follows from Haar uniqueness applied to the
-comap by $p^n$, evaluating it first on $\mathbb Z_p$ and then on the
-expanded ball. For the global calibration, choose a stage containing
-both $g$ and $g^{-1}$ in integral coordinates off $S$, using the checked
-idele stage cover. The image of the closed strip under $g$ is a product
-box in that additive stage. Its real interval has length $|g_\infty|$;
-the outside integer rings are unchanged, and the finitely many inside
-factors contribute their local absolute values. Compare the scaled Haar
-measures on that strip. The source states the image-set formula and
-cites [CF, Ch. XV, Lemma 4.1.2]; the proposed proof uses the checked
-rational stage product instead of importing the citation.
+First compute the mass of the image of `rationalAdeleClosedUnitStrip`.
+Use `iUnion_range_rationalIdeleFiniteStageEmbedding` to write $g$ in a
+stage $S$. In `RationalAdeleFiniteStage S` its image strip is the box
+with real interval $[\min(0,g_\infty),\max(0,g_\infty)]$, inside factors
+$g_vO_v$, and the whole outside integer product. Prove the box image
+identity using coordinatewise division by $g$, with the unit inverse
+preserving the outside integer rings. Evaluate via
+`comap_rationalAdeleAddHaar_finiteStage`, `Measure.prod_prod`,
+`Measure.pi_pi`, `Real.volume_Icc`, and
+`rationalLocalFieldAddHaar_dilate_integers`; rewrite the finite part of
+`AdeleRing.norm_apply_of_isUnit` as the product over $S$ since the norm
+is one outside. Then apply Haar uniqueness on the closed strip to the
+comap by the additive automorphism. Extend by Haar uniqueness and
+scalar multiplication to arbitrary rational additive Haar and evaluate
+on Borel sets. The manuscript cites [CF, Ch. XV, Lemma 4.1.2]; this
+rational proof uses the checked stage product instead. The global
+modulus, the arbitrary-Haar formulation, and the general number-field
+case remain open.
 
 ## Checked real-lattice inversion
 
