@@ -284,8 +284,8 @@ right-shell cutoff at fixed left position support in (11.3.1.4)–(11.3.2.3)
 and verify they represent the same operator as the corrected level-first
 trace before taking any limit. The [right-shell obstruction](trace-orbital-q.md#the-right-cutoff-erases-a-fixed-shell-in-the-literal-chain)
 excludes the literal same-chain choice. This comparison and its tail
-remain open. A separate checked route is the
-[finite completed-zeta contour](rational-explicit-formula.md#next-runnable-obligation-the-finite-completed-zeta-contour).
+remain open. The independent [finite completed-zeta contour](rational-explicit-formula.md#checked-finite-completed-zeta-contour)
+is now in Lean; its height limit remains open.
 
 **Diagnostic review:** Independent Yah analysis (`short-window`)
 supplied the isolation argument and checked the classical source

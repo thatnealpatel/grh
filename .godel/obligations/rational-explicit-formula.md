@@ -137,30 +137,52 @@ branch jumps at the left corners add to $2\pi i$. Independent Yah review
 (`residue-review`) checked the hypotheses, orientation, and manuscript
 locators with the digest-matched extraction, not rendered pages.
 
-## Next runnable obligation: The finite completed-zeta contour
+## Checked finite completed-zeta contour
 
-Take $1<a<2$, bottom height $u<0$, and top height $v>0$. Require no
-critical-strip zeta zero at either horizontal height. In the rectangle
-with real sides $1-a$ and $a$, prove that the checked boundary integral
-of $\Phi\Lambda'/\Lambda$, for $\Phi$ analytic near the closed rectangle,
-is $2\pi i$ times $-\Phi(0)-\Phi(1)+\sum_{u<\Im\rho<v} m_\rho\Phi(\rho)$.
-Sum over distinct open-strip zeros. Use `IsCompact.inter_riemannZetaZeros_finite`
-on the closed rectangle and the strict height condition to put these
-zeros in the interior, along with $0,1$. Off $0,1$, use
-`riemannZeta_def_of_ne_zero` and `Complex.Gammaℝ_ne_zero_of_re_pos` to
-compare zeros on the positive real-part side. Exclude $\Re s\ge1$ by
-`riemannZeta_ne_zero_of_one_le_re`, and $\Re s\le0$ by reflection.
-Analyticity of the tested integrand away from those points follows from
-analyticity and nonvanishing of $\Lambda$ there, differentiating and
-dividing. Instantiate the checked finite rectangle proposition with
-the checked local principal parts. This step assumes no bounds on the
-horizontal or vertical edge integrals.
+[`Masullo.rectangleIntegral_completedZeta_logDeriv`](../../Proofs/Theorems/RationalExplicitFormulaContour.lean)
+proves the finite-height step behind (B.4.2.2), p. 614, using
+(B.3.2.3), p. 606. Take $1<a$ and $u<0<v$, with no critical-strip
+zero at either height. The counterclockwise boundary integral of
+$\Phi\Lambda'/\Lambda$ on $[1-a,a]\times[u,v]$, for $\Phi$ analytic at
+every point of the closed rectangle, is $2\pi i$ times
 
-Afterward, choose both horizontal sides to avoid zeros and formalize
-[the bound in actual heights](#upstream-growth-check-use-height-rather-than-the-sequence-index).
-Absolute integrability on both vertical lines and height exhaustion of
-the zero sum are separate obligations. The [quadratic zero summability](trace-divisor-summability.md#checked-dyadic-shell-summability)
-provides a majorant once the test's uniform strip decay is in hand.
+$$-\Phi(0)-\Phi(1)+\sum_{u<\Im\rho<v} m_\rho\Phi(\rho).$$
+
+The sum counts each distinct open-strip zero once with its full order.
+The finite calculation allows asymmetric heights and needs no upper bound
+on $a$; the later growth argument uses $1<a<2$. Masullo supplies the
+contour and the logarithmic derivative. The [finite rectangle repair](#checked-finite-rectangle-with-simple-principal-parts)
+takes the simple principal part of the *tested* integrand instead of
+factoring the residue for arbitrary meromorphic functions. The existing
+completed-zeta germs give the coefficients. The new
+[`RationalCompletedZetaZeros`](../../Proofs/Lemmas/RationalCompletedZetaZeros.lean)
+lemmas verify that this list is exhaustive: Analyticity off $0,1$,
+comparison by the nonvanishing real gamma factor on $\Re s>0$,
+Mathlib's nonvanishing for $\Re s\ge1$, and reflection for $\Re s\le0$.
+Compactness gives finiteness of the distinct zero set between the heights.
+Independent Yah statement review (`contour-statement`) checked the signed
+boundary, full orders, two poles, and exact regularity hypotheses against
+the digest-matched extraction of pp. 605–606 and 614, not rendered pages.
+No horizontal or vertical edge bounds enter this result.
+
+## Next runnable obligation: Quantitatively separated ordinates
+
+Toward the [bound in actual heights](#upstream-growth-check-use-height-rather-than-the-sequence-index),
+prove that there is a constant $c>0$ such that, for every integer $m$
+with $|m|\ge2$, some $T_m\in(m,m+1)$ has
+$|T_m-\Im\rho|\ge c/(1+|m|)^2$ for every open-strip zero. This is a
+project substitute for Lang's logarithmic margin, suitable for a
+polynomial bound with Schwartz tests. Use the
+[checked quadratic summability](trace-divisor-summability.md#checked-dyadic-shell-summability):
+Each zero with $\Im\rho\in[m-1,m+2]$ contributes at least
+$1/(1+1/4+(|m|+2)^2)$ to the positive weighted sum. This bounds the
+cardinality by $C(1+|m|)^2$ uniformly. The intervals of the stated radius
+about these finitely many ordinates cover length at most $2cC<1$ for
+small $c$, and the other zeros are at distance greater than $1$.
+This gives the quantitative boundary premise, **not** a bound for
+$\Lambda'/\Lambda$ on the selected segments. The latter still needs a
+checked estimate converting zero separation to growth. Absolute vertical
+integrability and exhaustion of the zero sum are also separate obligations.
 The resulting target of (B.4.2.2), written in the real parameter, is
 
 $$
