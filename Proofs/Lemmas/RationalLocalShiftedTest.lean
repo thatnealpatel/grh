@@ -57,7 +57,8 @@ local notation "p[" v "]" => (Rat.HeightOneSpectrum.primesEquiv v : Nat.Primes)
 
 local instance (v : Place) : Fact (p[v] : ℕ).Prime := ⟨(p[v]).property⟩
 
-private theorem locallyConstant_unitNorm (v : Place) :
+/-- The norm on the units of a rational finite completion is locally constant. -/
+public theorem rationalLocalUnitNorm_isLocallyConstant (v : Place) :
     IsLocallyConstant (fun y : F[v]ˣ ↦ ‖(y : F[v])‖) := by
   let e := Rat.HeightOneSpectrum.adicCompletion.padicEquiv v
   have he (a : F[v]) : ‖e a‖ = ‖a‖ := norm_rationalLocal_padicEquiv v a
@@ -90,7 +91,7 @@ public theorem rationalLocalShiftedTest_properties (v : Place) {f : F[v]ˣ → �
   let j : F[v]ˣ → F[v] := Units.val
   let b (y : F[v]ˣ) := f y / (↑(Real.sqrt ‖(y : F[v])‖) : ℂ)
   have hj : IsOpenEmbedding j := Units.isOpenEmbedding_val
-  have hb : IsLocallyConstant b := hf.div ((locallyConstant_unitNorm v).comp (fun r ↦ (↑(Real.sqrt r) : ℂ)))
+  have hb : IsLocallyConstant b := hf.div ((rationalLocalUnitNorm_isLocallyConstant v).comp (fun r ↦ (↑(Real.sqrt r) : ℂ)))
   have hc' : HasCompactSupport b := hc.mono (fun y hy hz ↦ hy (by simp [b, hz]))
   let a : F[v] ≃ₜ F[v] := Homeomorph.addLeft 1
   refine ⟨(extend_zero_locallyConstant hj hb hc').comp_continuous a.continuous,

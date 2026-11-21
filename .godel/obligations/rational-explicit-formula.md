@@ -1285,31 +1285,72 @@ definition (B.4.3.2), not the unnormalized logarithm in the section
 introduction. Audit scope: `Lemmas.RationalLocalPrincipalValue` and
 `Theorems.RationalLocalPrincipalValue`.
 
-### Next: Identify the rational radial Fourier value with the prime-power sum
+## Checked rational radial Fourier value in prime-power samples
 
-For any compactly supported $F:\mathbb R\to\mathbb C$, set
-$f(y)=F(\log |y|_v)$. Prove that this is an admissible finite-place
-test: Expose the existing private `locallyConstant_unitNorm` in
-`Lemmas.RationalLocalShiftedTest`, then compose with `F ∘ Real.log`. Use
-`RationalLocalNormShell.log_norm` to put the support in finitely many
-shells, each compact by `RationalLocalNormShell.eq_translate` and
-`isCompact_range_rationalLocalUnitInclusion`. On $U_v$ the subtracted integrand is identically
-zero. Off $U_v$, `Real.sqrt_eq_rpow` matches it with
-`rationalLocalRadialSubtracted`. Compose the checked comparison
-(B.4.4.21) with `rationalLocalRadialHaar_eq_primeSamples` in
-[`Props/RationalFiniteHaar.lean`](../../Proofs/Props/RationalFiniteHaar.lean)
-for the Fourier integral's signed, absolutely integrable prime-power
-value, with the factor $\log p$ and the reflected twist from
-(B.4.2.10)–(11), p. 615. The shell expansion is (B.4.4.22), p. 625.
-For a common compact log profile, the bound $\log p$ greater than its
-support radius kills every nonzero shell, and subtraction kills the
-unit shell. This is a radial local comparison, not an identification
-of Masullo's global geometric trace. For the nonradial finite-place
-vanishing used on p. 625, support alone only rules out nonzero shells;
-unit subtraction also requires control on the integral units. A test
+[`rationalLocalRadialFourier_eq_primeSamples`](../../Proofs/Theorems/RationalLocalRadialPrimeSamples.lean)
+identifies the rational radial case of the normalized primed local
+integral (B.4.4.21), p. 625, with the evaluated contour contribution
+(B.4.2.10)–(11), p. 615. For a compactly supported log profile $F$, let
+$f(y)=F(\log|y|_v)$ and $g(t)=e^{-t/2}F(t)$. The integrand of the
+canonical shifted Fourier pairing is absolutely integrable, and its
+negative integral is the sum of the finitely many nonzero terms
+
+$$
+\log p\left(g(\log p^k)+p^{-k}g(-\log p^k)\right),\qquad k\ge 1.
+$$
+
+Masullo restricts a global test to the local group and uses a
+uniformizer expansion in (B.4.4.22), p. 625. The needed admissibility
+is checked for the radial pullback by `rationalLocalRadialTest_properties`:
+The norm is locally constant on field units, and bounded log support
+meets only finitely many shells, each a compact translate of the
+integral units. No continuity of $F$ is needed for this local result.
+`rationalLocalShifted_principal_value` then converts the Fourier pairing
+to the unit-subtracted Haar integral. The pointwise bridge
+`rationalLocalRadial_subtraction` cancels the entire norm-one shell,
+including the identity, and identifies the remaining square-root
+weight with the checked radial kernel. Finally
+`rationalLocalRadialHaar_eq_primeSamples` evaluates the Haar sum with the
+correct reflected factor and `log p`. The result does not require
+$F(0)=0$. It does not identify a global geometric trace or prove a
+distribution-topology limit. The equality is with the evaluated sample
+formula, not the literal inversion displays with their contour measures.
+Independent Yah `radial-statement-review` (output
+`8535408d49047bdf6ee4728db1094d46e9d032df`) approved the admissibility,
+normalization, sign, and reflected factor against the digest-verified
+text extraction. Rendered-page verification remains open.
+
+Audit scope: `Lemmas.RationalLocalShiftedTest`,
+`Lemmas.RationalLocalRadialTest`, and
+`Theorems.RationalLocalRadialPrimeSamples`.
+
+### Next: Sum the radial finite-place terms against von Mangoldt
+
+For a single compactly supported profile $F$, prove finite support and
+absolute summability over the **pairs** $(v,k)$, $k\ge1$, of the
+samples in `rationalLocalRadialFourier_eq_primeSamples`. If
+$\operatorname{supp}(F)\subset[-R,R]$, a nonzero pair requires
+$p_v^k\le e^R$. Use `Rat.HeightOneSpectrum.primesEquiv` and
+`Nat.Prime.pow_inj` to inject these pairs into the bounded natural
+interval. The same control gives vanishing of the entire local term
+when $\log p_v>R$, as in (B.4.4.22). Reindex through the subtype of
+natural prime powers using `isPrimePow_nat_iff`; off this subtype
+`ArithmeticFunction.vonMangoldt_ne_zero_iff` gives zero, and on it
+`vonMangoldt_apply_pow` and `vonMangoldt_apply_prime` give $\log p_v$.
+Prove that the sum of the canonical finite-place Fourier values equals
+the positive von Mangoldt sample sum in `completedZeta_contour_finite_places`
+with $g(t)=e^{-t/2}F(t)$, before inserting the outer minus sign of
+(B.4.4.16). For smooth $F$, that sum and
+`real_log_profile_fourier_eq_neg_gamma` can then supply the local
+terms of the rational radial, trivial-character idelic explicit formula
+with its two poles and full zero orders.
+
+The support argument on p. 625 does not by itself prove the analogous
+vanishing for nonradial restrictions: It rules out nonzero shells,
+but cancellation on the norm-one shell needs constancy there. A test
 invariant under a fixed open compact subgroup of the norm-one classes
-is constant on the integral units at all but finitely many rational
-places. Do not use the radial cancellation for a general local test.
+is constant on integral units at all but finitely many rational
+places. Do not use radial cancellation for a general local test.
 
 ### Separate open obligation: Ramified calibration
 
