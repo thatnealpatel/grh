@@ -496,34 +496,100 @@ PDF text extraction and the accepted right-line theorem. The extraction
 is not a rendered-page reading. This proves admissibility, not either
 local evaluation or the global comparison.
 
-## Next runnable obligation: Evaluate the rational finite-place term
+## Checked finite-place evaluation by Fourier inversion
 
-Let $s=2+it$, $W(t)=\Phi_g(s)+\Phi_g(1-s)$, and $n>0$. Prove
+[`Theorems.RationalExplicitFormulaFinitePlaces`](../../Proofs/Theorems/RationalExplicitFormulaFinitePlaces.lean)
+proves (B.4.2.10)–(11), p. 615, for smooth compact log profiles over
+$\mathbb Q$. Write $\Phi=\Phi_g$, $s=2+it$, and $W(t)=\Phi(s)+\Phi(1-s)$.
+
+- `Masullo.compactLogMellin_prime_power_evaluation` proves, for every real
+  $n>0$, that $(2\pi)^{-1}\int W(t)n^{-s}\,dt=g(\log n)+n^{-1}g(-\log n)$.
+- `Masullo.completedZeta_contour_finite_places` inserts these samples
+  into the checked split contour. The expression is the normalized real
+  Gamma integral **minus** the sum of the samples weighted by
+  $\Lambda_{\rm vM}(n)$. It preserves both poles, absolute summability
+  of both sums, and full zero multiplicities. The $n=0$ term vanishes on
+  both sides; Mellin inversion is only applied at positive arguments.
+
+Masullo supplies the Euler coefficients, the reflected argument, and the
+Dirac evaluation idea. With ordinary point evaluation, extracted
+(B.4.2.10) lacks $2\pi$ for unnormalized $dt$, and the upward $ds$ integral
+in (B.4.2.11) needs $+2\pi i$, not $-i$. The inverse normalization in
+(B.2.1.16), p. 596, gives the same check. The Euler minus sign belongs
+in the contour, not in the reflected sample. The repair is
+`compactLogMellin_reflected_inversion` in
+[`Lemmas.CompactLogMellinInversion`](../../Proofs/Lemmas/CompactLogMellinInversion.lean):
+Reflect $x\mapsto-x$ inside the second Mellin integral to get the inverse
+Fourier transform of $h(x)=e^{2x}g(x)+e^xg(-x)$ at $t/(2\pi)$. Compact
+support makes $h$ integrable and strip decay makes its transform
+integrable. Changing the Lebesgue variable and applying Mathlib's
+pointwise Fourier inversion supplies the exact Jacobian, then the
+positive-base power contributes $n^{-2}$, leaving $n^{-1}$ on the
+reflected sample. Absolute summability of the evaluated coefficients
+follows from the checked sum of the finite integrands' $L^1$ norms.
+
+Independent Yah statement review (`finite-eval-statement`) checked the
+normalizations, signs, domain, and convergence against the digest-matched
+Masullo extraction and the accepted split. Neither source reading is a
+visual check. This does not evaluate the Gamma term or establish the
+global geometric comparison.
+
+## Next runnable obligation: Prove the digamma integral needed at the real place
+
+Proposition B.4.2.1, p. 616, invokes Barner pp. 146, 150 to evaluate
+(B.4.2.13)–(16). The [GDZ Barner scan](https://gdz.sub.uni-goettingen.de/download/pdf/PPN243919689_0323/LOG_0011.pdf)
+(SHA-256 `086a7885f8bd84029e6b8ae98b83ba9a1c172e7615a904d7636aa285c34a1f3b`)
+was read by OCR, not visually: p. 145 starts with Gauss's integral for
+$\Gamma'/\Gamma$ and rescales its positive real variable; p. 146 integrates
+against a Fourier test and uses cancellation at zero; p. 150 shifts the
+contour and applies that proposition to the weighted profile plus its
+reflection. This is a scalar evaluation, not a statement about the
+global trace projection. Compact smooth profiles allow a direct right-line
+version, without Barner's Dirichlet kernel limit for rough tests or a
+second contour shift.
+
+**First prove in Lean:** For $\Re z>0$, the kernel below is integrable
+on $(0,1)$ and
 
 $$
-\frac{1}{2\pi}\int_{\mathbb R}W(t)n^{-s}\,dt
- = g(\log n)+n^{-1}g(-\log n).
+  \psi(1)-\psi(z)=\int_0^1 \frac{t^{z-1}-1}{1-t}\,dt,
+  \qquad \psi=\Gamma'/\Gamma.
 $$
 
-In the reflected term change $x\mapsto-x$; both terms then give
-$W(t)=\widehat h(-t/(2\pi))$ with
-$h(x)=e^{2x}g(x)+e^xg(-x)$. Pin the sign with
-`Real.fourier_real_eq_integral_exp_smul`, change the Lebesgue variable
-with `Measure.integral_comp_mul_left`, and use
-`Continuous.fourierInv_fourier_eq` at $\log n$. The profile $h$ is
-continuous and compactly supported, and $\widehat h$ is integrable by
-scaling the checked strip bounds for the two samples. The Fourier
-inversion value is $n^{-2}h(\log n)$. The independent review checked
-these Mathlib interfaces but did not elaborate the proposed evaluation.
+Pinned Mathlib has `Complex.digamma_def`, `Complex.digamma_one`, and
+`Complex.betaIntegral_eq_Gamma_mul_div`, but not Gauss's integral
+(`Gamma/Digamma.lean` lists it as a TODO). A route using that interface:
+For real $\varepsilon>0$, subtract $B(1,\varepsilon)=1/\varepsilon$
+from $B(z,\varepsilon)$. By the Gamma recurrence, the difference is
+$(\Gamma(z)\Gamma(1+\varepsilon)/\Gamma(z+\varepsilon)-1)/\varepsilon$,
+whose limit is $\psi(1)-\psi(z)$ by differentiation. In the Beta integrals
+use the common factor $(1-t)^{\varepsilon-1}(t^{z-1}-1)$ and dominated
+convergence as $\varepsilon\downarrow0$: Its norm is bounded by the
+$\varepsilon=0$ majorant. Near $1$, the numerator is $O(1-t)$ by
+smoothness; near $0$ use $1+t^{\Re z-1}$. This proposed route has not
+been elaborated.
 
-This is the ordinary Dirac evaluation control on (B.4.2.10)–(11),
-p. 615. With ordinary point evaluation, the extracted unnormalized
-$dt$ formula (B.4.2.10) lacks $2\pi$, and the upward $ds$ integral in
-(B.4.2.11) needs $+2\pi i$, not $-i$. The overall negative sign in the
-contour is from the Euler logarithmic derivative, not the substitution
-in the reflected test. These source comparisons are provisional pending
-visual review. Use `LSeries.term_of_ne_zero` to insert the von Mangoldt
-coefficient at $n>0$, and `LSeries.term_zero` at $n=0$. The checked
-right-line theorem justifies the combined sum and integral. The
-Archimedean evaluation, the normalizations of (B.4.4.16), pp. 623–625,
-and the independent global $S$-piece comparison remain open.
+**Consumer:** Substitute $t=e^{-2x}$ and use `Complex.Gammaℝ_def` to
+obtain, on $\Re s=2$,
+
+$$
+\frac{\Gamma_{\mathbb R}'}{\Gamma_{\mathbb R}}(s)
+ = -\frac{\log\pi+\gamma}{2}
+  +\int_0^\infty \frac{e^{-2x}-e^{-sx}}{1-e^{-2x}}\,dx.
+$$
+
+After inserting $W$, justify Fubini on the **difference**: For small
+$x$, $|1-e^{-itx}|\le |t|x$ and strip decay gives an integrable first
+moment in $t$; for large $x$, $e^{-2x}$ controls the tail. The checked
+inversion at $y=x$ and $y=0$ would then give
+
+$$
+-(\log\pi+\gamma)g(0)+\int_0^\infty
+ \frac{2g(0)e^{-2x}-g(x)-e^{-x}g(-x)}{1-e^{-2x}}\,dx.
+$$
+
+Compare this in the appropriate normalization with (B.4.2.15)–(17) and
+(B.4.4.16), pp. 623–625, before using it for the manuscript's trace.
+The Gamma prefactor $\pi^{-s/2}$ and its identity-supported term must
+not be dropped in that comparison. No Archimedean evaluation or global
+comparison is claimed here.
