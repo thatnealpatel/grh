@@ -898,19 +898,92 @@ reading remains provisional until visual verification. The local audit
 scope is `Lemmas.RealLogProfileHaar`, `Lemmas.RealLogCutoff`, and
 `Props.RealLogProfileHaar`, with the three endpoints above.
 
-## Next runnable obligation: Match the rational real Haar and Gamma terms
+<a id="next-runnable-obligation-match-the-rational-real-haar-and-gamma-terms"></a>
 
-Compare the symmetric compensated cutoff with the negative of the checked
-[`compactLogMellin_GammaReal_evaluation`](../../Proofs/Props/GammaRealMellin.lean)
-for $g(t)=e^{-t/2}F(t)$. This is the rational trivial-character comparison
-between (B.4.2.13)–(15), pp. 615–616, and (B.4.4.16), p. 623, with the
-normalization repairs already recorded above. First fold the two signs
-and the two log rays into $x>0$: At each positive cutoff the combined
-weight on $F(x)+F(-x)$ is $e^{-x/2}/(1-e^{-2x})$. Then subtract
-$2F(0)e^{-2x}/(1-e^{-2x})$ inside the integral and integrate that
-subtraction exactly. Its cutoff integral plus $F(0)\log\varepsilon$
-tends to $-F(0)\log 2$, leaving $\log\pi+\gamma$ in the complete local
-functional. Use the checked Gamma theorem for integrability of the
-combined kernel, not separate absolute convergence of its summands at
-zero. Finite-place idelic comparison and the global geometric comparison
-remain separate obligations.
+## Checked comparison of the rational real Haar and Gamma terms
+
+[`Props.RealHaarGamma`](../../Proofs/Props/RealHaarGamma.lean) compares the
+reflected right-line Gamma integral in (B.4.2.13)–(15), pp. 615–616, with
+the real local term in (B.4.4.16), p. 623, on every smooth compact log
+profile $F$. Put $g(x)=e^{-x/2}F(x)$ and use the translated test $u$ of
+(B.4.4.2), p. 620, as formalized above. Let $G(g)$ be the integral of
+$[\Phi_g(s)+\Phi_g(1-s)]\Gamma_{\mathbb R}'(s)/\Gamma_{\mathbb R}(s)$
+against $dt/(2\pi)$ on $s=2+it$. The first endpoint,
+`real_log_profile_fourier_eq_neg_gamma`, proves
+
+$$
+-\int_{\mathbb R}\log|\xi|\,\widehat u(\xi)\,d\xi=-G(g).
+$$
+
+The second endpoint, `real_log_profile_haar_log_tendsto_neg_gamma`,
+identifies the right-sided limit explicitly: If $H_\varepsilon$ is the
+integral of the Haar kernel over $|\log|y||\ge\varepsilon$ for **half**
+the full real Haar measure, then
+
+$$
+H_\varepsilon+F(0)\log\varepsilon+(\log(2\pi)+\gamma)F(0)
+\longrightarrow -G(g).
+$$
+
+No parity or zero-identity-value premise is imposed. The external minus
+in (B.4.4.16) turns this local value into $+G(g)$ on the zero-sum side.
+The external $1/M_\infty=1/2$ there normalizes full real Haar; applying it
+again to the additive pairing would halve the term incorrectly.
+
+Masullo supplies the reflected pairing and the translated additive test,
+but not this convergence comparison with the corrected subtraction and
+contact term. The proof uses `RealLogHaarFold.fold` to fold both signs and
+both log rays at fixed positive cutoff into the kernel
+$A(x)=e^{-x/2}(F(x)+F(-x))/(1-e^{-2x})$ on $x>\varepsilon$.
+The checked `compactLogMellin_GammaReal_evaluation` supplies integrability
+of the **combined** kernel $A-S$ on $x>0$, where
+$S(x)=2F(0)e^{-2x}/(1-e^{-2x})$. The literal extracted subtraction in
+(B.4.2.15) does not decay integrably at infinity; the exponential factor
+in the checked subtraction fixes this. The proof integrates $S$ only at
+positive cutoff, by the primitive $F(0)\log(1-e^{-2x})$. Thus
+$\int_\varepsilon^\infty S+F(0)\log\varepsilon\to -F(0)\log 2$.
+The previously checked Fourier contact term then leaves exactly
+$(\log\pi+\gamma)F(0)$ in the complete local functional, with the sign
+opposite to the tested Gamma constant. Independent Yah review
+(`review-archimedean`) checked the proposed identity, the half twist,
+and the contact and subtraction constants against the accepted interfaces
+and the digest-verified extraction. The manuscript reading is provisional,
+not a visual check. The audit scope is `Lemmas.RealLogHaarFold` and
+`Props.RealHaarGamma`, with the two endpoints above.
+
+This closes the real local comparison only. It does not identify the
+actual global $S$-piece, its operator limit, or its Mellin subtractions.
+
+## Next runnable obligation: Evaluate the rational finite Haar shells
+
+Read Lemma B.4.4.5 and its proof, pp. 622–623, and (B.4.4.21)–(22),
+p. 625, in the pinned text. The lemma uses subtraction of the identity
+value on the unit group; (B.4.4.22) introduces the translates by
+uniformizer powers. Test that calculation first on the rational radial
+profile $x\mapsto F(\log|x|_p)$ with the **unit-mass** local Haar measure
+`rationalLocalMultiplicativeHaar`. The unit-subtracted integrand on the
+unit group is identically zero; the literal value at the identity does
+not require an ordinary integral of the unsubtracted singularity.
+
+For each $m\ge1$, prove that the shells $|x|_p=p^{-m}$ and
+$|x|_p=p^m$ are translates of the image of `rationalLocalUnitInclusion`
+by the appropriate powers of the image of $p$. Transfer the norm through
+`norm_rationalLocal_padicEquiv` and use
+`rationalLocalMultiplicativeHaar_unitMass` and Haar invariance. Verify
+$|1-x|_p=1$ on the first shell and $|1-x|_p=|x|_p$ on the second.
+Consequently the normalized contribution of the two shells should be
+
+$$
+(\log p)p^{-m/2}\bigl(F(-m\log p)+F(m\log p)\bigr).
+$$
+
+For compactly supported $F$ only finitely many of these terms are nonzero
+at fixed $p$. The expression is exactly the pair of samples in
+`compactLogMellin_prime_power_evaluation` with $n=p^m$ and the same
+$g(x)=e^{-x/2}F(x)$, times $\log p$. First check the paired shell identity
+in the actual rational local completion, not in an unconnected abstract
+valuation model. That checks the **subtracted Haar side** of (B.4.4.14).
+It does not yet identify the additive Fourier distribution on the unit
+cutoff, a separate calibration at the unramified character. The existing
+`padicStdAddChar_eq_one_iff` gives its conductor condition; the printed
+proof's calibration and different should not be assumed as Lean results.
