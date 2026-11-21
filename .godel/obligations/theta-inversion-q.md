@@ -633,36 +633,77 @@ Exact-candidate checks: `lake --wfail build Proofs`,
 `lake env leanchecker Theorems.PadicIntegralBallFourier`, and an external
 Lean import checking the Haar instance, both statements, and their axioms.
 
-## Next Fourier step: Dilated and translated integral balls
+<a id="next-fourier-step-dilated-and-translated-integral-balls"></a>
 
-Prove the corrected negative-sign version of (A.3.1.5), p. 557, first
-for $N\in\mathbb N$ and all $a,y\in\mathbb Q_p$:
+## Checked Fourier transform of dilated and translated integral balls
+
+In [PadicIntegralBallFourier.lean](../../Proofs/Theorems/PadicIntegralBallFourier.lean),
+`Masullo.padicTranslatedBall_fourier` gives, for every prime $p$,
+$N\in\mathbb N$, and $a,y\in\mathbb Q_p$,
 
 $$
 \int_{a+p^N B}\overline{\psi_p(xy)}\,d\nu_p(x)
-=p^{-N}\overline{\psi_p(ay)}\,\mathbf 1_{p^{-N}B}(y).
+=p^{-N}\overline{\psi_p(ay)}\,\mathbf 1_{p^{-N}B}(y),\qquad B=\mathbb Z_p.
 $$
 
-The extracted line has a positive phase and appears to shift frequency
-in its intermediate expression. Under the chosen convention a position
-translation changes only the phase. A sign control is $N=1$, $a=1$,
-$y=1/p$ at an odd prime: The two phases are distinct and the frequency
-is in the support. Do not treat the extracted typography as verified.
+The position set in Lean is the preimage of $B$ under
+$x\mapsto p^{-N}(x-a)$. The frequency indicator is evaluated at $p^Ny$
+in $B$, so translation changes the phase but does not shift the support.
+[PadicBallPartition.lean](../../Proofs/Lemmas/PadicBallPartition.lean)
+identifies the $p^N$ residue fibers in $B$ with translates of $p^N B$
+and computes their common mass $p^{-N}$ by disjoint additivity. This
+includes $N=0$. `Masullo.padicAddHaar_map_inv_pow` then uses uniqueness
+of additive Haar: The pushforward by **inverse** dilation has mass
+$\nu_p(p^N B)$ on $B$, so it is $p^{-N}\nu_p$. The affine change of
+variables reduces the transform to the checked centered identity at
+$p^N y$.
 
-First compute $\nu_p(p^N B)=p^{-N}$ by counting the cosets of $p^N B$
-in $B$. Pinned Mathlib's `PadicInt.toZModPow` has kernel given by
-`PadicInt.ker_toZModPow`. Surjectivity follows by taking the natural
-representative of each residue and using `map_natCast`. Every fiber is
-a translate of the kernel, so finite additivity and mass one compute
-the common mass. Multiplication by $(p^N)^{-1}$ is a continuous additive
-automorphism. Use `ContinuousAddEquiv.isAddHaarMeasure_map` and
-`Measure.addHaarMeasure_unique` (with the same ball calibration) to
-identify its pushforward as $p^{-N}\nu_p$. For the affine domain first
-translate back, then use this pushforward on the restricted measure to
-reduce to the checked centered formula at $p^N y$. The norm identity
-`Padic.norm_p_pow` or the inverse automorphism gives the indicated
-frequency ball. Global product signs, dual parametrization, and
-Plancherel still need independent arguments.
+Independent Yah review checked both statement interfaces against the
+SHA-256-matched extraction of pp. 556–558. Equation (A.3.1.4) is an
+adelic image-set formula, not a pushforward formula for the same map.
+The calculation is a **repair under the negative-exponent convention**
+of Example A.3.1.5, p. 557, not a literal transcription of (A.3.1.5).
+The extracted phase is positive and its intermediate expression shifts
+the frequency. At $p=3$, $N=1$, $a=1$, and $y=1/3$, the checked
+formula gives $e^{-2\pi i/3}/3$, distinguishing the signs. At $N=0$,
+$a=1/p$, and $y=0$, the checked value is one, unlike the extracted
+shifted-frequency expression. These source observations are provisional
+until rendered-page review. This result is pointwise for natural $N$;
+it does not prove dual parametrization, Plancherel, or adelic Poisson
+summation.
+
+Candidate checks: Full `lake --wfail build Proofs`, `leanchecker` on the
+Fourier and residue-partition modules, and an external import checking
+the declaration types and axioms.
+
+## Next Fourier step: Cancel the rational diagonal phases
+
+Example A.3.1.8, p. 558, names the product of the local characters of
+Examples A.3.1.5–6. As extracted they are both positive. Even if this
+product is used for self-duality on the ambient additive group, it is
+not the character trivial on the diagonal $\mathbb Q$ needed for the
+usual rational lattice pairing. At $1/3$ only the real and $3$-adic
+phases contribute, so two positive choices give $e^{4\pi i/3}$.
+Keep the checked positive $\psi_p$ locally and conjugate the finite
+factors in the global product with the positive real factor. This is a
+project choice for diagonal cancellation, not a visual reading.
+
+First prove the arithmetic identity, for $r=m/d\in\mathbb Q$ in reduced
+form, that the product of the **positive** $p$-adic characters on $r$
+over $p\mid d$ equals $e^{2\pi i r}$. Write $n_p=v_p(d)$ and
+$d_p=d/p^{n_p}$. The integral numerator $p^{n_p}r=m/d_p$ has residue
+representative $b_p$ modulo $p^{n_p}$; reduction of $d_p(p^{n_p}r)=m$
+gives $d_p b_p\equiv m\pmod{p^{n_p}}$. For $q\ne p$, the term $d_qb_q$
+is divisible by $p^{n_p}$. Thus $d\mid(m-\sum_{p\mid d}d_pb_p)$, and the
+sum of the local turns differs from $r$ by an integer. This also handles
+$d=1$ with an empty product. At $p\nmid d$ prove the phase is one by
+integrality and the exact kernel. The pinned interfaces include
+`Rat.num_div_den`, `Nat.prod_factorization_pow_eq_self`,
+`Padic.norm_natCast_eq_one_iff`, `PadicInt.toZModPow`, and
+`Complex.exp_int_mul_two_pi_mul_I`. Only after this identity, transport
+along `Rat.HeightOneSpectrum.adicCompletion.padicEquiv` and construct
+the character on the restricted product. Continuity on the adelic
+stages and Poisson summation are subsequent obligations.
 
 ## Checked real-lattice inversion
 
@@ -1124,5 +1165,7 @@ are checked. The [full real local measure](#checked-full-real-local-multiplicati
 is checked. The [finite-stage Haar comparison](#checked-finite-stage-product-of-local-haar-measures)
 is checked. The [global restricted-product characterization](#checked-global-restricted-product-characterization)
 is checked over $\mathbb Q$. The [centered local Fourier indicator](#checked-fourier-transform-of-the-integral-indicator-over-qp)
-is now checked on the separate additive branch. The [scaled and translated
-formula](#next-fourier-step-dilated-and-translated-integral-balls) remains open.
+is now checked on the separate additive branch, as is the [scaled and
+translated formula](#checked-fourier-transform-of-dilated-and-translated-integral-balls).
+The [diagonal phase cancellation](#next-fourier-step-cancel-the-rational-diagonal-phases)
+remains open.
