@@ -1007,47 +1007,106 @@ normalization, compact-support assembly, and matching with the contour
 samples against the pinned text and accepted interfaces. This is a
 per-place calculation. It neither establishes the primed additive Fourier
 pairing in (B.4.4.21) nor identifies an actual global trace limit. The
-next runnable check is the translated unit-indicator calibration below:
-Begin with absolute integrability and the exact logarithmic moment on the
-additive integral ball, then use the established translated-ball formula.
+translated unit-indicator calibration below now checks one case of the
+additive Fourier identification independently of the Haar shell calculation.
 
-## Upstream calibration test: The translated rational unit indicator
+## Checked translated rational unit-indicator pairing
 
-The extracted proof of Lemma B.4.4.5, pp. 622–623, reduces (B.4.4.14)
-to (B.4.4.5) on tests vanishing at the identity, plus a check on the unit
-indicator. The earlier proof of Lemma B.4.4.3, (B.4.4.7)–(9), p. 621,
-uses the translated test in (B.4.4.2). The unit-indicator check is not an
-integral over the multiplicative unit shell: The logarithm
-in (B.4.4.1) is evaluated on the **additive Fourier transform of the
-translated test**, not on that test's original support. The vanishing
-of the logarithm on integral units, invoked at the end of the older
-proof, does not by itself establish this pairing. The key calculation
-following (B.4.4.15), p. 623, gives a different and usable route via
-two Fourier-transformed balls. This reading is based on text extraction.
+The pinned PDF text gives the translated test in (B.4.4.2), p. 620, and
+(B.4.4.7)–(9), p. 621. Lemma B.4.4.5 reduces (B.4.4.14), pp. 622–623,
+to the case $f(1)=0$ and the unit indicator. For the latter, $|1+x|_p^{-1/2}$
+is one on the support, and the translated test is zero at $x=-1$.
+Masullo states the two-ball transform following (B.4.4.15), p. 623;
+footnote 24 asks for a check of its right-hand side. That transform is
+not yet the evaluation of the two logarithm-weighted integrals.
+In particular, the vanishing of the logarithm on the original
+multiplicative units does not evaluate its pairing with the transformed
+test. We derive the signed transform and evaluate that pairing directly.
+These are text-extraction locators, not a rendered-page review.
 
-A separate runnable Lean obligation, not needed for the paired Haar
-shell identity, is as follows. On `ℚ_[p]`, put $B=\mathbb Z_p$,
-$\nu=\texttt{padicAddHaar}\ p$ (so $\nu(B)=1$), and use the negative
-standard-character Fourier kernel of `padicTranslatedBall_fourier`.
-Prove integrability and exact vanishing of
+[`padicTranslatedUnits_log_fourier`](../../Proofs/Theorems/PadicLogFourier.lean)
+proves, for every natural prime $p$, absolute integrability and exact
+vanishing of
 
 $$
-\int_{\mathbb Q_p} \frac{\log|\xi|_p}{\log p}\,\widehat{u_p}(\xi)\,d\nu(\xi),
-\qquad u_p=\mathbf1_B-\mathbf1_{-1+pB}.
+\int_{\mathbb Q_p} J(\xi)\,\widehat{u_p}(\xi)\,d\nu(\xi),
+\qquad J(\xi)=\frac{\log|\xi|_p}{\log p},\qquad
+u_p(x)=\mathbf1_{\{|1+x|_p=1\}}(x).
 $$
 
-Here $u_p(y)=\mathbf1_{B^\times}(1+y)|1+y|_p^{-1/2}$, extended by zero
-at $y=-1$, so this uses the test required by (B.4.4.2). Instantiate
-`padicIntegralBall_fourier` and `padicTranslatedBall_fourier` at $n=1$,
-$a=-1$ to obtain $\widehat{u_p}=\mathbf1_B-p^{-1}\alpha_{p,0}\mathbf1_{p^{-1}B}$.
-For a concrete check, $J=\log|\xi|_p/\log p$ should integrate to
-$-1/(p-1)$ on $B$ by summing the masses $(1-p^{-1})p^{-k}$ of
-$|\xi|_p=p^{-k}$ for $k\ge 0$ (the singleton $0$ has mass zero). On $B$,
-$\alpha_{p,0}=1$ by `padicStdAddChar_eq_one_iff`.
-On $p^{-1}B\setminus B$, $J=1$ and the integral of $\alpha_{p,0}$ is
-$-1$: Apply the translated-ball transform to the additive ball
-$p^{-1}B$ via scaling, or scale to $B$ and use
-`padicIntegralBall_fourier` at frequency $p^{-1}$. Thus the predicted
-pairing is $(1-p^{-1})(-1/(p-1))+p^{-1}=0$. This is a proposed
-calibration check, not a checked Lean result. It does not prove the
-comparison for arbitrary radial profiles or any ramified normalization.
+Here $\nu=\texttt{padicAddHaar}\ p$ gives $B=\mathbb Z_p$ mass one, and the
+Fourier kernel is the conjugate of `padicStdAddChar p (x * ξ)`.
+`padicTranslatedUnits_eq_sdiff` proves $u_p=\mathbf1_B-\mathbf1_{-1+pB}$
+via the set difference and inclusion. Using the two checked ball
+transforms gives $\widehat{u_p}=\mathbf1_B-p^{-1}\chi\mathbf1_{p^{-1}B}$,
+where $\chi(\xi)=\overline{\psi_p(-\xi)}$. The conjugate kernel fixes the
+phase convention independently of any overbar lost in extraction.
+Reversing the frequency reflects the Fourier transform and preserves
+this pairing since $J$ is even and additive Haar is invariant under
+negation. A phase on the first term is equivalent here since $\chi=1$
+on $B$.
+
+The weighted integrals are explicit in Lean:
+
+- `padicIntegralBall_log_moment` proves absolute integrability and the
+  value $-1/(p-1)$ by summing the shells of mass $(1-p^{-1})p^{-k}$,
+  where $J=-k$. The singleton at zero contributes zero by the value
+  assigned by Lean's logarithm.
+- `padicOuterBall_log_phase` proves absolute integrability on $p^{-1}B$.
+  The unweighted phase integrates to zero there by scaling and the
+  integral-ball transform at $-p^{-1}$. Subtracting the inner ball gives
+  $-1$ for the phase integral on the outer shell, where $J=1$. The full
+  weighted phase integral is consequently $-1/(p-1)-1$.
+
+Combining the two weighted integrals gives
+$(1-p^{-1})(-1/(p-1))+p^{-1}=0$. This is the integral before the
+outer factors of (B.4.4.1) and (B.4.4.14). It verifies the correction
+test only for rational local fields with their standard character and
+trivial local different. It does not transfer the principal-value
+formula for general profiles or any geometric trace limit.
+Independent Yah review `review-calibration` (output
+`95e78494d3aac7c747b0e73dac1a973f430679aa`) checked the four Lean
+statements against the pinned extraction, including the translation,
+frequency sign, Haar normalization, both moments, and scope.
+
+### Next: Pair the logarithm with a ball avoiding zero
+
+The reduction in Lemma B.4.4.5 still needs the zero-identity-value case.
+In (B.4.4.7)–(9), p. 621, Lemma B.4.4.3 uses (B.4.3.5), pp. 617–618,
+for the shifted additive test supported away from zero. The cited
+identity concerns the Fourier transform of the logarithm restricted to
+locally constant compactly supported tests on the multiplicative group,
+not a claim about the value of the logarithm on the original support.
+For a direct rational repair, first prove the following instance without
+postulating the distribution identity: For $n\in\mathbb N$ and
+$|a|_p>p^{-n}$, $J\widehat{\mathbf1_{a+p^nB}}$ is integrable against $\nu$
+and its integral is $-p^{-n}/((1-p^{-1})|a|_p)$. This is the negative
+of the integral of $1/|x|_p$ on that ball against $d\nu/(1-p^{-1})$.
+The factor makes $d\nu/((1-p^{-1})|x|_p)$ unit-mass multiplicative Haar,
+as required by (B.4.3.5). Use the checked translated ball transform.
+If $|a|_p=p^{-k}$, the phase integral on the centered ball of radius
+$p^m$ should be $p^m$ for $m\le k$ and zero for $m>k$. The phase is one
+through radius $p^k$. Scaling the checked moment there predicts
+$p^k(k-1/(p-1))$. The next shell contributes $-(k+1)p^k$ since $J=k+1$;
+every farther shell contributes zero. The hypothesis gives $k<n$, so
+the frequency cutoff of radius $p^n$ includes both terms.
+This evaluation and finite coset assembly would give the next
+comparison on locally constant compactly supported $f$ on $\mathbb Q_p^\times$
+with $f(1)=0$: Prove absolute integrability and
+
+$$
+-\int_{\mathbb Q_p} J(\xi)\widehat{u}(\xi)\,d\nu(\xi)
+=\int_{\mathbb Q_p^\times}\frac{f(y)|y|_p^{1/2}}{|1-y|_p}\,d\mu(y),
+\quad u(x)=f(1+x)|1+x|_p^{-1/2},
+$$
+
+where $u(-1)=0$ and $\mu$ is unit-mass multiplicative Haar.
+This still needs the change of Haar measures in (B.4.4.9). Then subtract
+$f(1)\mathbf1_{B^\times}$ and use the unit calibration. Neither this route
+nor its unit calibration currently proves the ramified formula or the
+global geometric comparison. For ramified continuation, separately check
+the second frequency ball in the display after (B.4.4.15): The extracted
+subscript appears to have $\mathfrak m_v^{-1}\mathfrak d$, whereas the
+annihilator of $\mathfrak m_v$ for the trace character is
+$\mathfrak m_v^{-1}\mathfrak d^{-1}$. The two agree over $\mathbb Q_p$.
+The subscript reading is provisional pending rendered-page review.
