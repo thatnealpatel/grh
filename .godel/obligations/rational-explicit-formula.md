@@ -245,40 +245,63 @@ matching-digest Masullo text extraction and Lang scan OCR, not rendered
 pages. The elementary Lang inequality by itself does not give the count
 with radii $5$ and $6$; the checked argument uses Jensen.
 
-## Next runnable obligation: Divide out the closed inner disk divisor
+## Checked removal of the closed inner disk divisor
 
-Prove the following factor-removal lemma in Lean. Given an entire $f$,
-a finite set $A$ of points, and the exact finite analytic order $m_a$ of
-$f$ at each $a\in A$, let $P(z)=\prod_{a\in A}(z-a)^{m_a}$. Construct an
-**entire** $g$ with $f=P g$ everywhere and $g(a)\ne0$ for all $a\in A$.
-Away from $A$, $g=f/P$; at each $a$ use the local nonvanishing analytic
-factor supplied by `AnalyticAt.analyticOrderAt_eq_natCast` and divide by
-the other, locally nonzero factors. One can patch those local germs or
-remove the factors one at a time, preserving the order at the other
-points. Do not use the raw totalized quotient as the analytic extension,
-or extend a disk-only identity to its exterior without proof.
+[`Masullo.entireZeta_moving_disk_factorization`](../../Proofs/Props/ZetaContourDisk.lean)
+constructs a finite set $A$ of **all** open-strip zeros in the closed
+radius-five disk about $c_t=2+it$, including the boundary. For each
+$|t|\ge1$, it factors $f=\operatorname{entireZeta}=P g$ on the whole
+plane, with $P(z)=\prod_{\rho\in A}(z-\rho)^{m_\rho}$ and $m_\rho$ the
+full zeta order. The quotient $g$ is entire and zero-free on the closed
+radius-five disk. With $N=\sum_{\rho\in A}m_\rho$ and uniform constants
+$C,K$, the theorem gives
 
-For $f=\operatorname{entireZeta}$ take $A$ to be all zeros in the closed
-radius-five disk about $c_t$, with $N=\sum_{a\in A}m_a$. The existing
-`completedZeta_eq_zero_iff_mem_criticalStripZetaZeros` and pole-clearing
-identity identify all numerator zeros off $0,1$; the numerator equals
-one at both poles. The factorization supplies a zero-free $g$ on the open
-radius-five disk. **No choice of a zero-avoiding radius or Blaschke factors
-is needed:** On the radius-six circle each $|z-a|\ge1$, hence $|g|\le M_t$
-there and on the enclosed disk by `Complex.norm_le_of_forall_mem_frontier_norm_le`.
-At the anchor, $|g(c_t)|\ge |f(c_t)|/5^N$. This ordinary-factor comparison
-was independently reviewed as mathematics by `moving-disk-review`; it
-is not yet checked in Lean.
+$$
+\sup_{|z-c_t|\le6}|g(z)|\le C(1+|t|)^2,\qquad
+|f(c_t)|\le 5^N|g(c_t)|,\qquad N\le K(1+|t|).
+$$
 
-For the subsequent derivative estimate, take a holomorphic logarithm
-$H$ of $g/g(c_t)$ with $H(c_t)=0$. The pinned
-`Complex.exists_continuousOn_eqOn_exp_comp` gives only continuity; prove
-holomorphy by locally comparing $H(z)-H(w)$ with the principal log of
-$g(z)/g(w)$ near each $w$ in the open disk. Its real part is bounded by
-$B=\log(M_t/|f(c_t)|)+N\log 5$. Translate the center to zero and apply
-`Complex.borelCaratheodory_zero` with $B+1$ to bound $|H|$ on the closed
-radius-four disk. Cauchy on unit circles then gives $|H'|\le8(B+1)$ on
-the closed radius-three disk. The factors add at most $N/\delta$ at
+Masullo cites Lang for growth on the completed contour in (B.4.2.1),
+p. 614. In the corresponding Lang scan passage, Ch. XVII §2,
+Proposition 2 and its proof (printed pp. 335–336), the comparison subtracts logarithmic
+derivatives via the global Weierstrass product and uses the right-edge
+estimate. The checked result instead prepares an ordinary **finite**
+local factorization for the rational function. Neither the local
+factorization nor the weaker bounds on it are attributed to Lang.
+
+[`Masullo.entire_extract_finset_factors`](../../Proofs/Lemmas/EntireFiniteFactors.lean)
+patches the raw quotient $f/P$ at each removed point: Mathlib's
+`AnalyticAt.analyticOrderAt_eq_natCast` supplies the local nonvanishing
+germ, and the other factors are nonzero there. This yields an entire
+extension and the identity even at the canceled points. The zeta
+proposition identifies all numerator zeros using the completed-zeta
+zero classification and the numerator's value one at the poles. Each
+removed factor has base modulus at least one on the radius-six circle
+and at most five at the center. The maximum modulus principle extends
+the upper bound to the closed outer disk. No moving radius or Blaschke
+normalization is needed. This result does not bound the derivative.
+Independent Yah statement review (`factor-statement`) confirmed the full
+orders, closed-boundary scope, and sufficiency for a uniform linear
+bound on the real part of the normalized log. The source check used
+digest-matched Masullo text extraction and Lang scan OCR, not rendered
+pages. The corresponding Lang scan uses different proposition numbering.
+
+## Next runnable obligation: Bound the logarithmic derivative of the quotient
+
+Using the checked factorization, prove the local Cauchy estimate for
+$g'/g$ on the closed radius-three disk. Take a logarithm $H$ of
+$g/g(c_t)$ on the open radius-five disk with $H(c_t)=0$. The pinned
+`Complex.exists_continuousOn_eqOn_exp_comp` supplies a continuous lift.
+To prove holomorphy, near each $w$ shrink the neighborhood so the
+imaginary part of the lift difference lies in $(-\pi,\pi)$, apply
+`Complex.log_exp`, and use `AnalyticAt.clog` for $g(z)/g(w)$, which
+has value $1$ at $w$. With $M_t=C(1+|t|)^2$, the real part of $H$ is
+bounded by $B=\log(M_t/|f(c_t)|)+N\log 5$. Translate the center to zero
+and apply `Complex.borelCaratheodory_zero` with $B+1$ to bound $|H|$ on
+the closed radius-four disk. Apply
+`Complex.norm_deriv_le_of_forall_mem_sphere_norm_le` on unit circles to
+get $|H'|\le8(B+1)$ on the closed radius-three disk. Differentiating $\exp H=g/g(c_t)$
+identifies $H' = g'/g$ there. The factors add at most $N/\delta$ at
 points of distance at least $\delta>0$ from the removed zeros. Subtract
 $1/s+1/(s-1)$ to transfer from $f'/f$ to $\Lambda'/\Lambda$. This gives
 the planned cubic horizontal bound on the separated-height segments
