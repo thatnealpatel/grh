@@ -27,7 +27,24 @@ go run ./cmd/godel audit-local <full-candidate-id> Lemmas.Example -- Masullo.exa
 
 The command compares `Proofs/` and the pinned Lake inputs on disk with the candidate, runs `lake --wfail build Proofs`, replays each listed module in a separate `leanchecker` process, and checks their axioms and endpoint provenance in Lean. It repeats the input comparison before reporting success. It uses the workspace's trusted local Lake dependencies, and neither contacts a proof worker nor adopts the candidate. Run it with a time bound and keep its output. The check covers the modules named on the command line; it does not select them or certify that a declaration has the intended statement.
 
-Inspect the reviewed statement in the built environment (`import Lemmas.Example` and `#check Masullo.exampleLemma` via `lake env lean --stdin`), and inspect changed Lean sources for new axioms, proof placeholders, or unsafe substitutes. The theorem must be proved in the project and depend only on `propext`, `Classical.choice`, and `Quot.sound`. Record the candidate ID, declarations, and results. Adopt that exact ID only on success. If a proof needs repair, edit in a writer workspace, integrate, and repeat the checks on the new candidate, including after a stale adoption attempt. The older `cmd/godel check` uses a designated remote worker and is not part of this workflow.
+Inspect the reviewed statement in the built environment (`import Lemmas.Example` and `#check Masullo.exampleLemma` via `lake env lean --stdin`), and inspect changed Lean sources for new axioms, proof placeholders, or unsafe substitutes. The theorem must be proved in the project and depend only on `propext`, `Classical.choice`, and `Quot.sound`. Record the candidate ID, declarations, and results. Adopt that exact ID only on success. If a proof needs repair, edit in a writer workspace, integrate, and repeat the checks on the new candidate. The older `cmd/godel check` uses a designated remote worker and is not part of this workflow.
+
+### Recovering a checked but unadopted proof
+
+A stale adoption means the target moved, not that the proof failed. Read `tool_campaign status` again and reconcile the checked patch with the new accepted tree. If it is still needed, integrate the registered output against the fresh base. If the base moves again before integration resolves it, refresh status before choosing the base. A commit readable in jj is not necessarily a registered output in this campaign. If the prior output is not in `status` with `verbose=true`, inspect the old candidate's patch against its parent and restore only the needed changes in a new direct workspace on the current base. Compare the resulting patch with the reviewed one; do not overwrite later work or change the graph manually.
+
+For a restack with identical Lean build inputs, reuse the trusted project build cache from the finished audit rather than starting cold. From the repository root, use the full old and new candidate IDs and the workspace paths returned by integration:
+
+```sh
+changed=$(jj --ignore-working-copy diff --summary \
+  --from "commit_id(\"$OLD\")" --to "commit_id(\"$NEW\")" -- \
+  Proofs lakefile.toml lake-manifest.json lean-toolchain) &&
+test -z "$changed" &&
+test ! -e "$NEW_WS/.lake/build" &&
+cp -a --reflink=auto "$OLD_WS/.lake/build" "$NEW_WS/.lake/build"
+```
+
+Only seed from a finished local audit under the same trusted toolchain and Lake dependencies. If the comparison is nonempty or the trusted cache is unavailable, use the ordinary audit. In either case, run `audit-local` and inspect the endpoint types in the new integration workspace before adoption. Reusing build artifacts saves elaboration time; it does not transfer an audit verdict to a new candidate.
 
 ## Bounded pilot
 

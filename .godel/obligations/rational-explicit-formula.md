@@ -852,6 +852,17 @@ pinned extraction, Connes Appendix II, and the checked Haar and additive
 interfaces. The printed displays have not been visually checked. The
 local integration audit covers both new modules and the three endpoints.
 
+Adopted as `852e57bfbd4870a6fb1b3818ad00ba23ac0ff506`. Its Lean inputs
+match the earlier independently reviewed and audited candidate
+`4f74603111803f89d05ae5e96040e5e7093ad2c9`, whose adoption went stale.
+Restoring only its proof and handoff patch on the current base preserved
+later non-proof work. With the [trusted Lake cache reuse procedure](../../cmd/godel/README.md#recovering-a-checked-but-unadopted-proof),
+the exact new candidate passed the full Lake build, separate kernel
+replay of both modules, endpoint type inspection, and all three axiom
+checks (`propext`, `Classical.choice`, and `Quot.sound` only). The
+`audit-local` command took about 11.5 seconds, versus about 101 seconds
+for the prior cold audit. The replay and axiom checks were not skipped.
+
 ## Next runnable obligation: Compare physical and symmetric log cutoffs
 
 For the same $F$ and normalized Haar integrand, prove that the difference
