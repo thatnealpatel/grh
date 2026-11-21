@@ -216,37 +216,60 @@ units-topology projections against the digest-matched layout extraction,
 not rendered pages. This does not treat arbitrary number fields or
 functoriality, or identify or normalize Haar measure.
 
-## Independent next Haar step: Exhibit a fundamental domain for principal ideles
+## Checked positive-real finite-unit fundamental domain
 
-Show that the positive-real, finite-unit window above projects
-bijectively onto `IdeleClassGroup (𝓞 ℚ) ℚ`. For surjectivity use
-`exists_rational_principal_mul_norm_section` and positivity of the
-norm. An idele with finite valuations one also has inverse valuations
-one since the product of each pair of coordinates is one. For
-injectivity show the window is an open subgroup: Multiplication and
-inversion preserve real positivity and the two finite integrality
-conditions. Then `QuotientGroup.eq_iff_div_mem` puts the quotient of
-two representatives of the same class in both the principal subgroup
-and the window, where the identity-isolation argument applies. Use
-`QuotientGroup.isOpenMap_coe` and openness of the window to get a
-homeomorphism on restriction. This is a proposed project construction of
-a specific fundamental domain, not a claim that p. 561 chooses it.
+[RationalIdeleFundamentalDomain.lean](../../Proofs/Theorems/RationalIdeleFundamentalDomain.lean)
+constructs `Masullo.rationalIdeleUnitWindowHomeomorph`. Its forward map
+is the actual idele-class quotient restricted to the open window of
+positive real coordinate and integral units at all finite places. The
+positive principal normalization gives surjectivity. The quotient of
+any two representatives of the same class in this window is itself in
+the window and principal, hence is the identity. The quotient map is
+open, so the continuous bijection on the open window is a homeomorphism.
+`Masullo.rationalIdeleUnitWindow_isFundamentalDomain` then supplies
+Mathlib's `IsFundamentalDomain` for any measure on the Borel ideles,
+with the opposite principal subgroup acting by right translation.
+This is a pointwise orbit statement, not an assumption about null sets
+or invariance of the measure. An independent Yah review checked the
+transversal, the right-action convention, and the measure interface.
 
-The measure target is the pushforward of the manuscript's quotient
-Haar measure by log norm, namely $dx$. Definition A.3.2.1, pp. 559–560,
-uses counting measure on $\mathbb Q^\times$ and $dt/t$ on the norm
-quotient; (A.3.2.1) gives mass one for the norm-one factor over
-$\mathbb Q$. Lemma A.3.2.4, (A.3.2.5), p. 560, specifies the restricted
-product measure upstairs. Section A.3.3.1, p. 561, computes strip volumes
-on a norm-one fundamental domain. For our window, the measure to
-compare is the **restriction** of the upstairs Haar measure, not the
-pushforward of the unrestricted measure with infinite principal fibers.
-Mathlib's `measurePreserving_quotientGroup_mk_of_QuotientMeasureEqMeasurePreimage`
-expresses the restricted comparison once a measurable fundamental
-domain and the measure relation are proved. In the log split, the
-pushforward of $dx\otimes\mu_1$ under the first projection is $dx$
-for $\mu_1$ of mass one (`Measure.map_fst_prod`); identifying that product
-with the chosen quotient measure remains a separate proof.
+The digest-matched layout extraction of (A.2.2.3), p. 546, describes
+$C_{\mathbb Q}$ by the positive real factor and finite integral units.
+In (A.2.3.13)–(A.2.3.14), p. 549, the rational norm-one domain has
+positive real coordinate (therefore one) and finite integral units:
+The rational class number is one, and the unit lattice has rank zero.
+Taking its positive radial extension gives our window. The reading is
+extraction-based, not verified against rendered pages. The Lean
+statements neither formalize the general number-field domain nor
+identify a specific Haar measure.
+
+## Independent next Haar step: Normalize the quotient by its log split
+
+The target is $dx$ as the pushforward of the rational quotient Haar
+measure by log norm. Definition A.3.2.1, pp. 559–560, uses counting
+measure on $\mathbb Q^\times$ and $dt/t$ on the positive real factor;
+(A.3.2.1) gives mass one on the norm-one factor over $\mathbb Q$.
+First construct the normalized Haar probability on the compact
+norm-one subgroup (`Measure.haarMeasure` on the positive compact
+set `univ`, using `Measure.haarMeasure_self`), then transport
+$dx\otimes\mu_1$ through
+`rationalIdeleClassLogSplit`. Check the Haar property and use
+`rationalIdeleClassLogSplit_symm_fst` and `Measure.map_fst_prod` to
+compute its log-norm pushforward. This supplies a normalized quotient
+candidate without assuming a product formula for the measure upstairs.
+
+For the second comparison, (A.3.2.5), p. 560, specifies the restricted
+product measure $\nu$ upstairs, and A.3.3.1, p. 561, computes its strip
+volume on a norm-one fundamental domain. The required comparison on
+the full window $W$ is $\pi_*(\nu|_W)$, not $\pi_*\nu$, which counts
+all principal translates. Now the fundamental-domain premise of
+`measurePreserving_quotientGroup_mk_of_QuotientMeasureEqMeasurePreimage`
+is available. The remaining input is the measure relation between $\nu$
+and the normalized quotient candidate, not just agreement of the
+topologies. Prove that the restriction to the window has the specified
+product normalization; `IsFundamentalDomain.quotientMeasureEqMeasurePreimage`
+then gives the comparison from the pushforward equality on this one
+window (with the invariant-measure and countability hypotheses).
 
 ## Checked real-lattice inversion
 

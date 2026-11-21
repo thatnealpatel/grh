@@ -10,6 +10,8 @@ open scoped RestrictedProduct
 
 namespace Masullo
 
+private abbrev Ideles := IdeleGroup (𝓞 ℚ) ℚ
+
 private def integralStage : Set (FiniteAdeleRing (𝓞 ℚ) ℚ) :=
   {b | ∀ v, b v ∈ v.adicCompletionIntegers ℚ}
 
@@ -37,6 +39,38 @@ public theorem rationalIdeleReal_one : rationalIdeleReal (1 : IdeleGroup (𝓞 �
   unfold rationalIdeleReal
   exact map_one _
 
+private theorem real_mul (a b : Ideles) :
+    rationalIdeleReal (a * b) = rationalIdeleReal a * rationalIdeleReal b :=
+  map_mul (InfinitePlace.Completion.ringEquivRealOfIsReal Rat.isReal_infinitePlace) _ _
+
+public theorem mul_mem_rationalIdeleUnitWindow {a b : IdeleGroup (𝓞 ℚ) ℚ}
+    (ha : a ∈ rationalIdeleUnitWindow) (hb : b ∈ rationalIdeleUnitWindow) : a * b ∈ rationalIdeleUnitWindow := by
+  refine ⟨?_, ?_, ?_⟩
+  · rw [real_mul]
+    exact mul_pos ha.1 hb.1
+  · intro v
+    exact (v.adicCompletionIntegers ℚ).mul_mem _ _ (ha.2.1 v) (hb.2.1 v)
+  · intro v
+    rw [mul_inv_rev]
+    exact (v.adicCompletionIntegers ℚ).mul_mem _ _ (hb.2.2 v) (ha.2.2 v)
+
+public theorem inv_mem_rationalIdeleUnitWindow {a : IdeleGroup (𝓞 ℚ) ℚ}
+    (ha : a ∈ rationalIdeleUnitWindow) : a⁻¹ ∈ rationalIdeleUnitWindow := by
+  refine ⟨?_, ha.2.2, inv_inv a ▸ ha.2.1⟩
+  have h := (real_mul a a⁻¹).symm
+  rw [mul_inv_cancel, rationalIdeleReal_one] at h
+  exact pos_of_mul_pos_right (h.symm ▸ (zero_lt_one : (0 : ℝ) < 1)) ha.1.le
+
+public theorem mem_rationalIdeleUnitWindow_of_finiteValuation_eq_one {a : IdeleGroup (𝓞 ℚ) ℚ}
+    (hreal : 0 < rationalIdeleReal a) (hfin : ∀ v : HeightOneSpectrum (𝓞 ℚ),
+      Valued.v ((a : AdeleRing (𝓞 ℚ) ℚ).2 v) = 1) : a ∈ rationalIdeleUnitWindow := by
+  refine ⟨hreal, fun v ↦ (hfin v).le, fun v ↦ ?_⟩
+  have h := congrArg (fun b : AdeleRing (𝓞 ℚ) ℚ ↦ Valued.v (b.2 v)) (Units.val_inv a)
+  change Valued.v ((a : AdeleRing (𝓞 ℚ) ℚ).2 v * (↑a⁻¹ : AdeleRing (𝓞 ℚ) ℚ).2 v) =
+    Valued.v (1 : v.adicCompletion ℚ) at h
+  rw [map_mul, hfin, one_mul, map_one] at h
+  exact h.le
+
 public theorem one_mem_rationalIdeleUnitWindow :
     (1 : IdeleGroup (𝓞 ℚ) ℚ) ∈ rationalIdeleUnitWindow := by
   refine ⟨rationalIdeleReal_one.symm ▸ zero_lt_one, ?_, ?_⟩
@@ -59,6 +93,26 @@ public theorem finiteValuation_eq_one_of_mem_rationalIdeleUnitWindow {a : IdeleG
     1 = Valued.v x * Valued.v y := by rw [← map_mul, hxy, map_one]
     _ ≤ Valued.v x * 1 := mul_le_mul_of_nonneg_left hy zero_le
     _ = Valued.v x := mul_one _
+
+/-- A principal idele in the positive finite-unit window is the identity. -/
+public theorem eq_one_of_mem_rationalIdeleUnitWindow_of_principal {a : IdeleGroup (𝓞 ℚ) ℚ}
+    (ha : a ∈ rationalIdeleUnitWindow) (hp : a ∈ IdeleGroup.principalSubgroup (𝓞 ℚ) ℚ) :
+    a = 1 := by
+  obtain ⟨r, rfl⟩ := hp
+  have hnorm : ideleNorm (IdeleGroup.unitEmbedding (𝓞 ℚ) ℚ r) = 1 := by
+    rw [ideleNorm_apply]
+    exact AdeleRing.norm_algebraMap_eq_one_of_ne_zero r.ne_zero
+  have hfin := finiteValuation_eq_one_of_mem_rationalIdeleUnitWindow ha
+  have habs := (ideleNorm_eq_abs_rationalIdeleReal _ hfin).symm.trans hnorm
+  have hpos : 0 < rationalIdeleReal (IdeleGroup.unitEmbedding (𝓞 ℚ) ℚ r) := ha.1
+  rw [abs_of_pos hpos] at habs
+  have hreal : ((r : ℚ) : ℝ) = 1 := by
+    rw [← mul_one (IdeleGroup.unitEmbedding (𝓞 ℚ) ℚ r), rationalIdeleReal_principal_mul]
+      at habs
+    rwa [rationalIdeleReal_one, mul_one] at habs
+  have hr : r = 1 := Units.ext (Rat.cast_injective (by
+    simpa only [Units.val_one, Rat.cast_one] using hreal))
+  simp [hr]
 
 /-- The rational ideles are Hausdorff in the units topology. The adele ring is
 Hausdorff as a product of the infinite and finite adele rings. -/

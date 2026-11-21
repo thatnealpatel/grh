@@ -30,23 +30,8 @@ public theorem discreteTopology_rationalPrincipalIdeles :
   ext a
   change (a : IdeleGroup (𝓞 ℚ) ℚ) ∈ rationalIdeleUnitWindow ↔ a = 1
   constructor
-  · rcases a with ⟨_, r, rfl⟩
-    intro ha
-    have hnorm : ideleNorm (IdeleGroup.unitEmbedding (𝓞 ℚ) ℚ r) = 1 := by
-      rw [ideleNorm_apply]
-      exact AdeleRing.norm_algebraMap_eq_one_of_ne_zero r.ne_zero
-    have hfin := finiteValuation_eq_one_of_mem_rationalIdeleUnitWindow ha
-    have habs := (ideleNorm_eq_abs_rationalIdeleReal _ hfin).symm.trans hnorm
-    have hpos : 0 < rationalIdeleReal (IdeleGroup.unitEmbedding (𝓞 ℚ) ℚ r) := ha.1
-    rw [abs_of_pos hpos] at habs
-    have hreal : ((r : ℚ) : ℝ) = 1 := by
-      rw [← mul_one (IdeleGroup.unitEmbedding (𝓞 ℚ) ℚ r), rationalIdeleReal_principal_mul]
-        at habs
-      rwa [rationalIdeleReal_one, mul_one] at habs
-    have hr : r = 1 := Units.ext (Rat.cast_injective (by
-      simpa only [Units.val_one, Rat.cast_one] using hreal))
-    apply Subtype.ext
-    simp [hr]
+  · intro ha
+    exact Subtype.ext (eq_one_of_mem_rationalIdeleUnitWindow_of_principal ha a.property)
   · rintro rfl
     exact one_mem_rationalIdeleUnitWindow
 
