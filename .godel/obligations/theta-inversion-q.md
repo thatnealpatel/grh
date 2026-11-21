@@ -1999,41 +1999,62 @@ in the proof of Theorem 2.2.3.4(4), pp. 84–85. The validation scope is
 `lake --wfail build Proofs`, `leanchecker` for the three linked modules,
 and type and axiom checks for the new public declarations.
 
-### Next orbit step: LF topology and the bounded-family criterion
+## Checked rational Schwartz inductive topology and bounded families
 
-Theorem 2.2.3.4(4) needs one common stage **and** bounded product
-Schwartz coordinates for a bounded family. In the extraction, the
-proof first cites C.2.5.1(4) for the *finite-adelic* factor only, then
-C.2.3.13(2), (C.2.3.26), pp. 682–683, for the topology comparison.
-On p. 84, the full tensor bounded-hull step explicitly invokes
-[Schaefer, Ch. II, §6, 6.5, p. 59]. The next page uses boundedness of
-the real Schwartz set $B_\infty$; that hypothesis is not explicit in
-the p. 84 hull sentence in the extraction. The external reference has
-not been verified. D.3.3, pp. 808 and 810, cites it for the analogous
-bounded-layer criterion. None of this identifies a Lean LF topology.
+Objective: Prove the common-stage bounded-family input for the rational
+model of Theorem 2.2.3.4(4), pp. 84–85, and use it to reach uniform theta
+estimates on bounded rational adelic Schwartz families.
 
-Define the topology using `WithSeminorms` and the family of **all**
-seminorms on the union that pull back continuously along every stage
-assembly. Verify that it is the finest locally convex topology making
-those assemblies continuous. `WithSeminorms.continuous_iff_continuous_comp`
-and `WithSeminorms.isVonNBounded_iff_seminorm_bounded` give interfaces
-to continuity and boundedness, respectively. The checked reading maps
-are then continuous to the tuple spaces and give the original coordinates
-on a common stage. Do not use the pointwise or projective tensor topology.
+[RationalAdeleSchwartzLF.lean](../../Proofs/Props/RationalAdeleSchwartzLF.lean)
+equips the algebraic stage union with the topology of **all** complex
+seminorms whose restrictions to the product Schwartz stages are continuous.
+`rationalAdeleLF_continuous_iff` is the stagewise continuity criterion for
+complex-linear maps into seminorm-defined spaces. In particular,
+`rationalAdeleLF_finest` gives the finest such topology making the assemblies
+continuous. The readings separate points by reading in a stage containing
+both inputs, so the space is Hausdorff. Each assembly has the corresponding
+continuous reading as left inverse and embeds its stage as a closed subspace
+with the original topology. The topology is not inherited from the ambient
+function type.
 
-If a set $B$ is not contained in any stage, the residual membership
-criterion gives unboundedly many indices $n$ for which some $f_n\in B$
-has a nonzero $R_n f_n$. At each such index choose a nonzero coordinate
-of this tuple. Pull back the Schwartz seminorm `(0, 0)` along that
-coordinate of $R_n$ and rescale to give value at least $n+1$ on $f_n$;
-`SchwartzMap.norm_le_seminorm` ensures strict positivity. Use the zero
-seminorm at inactive indices. To sum these seminorms, evaluate on any
-containing stage $m$ and sum only $n<m$. The cutoff is immaterial by
-residual vanishing on stage $m$ and higher stages; use a common stage
-for two inputs to verify the seminorm law. Its pullback on each stage is
-a finite sum of continuous seminorms. This contradicts boundedness in
-the indicated topology. The common-stage conclusion can then feed the
-existing fixed-geometry uniform theta estimates over $\mathbb Q$.
+[RationalAdeleSchwartzBounded.lean](../../Proofs/Props/RationalAdeleSchwartzBounded.lean)
+proves `rationalAdeleLF_bounded_iff`: A set is von Neumann bounded over
+$\mathbb C$ iff it is the image of a bounded product-Schwartz family under
+a single factorial-stage assembly. If a set escapes every stage, there are
+unboundedly many indices $n$ for which some member has nonzero residual
+$R_n$. For each such index choose a detecting coordinate and pull back
+its Schwartz sup seminorm `(0, 0)`, scaled to have value $n+1$ on that
+member. Use zero at inactive indices. The
+[pointwise finite seminorm sum](../../Proofs/Lemmas/EventualZeroSeminormSum.lean)
+restricts on stage $m$ to the continuous finite sum over $n<m$, but is
+unbounded on the set. Containment in a common stage then gives bounded
+coordinates by continuity of the reading. The converse uses continuity of
+assembly.
+
+Independent Yah statement review checked the rational scope and the needed
+bounded-family interface against the digest-matched text extraction of
+(2.1.3.3), pp. 69–70, and Theorem 2.2.3.4(4), pp. 84–85. In the extraction,
+C.2.5.1(4) is used for the finite-adelic factor, and C.2.3.13(2),
+(C.2.3.26), pp. 682–683, is a tensor topology comparison, not the full
+bounded-hull step. That step on p. 84 cites [Schaefer, Ch. II, §6, 6.5,
+p. 59]; p. 85 uses boundedness of the real Schwartz set $B_\infty$.
+The residual proof is a direct project argument. It neither verifies the
+Schaefer reference nor identifies the rational LF model with the manuscript's
+topological tensor product. Source readings are extraction-based, not visual.
+
+### Next orbit step: Uniform theta estimates for rational LF-bounded families
+
+For $B$ bounded in `RationalAdeleSchwartzLF`, obtain a common $n$ and a
+bounded profile family $C$ via `rationalAdeleLF_bounded_iff`. Specialize
+`exists_rationalAdeleStageCoordinates_symm_eq_boxSum` at $(n+1)!$ for one
+geometry working for every tuple. Each coordinate image of $C$ is bounded
+by continuous linear projection. Use `rationalAdeleBoxSum_uniform_theta_tails`
+and `rationalAdeleBoxSum_uniform_theta_log_bound` with those images.
+State the output on the underlying adelic functions, with one constant
+for all $f\in B$ and all rational idele classes in the relevant norm range.
+Retain both corrections for the small-norm estimate; require both zero
+modes to vanish only for the log bound. This does not require identifying
+the manuscript tensor topology.
 
 ## Checked real-lattice inversion
 
