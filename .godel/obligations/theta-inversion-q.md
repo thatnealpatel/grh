@@ -899,31 +899,61 @@ Borel hypotheses of the Mathlib wrapper. It did not inspect rendered pages.
 The source also states precompactness, which is not a new endpoint of this
 module.
 
-## Next additive step: Normalize Haar on the half-open strip
+<a name="next-additive-step-normalize-haar-on-the-half-open-strip"></a>
 
-First construct additive Haar upstairs in the rational model and prove that
-it gives the strip mass one. A concrete route is to transport $[0,1]\times
-\prod_p\mathbb Z_p$ through `rationalIntegralAdelesHomeomorph` and the open
-subgroup inclusion to make a `PositiveCompacts` in the actual adele ring.
-The open stage supplies local compactness by translation. Normalize with
-`Measure.addHaarMeasure` on this closed window. For the half-open mass,
-identify its comap to the empty stage with Lebesgue measure times the
-probability Haar measure on the compact additive factor, by uniqueness of
-Haar with closed-window mass one. The coordinate formulas for the
-homeomorphism suffice to promote it to an additive equivalence for this
-comparison. Both $[0,1]$ and $[0,1)$ have Lebesgue mass one. For the further
-local-product comparison, the local input is `padicAddHaar_integralBall`;
-see the multiplicative [stage comparison](#checked-finite-stage-product-of-local-haar-measures)
-for the analogous Mathlib measure interfaces.
+## Checked additive Haar normalization over the rationals
 
-The source interface is Definition A.3.1.1, (A.3.1.1), p. 555, Definition
-A.3.1.2 and Lemma A.3.1.3, p. 556, and the unit-strip mass in Example A.3.1.8,
-p. 558 (provisional extracted-text reading). After establishing the upstairs
-normalization, compare the restriction-and-pushforward through the strip
-with probability Haar on the additive quotient using the checked fundamental
-domain. Neither that comparison nor the full restricted-product measure
-formula, ambient duality, Plancherel, or adelic Poisson summation follows
-from the exact translate cover alone.
+In [RationalAdeleAddHaar.lean](../../Proofs/Theorems/RationalAdeleAddHaar.lean),
+`Masullo.rationalAdeleAddHaar` is regular additive Haar on the actual rational
+adele ring with its Borel sigma-algebra. Use the open additive embedding
+`Masullo.rationalAdeleIntegralEmbedding` of $\mathbb R\times\prod_v O_v$ to
+transport the closed window $[0,1]\times\prod_v O_v$ as a compact set with
+nonempty interior. The Haar construction gives this closed set mass one.
+The comap along this embedding is Haar on the open stage, and
+`Masullo.comap_rationalAdeleAddHaar_integral` identifies it with Lebesgue
+measure times the Haar probability of the compact additive group $\prod_v O_v$:
+Both have the same mass on the closed window, so Haar uniqueness applies.
+`Masullo.rationalAdeleAddHaar_unitStrip` then computes mass one for the
+**half-open** fundamental domain using Lebesgue measure of $[0,1)$.
+
+The specific conclusion is the last sentence of Example A.3.1.8, p. 558,
+in the digest-matched text extraction. Definition A.3.1.2 and Lemma A.3.1.3,
+p. 556, use the real and finite local measures on every stage. The checked
+comparison only splits off the real measure on the integral-finite stage;
+it does not yet identify the compact Haar probability with the product of
+local restrictions, or compare all stages. Definition A.3.1.1, (A.3.1.1),
+p. 555, requires an induced measure on $\mathbb A_{\mathbb Q}/\mathbb Q$
+with counting measure on the diagonal. The checked result computes the
+upstairs mass that fixes its scale, not the induced-measure theorem. No
+ambient Pontryagin duality, Plancherel, or Poisson summation is used.
+
+## Next additive step: Induce probability Haar on the quotient
+
+On the Borel quotient $\mathbb A_{\mathbb Q}/\mathbb Q$, prove that
+`(rationalAdeleAddHaar.restrict rationalAdeleUnitStrip).map QuotientAddGroup.mk`
+is additive Haar probability. The `map_apply` and `restrict_apply` formulas
+give total mass one immediately. For translation invariance, lift the
+translating class to an adele $a$. The translate of the strip by $a$ is
+another fundamental domain: Use `IsAddFundamentalDomain.vadd_of_comm`
+(ambient translations commute with the diagonal action). The saturated
+preimage of any Borel quotient set has the same intersection mass on either
+domain by `IsAddFundamentalDomain.measure_set_eq`; the other side of the
+comparison is upstairs Haar translation invariance. The diagonal is
+countable as an image of $\mathbb Q$. This gives a direct route without first
+constructing a Polish structure on the ambient restricted product. Use
+compactness and Hausdorffness of the checked quotient to compare with
+`Measure.addHaarMeasure` normalized at the whole quotient. The quotient
+integration formula with diagonal counting measure can then be expressed
+using the disjoint translate cover; keep it separate from invariance if not
+proved in the same step.
+
+Independently, the integral-stage comparison can be strengthened by
+identifying `rationalFiniteIntegersHaar` with the product of the restrictions
+of the checked $p$-adic measures (`padicAddHaar_integralBall`) to their
+integral rings. This gives the compact factor of the restricted-product
+formula of Lemma A.3.1.3. The multiplicative
+[stage comparison](#checked-finite-stage-product-of-local-haar-measures)
+gives the analogous measure interfaces for extending to all stages.
 
 ## Checked real-lattice inversion
 
@@ -1393,5 +1423,6 @@ The [finite-denominator clearing step](#checked-clearing-of-finite-adelic-denomi
 is checked, and the [global rational diagonal annihilator](#checked-rational-diagonal-annihilator)
 is now exactly the diagonal. The [additive quotient topology](#checked-additive-quotient-topology-over-the-rationals)
 is checked. The [half-open additive fundamental domain](#checked-half-open-additive-fundamental-domain)
-is also checked. The [upstairs unit-strip mass](#next-additive-step-normalize-haar-on-the-half-open-strip)
-is next.
+is also checked, as is the [upstairs unit-strip mass](#checked-additive-haar-normalization-over-the-rationals).
+[Induce probability Haar on the quotient](#next-additive-step-induce-probability-haar-on-the-quotient)
+next.

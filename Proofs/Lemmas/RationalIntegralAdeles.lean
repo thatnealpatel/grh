@@ -74,7 +74,10 @@ public theorem algebraMap_mem_rationalIntegralAdeles_iff (q : ℚ) :
     rw [map_intCast]
     exact intCast_mem_rationalIntegralAdeles z
 
-private abbrev IntegralCoordinates := ℝ × ((v : V) → O v)
+/-- The compact product of the local integral rings over the finite places of ℚ. -/
+public abbrev RationalFiniteIntegers := (v : V) → O v
+
+private abbrev IntegralCoordinates := ℝ × RationalFiniteIntegers
 
 private noncomputable def emptyStage (x : IntegralCoordinates) : RationalAdeleFiniteStage ∅ :=
   (x.1, (fun v ↦ False.elim (Finset.notMem_empty v.val v.property), fun v ↦ x.2 v.val))
@@ -128,6 +131,33 @@ public theorem compactSpace_rationalFiniteIntegers : CompactSpace ((v : V) → O
   let (v : V) : CompactSpace (O v) :=
     (Rat.HeightOneSpectrum.adicCompletionIntegers.padicIntEquiv v).toHomeomorph.symm.compactSpace
   infer_instance
+
+/-- The product coordinates of the integral-finite stage, embedded additively in the adeles. -/
+@[expose]
+public noncomputable def rationalAdeleIntegralEmbedding : (ℝ × RationalFiniteIntegers) →+ A :=
+  AddMonoidHom.mk' (fun x ↦ (rationalIntegralAdelesHomeomorph x : A)) fun x y ↦ by
+    refine Prod.ext ?_ (FiniteAdeleRing.ext ℚ fun v ↦ ?_)
+    · funext v
+      have hv : v = Rat.infinitePlace := Subsingleton.elim _ _
+      subst v
+      let e := InfinitePlace.Completion.ringEquivRealOfIsReal Rat.isReal_infinitePlace
+      apply e.injective
+      have h (a b : A) : rationalAdeleReal (a + b) = rationalAdeleReal a + rationalAdeleReal b := by
+        simp only [rationalAdeleReal_apply]
+        exact map_add e _ _
+      simp only [e, ← rationalAdeleReal_apply, h, rationalIntegralAdelesHomeomorph_real]
+      rfl
+    · change ((rationalIntegralAdelesHomeomorph (x + y) : rationalIntegralAdeles) : A).2 v =
+        ((rationalIntegralAdelesHomeomorph x : rationalIntegralAdeles) : A).2 v +
+        ((rationalIntegralAdelesHomeomorph y : rationalIntegralAdeles) : A).2 v
+      rw [rationalIntegralAdelesHomeomorph_finite, rationalIntegralAdelesHomeomorph_finite,
+        rationalIntegralAdelesHomeomorph_finite]
+      rfl
+
+public theorem isOpenEmbedding_rationalAdeleIntegralEmbedding :
+    IsOpenEmbedding rationalAdeleIntegralEmbedding :=
+  isOpen_rationalIntegralAdeles.isOpenEmbedding_subtypeVal.comp
+    rationalIntegralAdelesHomeomorph.isOpenEmbedding
 
 /-- Subtracting a diagonal integer puts the real coordinate in the half-open unit interval. -/
 public theorem exists_sub_intCast_real_mem_Ico (a : A) :
