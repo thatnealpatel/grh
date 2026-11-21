@@ -22,6 +22,17 @@ namespace Masullo
 @[expose] public noncomputable def rationalTheta (b : 𝓢(ℝ, ℂ)) (t : ℝ) : ℂ :=
   ∑' n : {n : ℤ // n ≠ 0}, b (t * (n : ℤ))
 
+/-- Continuity on the positive real section, as in the lattice specialization of
+Masullo's Lemma 2.2.2.1(2), p. 77. -/
+public theorem rationalTheta_continuousOn (b : 𝓢(ℝ, ℂ)) :
+    ContinuousOn (rationalTheta b) (Set.Ioi 0) := by
+  apply continuousOn_of_locally_continuousOn
+  intro t ht
+  have ht' : 0 < t := ht
+  refine ⟨Set.Ioi (t / 2), isOpen_Ioi, show t / 2 < t by linarith, ?_⟩
+  exact (continuousOn_tsum_schwartz_int_mul_nonzero b (by positivity : 0 < t / 2)).mono
+    (fun _ hx ↦ le_of_lt hx.2)
+
 private theorem lattice_sum_split_zero (b : 𝓢(ℝ, ℂ)) {t : ℝ} (ht : t ≠ 0) :
     (∑' n : ℤ, b (t * n)) = b 0 + rationalTheta b t := by
   have hs := (summable_norm_schwartz_int_mul b ht).of_norm

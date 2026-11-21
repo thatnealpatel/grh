@@ -1,10 +1,12 @@
 # Rational theta inversion at the unramified tensor
 
-**Status:** The [real-lattice module](../../Proofs/Theorems/RationalThetaInversion.lean)
-proves inversion and uniform two-tail estimates, with independent Yah statement
-reviews against text extracted from the digest-matched
-[pinned edition](../sources/masullo/README.md). The readings are provisional,
-not visual. The adelic reduction itself is not formalized.
+**Status:** The [real-lattice inversion module](../../Proofs/Theorems/RationalThetaInversion.lean)
+proves continuity, inversion, and uniform two-tail estimates. The
+[weighted integrability module](../../Proofs/Theorems/RationalThetaIntegrability.lean)
+proves finiteness of the compact-strip squared-norm integral in log
+coordinates. Independent Yah statement reviews used text extracted from the
+digest-matched [pinned edition](../sources/masullo/README.md). The readings
+are provisional, not visual. The adelic reduction itself is not formalized.
 
 ## Manuscript statement and rational reduction
 
@@ -81,21 +83,71 @@ hypotheses against the digest-matched extraction. The real lattice proof
 does not handle arbitrary finite test factors, bounded adelic families,
 or the archimedean fundamental-domain estimate used in the manuscript.
 
-## Next runnable step: Prove continuity of the lattice theta function
+## Checked continuity and compact-strip integrability
 
-Definition 2.2.3.1, pp. 81–82, uses the continuity furnished by
-Lemma 2.2.2.1(2). In this model, prove that `rationalTheta b` is
-continuous on $t>0$ for every complex Schwartz $b$. On each interval
-$t\ge a>0$, dominate the samples by
-$p_{2,0}(b)a^{-2}|n|^{-2}$ on the nonzero integer subtype.
-`continuousOn_tsum` in `Mathlib.Analysis.Normed.Group.FunctionSeries`
-takes continuous summands and this summable uniform majorant;
-`continuousOn_of_locally_continuousOn` glues the positive-scale bounds.
-Unlike the large-scale estimate, the majorant here must also work for
-arbitrarily small positive lower endpoints $a$.
+Definition 2.2.3.1, pp. 81–82, uses continuity from Lemma 2.2.2.1(2),
+p. 77. In the real-lattice model, `Masullo.rationalTheta_continuousOn`
+proves continuity on positive scales for every complex Schwartz $b$.
+On $t\ge c>0$, the Schwartz seminorm $p_{2,0}(b)$ gives the summable
+majorant $p_{2,0}(b)c^{-2}|n|^{-2}$ on nonzero integers.
+`continuousOn_tsum` proves continuity on $[c,\infty)$; taking $c<t$
+then gives continuity locally at every positive $t$. Neither zero mode
+needs to vanish for this step, and no continuity at $t=0$ is asserted.
 
-Continuity after $t=e^x$, together with the two-moment log bound, is an
-input to weighted $L^2$ estimates for the
-[rational orbital theta lifts](trace-orbital-q.md#genuine-global-theta-lifts).
-It does not by itself give derivatives, an adelic identification, or a
-trace comparison.
+In the provisional reading of (9.2.2.4), p. 412, the real compact-strip
+norm uses $dt/t$, the maximum of the two endpoint powers, and polynomial
+weight $(1+|\log t|^2)^{s/2}$ for $s\ge0$. The global norm (10.1.1.6),
+p. 435, shifts both exponents by $2a$. For the rational radial model use
+$x=\log t$ and Lebesgue measure $dx$, the log-coordinate form of $dt/t$.
+The manuscript's compact-factor decomposition ((9.2.1.19), p. 408, and
+Appendix A.3.3.1, p. 561) motivates this model; Lean does not identify the
+compact factor, adelic tensor, or quotient measure.
+
+`Masullo.integrable_rationalTheta_hardySobolev` proves integrability of
+
+$$
+  |\theta_b(e^x)|^2\max(e^{2(a+\alpha)x},e^{2(a+\beta)x})(1+x^2)^{s/2}
+$$
+
+when $b(0)=\widehat b(0)=0$, for any $a,\alpha,\beta\in\mathbb R$ and
+$s\ge0$. The strip interpretation uses $\alpha\le\beta$, including a
+singleton; the symmetric weight does not need that ordering. The proof
+uses continuity for measurability and the two-tail estimate with
+$N\ge \max(|a+\alpha|,|a+\beta|)+s/2+1$. The auxiliary bound
+$(1+x^2)^{s/2}\le e^{s|x|}$ leaves an integrable majorant $C^2e^{-|x|}$.
+Independent review confirmed both statements against the digest-matched
+extraction, in particular the moment hypotheses and both endpoint
+powers. This supplies finite weighted norms for the real profiles used
+in the [rational orbital lifts](trace-orbital-q.md#genuine-global-theta-lifts).
+It does not supply the theta-to-Hilbert map's continuity in the source
+topology, the identification with the partitioned diagonal, or a trace
+formula.
+
+## Next runnable step: Unfold the rational theta Mellin integral
+
+Theorem 3.2.2.1(2)–(3), pp. 124–125, and (3.2.2.11), p. 127, first
+unfold the absolutely convergent theta integral in $\Re z>1$. In our
+rational unramified lattice model, let $B(x)=b(e^x)+b(-e^x)$. For
+$z\in\mathbb C$ with $\Re z>1$, the target is
+
+$$
+  \int_{\mathbb R}\theta_b(e^x)e^{zx}\,dx
+   =\zeta(z)\int_{\mathbb R}B(x)e^{zx}\,dx.
+$$
+
+This is the rational calculation in the orbital handoff, not an
+adelic unfolding theorem. No moment hypotheses are needed on this
+half-plane: $B$ is bounded at the negative end and decays rapidly in
+$e^x$ at the positive end. Start by proving integrability of
+$B(x)e^{zx}$ and the exact norm-series bound. Split the nonzero integers
+into positive and negative pairs indexed by $k=n+1$, $n\in\mathbb N$.
+With $F_z(x)=B(x)e^{zx}$ the $k$th weighted sample is
+$k^{-z}F_z(x+\log k)$. By translation invariance, its integrated norm
+is $k^{-\Re z}\int_{\mathbb R}|F_z(x)|\,dx$. Thus the norm-integral
+series has a finite sum by the real $p$-series test. Pinned Mathlib's
+`MeasureTheory.integral_tsum` asks for exactly this finite sum of norm
+lintegrals and a.e. strong measurability of each sample. Use
+`zeta_eq_tsum_one_div_nat_add_one_cpow` to match $k=n+1$, without relying
+on the convention for complex powers of zero. This step does not
+continue the identity to the zero line, prove zero-line nonvanishing,
+or identify any quotient projection.

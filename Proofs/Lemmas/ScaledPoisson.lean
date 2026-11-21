@@ -3,6 +3,7 @@ module
 public import Mathlib.Analysis.Distribution.SchwartzSpace.Fourier
 public import Mathlib.Analysis.LocallyConvex.WithSeminorms
 import Mathlib.Analysis.Fourier.PoissonSummation
+import Mathlib.Analysis.Normed.Group.FunctionSeries
 import Mathlib.Analysis.Normed.Module.FiniteDimension
 import Mathlib.Analysis.PSeries
 import Mathlib.MeasureTheory.Measure.Haar.NormedSpace
@@ -56,6 +57,37 @@ public theorem schwartz_scaled_poisson (b : 𝓢(ℝ, ℂ)) {t : ℝ} (ht : 0 < 
   simpa [dilateSchwartz_apply, fourier_dilateSchwartz _ ht, tsum_mul_left] using
     (dilateSchwartz b t ht.ne').tsum_eq_tsum_fourier 0
 
+private theorem summable_inv_sq_nonzero_int :
+    Summable (fun n : {n : ℤ // n ≠ 0} ↦ (|((n : ℤ) : ℝ)| ^ 2)⁻¹) := by
+  have h : Summable (fun n : ℤ ↦ (|(n : ℝ)| ^ 2)⁻¹) := by
+    simpa only [Real.rpow_neg (abs_nonneg _), Real.rpow_two] using
+      (Real.summable_abs_int_rpow one_lt_two)
+  exact h.subtype (fun n : ℤ ↦ n ≠ 0)
+
+/-- On any interval bounded away from scale zero, the dilated lattice samples
+have a uniform summable majorant. In particular, their sum is continuous there. -/
+public theorem continuousOn_tsum_schwartz_int_mul_nonzero (b : 𝓢(ℝ, ℂ)) {c : ℝ}
+    (hc : 0 < c) :
+    ContinuousOn (fun t : ℝ ↦ ∑' n : {n : ℤ // n ≠ 0}, b (t * (n : ℤ))) (Set.Ici c) := by
+  apply continuousOn_tsum (u := fun n : {n : ℤ // n ≠ 0} ↦
+    (SchwartzMap.seminorm ℂ 2 0 b / c ^ 2) * (|((n : ℤ) : ℝ)| ^ 2)⁻¹)
+  · intro n
+    exact (b.continuous.comp (continuous_id.mul continuous_const)).continuousOn
+  · exact summable_inv_sq_nonzero_int.mul_left _
+  · intro n t ht
+    have ht' : c ≤ t := ht
+    have htn := hc.trans_le ht'
+    have hn : (0 : ℝ) < |((n : ℤ) : ℝ)| := abs_pos.mpr (by exact_mod_cast n.property)
+    rw [← div_eq_mul_inv, le_div_iff₀ (pow_pos hn _), le_div_iff₀ (pow_pos hc _)]
+    calc
+      ‖b (t * (n : ℤ))‖ * |((n : ℤ) : ℝ)| ^ 2 * c ^ 2 ≤
+          ‖b (t * (n : ℤ))‖ * |((n : ℤ) : ℝ)| ^ 2 * t ^ 2 := by gcongr
+      _ = ‖t * ((n : ℤ) : ℝ)‖ ^ 2 * ‖b (t * (n : ℤ))‖ := by
+        rw [norm_mul, Real.norm_eq_abs, Real.norm_eq_abs, abs_of_pos htn, mul_pow]
+        ring
+      _ ≤ SchwartzMap.seminorm ℂ 2 0 b := by
+        simpa only [norm_iteratedFDeriv_zero] using b.le_seminorm ℂ 2 0 (t * (n : ℤ))
+
 /-- The lattice sum is bounded by a fixed summable majorant times the appropriate
 Schwartz seminorm and inverse power of the scale. -/
 private theorem norm_tsum_schwartz_int_mul_nonzero_le (b : 𝓢(ℝ, ℂ)) (N : ℕ) {t : ℝ}
@@ -65,15 +97,10 @@ private theorem norm_tsum_schwartz_int_mul_nonzero_le (b : 𝓢(ℝ, ℂ)) (N : 
         ∑' n : {n : ℤ // n ≠ 0}, (|((n : ℤ) : ℝ)| ^ 2)⁻¹ := by
   have ht0 : 0 < t := zero_lt_one.trans_le ht
   let p := SchwartzMap.seminorm ℂ (N + 2) 0 b
-  have hs : Summable (fun n : {n : ℤ // n ≠ 0} ↦ (|((n : ℤ) : ℝ)| ^ 2)⁻¹) := by
-    have h : Summable (fun n : ℤ ↦ (|(n : ℝ)| ^ 2)⁻¹) := by
-      simpa only [Real.rpow_neg (abs_nonneg _), Real.rpow_two] using
-        (Real.summable_abs_int_rpow one_lt_two)
-    exact h.subtype (fun n : ℤ ↦ n ≠ 0)
   have hnorm := (summable_norm_schwartz_int_mul b ht0.ne').subtype (fun n : ℤ ↦ n ≠ 0)
   refine (norm_tsum_le_tsum_norm hnorm).trans ?_
   rw [← tsum_mul_left]
-  refine hnorm.tsum_le_tsum ?_ (hs.mul_left _)
+  refine hnorm.tsum_le_tsum ?_ (summable_inv_sq_nonzero_int.mul_left _)
   intro n
   have hn : (1 : ℝ) ≤ |((n : ℤ) : ℝ)| := by exact_mod_cast Int.one_le_abs n.property
   have hn0 : 0 < |((n : ℤ) : ℝ)| := zero_lt_one.trans_le hn
