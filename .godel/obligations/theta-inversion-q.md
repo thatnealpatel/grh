@@ -870,27 +870,60 @@ integral rings with the manuscript's abstract ideal-adic completion is not
 formalized here, and neither are unique divisibility, functoriality, or the
 general number field. Rendered-page verification remains open.
 
-## Next additive step: Check the half-open fundamental domain
+## Checked half-open additive fundamental domain
 
-Example A.2.1.3, (A.2.1.5)–(A.2.1.6), pp. 545–546, asserts the disjoint
-translate cover of $\mathbb A_{\mathbb Q}$ by the rational translates of
-$[0,1)\times\prod_p\mathbb Z_p$ (digest-matched text extraction). Use
-`rationalIntegralAdelesHomeomorph` to identify the coordinates. Start from
-`exists_rational_sub_mem_integral` and subtract the floor of the real coordinate
-for existence; for uniqueness the difference of representatives is a diagonal
-integer with real coordinate in $(-1,1)$. Prove Borel measurability by the
-intersection of the open integral-finite stage with the preimage of $[0,1)$
-under the continuous real coordinate. Package the resulting exact translate
-cover with `MeasureTheory.IsAddFundamentalDomain.mk'` under Borel hypotheses.
-The strip is a measurable fundamental domain, not a continuous section.
+In [RationalAdeleFundamentalDomain.lean](../../Proofs/Theorems/RationalAdeleFundamentalDomain.lean),
+`Masullo.rationalAdeleUnitStrip` is the set of adeles with real coordinate in
+$[0,1)$ and every finite coordinate integral. The accepted
+`rationalIntegralAdelesHomeomorph` identifies it in local product coordinates
+with $[0,1)\times\prod_p\mathbb Z_p$. This is the window in Example A.2.1.3,
+(A.2.1.5)–(A.2.1.6), pp. 545–546, in the digest-matched layout extraction;
+the identification of the abstract ideal-adic completion with the product
+is not a separate Lean result here.
 
-This supplies the domain for covolume one in Definition A.3.1.1, (A.3.1.1),
-p. 555, and Example A.3.1.8, p. 558. Only after proving that the upstairs
-restricted-product Haar measure gives the strip mass one can one identify
-its pushforward from the strip with normalized quotient Haar. The local measure
-inputs are $dx$ and the checked mass-one integral-ball normalizations,
-as in Definition A.3.1.2 and Lemma A.3.1.3, p. 556. This step does not
-supply ambient duality, Plancherel, or adelic Poisson summation.
+`Masullo.existsUnique_rational_sub_mem_adeleUnitStrip` gives the pointwise
+disjoint cover: For each $a\in\mathbb A_{\mathbb Q}$, exactly one $q\in\mathbb Q$
+has $a-q$ in the strip. Clear the finite denominators and subtract the floor
+of the resulting real coordinate. Two such representatives differ by a
+diagonal rational with integral finite coordinates, hence by an integer;
+its real coordinate belongs to $(-1,1)$, so it is zero.
+`Masullo.measurableSet_rationalAdeleUnitStrip` proves Borel measurability
+using the open integral-finite stage and the continuous real coordinate.
+`Masullo.rationalAdeleUnitStrip_isAddFundamentalDomain` packages the exact
+cover for any Borel measure and the diagonal subgroup's additive translation.
+The minus sign in the exact statement corresponds to negating the translating
+subgroup element in the `+ᵥ` action. This is not a continuous section or a
+choice of Haar measure. Independent Yah review matched the pointwise claim
+and half-open endpoint to the pinned extraction and checked the sign and
+Borel hypotheses of the Mathlib wrapper. It did not inspect rendered pages.
+The source also states precompactness, which is not a new endpoint of this
+module.
+
+## Next additive step: Normalize Haar on the half-open strip
+
+First construct additive Haar upstairs in the rational model and prove that
+it gives the strip mass one. A concrete route is to transport $[0,1]\times
+\prod_p\mathbb Z_p$ through `rationalIntegralAdelesHomeomorph` and the open
+subgroup inclusion to make a `PositiveCompacts` in the actual adele ring.
+The open stage supplies local compactness by translation. Normalize with
+`Measure.addHaarMeasure` on this closed window. For the half-open mass,
+identify its comap to the empty stage with Lebesgue measure times the
+probability Haar measure on the compact additive factor, by uniqueness of
+Haar with closed-window mass one. The coordinate formulas for the
+homeomorphism suffice to promote it to an additive equivalence for this
+comparison. Both $[0,1]$ and $[0,1)$ have Lebesgue mass one. For the further
+local-product comparison, the local input is `padicAddHaar_integralBall`;
+see the multiplicative [stage comparison](#checked-finite-stage-product-of-local-haar-measures)
+for the analogous Mathlib measure interfaces.
+
+The source interface is Definition A.3.1.1, (A.3.1.1), p. 555, Definition
+A.3.1.2 and Lemma A.3.1.3, p. 556, and the unit-strip mass in Example A.3.1.8,
+p. 558 (provisional extracted-text reading). After establishing the upstairs
+normalization, compare the restriction-and-pushforward through the strip
+with probability Haar on the additive quotient using the checked fundamental
+domain. Neither that comparison nor the full restricted-product measure
+formula, ambient duality, Plancherel, or adelic Poisson summation follows
+from the exact translate cover alone.
 
 ## Checked real-lattice inversion
 
@@ -1359,5 +1392,6 @@ is now checked, as is the [rational adelic character](#checked-rational-adelic-c
 The [finite-denominator clearing step](#checked-clearing-of-finite-adelic-denominators)
 is checked, and the [global rational diagonal annihilator](#checked-rational-diagonal-annihilator)
 is now exactly the diagonal. The [additive quotient topology](#checked-additive-quotient-topology-over-the-rationals)
-is checked. The [half-open additive fundamental domain](#next-additive-step-check-the-half-open-fundamental-domain)
+is checked. The [half-open additive fundamental domain](#checked-half-open-additive-fundamental-domain)
+is also checked. The [upstairs unit-strip mass](#next-additive-step-normalize-haar-on-the-half-open-strip)
 is next.
