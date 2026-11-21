@@ -1967,41 +1967,73 @@ targets: The full `lake --wfail build Proofs`, `leanchecker` on the
 transition, coordinates, and sampling modules, and `#check` and
 `#print axioms` for their new public endpoints.
 
-### Next orbit step: Construct the factorial-stage residual maps
+## Checked factorial-stage residual maps
 
-Use levels $M_n=(n+1)!$ (`Nat.factorial_dvd_factorial`,
-`Nat.dvd_factorial`) and their algebraic union. Sample a union element
-along every line of level $M_n$ to obtain $E_n f$; the Schwartz-slice
-condition of any stage containing $f$ justifies these samples even if
-$f$ is not in stage $n$. On each fixed stage these maps are continuous:
-Each sample is either zero or a coordinate projection by the same
-support and cell tests. Write $T_n$ for the checked transition from
-$n$ to $n+1$. Prove that $E_{n+1}-T_n E_n$ vanishes on stage $n$,
-and on stage $n+1$ vanishes only on the image of stage $n$. This gives
-continuous maps on each stage that detect a new layer without first
-formalizing a direct-sum decomposition.
+Set $M_n=(n+1)!$. [The algebraic union](../../Proofs/Lemmas/RationalAdeleStageUnion.lean)
+consists exactly of the functions belonging to some factorial stage and
+contains every positive integer stage. `rationalAdeleFactorialStageRead`
+defines $E_n$ on this union by reading every level-$M_n$ representative
+line. The Schwartz slice condition ensures that the profiles are defined
+regardless of whether the function belongs to the sampled stage.
+On any fixed source stage $m$, reading at $n$ is continuous: Transition
+from $m$ to $k=\max(m,n)$ and select the old lines from $n$ in stage $k$.
+The [transition formulas](../../Proofs/Props/RationalAdeleStageTransition.lean)
+check equality of those finite representatives, not just cell membership.
 
-Theorem 2.2.3.4(4), pp. 84–85, needs one common stage **and** bounded
-Schwartz coordinate images for a bounded set of the full LF space.
-On p. 70, Proposition C.2.3.13(2), (C.2.3.26), pp. 682–683, is
-used for the inductive topology; it is not a bounded-set result.
-On p. 84 the finite-space result C.2.5.1(4) likewise does not
-supply boundedness on the full tensor space. The additional
-Schaefer II §6.5 input appears explicitly as a bounded-layer
-criterion in the analogous strict inductive limit in D.3.3,
-pp. 808 and 810; the external reference itself has not been verified.
-These are provisional text readings.
+[The residual proposition](../../Proofs/Props/RationalAdeleStageResidual.lean)
+uses $R_n=E_{n+1}-T_n E_n$, where $T_n$ is the adjacent same-function
+transition. It proves continuity after assembly from every fixed stage,
+vanishing on stage $n$, and detection of stage $n$ **within stage $n+1$**.
+For an arbitrary element of the union, `mem_rationalAdeleSchwartzStage_iff_residual`
+proves membership in stage $m$ iff **all** residuals with $n\ge m$ vanish.
+For the converse, descend from any stage containing the given function.
+No topology on the union is used in these statements.
 
-A direct rational proof would use the seminorms whose restrictions
-to each stage are continuous to define the locally convex inductive
-topology. If a family escapes all stages, choose members at strictly
-increasing minimal stages. Each has a nonzero residual at its newest
-layer. Pick and scale a Schwartz seminorm on that residual to exceed
-the stage index there. Their sum is finite on each stage and has
-continuous restriction, so it detects unboundedness. The maps $E_n$
-then test coordinate boundedness in a common stage. This is a proposed
-proof route, not an LF identification. Do not replace the inductive
-topology by the pointwise or projective tensor topology.
+Independent Yah statement review (`lf-residual-review`, agent `PidjlVJ`)
+checked both stage restrictions and the source comparison against
+SHA-256-matched layout extraction, not rendered pages. The factorial
+filtration and residuals are project constructions. The underlying split
+tensor inclusions appear in the proof of Proposition 2.1.3.2,
+(2.1.3.3), pp. 69–70. The residuals target the bounded-family premise
+in the proof of Theorem 2.2.3.4(4), pp. 84–85. The validation scope is
+`lake --wfail build Proofs`, `leanchecker` for the three linked modules,
+and type and axiom checks for the new public declarations.
+
+### Next orbit step: LF topology and the bounded-family criterion
+
+Theorem 2.2.3.4(4) needs one common stage **and** bounded product
+Schwartz coordinates for a bounded family. In the extraction, the
+proof first cites C.2.5.1(4) for the *finite-adelic* factor only, then
+C.2.3.13(2), (C.2.3.26), pp. 682–683, for the topology comparison.
+On p. 84, the full tensor bounded-hull step explicitly invokes
+[Schaefer, Ch. II, §6, 6.5, p. 59]. The next page uses boundedness of
+the real Schwartz set $B_\infty$; that hypothesis is not explicit in
+the p. 84 hull sentence in the extraction. The external reference has
+not been verified. D.3.3, pp. 808 and 810, cites it for the analogous
+bounded-layer criterion. None of this identifies a Lean LF topology.
+
+Define the topology using `WithSeminorms` and the family of **all**
+seminorms on the union that pull back continuously along every stage
+assembly. Verify that it is the finest locally convex topology making
+those assemblies continuous. `WithSeminorms.continuous_iff_continuous_comp`
+and `WithSeminorms.isVonNBounded_iff_seminorm_bounded` give interfaces
+to continuity and boundedness, respectively. The checked reading maps
+are then continuous to the tuple spaces and give the original coordinates
+on a common stage. Do not use the pointwise or projective tensor topology.
+
+If a set $B$ is not contained in any stage, the residual membership
+criterion gives unboundedly many indices $n$ for which some $f_n\in B$
+has a nonzero $R_n f_n$. At each such index choose a nonzero coordinate
+of this tuple. Pull back the Schwartz seminorm `(0, 0)` along that
+coordinate of $R_n$ and rescale to give value at least $n+1$ on $f_n$;
+`SchwartzMap.norm_le_seminorm` ensures strict positivity. Use the zero
+seminorm at inactive indices. To sum these seminorms, evaluate on any
+containing stage $m$ and sum only $n<m$. The cutoff is immaterial by
+residual vanishing on stage $m$ and higher stages; use a common stage
+for two inputs to verify the seminorm law. Its pullback on each stage is
+a finite sum of continuous seminorms. This contradicts boundedness in
+the indicated topology. The common-stage conclusion can then feed the
+existing fixed-geometry uniform theta estimates over $\mathbb Q$.
 
 ## Checked real-lattice inversion
 
