@@ -325,34 +325,79 @@ boundary inclusion, and use of the full orders, and confirmed that the
 selected-height consumer needs only actual-height polynomial growth. It
 checked the matching-digest Masullo extraction and Lang OCR, not images.
 
-## Next runnable obligation: Bound the completed derivative on the contour edges
+## Checked growth on the completed-zeta contour edges
 
-First prove $\Lambda'/\Lambda=f'/f-1/z-1/(z-1)$ off the poles and
-zeros. Use `completedZeta_eq_quotient` as a neighborhood equality, not
-just a point equality, then `logDeriv_fun_div` and `logDeriv_fun_mul`.
-For $|\Im z|\ge1$, each pole term has modulus at most one by
-`Complex.abs_im_le_norm`.
+[`Props.ZetaContourEdges`](../../Proofs/Props/ZetaContourEdges.lean) proves
+both edge estimates for the rational contour with $a=2$:
 
-Using `exists_height_separated_from_zeta_zeros`, prove that one constant
-bounds $|\Lambda'/\Lambda|$ by $C(1+|T_m|)^3$ throughout each
-$[-1,2]+iT_m$, for integer $|m|\ge2$ and $T_m\in(m,m+1)$.
-The entire segment is in the radius-three disk about $2+iT_m$,
-including the endpoint at $-1$. The ordinate separation is also a lower
-bound on complex distance, and $1+|m|\le2(1+|T_m|)$ converts the
-quadratic margin to the actual height. On the right vertical line at
-$2+it$, take $\delta=1$ by real-part separation from the open-strip zeros.
-This gives a linear large-height bound. Extend it to all heights by
-continuity and compactness on $|t|\le1$, and apply
-`completedZeta_logDeriv_reflection` for the left vertical line at $-1$.
-Using $a=2$ is allowed by the checked finite contour. These estimates
-are not yet Lean declarations.
+- `Masullo.completedZeta_logDeriv_eq_entireZeta`: Off the poles and zeros,
+  $\Lambda'/\Lambda=f'/f-1/z-1/(z-1)$ for $f=\operatorname{entireZeta}$.
+  The pole-clearing quotient agrees on an entire neighborhood, so its
+  logarithmic derivative agrees there too. For $|\Im z|\ge1$ the two
+  correction terms increase the norm bound by at most two.
+- `Masullo.exists_height_completedZeta_logDeriv_le`: Each integer interval
+  $(m,m+1)$ with $|m|\ge2$ has an ordinate $T_m$ at distance at least
+  $c/(1+|m|)^2$ from every zero ordinate. One constant bounds the completed
+  derivative by $C(1+|T_m|)^3$ on **all** of $[-1,2]+iT_m$. The segment
+  fits in the already checked radius-three disk, and the ordinate margin
+  bounds the complex distance from each zero. The estimate is in the
+  actual height since $1+|m|\le2(1+|T_m|)$.
+- `Masullo.completedZeta_logDeriv_le_vertical`: One constant bounds the
+  completed derivative by $C(1+|t|)$ on **both** vertical lines for every
+  $t\in\mathbb R$. At $2+it$, the real-part separation from the strip
+  zeros is at least one; on $|t|\le1$ use analyticity and compactness.
+  The checked reflection identity then gives the same bound at $-1+it$.
 
-Absolute vertical integrability and exhaustion of the zero sum still
-need to be checked. The target of (B.4.2.2) remains
+Masullo supplies the completed logarithmic derivative and invokes Lang's
+edge estimates in (B.4.2.1), p. 614, to use the asymptotic residue theorem.
+The corresponding Lang OCR (Ch. XVII §2, printed pp. 334–336, different
+proposition numbering) uses a logarithmic separation margin and a global
+product comparison for the horizontal bound on fixed strips
+$[-b,1+b]$ with $0<b<1$, not the closed endpoint $[-1,2]$ by taking
+$b=1$. The right-line source argument uses the Euler product and Stirling.
+The checked rational repair uses the local disk estimate instead, with
+weaker rates that suffice for the contour limit. The use of the actual
+height also avoids the insufficient index-to-height implication in the
+extracted (B.3.1.3), p. 605. Independent Yah statement review
+(`edge-statement`) checked the signs, nonvanishing guards, both signs of
+height, and the closed-edge scope against the digest-matched Masullo
+layout extraction and Lang OCR. These source readings remain provisional,
+not visual checks. The theorem does not claim bounds on every inward pair
+of vertical lines or for other Hecke characters.
+
+## Next runnable obligation: Exhaust the rational completed-zeta contour
+
+Prove (B.4.2.2), p. 614, at $a=2$ for entire $\Phi$ satisfying a uniform
+fourth-power decay bound $|\Phi(\sigma+it)|\le B/(1+|t|)^4$ for
+$-1\le\sigma\le2$. This is an explicit consequence required of the
+manuscript's uniformly Schwartz entire Mellin transform
+(Proposition B.2.1.9(2), p. 598, and Definition B.2.2.1, p. 600),
+not a conclusion of the contour theorem. The existing *quadratic*
+`CompactTestLaplace` estimate alone does not provide this input.
+
+Take the separately selected heights in intervals indexed by $n+2$ and
+$-(n+2)$ for the top and bottom of the finite rectangle. Their separation
+excludes boundary zeros, and they tend to the two infinities. Apply
+`rectangleIntegral_completedZeta_logDeriv`, with its checked orientation
+rather than the horizontal signs in the text extraction of (B.3.2.4),
+p. 606. The interval integral norm bound
+`intervalIntegral.norm_integral_le_of_norm_le_const` bounds each
+horizontal contribution by $3BC/(1+|T_m|)$, hence by a quantity tending
+to zero. On both vertical lines the norm is bounded by a constant times
+$(1+|t|)^{-3}$; `integrable_one_add_norm` gives the integrable majorant,
+and apply dominated convergence to the interval indicators. Dominate the
+full-order terms of the zero sum by a constant times
+$m_\rho/(1+\|\rho-1/2\|^2)$ using the strip bound on $\Re\rho$ and
+`summable_zetaZeroOrder_div_one_add_norm_sq`. The exhausting finite zero
+sets are cofinal among finite subsets, so their sums converge to the
+absolute sum.
+
+The target, with the two vertical integrands integrable and the series
+absolutely summable, is
 
 $$
-\frac{1}{2\pi}\left[\int_{\mathbb R}(\Phi\Lambda'/\Lambda)(a+it)\,dt
--\int_{\mathbb R}(\Phi\Lambda'/\Lambda)(1-a+it)\,dt\right]
+\frac{1}{2\pi}\left[\int_{\mathbb R}(\Phi\Lambda'/\Lambda)(2+it)\,dt
+-\int_{\mathbb R}(\Phi\Lambda'/\Lambda)(-1+it)\,dt\right]
 = -\Phi(0)-\Phi(1)+\sum_{0<\Re\rho<1}m_\rho\Phi(\rho).
 $$
 
