@@ -676,34 +676,70 @@ Candidate checks: Full `lake --wfail build Proofs`, `leanchecker` on the
 Fourier and residue-partition modules, and an external import checking
 the declaration types and axioms.
 
-## Next Fourier step: Cancel the rational diagonal phases
+<a id="next-fourier-step-cancel-the-rational-diagonal-phases"></a>
 
-Example A.3.1.8, p. 558, names the product of the local characters of
-Examples A.3.1.5–6. As extracted they are both positive. Even if this
-product is used for self-duality on the ambient additive group, it is
-not the character trivial on the diagonal $\mathbb Q$ needed for the
-usual rational lattice pairing. At $1/3$ only the real and $3$-adic
-phases contribute, so two positive choices give $e^{4\pi i/3}$.
-Keep the checked positive $\psi_p$ locally and conjugate the finite
-factors in the global product with the positive real factor. This is a
-project choice for diagonal cancellation, not a visual reading.
+## Checked cancellation of the rational diagonal phases
 
-First prove the arithmetic identity, for $r=m/d\in\mathbb Q$ in reduced
-form, that the product of the **positive** $p$-adic characters on $r$
-over $p\mid d$ equals $e^{2\pi i r}$. Write $n_p=v_p(d)$ and
-$d_p=d/p^{n_p}$. The integral numerator $p^{n_p}r=m/d_p$ has residue
-representative $b_p$ modulo $p^{n_p}$; reduction of $d_p(p^{n_p}r)=m$
-gives $d_p b_p\equiv m\pmod{p^{n_p}}$. For $q\ne p$, the term $d_qb_q$
-is divisible by $p^{n_p}$. Thus $d\mid(m-\sum_{p\mid d}d_pb_p)$, and the
-sum of the local turns differs from $r$ by an integer. This also handles
-$d=1$ with an empty product. At $p\nmid d$ prove the phase is one by
-integrality and the exact kernel. The pinned interfaces include
-`Rat.num_div_den`, `Nat.prod_factorization_pow_eq_self`,
-`Padic.norm_natCast_eq_one_iff`, `PadicInt.toZModPow`, and
-`Complex.exp_int_mul_two_pi_mul_I`. Only after this identity, transport
-along `Rat.HeightOneSpectrum.adicCompletion.padicEquiv` and construct
-the character on the restricted product. Continuity on the adelic
-stages and Poisson summation are subsequent obligations.
+[The diagonal phase theorems](../../Proofs/Theorems/RationalDiagonalPhases.lean)
+prove, for every $r\in\mathbb Q$ and finite set $S$ of primes containing
+all prime divisors of its reduced denominator,
+
+$$
+\prod_{p\in S}\psi_p(r)=e^{2\pi i r},\qquad
+ e^{2\pi i r}\prod_{p\in S}\overline{\psi_p(r)}=1.
+$$
+
+`Masullo.rationalPadicPhase` is the positive `padicStdAddChar` composed
+with the canonical rational cast. The local [support and residue lemmas](../../Proofs/Lemmas/RationalPadicPhase.lean)
+show the phase is one exactly off the denominator primes. For each $p$,
+take a natural residue representative $b_p$ of an integral numerator
+$p^{n_p}r$. The rational turns $b_p/p^{n_p}$ have the same phase as
+$r$ at $p$, give its positive exponential there, and are integral at
+all other primes. The sum over $S$ therefore agrees with $r$ modulo the
+local character kernel at every prime. The difference is an integer:
+Otherwise its reduced denominator has a prime divisor, where it cannot
+be integral. This proves the product identity by real exponential
+periodicity without a separate CRT lemma. Empty $S$, negative numerators,
+and repeated prime powers need no additional premises.
+
+Independent Yah statement review used the digest-matched layout
+extraction of Examples A.3.1.5–6, p. 557, A.3.1.8, p. 558, and
+A.3.1.11, pp. 558–559. As extracted, the real and finite standard
+characters are both positive and A.3.1.8 multiplies them. At $r=1/3$
+that gives $e^{4\pi i/3}\ne1$, so the literal product cannot serve as
+the diagonal-trivial character needed for the rational lattice pairing.
+A.3.1.11 gives the dual-lattice setting, not the missing arithmetic
+cancellation. Keep the positive real character and conjugate the finite
+ones in the global pairing. This is a project repair for that use, not a
+claim against ambient self-duality or a rendered-page reading. The
+centered ball cannot detect the sign. With a conjugated global character
+in the Fourier integral, the finite local factor has the *positive*
+exponent; the checked translated-ball theorem for the negative exponent
+then has to be conjugated for real-valued indicators.
+
+The checked public endpoints are `Masullo.prod_rationalPadicPhase` and
+`Masullo.rationalDiagonal_phase_eq_one`. The local endpoint is
+`Masullo.rationalPadicPhase_eq_one_iff`.
+
+## Next Fourier step: Construct the rational adelic character
+
+On `AdeleRing (𝓞 ℚ) ℚ`, pair the positive real exponential with the
+finite *conjugated* character transported by
+`Rat.HeightOneSpectrum.adicCompletion.padicEquiv`. Its integral-subring
+restriction is `adicCompletionIntegers.padicIntEquiv`. First show the
+local factor is one on that integral subring, then use the restricted
+product condition to prove finite multiplicative support. Define the
+finite factor with `finprod`; use `finprod_mul_distrib` to prove
+additivity in character form. On each cofinite principal stage it
+reduces to the finite product on the complementary places by
+`finprod_eq_prod_of_mulSupport_subset`. This gives a route to continuity
+via `RestrictedProduct.continuous_dom_prod_left`, with the real place
+unchanged. Use `Rat.HeightOneSpectrum.primesEquiv` to reindex a finite set
+containing the denominator primes, and use the rational algebra map
+compatibility of `padicEquiv` to apply the diagonal cancellation theorem.
+The next endpoint is the continuous character, with its value one on
+the diagonal rational algebra map. The full annihilator identity,
+additive adelic Haar, and adelic Poisson summation are separate steps.
 
 ## Checked real-lattice inversion
 
@@ -1167,5 +1203,6 @@ is checked. The [global restricted-product characterization](#checked-global-res
 is checked over $\mathbb Q$. The [centered local Fourier indicator](#checked-fourier-transform-of-the-integral-indicator-over-qp)
 is now checked on the separate additive branch, as is the [scaled and
 translated formula](#checked-fourier-transform-of-dilated-and-translated-integral-balls).
-The [diagonal phase cancellation](#next-fourier-step-cancel-the-rational-diagonal-phases)
+The [diagonal phase cancellation](#checked-cancellation-of-the-rational-diagonal-phases)
+is now checked. The [global character construction](#next-fourier-step-construct-the-rational-adelic-character)
 remains open.
