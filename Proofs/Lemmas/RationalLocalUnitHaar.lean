@@ -37,10 +37,37 @@ local instance (v : V) : SecondCountableTopology (U v) := by
     MulOpposite.opHomeomorph.symm.secondCountableTopology
   exact Units.isInducing_embedProduct.secondCountableTopology
 
-local instance (v : V) : CompactSpace (U v) := by
+public theorem compactSpace_rationalLocalUnits (v : V) : CompactSpace (U v) := by
   let : CompactSpace (v.adicCompletionIntegers ℚ) :=
     (Rat.HeightOneSpectrum.adicCompletionIntegers.padicIntEquiv v).toHomeomorph.symm.compactSpace
   infer_instance
+
+local instance (v : V) : CompactSpace (U v) := compactSpace_rationalLocalUnits v
+
+/-- The inclusion of the integral units into the multiplicative group of the local field. -/
+@[expose]
+public noncomputable def rationalLocalUnitInclusion (v : V) : (U v) →* (v.adicCompletion ℚ)ˣ :=
+  Units.map (v.adicCompletionIntegers ℚ).subtype.toMonoidHom
+
+public theorem isOpenEmbedding_rationalLocalUnitInclusion (v : V) :
+    Topology.IsOpenEmbedding (rationalLocalUnitInclusion v) := by
+  have hc : Continuous (rationalLocalUnitInclusion v) := Units.continuous_map continuous_subtype_val
+  have hi : Function.Injective (rationalLocalUnitInclusion v) := Units.map_injective Subtype.val_injective
+  let S := (v.adicCompletionIntegers ℚ).toSubring.toSubmonoid
+  have hr : Set.range (rationalLocalUnitInclusion v) = (S.units : Set (v.adicCompletion ℚ)ˣ) := by
+    ext x
+    constructor
+    · rintro ⟨u, rfl⟩
+      exact ⟨u.val.property, u.inv.property⟩
+    · intro hx
+      exact ⟨S.unitsEquivUnitsType ⟨x, hx⟩, Units.ext rfl⟩
+  refine ⟨(hc.isClosedEmbedding hi).isEmbedding, ?_⟩
+  rw [hr]
+  exact S.isOpen_units (Valued.isOpen_valuationSubring (v.adicCompletion ℚ))
+
+public theorem isCompact_range_rationalLocalUnitInclusion (v : V) :
+    IsCompact (Set.range (rationalLocalUnitInclusion v)) :=
+  isCompact_range (isOpenEmbedding_rationalLocalUnitInclusion v).continuous
 
 local instance : CompactSpace RationalFiniteUnits := compactSpace_rationalFiniteUnits
 

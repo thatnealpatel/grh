@@ -351,28 +351,60 @@ factor here comes from the induced splitting **on classes**. This
 is not a rendered-page check, a formal calculation of discriminants,
 or a construction of (A.3.2.5) on the upstairs restricted product.
 
-## Next Haar step: Identify the restrictions of the local multiplicative measures
+## Checked local multiplicative Haar and its restriction to integral units
 
-For each finite place $v$ of $\mathbb Q$, use the natural monoid map
-$j_v:\mathcal O_v^\times\hookrightarrow\mathbb Q_v^\times$ induced by
-inclusion. With Borel spaces, prove that for a Haar measure $\nu_v$ on
-$\mathbb Q_v^\times$ satisfying $\nu_v(\operatorname{range}j_v)=1$, its
-comap along $j_v$ is `rationalLocalUnitHaar v`. This isolates the rational
-normalization in (A.3.2.2) from the upstairs restricted-product assertion
-(A.3.2.5), both on p. 560. The comap is restriction expressed in the
-coordinates of the integral unit group, not pushforward to the ambient
-local field.
+In [RationalLocalMultiplicativeHaar.lean](../../Proofs/Theorems/RationalLocalMultiplicativeHaar.lean),
+`Masullo.rationalLocalMultiplicativeHaar v` is Haar on the field unit group
+$\mathbb Q_v^\times$ with its Borel sigma-algebra. The map
+`Masullo.rationalLocalUnitInclusion v` sends integral units to field units
+via the ring inclusion. Its image is compact and open: In the field unit
+group it consists of elements whose values and inverses both lie in the
+open valuation subring. The inclusion is an open embedding.
 
-In pinned Mathlib, use `Submonoid.unitsEquivUnitsType` to identify the
-range with the subgroup of units having value and inverse in $\mathcal O_v$.
-`Valued.isOpen_valuationSubring` and `Submonoid.isOpen_units` make the
-range open. Continuity and injectivity of `Units.map` on this inclusion,
-compactness of the source, and Hausdorffness of the target give the
-embedding. Apply `Measure.IsHaarMeasure.comap` to the open embedding
-and `Measure.isHaarMeasure_eq_of_isProbabilityMeasure` after evaluating
-on `univ`. The local equality does not yet identify the positive window
-product or all upstairs cylinder masses. The corresponding additive
-finite Fourier self-duality problem is independent.
+`Masullo.rationalLocalMultiplicativeHaar_unitMass` and
+`Masullo.rationalLocalMultiplicativeHaar_eq` give existence and uniqueness
+at unit mass one. `Masullo.comap_rationalLocalMultiplicativeHaar` shows
+that restriction, expressed in integral-unit coordinates by comap, is
+exactly `rationalLocalUnitHaar v`, the probability used in the quotient
+product. Haar pulls back under the open embedding, and its mass on the
+whole source is the ambient measure of the image. Compact Haar uniqueness
+then identifies the result. The same conclusion holds for any ambient
+Haar measure with the stated unit mass, by the uniqueness theorem.
+
+Independent Yah statement review checked the SHA-256-matched layout
+extraction of Definition A.3.2.2 and (A.3.2.2)–(A.3.2.5), p. 560.
+For $\mathbb Q$, the extension of the completed integer ring over
+$\mathbb Z_p$ is trivial, so its discriminant is one. This is the
+normalization used in Lean, not a formal discriminant calculation.
+The additive-density identity (A.3.2.3), the global restricted product
+(A.3.2.5), and the resulting upstairs strip mass are not proved here.
+There has been no rendered-page review of these passages.
+
+## Next Haar step: Identify the positive real multiplicative measure
+
+Definition A.3.2.2(1), p. 560, uses $|t|^{-1}$ times the additive measure
+on the real field units. The rational window in (A.2.3.14), p. 549,
+selects the positive component, so the input to (A.3.3.1), p. 561, is
+$dt/t$ there, not the folded measure of both real components. These are
+readings of the pinned text extraction. With additive real Lebesgue
+measure, prove the measure identity on $\mathbb R$:
+
+$$
+\exp_* dx = (dt\!\mid_{(0,\infty)})/t.
+$$
+
+The right side in Lean is `(volume.restrict (Set.Ioi (0 : ℝ))).withDensity
+(fun t : ℝ ↦ ENNReal.ofReal t⁻¹)`. For a Borel set $s$, apply
+`MeasureTheory.lintegral_image_eq_lintegral_abs_deriv_mul` to `Real.log`
+on $s\cap(0,\infty)$ with integrand one. Use `Real.hasDerivAt_log` and
+exp/log inversion to identify the image with $\exp^{-1}(s)$. The identity
+would give real mass one on $[1,e]$, with no extra factor of two. Together
+with the checked finite local restrictions this supplies the factors
+for the all-integral finite window, but does not itself identify that
+window with a restriction of the upstairs measure. The remaining global
+obligation is to compare the measures on restricted-product stages with
+arbitrary finite exceptional sets and assemble the upstairs measure. The
+additive finite Fourier self-duality problem is independent.
 
 ## Checked real-lattice inversion
 
@@ -826,6 +858,6 @@ assumes a nondegenerate interval, while the checked result does not.
 
 The independent Haar branch now has a [checked window comparison](#checked-haar-comparison-for-a-normalized-upstairs-window)
 and a [checked finite-unit identification](#checked-finite-unit-identification-of-the-norm-one-classes).
-The [product formula for quotient Haar](#checked-product-of-local-haar-probabilities-on-the-rational-quotient)
-is now checked. The [local restriction comparison](#next-haar-step-identify-the-restrictions-of-the-local-multiplicative-measures)
+The [local restriction comparison](#checked-local-multiplicative-haar-and-its-restriction-to-integral-units)
+is now checked. The [positive real multiplicative measure](#next-haar-step-identify-the-positive-real-multiplicative-measure)
 can run separately from checking the printed endpoint at the visual gate.
