@@ -3,7 +3,9 @@
 **Status:** The [finite support theorem](../../Proofs/Theorems/RationalThetaUnramified.lean)
 now identifies the explicit nonzero rational sum for the unramified
 input on the real section with the integer lattice, with absolute
-summability. The [real-lattice inversion module](../../Proofs/Theorems/RationalThetaInversion.lean)
+summability. The [norm-fiber theorem](../../Proofs/Theorems/RationalThetaNormFiber.lean)
+extends this to an arbitrary rational idele, with the idelic norm as
+scale. The [real-lattice inversion module](../../Proofs/Theorems/RationalThetaInversion.lean)
 proves continuity, inversion, and uniform two-tail estimates. The
 [weighted integrability module](../../Proofs/Theorems/RationalThetaIntegrability.lean)
 proves finiteness of the compact-strip squared-norm integral in log
@@ -20,8 +22,8 @@ vanishing at every zeta zero in the open critical strip. The
 now gives the algebraic normalization needed to leave the real section.
 Independent Yah statement reviews used text extracted from the
 digest-matched [pinned edition](../sources/masullo/README.md). The readings
-are provisional, not visual. The full norm-fiber reduction, finite Fourier
-self-duality, and measure comparison are not formalized.
+are provisional, not visual. Finite Fourier self-duality and measure
+comparison are not formalized.
 
 ## Manuscript statement and rational reduction
 
@@ -51,9 +53,8 @@ $$
 Retain both zero modes for arbitrary complex Schwartz $b$. Neither
 evenness nor a Gaussian hypothesis is needed. The two-moment case
 $b(0)=\widehat b(0)=0$ is a corollary, not the inversion statement.
-The finite support reduction on the section is now checked below. The
-identification of the tensor Fourier transform and the continuation of
-this reduction to arbitrary representatives remain open. This model
+The reduction of the sum now applies to arbitrary representatives. The
+identification of the tensor Fourier transform remains open. This model
 gives no theorem for other finite inputs or number fields.
 
 ## Checked finite support on the real section
@@ -108,29 +109,55 @@ this is the existence part of the finite factor in (A.2.2.1), p. 546,
 used in (A.2.2.2)–(A.2.2.4). It does not prove the topological
 isomorphism, uniqueness, or a continuous choice of representatives.
 
-## Independent next step: Reduce the arbitrary-representative sum
+## Checked norm-fiber reduction
 
-For a complex-valued Schwartz function $b$ on $\mathbb R$ and a rational
-idele $a$, form the summand on $q\in\mathbb Q^{\times}$ that applies $b$
-to the real coordinate of $a\operatorname{diag}(q)$ if every finite
-coordinate is integral, and is zero otherwise. Prove absolute summability
-and identify the sum with $\theta_b(\operatorname{ideleNorm}(a))$.
+`Masullo.rationalTheta_eq_unramified_idele_sum` proves absolute
+summability and identifies (2.2.3.1), pp. 81–82, for the unramified
+tensor, evaluated at **any** rational idele $a$, with
+$\theta_b(\operatorname{ideleNorm}(a))$. The summand for
+$q\in\mathbb Q^\times$ samples the real coordinate of
+$\operatorname{diag}(q)a$ if every finite coordinate of that product
+is integral, and is zero otherwise.
 
-First prove the summand-level invariances: Principal multiplication
-reindexes the nonzero rationals by a unit, and multiplying a finite
-coordinate by an integral unit preserves its integrality in both
-directions. Use the checked normalization theorem and the product formula
-with `Masullo.ideleNorm`. With finite valuations one,
-`AdeleRing.norm_apply_of_isUnit` leaves only the real norm; use
-`Rat.infinitePlace`, `Rat.isReal_infinitePlace`, and
-`InfinitePlace.Completion.ringEquivRealOfIsReal`. If the real coordinate
-is negative, reindex the lattice by negation, without assuming $b$ is
-even. This reduces the sum to `rationalTheta_eq_unramified_sum` on the
-positive real section. The invariances and this combined theorem are
-not yet elaborated. Only after constancy on the norm fibers can the
-Haar reduction use (A.3.3.1), p. 561, and the mass-one specialization
-of (A.3.2.1), p. 560. Neither this step nor the zeta-order step below
-needs to wait for a visual audit of p. 522.
+The proof rescales $a$ by one principal rational $r$, using
+`Masullo.exists_rational_principal_mul_norm_section`. The product
+formula preserves the norm, the finite valuations of the new
+representative equal one, and the real coordinate is the positive
+idelic norm after changing the sign of $r$ if necessary. This changes
+the summation indices by the bijection $q\mapsto qr$. In the new
+representative, the local integrality tests agree with those on the
+section because the finite factors are units, not because they are
+literally one. The checked positive-section theorem supplies
+summability and the sum equality. No parity or moment assumptions
+are needed, and no equality of idele classes in one fiber is asserted.
+
+Independent Yah review checked the proposed statement against
+(2.2.2.4), p. 78, (2.2.3.1), pp. 81–82, and
+(A.2.2.1)–(A.2.2.4), p. 546, in digest-matched text extraction.
+This is a specialized pointwise evaluation of the manuscript's series,
+not a construction of the global Schwartz–Bruhat tensor space or the
+manuscript's general compact-uniform convergence theorem.
+
+## Independent next step: Construct the continuous log-norm section
+
+As a first Lean step toward the Haar reduction, construct the section
+in (A.2.2.4), p. 546, in log coordinates: A continuous homomorphism
+from `Multiplicative ℝ` to rational ideles, with finite coordinates one,
+real coordinate $e^x$, and idelic norm $e^x$. Construct the real unit
+via the inverse ring equivalence at `Rat.infinitePlace` and use
+`IdeleGroup.ofCompletion`. `Units.continuous_iff` reduces continuity to
+that of the value and inverse, which have coordinates $e^x$ and
+$e^{-x}$ at the real place and constant coordinates elsewhere. Compose
+with the class quotient for a section there. This does not need an
+adelic measure instance.
+
+The measure target after the section is the pushforward of the
+manuscript's quotient Haar measure by log norm, namely $dx$.
+A.3.3.1, p. 561, uses $dt/t$ and the norm-one measure from
+(A.3.2.1), p. 560, of mass one for $\mathbb Q$. The section and
+norm-fiber calculation do not by themselves identify that measure
+or prove its normalization. This branch remains independent of the
+log-moment integral formula below.
 
 ## Checked real-lattice inversion
 

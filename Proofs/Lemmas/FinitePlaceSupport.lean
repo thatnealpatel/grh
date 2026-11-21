@@ -52,6 +52,11 @@ public noncomputable def ideleNorm : IdeleGroup (𝓞 K) K →* ℝ where
     rw [finprod_mul_distrib (hasFiniteMulSupport_finiteNorm x) (hasFiniteMulSupport_finiteNorm y)]
     ac_rfl
 
+public theorem ideleNorm_apply (a : IdeleGroup (𝓞 K) K) :
+    ideleNorm a = ‖(a : AdeleRing (𝓞 K) K)‖ := by
+  unfold ideleNorm
+  rfl
+
 /-- The idelic norm is continuous for the topology on units (Appendix A.1.3.3). -/
 public theorem continuous_ideleNorm : Continuous (ideleNorm (K := K)) := by
   let integral : Set (IsDedekindDomain.FiniteAdeleRing (𝓞 K) K) :=
@@ -103,6 +108,11 @@ public noncomputable def ideleClassNorm : IdeleClassGroup (𝓞 K) K →* ℝ :=
     apply MonoidHom.mem_ker.mpr
     change ‖algebraMap K (AdeleRing (𝓞 K) K) (u : K)‖ = 1
     exact AdeleRing.norm_algebraMap_eq_one_of_ne_zero u.ne_zero)
+
+public theorem ideleClassNorm_mk (a : IdeleGroup (𝓞 K) K) :
+    ideleClassNorm (QuotientGroup.mk a) = ideleNorm a := by
+  unfold ideleClassNorm
+  rfl
 
 /-- The descended norm is continuous in the quotient topology (Appendix A.1.3.4). -/
 public theorem continuous_ideleClassNorm : Continuous (ideleClassNorm (K := K)) := by
