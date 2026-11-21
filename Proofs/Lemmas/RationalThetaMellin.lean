@@ -1,6 +1,8 @@
 module
 
 public import Theorems.RationalThetaInversion
+public import Mathlib.Analysis.Calculus.Deriv.Basic
+import Lemmas.LogMellinDerivative
 import Mathlib.Analysis.PSeries
 import Mathlib.Analysis.SpecialFunctions.ImproperIntegrals
 import Mathlib.MeasureTheory.Integral.DominatedConvergence
@@ -62,6 +64,34 @@ public theorem integrable_rationalMellinIntegrand (b : 𝓢(ℝ, ℂ)) {z : ℂ}
       (2 * SchwartzMap.seminorm ℂ n 0 b)).mono' hcont.aestronglyMeasurable ?_
     exact Filter.Eventually.of_forall (norm_rationalMellinIntegrand_le b z n)
   simpa using hhi.union hlo
+
+/-- The two-ray archimedean Mellin factor is holomorphic in `0 < z.re`.
+Its derivative inserts the log-coordinate factor `x` under the integral. -/
+public theorem hasDerivAt_rationalMellin (b : 𝓢(ℝ, ℂ)) {z : ℂ} (hz : 0 < z.re) :
+    Integrable (fun x : ℝ ↦ (x : ℂ) * rationalMellinIntegrand b z x) ∧
+    HasDerivAt (fun w : ℂ ↦ ∫ x : ℝ, rationalMellinIntegrand b w x)
+      (∫ x : ℝ, (x : ℂ) * rationalMellinIntegrand b z x) z := by
+  obtain ⟨n : ℕ, hn⟩ := exists_nat_gt (2 * z.re)
+  let c (k : ℕ) : ℝ := 2 * SchwartzMap.seminorm ℂ k 0 b
+  have hc (k : ℕ) : 0 ≤ c k := mul_nonneg zero_le_two (apply_nonneg _ _)
+  let f (x : ℝ) := b (Real.exp x) + b (-Real.exp x)
+  have hf : Continuous f := (b.continuous.comp Real.continuous_exp).add
+    (b.continuous.comp Real.continuous_exp.neg)
+  refine (hasDerivAt_logMellin_of_decay hf z (r := z.re / 3) (C := c 0 + c n)
+    (by positivity) (add_nonneg (hc 0) (hc n)) fun x ↦ ?_).2
+  change ‖rationalMellinIntegrand b z x‖ ≤ _
+  rw [show 3 * (z.re / 3) = z.re by ring]
+  by_cases hx : x ≤ 0
+  · rw [abs_of_nonpos hx, neg_mul_neg]
+    calc
+      _ ≤ c 0 * Real.exp (z.re * x) := by simpa [c] using norm_rationalMellinIntegrand_le b z 0 x
+      _ ≤ _ := mul_le_mul_of_nonneg_right (le_add_of_nonneg_right (hc n)) (Real.exp_pos _).le
+  · have hx' := (lt_of_not_ge hx).le
+    rw [abs_of_nonneg hx']
+    refine (norm_rationalMellinIntegrand_le b z n x).trans ?_
+    apply mul_le_mul (le_add_of_nonneg_left (hc 0)) _ (Real.exp_pos _).le
+      (add_nonneg (hc 0) (hc n))
+    exact Real.exp_le_exp.mpr (mul_le_mul_of_nonneg_right (by linarith) hx')
 
 -- The positive copy starts at one, and `Int.negSucc` already starts at minus one.
 private def signedNatEquiv : ℕ ⊕ ℕ ≃ {n : ℤ // n ≠ 0} where

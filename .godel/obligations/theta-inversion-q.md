@@ -5,7 +5,10 @@ proves continuity, inversion, and uniform two-tail estimates. The
 [weighted integrability module](../../Proofs/Theorems/RationalThetaIntegrability.lean)
 proves finiteness of the compact-strip squared-norm integral in log
 coordinates. The [Mellin unfolding theorem](../../Proofs/Theorems/RationalThetaMellin.lean)
-proves absolute convergence and the zeta factorization in $\Re z>1$.
+proves absolute convergence and the zeta factorization in $\Re z>1$. The
+[entireness theorem](../../Proofs/Theorems/RationalThetaMellinEntire.lean)
+proves complex differentiability with both zero modes removed. The local
+two-ray factor is holomorphic on $\Re z>0$ without moment conditions.
 Independent Yah statement reviews used text extracted from the
 digest-matched [pinned edition](../sources/masullo/README.md). The readings
 are provisional, not visual. The adelic reduction itself is not formalized.
@@ -170,27 +173,61 @@ part. Cancellation for a nontrivial compact isotype happens in the
 compact average **before** the norm-section integral in (3). The
 trivial-isotype calculation above does not depend on that wording.
 
-## Next runnable step: Differentiate the two-moment theta Mellin integral
+## Checked holomorphy of the theta transform and real local factor
 
-This targets Theorem 3.2.2.1(2)(a) and (3)(a), pp. 124–125, in the same
-rational model. For $b(0)=\widehat b(0)=0$, show that
-$z\mapsto\int_{\mathbb R}\theta_b(e^x)e^{zx}\,dx$ is entire. For each
-$z_0$ and $|z-z_0|<1$, both the weighted theta and its parameter
-derivative are bounded by $C(1+|x|)e^{-(N-|\Re z_0|-1)|x|}$ using
-`rationalTheta_uniform_log_bound`. Choose $N>|\Re z_0|+2$ and absorb
-$1+|x|\le e^{|x|}$. Apply pinned Mathlib's
-`hasDerivAt_integral_of_dominated_loc_of_deriv_le`, with derivative
-the integral of $x\theta_b(e^x)e^{zx}$. Prove holomorphy of the two-ray
-factor on $\Re z>0$ by the analogous positive and negative tail bounds
-on a neighborhood whose real parts stay positive. These are the two
-holomorphy inputs to the identity theorem on
-$\{\Re z>0\}\setminus\{1\}$. Use `differentiableAt_riemannZeta` there.
+`Masullo.hasDerivAt_rationalTheta_mellin` proves integrability of the
+weighted theta profile and its parameter derivative for all $z\in\mathbb C$
+when $b(0)=\widehat b(0)=0$. It computes the derivative of the integral by
+inserting the log-norm factor $x$ in the integrand. The corollary
+`Masullo.differentiable_rationalTheta_mellin` states entireness. This most
+directly models the trivial-character norm-section assertion of Theorem
+3.2.2.1(3)(a), (3.2.2.4), p. 125, and models (2)(a), p. 124, after the
+rational unramified reduction above. The extraction gives a proof by
+uniform convergence of holomorphic truncations: See Remark 3.2.2.2,
+p. 125, and (3.2.2.7)–(3.2.2.10), pp. 126–127. The Lean proof instead
+differentiates directly and does not state uniform convergence of the
+truncations.
 
-If $B$ is not identically zero, the series of integrated norms of the
-paired samples diverges for $0<\Re z\le1$, even for two-moment inputs.
-Continuation into the strip must not repeat the absolute interchange.
-Treat $z=1$ separately: The two-ray factor at $1$ is $\int b=0$ when
-$\widehat b(0)=0$, but the removable value of the product is given by
-the derivative of that factor, not by evaluating the totalized
-`riemannZeta 1`. Neither the zero-line identity nor the trace's Mellin
-subtractions are established by the half-plane theorem.
+`Masullo.hasDerivAt_rationalMellin` proves the analogous derivative and
+its absolute integrability for the two-ray factor $M_b(z)$ at each
+$\Re z>0$, with neither zero mode assumed. This is the real trivial-sign
+case of the local convergence and holomorphy used in Theorem 3.3.1.1(1),
+p. 129, and (3.3.1.7), p. 130, not a larger domain for the uncorrected
+global theta integral. Order-zero and higher Schwartz seminorms control
+the negative and positive log tails respectively. With $\sigma=\Re z>0$,
+an order $n>2\sigma$ gives decay at least $e^{-\sigma|x|}$ at the center
+parameter $z$ on the positive tail as well as on the negative tail.
+
+Both proofs use the same local domination lemma. If the weighted
+profile at $z$ is bounded by $C e^{-3r|x|}$, on $|w-z|<r$ the weight
+changes by at most $e^{r|x|}$, and $|x|\le e^{r|x|}/r$ absorbs the
+parameter derivative. The remaining majorant $(C/r)e^{-r|x|}$ is
+integrable, so Mathlib's `hasDerivAt_integral_of_dominated_loc_of_deriv_le`
+applies at the complex parameter $z$. The theta proof takes $r=1$ and
+uses the two-tail estimate of order $N\ge |\Re z|+3$. Independent Yah
+statement review checked both domains, both real rays, the two zero
+modes, and the normalization against digest-matched text extraction,
+not the rendered pages.
+
+## Next runnable step: Continue the factorization into the open strip
+
+For two-moment input, prove that the entire theta Mellin transform agrees
+with $\zeta(z)M_b(z)$ on $\Re z>0$ away from $z=1$. It should then vanish
+at every zeta zero in the open strip. The source uses an identity theorem
+immediately after (3.2.2.11), p. 127. Do not try to extend the absolute
+unfolding: If the two-ray profile is not identically zero, the sum of
+integrated norms of the paired samples diverges for $0<\Re z\le1$.
+
+A route that also handles the pole uses the whole connected right
+half-plane. First show $M_b(1)=\int b=0$ by the two exponential
+changes of variables and Fourier evaluation at zero. Let $G$ equal
+$\zeta M_b$ off $1$ and $M_b'(1)$ at $1$. The derivative of $M_b$ at $1$
+and `riemannZeta_residue_one` give continuity of $G$ at $1$ via
+$(z-1)\zeta(z)\cdot(M_b(z)-M_b(1))/(z-1)$. Apply
+`Complex.analyticAt_of_differentiable_on_punctured_nhds_of_continuousAt`
+at $1$, and `analyticOn_riemannZeta` with the local derivative elsewhere.
+Use `AnalyticOnNhd.eqOn_of_preconnected_of_eventuallyEq` on the convex
+right half-plane, with agreement near $2$ from the checked unfolding.
+Evaluating the totalized `riemannZeta 1` in the unmodified product is not
+the removable value. The continuation, adelic reduction, and trace's
+Mellin subtractions are not supplied by the current holomorphy proofs.
