@@ -246,17 +246,4 @@ for some cutoffs from failure for a prescribed one. It also independently
 compared the operator and topology with (11.2.1.6–8) and C.3.2.2 in
 extracted text. This is mathematical and text review, not Lean checking.
 
-**Runnable successor avoiding inverse transport:** In this same
-fixed-cutoff model work directly with the model-space projection
-$P_{K_I}=P_+-SP_+S^*$, where $P_+$ is causal support restriction. The
-causal identity contribution has trace zero: The fixed compact cutoff
-bounds output position above, and every application of the convolution
-moves support right by at least $\inf\operatorname{supp} f>0$. This
-trace-class operator is nilpotent. The global trace can therefore be
-computed with $-P_{K_I}$ instead, without division by $\zeta$. Start
-with a single Blaschke factor on the half-plane, compute its actual
-rank-one Haar diagonal at a fixed $\rho$, and compare the resulting
-Mellin test value and sign with p. 520. Separately justify each extension
-from this control to the full projection and to the prescribed cutoff
-order before using it as a source comparison. The $+1/2$ subtraction,
-orbital contribution, and end-to-end Lean GRH proof remain open.
+**Successor avoiding inverse transport:** The [direct Hardy diagonal](trace-hardy-diagonal-q.md) now computes the fixed-cutoff rank-one overlap in Lean and gives an independently reviewed scalar position limit for the full model-space projection. It avoids division by $\zeta$, but is not a global Paley–Wiener level limit. See that handoff for the exact remaining formal and manuscript-facing obligations.
