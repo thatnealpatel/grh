@@ -243,33 +243,61 @@ extraction-based, not verified against rendered pages. The Lean
 statements neither formalize the general number-field domain nor
 identify a specific Haar measure.
 
-## Independent next Haar step: Normalize the quotient by its log split
+## Checked log-norm Haar normalization on the rational quotient
 
-The target is $dx$ as the pushforward of the rational quotient Haar
-measure by log norm. Definition A.3.2.1, pp. 559–560, uses counting
-measure on $\mathbb Q^\times$ and $dt/t$ on the positive real factor;
-(A.3.2.1) gives mass one on the norm-one factor over $\mathbb Q$.
-First construct the normalized Haar probability on the compact
-norm-one subgroup (`Measure.haarMeasure` on the positive compact
-set `univ`, using `Measure.haarMeasure_self`), then transport
-$dx\otimes\mu_1$ through
-`rationalIdeleClassLogSplit`. Check the Haar property and use
-`rationalIdeleClassLogSplit_symm_fst` and `Measure.map_fst_prod` to
-compute its log-norm pushforward. This supplies a normalized quotient
-candidate without assuming a product formula for the measure upstairs.
+Definition A.3.2.1 and (A.3.2.1), pp. 559–560, pair counting
+measure on the principal ideles with the radial measure $dt/t$. The
+norm-one mass in the displayed formula specializes to one over $\mathbb Q$:
+$r_1=1$, $r_2=0$, $h=d=R=1$ (the rank-zero regulator is the empty
+determinant), and $w=2$. A.3.3.1, p. 561, gives strip mass
+$\log(T)\mu_1(C^1_F)$. These locators and normalizations are from
+layout extraction of the digest-matched PDF, not a rendered-page check.
 
-For the second comparison, (A.3.2.5), p. 560, specifies the restricted
-product measure $\nu$ upstairs, and A.3.3.1, p. 561, computes its strip
-volume on a norm-one fundamental domain. The required comparison on
-the full window $W$ is $\pi_*(\nu|_W)$, not $\pi_*\nu$, which counts
-all principal translates. Now the fundamental-domain premise of
-`measurePreserving_quotientGroup_mk_of_QuotientMeasureEqMeasurePreimage`
-is available. The remaining input is the measure relation between $\nu$
-and the normalized quotient candidate, not just agreement of the
-topologies. Prove that the restriction to the window has the specified
-product normalization; `IsFundamentalDomain.quotientMeasureEqMeasurePreimage`
-then gives the comparison from the pushforward equality on this one
-window (with the invariant-measure and countability hypotheses).
+[RationalIdeleClassHaar.lean](../../Proofs/Theorems/RationalIdeleClassHaar.lean)
+constructs Haar probability on the compact norm-one subgroup by
+normalizing Mathlib's Haar measure on the whole group. It transports the
+product with Lebesgue measure in log coordinates via the checked
+`rationalIdeleClassLogSplit`. `isHaarMeasure_rationalIdeleClassHaar`
+checks Haar invariance, finiteness on compact sets, and positivity on
+nonempty open sets. `measurePreserving_rationalIdeleClass_logNorm`
+identifies the log-norm pushforward with Lebesgue measure: In the split
+coordinates the map is just the first projection, and the other factor
+has mass one. `rationalIdeleClassHaar_normStrip` gives the mass of
+$1\le |c|\le T$ for $1\le T$, including the degenerate strip. The
+log-norm integrability equivalence and integral formula apply to complex
+functions of log norm; no extra compact volume factor appears.
+
+This constructs the normalization specified on the quotient. It does
+not construct the upstairs restricted-product measure or prove that its
+quotient measure is the one just constructed.
+
+## Next Haar step: Compare the upstairs window measure
+
+Lemma A.3.2.4, (A.3.2.5), p. 560, describes the restricted product of
+local multiplicative Haar measures upstairs. The rational local unit
+masses are one in (A.3.2.2); the positive real coordinate has density
+$dt/t$. The comparison is $\pi_*(\nu|_W)=\mu$, **not** $\pi_*\nu$:
+$W$ is the checked positive-real, finite-unit window, $\nu$ is the
+upstairs measure, and $\mu$ is `rationalIdeleClassHaar`.
+
+A runnable intermediate target is this equality conditional on Borel
+Haar measure $\nu$ and mass one for the intersection of $W$ with the
+upstairs norm strip $[1,e]$. Bundle $W$ as an open subgroup using
+`one_mem_rationalIdeleUnitWindow`, `mul_mem_rationalIdeleUnitWindow`,
+and `inv_mem_rationalIdeleUnitWindow`. Use the checked window
+homeomorphism (the actual quotient map, hence a homomorphism) to
+transport the restricted Haar measure. In pinned Mathlib,
+`Measure.measure_isMulInvariant_eq_smul_of_isCompact_closure` compares
+Haar measures on relatively compact sets without assuming second
+countability. Apply it to the compact strip $[1,e]$ to fix the scalar,
+then to intersections with a countable compact exhaustion supplied by
+the log split. `Measure.ext_of_iUnion_eq_univ` is the corresponding
+measure extensionality interface. This route has not yet been elaborated.
+After establishing window equality,
+`IsFundamentalDomain.quotientMeasureEqMeasurePreimage` accesses the
+quotient integral interface. The decisive premise for the manuscript
+measure is still to construct or identify $\nu$ from its local factors
+and prove the upstairs strip normalization, rather than assume it.
 
 ## Checked real-lattice inversion
 
