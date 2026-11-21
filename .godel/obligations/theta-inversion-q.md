@@ -2042,19 +2042,79 @@ The residual proof is a direct project argument. It neither verifies the
 Schaefer reference nor identifies the rational LF model with the manuscript's
 topological tensor product. Source readings are extraction-based, not visual.
 
-### Next orbit step: Uniform theta estimates for rational LF-bounded families
+<a id="next-orbit-step-uniform-theta-estimates-for-rational-lf-bounded-families"></a>
 
-For $B$ bounded in `RationalAdeleSchwartzLF`, obtain a common $n$ and a
-bounded profile family $C$ via `rationalAdeleLF_bounded_iff`. Specialize
-`exists_rationalAdeleStageCoordinates_symm_eq_boxSum` at $(n+1)!$ for one
-geometry working for every tuple. Each coordinate image of $C$ is bounded
-by continuous linear projection. Use `rationalAdeleBoxSum_uniform_theta_tails`
-and `rationalAdeleBoxSum_uniform_theta_log_bound` with those images.
-State the output on the underlying adelic functions, with one constant
-for all $f\in B$ and all rational idele classes in the relevant norm range.
-Retain both corrections for the small-norm estimate; require both zero
-modes to vanish only for the log bound. This does not require identifying
-the manuscript tensor topology.
+## Checked uniform theta estimates for rational LF-bounded families
+
+In [RationalAdeleLFThetaTails.lean](../../Proofs/Theorems/RationalAdeleLFThetaTails.lean),
+`rationalAdeleLF_uniform_theta_tails` proves the rational LF-model versions
+of Theorem 2.2.3.4(1)–(2), (4)–(5), (2.2.3.4)–(2.2.3.5), pp. 82–86.
+For every bounded family $B$ and integer $m\ge0$, one $K>0$ works for
+all $f\in B$ and all rational idele classes $d$ of norm $r$:
+
+$$
+|\theta_f(d)|\le K/r^m\quad(r\ge1),\qquad
+|\theta_f(d)-r^{-1}\widehat f(0)+f(0)|\le Kr^m\quad(r\le1).
+$$
+
+`rationalAdeleLF_uniform_theta_log_bound` gives the version of (3)–(5),
+(2.2.3.6): If both zero modes of a member vanish, its theta function is
+bounded by $K e^{-m|\log r|}$ on the whole class group. The constant is
+still chosen before the member and class. Taking the maximum of the two
+constants makes one work for all three inequalities. Both tails include
+norm one, and neither requires vanishing of a zero mode.
+
+`rationalAdeleLF_bounded_iff` puts $B$ in one bounded tuple family at a
+factorial level. The inverse stage coordinates fix the box centers and
+scales for the whole tuple family. Continuous linear projection makes
+its coordinate images bounded. The existing box estimates therefore
+apply to each assembled function, with the equality holding on all
+adeles. The Fourier-side bound comes from the fixed-box argument, not
+from assuming the as-yet unproved LF Fourier automorphism. There is no
+identification with the manuscript tensor topology or extension to
+other number fields. The source locators refer to the digest-matched
+text extraction, not a rendered-page reading.
+
+## Next orbit step: The real dilation derivative on the rational LF space
+
+For the positive real norm section, implement the generator $D$ on
+`RationalAdeleSchwartzLF` for Lemma 2.2.4.2, (2.2.4.2)–(2.2.4.6),
+pp. 87–88. Write $x=(u,z)$ in real and finite coordinates. Prove that
+$Df(u,z)=u\,\partial_u f(u,z)$ is a complex continuous linear map,
+stage preserving, and equals the derivative at $s=0$ of
+$f(e^s u,z)$. This is the logarithmic parameter of $t\mapsto(t,1)$;
+the quotient in (2.2.4.2) uses $t-1$, and $d(e^s)/ds=1$ at zero.
+On each tuple use `SchwartzMap.derivCLM` followed by
+`SchwartzMap.smulLeftCLM` with `Complex.hasTemperateGrowth_ofReal`.
+The pointwise formula makes the stage maps compatible, and
+`rationalAdeleLF_continuous_iff` gives continuity of the assembled map.
+This endpoint needs neither termwise theta differentiation nor a
+classification of all one-parameter subgroups.
+
+### Source interface: The Fourier zero mode of the generator
+
+The digest-matched extraction of Lemma 2.2.4.5, p. 92, appears to set
+$\widehat{\partial_\gamma f}(0)=0$ for general $f$ by using
+$\gamma(t)^{-1}0=0$ in (2.2.4.29). The same limit still contains the
+factor $|\gamma(t)|_F^{-1}$. The matrix (2.2.4.27), p. 91, and the
+closing argument on p. 95 instead give
+$-\alpha_\gamma\widehat f(0)$, consistent with (2.2.4.36), p. 93.
+For the real norm section $|\gamma(t)|=t$, the quotient at zero is
+exactly $-t^{-1}\widehat f(0)$ for $t\ne1$. Thus its limit is
+$-\widehat f(0)$, and it vanishes on the Fourier zero-mode kernel,
+not on every test. This reading is provisional pending visual review.
+
+A concrete control is the unramified tensor of a nonnegative smooth
+real bump with nonzero integral: Its transform at zero is that
+integral by `integral_rationalAdeleUnramified_mul_conj_char` and the
+normalized finite factor. The existing `fourier_dilate` proof in
+`Theorems.RationalAdeleBoxThetaInversion` supplies the exact covariance
+needed to formalize the zero-frequency difference quotient. When
+relating this to $Df$, prove the Fourier zero-mode identity, for example
+by integration by parts stagewise, rather than assuming differentiation
+under the integral. This leaves the two-moment subspace invariant but
+blocks an unconditional vanishing assertion. The theta derivative
+commutation (2.2.4.7), pp. 88–91, is a separate step.
 
 ## Checked real-lattice inversion
 
