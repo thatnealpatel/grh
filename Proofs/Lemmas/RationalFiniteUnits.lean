@@ -1,6 +1,7 @@
 module
 
 public import Theorems.RationalIdeleLogSection
+import Theorems.RationalIdeleFundamentalDomain
 import Mathlib.NumberTheory.Padics.HeightOneSpectrum
 import Mathlib.NumberTheory.Padics.ProperSpace
 
@@ -69,6 +70,43 @@ public noncomputable def rationalFiniteUnitClass (u : RationalFiniteUnits) : rat
 public theorem continuous_rationalFiniteUnitClass : Continuous rationalFiniteUnitClass :=
   (QuotientGroup.continuous_mk.comp continuous_finiteUnitIdele).subtype_mk
     (fun u ↦ (rationalFiniteUnitClass u).property)
+
+private theorem finiteUnitIdele_mul (u w : RationalFiniteUnits) :
+    finiteUnitIdele (u * w) = finiteUnitIdele u * finiteUnitIdele w := by
+  apply Units.ext
+  exact Prod.ext (one_mul 1).symm (FiniteAdeleRing.ext ℚ fun _ ↦ rfl)
+
+private theorem finiteUnitIdele_injective : Function.Injective finiteUnitIdele := by
+  intro u w h
+  funext v
+  apply Units.ext
+  apply Subtype.ext
+  exact congrArg (fun a : IdeleGroup (𝓞 ℚ) ℚ ↦ (a : AdeleRing (𝓞 ℚ) ℚ).2 v) h
+
+private theorem finiteUnitIdele_mem_window (u : RationalFiniteUnits) :
+    finiteUnitIdele u ∈ rationalIdeleUnitWindow := by
+  apply mem_rationalIdeleUnitWindow_of_finiteValuation_eq_one
+  · rw [rationalIdeleReal_finiteUnitIdele]
+    exact zero_lt_one
+  · intro v
+    exact adicCompletionIntegers.isUnit_iff_valued_eq_one.mp (u v).isUnit
+
+public theorem rationalFiniteUnitClass_mul (u w : RationalFiniteUnits) :
+    rationalFiniteUnitClass (u * w) = rationalFiniteUnitClass u * rationalFiniteUnitClass w := by
+  apply Subtype.ext
+  change QuotientGroup.mk' _ (finiteUnitIdele (u * w)) =
+    QuotientGroup.mk' _ (finiteUnitIdele u) * QuotientGroup.mk' _ (finiteUnitIdele w)
+  rw [finiteUnitIdele_mul, map_mul]
+
+public theorem rationalFiniteUnitClass_injective : Function.Injective rationalFiniteUnitClass := by
+  intro u w h
+  let a : rationalIdeleUnitWindow := ⟨finiteUnitIdele u, finiteUnitIdele_mem_window u⟩
+  let b : rationalIdeleUnitWindow := ⟨finiteUnitIdele w, finiteUnitIdele_mem_window w⟩
+  have hab : rationalIdeleUnitWindowHomeomorph a = rationalIdeleUnitWindowHomeomorph b := by
+    rw [rationalIdeleUnitWindowHomeomorph_apply, rationalIdeleUnitWindowHomeomorph_apply]
+    exact congrArg Subtype.val h
+  exact finiteUnitIdele_injective (congrArg Subtype.val
+    (rationalIdeleUnitWindowHomeomorph.injective hab))
 
 public theorem rationalFiniteUnitClass_surjective : Function.Surjective rationalFiniteUnitClass := by
   classical

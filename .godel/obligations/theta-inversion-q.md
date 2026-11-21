@@ -299,28 +299,55 @@ from the negative real coordinate. This reading is provisional, not a
 rendered-page check. The theorem assumes that strip mass for $\nu$;
 it does not construct or identify the manuscript's restricted product.
 
-## Next Haar step: Identify the finite-unit factor
+## Checked finite-unit identification of the norm-one classes
 
-Prove that `rationalFiniteUnitClass` from `RationalFiniteUnits` to
-`rationalIdeleClassNormOne` is an injective homomorphism as well as the
-already checked continuous surjection. The representatives $(1,u)$
-lie in $W$: Their real coordinate is one and every finite valuation
-is one. If two such classes coincide, injectivity of the checked window
-homeomorphism gives equality upstairs; evaluate at each finite place
-to recover equality of the local units. Multiplication can be checked
-coordinatewise. Pinned Mathlib's `Continuous.homeoOfEquivCompactToT2`
-then gives the continuous group identification, since the source is
-compact and the target is Hausdorff. This interface has not yet been
-elaborated.
+In [RationalIdeleFiniteUnitFactor.lean](../../Proofs/Theorems/RationalIdeleFiniteUnitFactor.lean),
+`Masullo.rationalFiniteUnitClassEquiv` identifies the product of the
+local integral unit groups with the actual norm-one subgroup of the
+rational idele class quotient, as topological groups. The apply lemma
+specifies the map $u\mapsto [(1,u)]$. Multiplicativity is coordinatewise.
+The representatives lie in the positive-real finite-unit window, whose
+quotient map is injective. Equality of representatives gives equality
+of the local units at each place. The existing continuous surjection is
+therefore a homeomorphism by `Continuous.homeoOfEquivCompactToT2`.
 
-Use that identification with the log split to address the remaining
-measure premise of (A.3.2.5), p. 560: Compare the window restriction
-with Lebesgue log measure times the product of the local unit Haar
-probabilities. Pinned Mathlib has `Measure.infinitePi_map_pi` for
-coordinatewise translations and `Measure.infinitePi_pi` for the
-finite-cylinder masses. A proof on the window does not by itself
-construct the full upstairs restricted product; compatibility on
-translated windows still needs justification if used.
+Independent Yah statement review checked the full finite product,
+the fixed real coordinate, and the actual quotient and subgroup
+topologies against the SHA-256-matched layout extraction of
+(A.2.2.1)–(A.2.2.4), p. 546. The positive real coordinate in the class
+splitting equals the norm, so norm one means real coordinate $1$; there
+is no remaining quotient of the finite units by the signs.
+The same representatives specialize (A.2.3.14), p. 549, to $\mathbb Q$.
+Together with `rationalIdeleClassLogSplit`, this identifies the two
+factors of (A.2.2.3) in logarithmic coordinates. This is the group
+identification, not a measure comparison or a rendered-page reading.
+
+## Next Haar step: Identify the compact Haar probability
+
+Prove that `Measure.infinitePi` of the local integral-unit Haar
+probabilities pushes forward by `rationalFiniteUnitClassEquiv` to
+`rationalNormOneHaar`. The sigma-algebra on the source must be both the
+product and the Borel one. For `Pi.borelSpace`, use
+`Rat.HeightOneSpectrum.primesEquiv` for countability of the index. For
+local second countability, use `padicIntEquiv` and the
+`Units.isInducing_embedProduct` embedding of units into the
+integer ring times its multiplicative opposite. Transport second
+countability to the opposite by `MulOpposite.opHomeomorph.symm`.
+The index countability and local second countability elaborate in a
+standalone probe; the measure equality is still open. The existing
+compactness proof supplies compactness of each local unit group; use
+Haar measure normalized on the entire compact group. Check translation
+invariance with `Measure.infinitePi_map_pi`, and apply uniqueness of
+Haar probability on the compact factor. `Measure.infinitePi_pi` then
+gives the finite-cylinder masses.
+
+This would describe the quotient measure as Lebesgue log measure times
+the local unit probabilities. To compare to (A.3.2.5), p. 560, still
+identify those probabilities with the restrictions from (A.3.2.2)
+over $\mathbb Q$, and verify that the upstairs product restricts on
+the positive window to the corresponding product with $dt/t$.
+A result on the window alone does not construct the full upstairs
+restricted product.
 
 ## Checked real-lattice inversion
 
@@ -773,5 +800,6 @@ identification of the adelic completion. The p. 417 duality proposition
 assumes a nondegenerate interval, while the checked result does not.
 
 The independent Haar branch now has a [checked window comparison](#checked-haar-comparison-for-a-normalized-upstairs-window)
-and a runnable [finite-unit identification](#next-haar-step-identify-the-finite-unit-factor). Verification of the exact printed endpoint still
-requires the visual gate recorded in the frontier.
+and a [checked finite-unit identification](#checked-finite-unit-identification-of-the-norm-one-classes).
+The [compact Haar probability comparison](#next-haar-step-identify-the-compact-haar-probability)
+can now run separately from checking the printed endpoint at the visual gate.
