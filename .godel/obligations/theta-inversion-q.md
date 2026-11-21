@@ -1677,6 +1677,10 @@ care with the general-field diagonal-section scaling in (2.2.3.10)
 and (2.2.3.12): The linear dependence on idelic norm used here is specific
 to $\mathbb Q$.
 
+The proofs of these endpoints now specialize the [uniform threshold-one
+estimates](#checked-uniform-tails-for-fixed-finite-box-families) to
+singleton Schwartz sets. Their original statements are unchanged.
+
 Validation endpoints: `rationalAdeleBoxSum_theta_large_norm`,
 `rationalAdeleBoxSum_theta_small_norm`,
 `rationalAdeleBoxSum_absolute_theta_tail`, and
@@ -1703,7 +1707,7 @@ $$
 |\theta_f(d)|\le K\exp(-m|\log|d||)
 $$
 
-for **every** rational idele class $d$. The vanishing assumptions remove
+for **every** rational idele class $d$. In the original fixed-test proof, the vanishing assumptions remove
 the corrections in the small-norm estimate; neither tail changes its
 exponent. Between the two thresholds, bound the continuous function
 $|\theta_f(d)|/\exp(-m|\log|d||)$ on the compact norm band. Taking the
@@ -1718,41 +1722,95 @@ strategy of (5), pp. 85–86, for one test only. In the extraction,
 be rescaled by the maximum of the reciprocal decay weight before
 taking the maximum with the tail constants. The Lean proof bounds the
 weighted quantity directly. This is not a visual reading or a proof
-of the LF bounded-family assertion. It does not separately move the
-thresholds of the uncorrected large and corrected small tails to one.
+of the LF bounded-family assertion. The fixed-test theorem now specializes
+[the stronger uniform theorem](#checked-uniform-tails-for-fixed-finite-box-families),
+which eliminates the middle band by moving both thresholds to one.
+Compactness of norm bands remains an independent result.
 
 Validation endpoints: `isCompact_rationalIdeleClass_normStrip` and
 `rationalAdeleBoxSum_theta_log_bound`. Use `lake --wfail build Proofs`,
 `leanchecker` on both linked modules and `Lemmas.RationalIdeleWindowMeasure`,
 and `#print axioms` on both endpoints.
 
-### Next orbit step: A common bound on fixed finite box families
+## Checked uniform tails for fixed finite box families
 
-For fixed finite box geometry $(a_i,g_i)$ and fixed coefficients $c_i$,
-let each real factor $b_i$ range over a von Neumann bounded set of
-complex Schwartz maps. Prove the two estimates (2.2.3.4)–(2.2.3.5) with
-common constants and threshold one for this parameterized family.
-This isolates the quantitative part of (4)–(5) without assuming an
-adelic LF bornology. Check it first for one translated box by replacing
-`schwartz_tail_term` in the proof of `exists_box_tail_majorant` in
-[Lemmas/RationalAdeleBoxTail.lean](../../Proofs/Lemmas/RationalAdeleBoxTail.lean)
-with a uniform seminorm estimate valid also at the lower endpoint.
+[The uniform tail theorem](../../Proofs/Theorems/RationalAdeleThetaTails.lean)
+fixes finitely many coefficients, adelic centers, and idelic scales.
+For each active box, its real Schwartz factor ranges over a specified
+complex von Neumann bounded set. `rationalAdeleBoxSum_uniform_theta_tails`
+chooses one $K>0$ for each order $m$, **before** choosing the real factors.
+For every resulting box sum $f$ and rational idele class $d$, it gives
 
-After finite-unit normalization the real argument is $y=t n-x$ with
-$t=|d|/(|g|D)>0$ and $0\ne n\in\mathbb Z$. Use
-$t|n|\le |y|+|x|\le(1+|x|)\max(1,|y|)$. The order-$0$ and
-order-$(m+2)$ Schwartz seminorms bound
-$\max(1,|y|)^{m+2}|b_i(y)|$. This yields a bound by a fixed multiple
-of $t^{-(m+2)}|n|^{-(m+2)}$ before summation. For $|d|\ge1$, the two
-extra inverse powers of $|d|$ only help; this controls the middle range
-without a compactness assertion for a varying family of theta functions.
-Reuse the seminorm boundedness and `FourierTransform.fourierCLM`
-argument of `Masullo.rationalTheta_uniform_tail_bounds` on the real
-factors in the centered Fourier-box envelope, and use order $m+1$ for
-the inverted estimate. The remaining source bridge from arbitrary
-bounded adelic sets to such finite-stage families must be addressed
-separately: See Proposition 2.1.3.2(2), Proposition C.2.5.1(4), and the
-bounded-set claim in the proof on p. 84. No such bridge is used here.
+$$
+\begin{aligned}
+|\theta_f(d)| &\le K |d|^{-m} && (|d|\ge 1),\\
+|\theta_f(d)-|d|^{-1}\widehat f(0)+f(0)| &\le K |d|^m && (|d|\le 1).
+\end{aligned}
+$$
+
+`rationalAdeleBoxSum_uniform_theta_log_bound` gives the global
+$K\exp(-m|\log|d||)$ bound, uniformly on the subfamily for which both
+zero modes of the **sum** vanish. Neither statement requires each box
+separately to have vanishing zero modes. Both cover order zero and norm
+one. The estimates implement (2.2.3.4)–(2.2.3.6) and the threshold in
+Theorem 2.2.3.4(4)–(5), pp. 83–86, on the stated family only.
+
+[The absolute spatial and Fourier estimates](../../Proofs/Lemmas/RationalAdeleBoxTail.lean)
+use the same normalization and denominator clearing as the fixed-test
+proof. For the normalized real argument $y=tn-x$, with $n\ne0$ and
+$t=|d|/(|g|D)$, use $t|n|\le(1+|x|)\max(1,|y|)$ rather than requiring
+$t$ to dominate the translation. Orders $(0,0)$ and $(m+2,0)$ bound
+$\max(1,|y|)^{m+2}|b(y)|$ on the given bounded set. Since $|d|,|n|\ge1$,
+the resulting sample bound is at most a fixed multiple of
+$|d|^{-m}|n|^{-2}$. This argument includes samples at $y=0$ and avoids
+an unweighted middle-band estimate. The continuous linear real Fourier
+transform preserves each bounded factor set; the centered dual-box
+norm envelope and order $m+1$ give the corrected small-norm estimate.
+Neither the adelic Fourier topology nor the LF bounded-set theorem is
+used.
+
+Independent Yah statement review (`statement-review`, agent `UJYUrAc`)
+checked the normalization, exponent loss, both zero-mode signs, and
+quantifier order at base `19b12d5d1c9b09a9e6f39deeca903528ff49557e`.
+The SHA-256-matched layout extraction of pp. 82–86 is provisional, not
+a rendered-page reading. The corrected difference is (2.2.3.7), p. 83.
+The bound uses the real component of the finite-unit representative,
+not the real component of an arbitrary lift as a literal reading of
+(2.2.2.3) could suggest. The separate bornology step on p. 84 cites
+Schaefer II §6.5 for the full tensor space, beyond the finite-adelic
+bounded-set result of Proposition C.2.5.1(4). That external citation
+was not verified here.
+
+Validation endpoints: `rationalAdeleBoxSum_uniform_theta_tails`,
+`rationalAdeleBoxSum_uniform_theta_log_bound`,
+`rationalAdeleBoxSum_uniform_absolute_theta_tail`, and
+`rationalAdeleBoxSum_uniform_absolute_fourier_theta_tail`. Use
+`lake --wfail build Proofs`, `leanchecker` on both linked modules, and
+`#print axioms` on the four endpoints and the fixed-test specializations.
+
+### Next orbit step: A rational finite quotient stage in box coordinates
+
+The proof of Proposition 2.1.3.2, pp. 69–70, uses two compact open
+subgroups $H\subset K$ of the finite adeles, not merely a common
+support set: The tests supported on $K$ must be constant on $H$-cosets.
+Start with one explicit stage $K=M^{-1}\widehat{\mathbb Z}$,
+$H=M\widehat{\mathbb Z}$ for a positive integer $M$. Prove that the
+$M^2$ translates $j/M+H$ for $0\le j<M^2$ partition $K$ and are fixed
+box factors with real scale one and real center zero. Use the existing
+rational denominator-clearing theorem on $x/M$ for $x\in K$:
+$x/M-q\in\widehat{\mathbb Z}$ implies $M^2q\in\widehat{\mathbb Z}$
+by multiplying by $M^2$ and using $Mx\in\widehat{\mathbb Z}$.
+Integral diagonal rationals are integers, so reduce $M^2q$ modulo $M^2$.
+For distinctness apply that same diagonal-integrality criterion to
+$(j-j')/M^2$. This can be stated on full adeles using the existing
+subring `rationalIntegralAdeles`, which puts no restriction on the
+real coordinate. Use the positive real section to cancel the real
+scale of the diagonal idele $M$.
+
+This supplies explicit box coordinates for such finite quotient
+stages. Proving cofinality and showing that every LF-bounded adelic
+family lies boundedly in one stage remain separate obligations; a
+common compact support alone does not bound the invariance level.
 
 ## Checked real-lattice inversion
 
