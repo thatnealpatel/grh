@@ -412,35 +412,82 @@ for the limit. The declaration is a
 rational specialization, not the explicit formula with the local
 terms evaluated and not a global trace comparison.
 
-## Next runnable obligation: Reflect and split the rational contour
+## Checked reflection and splitting of the rational contour
 
-First prove the one-line form of (B.4.2.4), p. 615, with the rational
-trivial-character conductor term zero. Under the same hypotheses, show
-absolute integrability and replace the left of the checked contour
-identity by
+[`Theorems.RationalExplicitFormulaRightLine`](../../Proofs/Theorems/RationalExplicitFormulaRightLine.lean)
+keeps the hypotheses of the infinite contour identity. Write $s=2+it$,
+$W(t)=\Phi(s)+\Phi(1-s)$, and
+$Z=-\Phi(0)-\Phi(1)+\sum_\rho m_\rho\Phi(\rho)$ with the full open-strip
+orders. Both declarations retain absolute summability of the zero sum.
 
-$$
-\frac{1}{2\pi}\int_{\mathbb R}
-  [\Phi(2+it)+\Phi(-1-it)]\frac{\Lambda'}{\Lambda}(2+it)\,dt.
-$$
+- `Masullo.completedZeta_contour_reflected` proves the one-line form of
+  (B.4.2.4), p. 615: $W\,\Lambda'/\Lambda$ is integrable on the right
+  line and its integral divided by $2\pi$ is $Z$. The conductor factor
+  for the rational trivial character is one. The plus sign in the
+  extracted logarithmic derivative (B.4.2.3), p. 614, does not follow
+  from the functional equation; the checked
+  `completedZeta_logDeriv_reflection` supplies the chain-rule minus sign.
+  Invariance of Lebesgue measure under $t\mapsto-t$ gives the actual
+  reflected sample $\Phi(-1-it)$ and the addition in (B.4.2.4).
+- `Masullo.completedZeta_contour_split` proves (B.4.2.5)–(B.4.2.9),
+  p. 615, before evaluating the Mellin integrals. It gives
 
-Use the checked `completedZeta_logDeriv_reflection` (minus sign, as
-needed by (B.4.2.4), not the sign extracted in (B.4.2.3)), then substitute
-$t\mapsto-t$ in the left integral using invariance of Lebesgue measure
-under negation. In particular, the reflected test is $\Phi(1-s)$ at
-$s=2+it$, not $\Phi(-1+it)$ at the same $t$. This is also the sign and
-argument control for the test samples in (B.4.2.8)–(B.4.2.11), p. 615.
+  $$
+  \frac{1}{2\pi}\left[
+    \int_{\mathbb R} W(t)\frac{\Gamma_{\mathbb R}'(s)}{\Gamma_{\mathbb R}(s)}\,dt
+    -\sum_{n\ge1}\int_{\mathbb R} W(t)\frac{\Lambda_{\rm vM}(n)}{n^s}\,dt
+  \right]=Z.
+  $$
 
-Then for (B.4.2.5)–(B.4.2.7), split $\Lambda=\Gamma_{\mathbb R}\zeta$
-on a neighborhood of the right line, where both factors are nonzero.
-`ArithmeticFunction.LSeries_vonMangoldt_eq_deriv_riemannZeta_div`
-in pinned Mathlib identifies $-\zeta'/\zeta$ on $\Re s>1$ with the von
-Mangoldt series; `ArithmeticFunction.LSeriesSummable_vonMangoldt` at
-$s=2$ supplies a summable majorant independent of $t$. Discharge the
-test-times-series integral interchange before doing Fourier inversion
-on actual Mellin profiles. For smooth compact positive-log profiles,
-`CompactTestLaplace` only supplies a quadratic estimate; a specialization
-of the contour theorem to those profiles still needs entire dependence
-and the uniform fourth-power bound. The Archimedean evaluation, the
-normalizations in (B.4.4.16), pp. 623–625, and the independent global
-$S$-piece comparison remain open.
+  The Gamma integrand is integrable, and the sum of the $L^1$ norms of
+  the finite integrands is finite. Mathlib's von Mangoldt coefficient
+  is $\log p$ on $p^m$ for $m>0$ and zero otherwise; `LSeries.term`
+  also includes a zero term at $n=0$.
+
+In [`Lemmas.ZetaRightLine`](../../Proofs/Lemmas/ZetaRightLine.lean),
+`completedZeta_logDeriv_eq_gamma_add_zeta` proves the local product
+identity as an identity of germs on $\Re s>1$, with both factors
+nonzero there. Masullo invokes absolute uniform Euler-product convergence
+and then dominated convergence. `vonMangoldt_right_line_integrals`
+implements that step using Mathlib's logarithmic derivative and
+summability theorems at $s=2$: The L-series term norm is independent of
+$t$, so its weighted $L^1$ norm is exactly that constant times
+$\int|W|$. This justifies the **combined** finite-place interchange for
+both tests rather than just interchanging at one prime. The Gamma
+integrability then follows by subtraction, without a separate Gamma
+growth estimate.
+
+Independent Yah statement review (`rightline-review`) checked the signs,
+argument, conductor, and strength of the absolute convergence against
+the digest-matched Masullo extraction of pp. 614–615. The extraction is
+not a visual reading. The two local evaluations, and their independent
+comparison with the global geometric distribution, are not proved here.
+
+## Next runnable obligation: Admit smooth compact log profiles
+
+For $g:\mathbb R\to\mathbb C$ smooth with compact support, take
+$\Phi_g(s)=\int_{\mathbb R} g(x)e^{sx}\,dx$, as in (B.2.1.29), p. 599.
+Prove analyticity at every $s$ and one constant $B>0$ giving the fourth-power
+bound on the full closed strip $-1\le\Re s\le2$. This is the compact-log
+specialization of Proposition B.2.1.9(1)–(2), pp. 598–599, needed to apply
+`completedZeta_contour_split` to an actual two-sided test. Bound the complex
+derivative on a neighborhood of each $s$ by a compact-support majorant for
+`hasDerivAt_integral_of_dominated_loc_of_deriv_le`. On the full real line,
+`MeasureTheory.integral_mul_deriv_eq_deriv_mul` lets one iterate the
+single integration by parts four times without a boundary at zero. Use
+compact support for the zero boundary values and the uniform estimate
+$|e^{sx}|\le e^{2|x|}$ on the strip. The existing `CompactTestLaplace`
+proof is a pattern, not this result: It integrates on $x>0$ and supplies
+only quadratic decay.
+
+The subsequent finite-place evaluation can then apply pinned
+`Continuous.fourierInv_fourier_eq` to $e^{2x}g(x)$ and to the corresponding
+reflected profile $e^{2x}e^{-x}g(-x)$. A normalization control for
+(B.4.2.10)–(B.4.2.11), p. 615, is that the $n>0$ integral before the von
+Mangoldt coefficient, with its $1/(2\pi)$ factor, must be
+$g(\log n)+n^{-1}g(-\log n)$. This follows at the level of the proposed
+formula by changing $x\mapsto -x$ in $\Phi_g(1-s)$ before applying the
+same Fourier inversion to both terms; the overall finite-place sign in
+the contour remains minus. This control is not yet checked in Lean. The
+Archimedean evaluation, the normalizations in (B.4.4.16), pp. 623–625,
+and the global $S$-piece comparison remain open.
