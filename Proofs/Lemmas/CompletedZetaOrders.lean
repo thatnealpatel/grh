@@ -16,7 +16,8 @@ open scoped Topology
 
 namespace Masullo
 
-private theorem completedZeta_eq_quotient {s : ℂ} (h0 : s ≠ 0) (h1 : s ≠ 1) :
+/-- Away from the poles, recover the completed function from its entire numerator. -/
+public theorem completedZeta_eq_quotient {s : ℂ} (h0 : s ≠ 0) (h1 : s ≠ 1) :
     completedRiemannZeta s = entireZeta s / (s * (s - 1)) := by
   rw [completedRiemannZeta_eq, entireZeta]
   have hs1 := sub_ne_zero.mpr h1

@@ -188,33 +188,53 @@ constant of $5$ would not follow from this estimate at $m=0$. The
 Lean proof uses $6$. The growth reading is still provisional OCR/text,
 not rendered-page verification.
 
-## Next runnable obligation: A lower bound at the right-hand anchor
+## Checked lower bound at the right-hand anchor
 
-Lang's §2 argument (scan printed pp. 335–336) compares the completed
-logarithmic derivative to its value on the right edge using a
-Weierstrass product, then uses the Euler product and Stirling there.
-For the rational contour, a fixed-radius disk comparison is a project
-route to the weaker polynomial bound actually needed. Do not infer
-that bound from separation alone. First prove the anchor estimate in
-Lean, for all real $t$ with $1\le |t|$:
+[`Masullo.entireZeta_right_anchor_lower_bound`](../../Proofs/Lemmas/ZetaContourAnchor.lean)
+proves, for all real $t$ with $1\le |t|$,
 
 $$\|\operatorname{entireZeta}(2+it)\|\ge (3\pi)^{-1}e^{-\pi |t|/4}.$$
 
-The Dirichlet series gives $|\zeta(2+it)-1|\le \zeta(2)-1$,
-so `riemannZeta_two` and `Real.pi_lt_d2` give $|\zeta(2+it)|\ge1/3$.
-At $z=it/2\ne0$, `Complex.Gamma_add_one`, `Complex.Gamma_conj`,
-and `Complex.Gamma_mul_Gamma_one_sub` give
-$|\Gamma(1+it/2)|^2=\pi |t|/(2\sinh(\pi |t|/2))$. The elementary
-upper bound on $\sinh$ then gives $|\Gamma(1+it/2)|\ge e^{-\pi |t|/4}$.
-The completion contributes a factor of modulus $1/\pi$, and clearing
-the poles multiplies the norm by $|(2+it)(1+it)|\ge1$. These are
-already relevant pinned Mathlib interfaces, not a checked anchor proof.
+Masullo invokes Lang for growth of the completed logarithmic derivative
+in (B.4.2.1), p. 614. Lang's §2 (scan printed pp. 335–336) compares
+logarithmic derivatives using the Weierstrass product and estimates the
+right-edge derivative by the Euler product and Stirling. The Lean lemma
+is a project replacement input for a local disk comparison, not Lang's
+right-edge derivative estimate. It supplies center nonvanishing and
+$-\log\|\operatorname{entireZeta}(2+it)\|\le \pi |t|/4+\log(3\pi)$.
+Independent Yah review (`anchor-statement`) checked the statement and route
+against the digest-matched Masullo extraction and the Lang OCR, not rendered
+pages.
+
+At $\Re s=2$, absolute convergence of the Dirichlet series bounds
+$|\zeta(s)-1|$ by $\zeta(2)-1\le 2/3$. Gamma reflection, recurrence, and
+conjugation at $z=it/2$ give
+$|\Gamma(1+it/2)|^2 |\sin(\pi z)|=\pi |t|/2$. The last factor on the left
+is at most $e^{\pi|t|/2}$, and the right-hand side is at least one.
+The factor $\pi^{-s/2}$ has modulus $1/\pi$. The exposed existing lemma
+`Masullo.completedZeta_eq_quotient` accounts for the pole-clearing factor
+$s(s-1)$, of modulus at least one here. This bounds the entire numerator,
+not the pole-subtracted `completedRiemannZeta₀` itself.
+
+## Next runnable obligation: A multiplicity count in the moving disk
+
+With $c_t=2+it$, prove in Lean that one constant $K>0$ bounds the sum of
+`zetaZeroOrder` over any finite set of open-strip zeros in
+$\overline B(c_t,5)$ by $K(1+|t|)$, uniformly for $1\le|t|$.
+Generalize the center in the divisor-sum comparison already used in
+[`ZetaZeroDiskCount`](../../Proofs/Lemmas/ZetaZeroDiskCount.lean) and apply
+`AnalyticOnNhd.sum_divisor_le` with inner radius $5$ and outer radius $6$.
+On the outer circle, $|\Re s|\le8$ and $\|s\|\le8+|t|$. Fixing $n=8$
+in `completedZeta₀_factorial_growth` and expanding
+$1+s(s-1)\operatorname{completedRiemannZeta}_0(s)$ gives the required outer
+upper bound of the form $C(1+|t|)^2$. Matching exponential decay on the
+outer circle is not needed for a polynomial bound on the logarithmic
+derivative: The logarithm of the outer-to-anchor ratio grows at most
+linearly in $1+|t|$. This moving-center Jensen estimate is not yet checked.
 
 For the successor, center a disk at $2+it$, take a radius in $(4,5)$
 avoiding the zero radii, and strip the disk's zeros with finite
-Blaschke factors. The checked `completedZeta₀_factorial_growth` on a
-fixed real strip bounds the outer norm of `entireZeta` by $C(1+|t|)^2$.
-The factors preserve the boundary norm and only increase the norm at
+Blaschke factors. The factors preserve the boundary norm and only increase the norm at
 the center after division. On the zero-free quotient use a branch of
 logarithm, Borel–Carathéodory, and a fixed-radius Cauchy estimate to
 bound the logarithmic derivative for $\|s-(2+it)\|\le3$. Pinned
@@ -222,9 +242,8 @@ Mathlib supplies `MeromorphicOn.extract_zeros_poles`,
 `Complex.exists_continuousOn_eqOn_exp_comp`,
 `Complex.borelCaratheodory_zero`, and
 `Complex.norm_deriv_le_of_forall_mem_sphere_norm_le`; the disk
-comparison is not yet formalized. Jensen at outer radius $6$ and the
-anchor bound control the sum of the orders in radius $5$. The log
-derivatives of the factors each cost $O(1+\delta^{-1})$ at distance
+comparison is not yet formalized. The log derivatives of the factors
+each cost $O(1+\delta^{-1})$ at distance
 at least $\delta$ from the zeros, because the denominator of each
 Blaschke factor stays bounded away from zero in the inner disk after
 normalization. At $s=2+it$ the distance to each zero is at least $1$,
