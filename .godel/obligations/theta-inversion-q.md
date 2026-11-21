@@ -556,61 +556,79 @@ For verification, build `Proofs` with warnings as errors, run
 of both new declarations. The claim is multiplicative, and establishes
 neither the additive Haar formula nor the general number-field formula.
 
+## Checked standard additive character over Qp
+
+The accepted base `261011e98206057abb5b7f1885d669b5ca1c7d8a` already
+closes the preceding handoff's global multiplicative Haar obligation.
+The independent additive branch now has
+[`Masullo.padicStdAddChar`](../../Proofs/Theorems/PadicStandardCharacter.lean)
+for every prime $p$. Example A.3.1.6, p. 557, defines the positive
+character via the inclusion of $\mathbb Q_p/\mathbb Z_p$ as the
+$p$-primary subgroup of $\mathbb Q/\mathbb Z$ followed by $e^{2\pi i t}$.
+The Lean realization clears denominators: If $a=p^n x\in\mathbb Z_p$,
+`padicStdAddChar_apply_of_scaled_integral` gives the standard cyclic
+character at $a\bmod p^n$, with no minimality assumption on $n$.
+This includes $n=0$, when the modulus is one.
+
+The [denominator lemmas](../../Proofs/Lemmas/PadicCharacterDenominators.lean)
+use the $p$-adic valuation to find an integral numerator. The transition
+from $n$ to $n+k$ multiplies both the residue representative and the
+modulus by $p^k$, so the positive cyclic exponential is unchanged. A
+common denominator proves additivity. `padicStdAddChar_eq_one_iff`
+identifies the kernel with $\|x\|\le1$ via the kernel of `toZModPow`;
+`norm_padicStdAddChar` gives unit modulus, and `continuous_padicStdAddChar`
+uses constancy near each point. These are checked details of the source
+construction, not a classification of continuous characters or a proof
+of Plancherel or adelic Poisson summation.
+
+Independent Yah review verified the SHA-256-matched extraction of
+pp. 557–558 and checked the scaled formula, denominator independence,
+and exact kernel against the quotient description. Rendered-page
+verification remains open. The extracted noncentered formula (A.3.1.5)
+prints the positive character phase, whereas the negative-exponent
+Fourier convention would give the phase $\psi_p(-ay)$ at frequency $y$
+for a translate by $a$. The checked character keeps the positive sign
+from the definition and does not use that translated formula. Also
+reconcile finite and real signs before the global product in Example
+A.3.1.8: Taking both positive as extracted yields $e^{4\pi i/p}$ on
+diagonal $1/p$ for odd $p$, not a character trivial on $\mathbb Q$.
+Neither sign issue changes the centered indicator transform.
+
+The candidate checks are `lake --wfail build Proofs`,
+`lake env leanchecker Theorems.PadicStandardCharacter`, and `#check` and
+`#print axioms` on the character and its four public theorems.
+
 ## Next Fourier step: The local integral indicator over Qp
 
-The multiplicative measure comparison does not identify the Fourier
-factor needed for adelic theta inversion. Work upstream of Theorem
-2.2.3.2: Definition A.3.1.2(3), p. 556, gives the rational local
-**additive** normalization $\nu_p(\mathbb Z_p)=1$, and Examples
-A.3.1.6–7, pp. 557–558, use the standard character of conductor
-$\mathbb Z_p$ to compute the transform of $\mathbf 1_{\mathbb Z_p}$.
-Example A.3.1.10 and Remark A.3.4.2, pp. 558 and 562, distinguish this
-unramified identity from the inverse-different formula. The following
-target uses the centered indicator only, so conjugating the character
-makes no difference. These locators are from the SHA-256-matched layout
-extraction, not rendered-page inspection.
-
-Prove for every prime $p$, with the standard continuous additive
-character $\psi_p$ on $\mathbb Q_p$ and additive Haar of unit-ball mass
-one,
+Construct the additive Haar measure $\nu_p$ normalized by
+$\nu_p(\mathbb Z_p)=1$ (Definition A.3.1.2(3), p. 556, and Example
+A.3.1.7, pp. 557–558). Prove for all $y\in\mathbb Q_p$ that
 
 $$
 \int_{\mathbb Z_p}\overline{\psi_p(xy)}\,d\nu_p(x)
-=\mathbf 1_{\mathbb Z_p}(y)\qquad(y\in\mathbb Q_p).
+=\mathbf 1_{\mathbb Z_p}(y),
 $$
 
-Start by constructing `AddChar ℚ_[p] ℂ` with unit modulus and proving
-`ψp x = 1 ↔ ‖x‖ ≤ 1`. At each $x$ choose $n\ge0$ such that $p^n x$
-is integral (`Padic.norm_eq_zpow_neg_valuation`, `Padic.norm_p_pow`).
-Apply `ZMod.stdAddChar` to `PadicInt.toZModPow n` of $p^n x$. For a
-larger denominator, the numerator residue is multiplied by the same
-power of $p$ as the denominator: Use `PadicInt.appr_spec` to compare
-representatives modulo the larger power and the exponential expression
-for `ZMod.stdAddChar` on natural casts. A common denominator handles
-additivity. `PadicInt.ker_toZModPow` and `ZMod.injective_stdAddChar`
-give the exact kernel. The open embedding `PadicInt.isOpenEmbedding_coe`
-then makes the character locally constant. The pinned Mathlib file
-`Mathlib.NumberTheory.Padics.AddChar` constructs characters of
-$\mathbb Z_p$ with an ultrametric coefficient ring, not this character
-on $\mathbb Q_p$ with complex coefficients.
+using the checked positive `padicStdAddChar` for $\psi_p$ and
+conjugating it for the negative-exponent transform convention. The
+source gives the centered identity with the positive sign, for which
+the same proof works. Example A.3.1.10, p. 558, and Remark A.3.4.2,
+p. 562, distinguish the unramified identity from the inverse-different
+formula. These locators use text extraction, not rendered pages.
 
-For the integral, use the compact open unit ball as `PositiveCompacts`
-for `Measure.addHaarMeasure`. On the ball, if $y$ is integral the
-integrand is one. Otherwise translation by $1$ preserves the ball and
-its Haar restriction, but multiplies the integral by
-$\overline{\psi_p(y)}\ne1$. The relevant Mathlib interfaces are
-`integral_add_left_eq_self` and `integral_const_mul`; alternatively
-integrate in the $\mathbb Z_p$ coordinates with its additive Haar
-probability and compare it to the ambient restriction by comap. Check
-the Borel spaces and the normalization separately from the character
-construction. This is a local Fourier identity, not a proof of local
-Plancherel or adelic Poisson summation. Before taking a global product,
-verify the relative real and finite character signs. With the positive
-exponential at both places as extracted in Examples A.3.1.5–6, the
-product in Example A.3.1.8 at diagonal $1/p$ is $e^{4\pi i/p}$ for odd
-$p$, since every other finite component is integral. Triviality on
-$\mathbb Q$ would instead require opposite signs. This is a provisional
-sign check, not an obstacle to the centered local calculation.
+Use the compact open closed unit ball as `PositiveCompacts` for
+`Measure.addHaarMeasure`. Import `Mathlib.NumberTheory.Padics.ProperSpace`
+for compactness of closed balls and use the ultrametric closed-ball
+openness lemma. One route is to integrate in the coordinates
+$\mathbb Z_p$ via the comap of the normalized Haar along
+`PadicInt.isOpenEmbedding_coe`. It is invariant by addition and has
+total mass one. For integral $y$, the integrand is one by the checked
+kernel. Otherwise the translation by $1$ multiplies the integral by
+$\overline{\psi_p(y)}\ne1$ but leaves its value unchanged. Use
+`integral_add_left_eq_self` and `integral_const_mul`, and transport the
+result to the set integral with the measurable embedding. This is a
+local Fourier identity, not a proof of the entire local self-duality
+claim.
 
 ## Checked real-lattice inversion
 
