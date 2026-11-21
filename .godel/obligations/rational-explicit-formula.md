@@ -1069,44 +1069,84 @@ Independent Yah review `review-calibration` (output
 statements against the pinned extraction, including the translation,
 frequency sign, Haar normalization, both moments, and scope.
 
-### Next: Pair the logarithm with a ball avoiding zero
+## Checked logarithmic Fourier pairing on rational balls avoiding zero
 
-The reduction in Lemma B.4.4.5 still needs the zero-identity-value case.
-In (B.4.4.7)–(9), p. 621, Lemma B.4.4.3 uses (B.4.3.5), pp. 617–618,
-for the shifted additive test supported away from zero. The cited
-identity concerns the Fourier transform of the logarithm restricted to
-locally constant compactly supported tests on the multiplicative group,
-not a claim about the value of the logarithm on the original support.
-For a direct rational repair, first prove the following instance without
-postulating the distribution identity: For $n\in\mathbb N$ and
-$|a|_p>p^{-n}$, $J\widehat{\mathbf1_{a+p^nB}}$ is integrable against $\nu$
-and its integral is $-p^{-n}/((1-p^{-1})|a|_p)$. This is the negative
-of the integral of $1/|x|_p$ on that ball against $d\nu/(1-p^{-1})$.
-The factor makes $d\nu/((1-p^{-1})|x|_p)$ unit-mass multiplicative Haar,
-as required by (B.4.3.5). Use the checked translated ball transform.
-If $|a|_p=p^{-k}$, the phase integral on the centered ball of radius
-$p^m$ should be $p^m$ for $m\le k$ and zero for $m>k$. The phase is one
-through radius $p^k$. Scaling the checked moment there predicts
-$p^k(k-1/(p-1))$. The next shell contributes $-(k+1)p^k$ since $J=k+1$;
-every farther shell contributes zero. The hypothesis gives $k<n$, so
-the frequency cutoff of radius $p^n$ includes both terms.
-This evaluation and finite coset assembly would give the next
-comparison on locally constant compactly supported $f$ on $\mathbb Q_p^\times$
-with $f(1)=0$: Prove absolute integrability and
+Proposition B.4.3.1(2), (B.4.3.5), pp. 617–618, gives the restriction
+of the Fourier transform of $J(\xi)=\log|\xi|_p/\log p$ to locally
+constant compactly supported tests on the multiplicative group. Its
+proof uses (B.4.3.3)–(4) for covariance, uniqueness of the invariant
+functional, and the unshifted unit test (B.4.3.9)–(11) for the coefficient
+$-1/\mu_v(O_v^\times)$. Lemma B.4.4.3, (B.4.4.8), p. 621,
+applies this to the shifted test (B.4.4.7) when $f(1)=0$. The
+translation/character reformulation is (B.4.4.9). This is a restriction
+of a Fourier distribution, not an evaluation of $J$ on the spatial
+support. These locators come from digest-verified text extraction;
+no rendered-page reading was made.
+
+[`padicTranslatedBall_log_fourier`](../../Proofs/Theorems/PadicLogBallFourier.lean)
+proves the rational indicator instance directly, without assuming
+covariance or uniqueness of the Fourier distribution. For
+$S=a+p^n\mathbb Z_p$, $n\in\mathbb N$, and $|a|_p>p^{-n}$, it proves
+absolute integrability and the value
 
 $$
--\int_{\mathbb Q_p} J(\xi)\widehat{u}(\xi)\,d\nu(\xi)
-=\int_{\mathbb Q_p^\times}\frac{f(y)|y|_p^{1/2}}{|1-y|_p}\,d\mu(y),
-\quad u(x)=f(1+x)|1+x|_p^{-1/2},
+\int_{\mathbb Q_p} J(\xi)\widehat{\mathbf1_S}(\xi)\,d\nu(\xi)
+ = -\frac{p^{-n}}{(1-p^{-1})|a|_p}.
 $$
 
-where $u(-1)=0$ and $\mu$ is unit-mass multiplicative Haar.
-This still needs the change of Haar measures in (B.4.4.9). Then subtract
-$f(1)\mathbf1_{B^\times}$ and use the unit calibration. Neither this route
-nor its unit calibration currently proves the ramified formula or the
-global geometric comparison. For ramified continuation, separately check
-the second frequency ball in the display after (B.4.4.15): The extracted
-subscript appears to have $\mathfrak m_v^{-1}\mathfrak d$, whereas the
-annihilator of $\mathfrak m_v$ for the trace character is
+Here $\nu=\texttt{padicAddHaar}\ p$ has integral-ball mass one, and
+$\widehat{\mathbf1_S}$ uses the conjugated standard character. The
+right side is the negative of the integral of
+$d\nu(x)/((1-p^{-1})|x|_p)$ over $S$: The norm there is $|a|_p$ by the
+strict radius inequality, and its mass is $p^{-n}$. This matches the
+unit normalization in (B.4.3.5) and (A.3.2.3)–(4), p. 560. The
+identification of that density with the ambient Haar module is still
+needed for the final comparison.
+
+Example A.3.1.6, (A.3.1.5), p. 557, has an intermediate expression
+that, as extracted, shifts the frequency support instead of supplying
+a phase. The last expression has centered support. We use
+`padicTranslatedBall_fourier`, not the intermediate expression, to
+check the translation step. This reading of the discrepancy is
+provisional. The checked translated Fourier formula yields the factor $p^{-n}$
+and a centered frequency support of radius $p^n$. The discrete norms
+make the rescaled radius $|a|_p p^n$ at least $p$. The supporting
+`padic_log_phase_moment` changes variables by $\xi\mapsto-a\xi$; additive
+Haar contributes $|a|_p^{-1}$, and the logarithm changes by a constant
+away from the null singleton. On $p^{-1}\mathbb Z_p$ that constant's
+pairing is zero, while `padicOuterBall_log_phase` gives
+$-1/(p-1)-1$. The remaining radial tail is invariant under translation
+by $p^{-1}$, which multiplies the normalized phase by a nontrivial
+constant. Its integral is therefore zero for any larger cutoff. This
+proves the value with absolute integrability of the inner ball and
+tail separately, not by conditional cancellation at infinity.
+
+### Next: Assemble the off-zero pairing on locally constant compact tests
+
+Prove that every locally constant, compactly supported
+$u:\mathbb Q_p\to\mathbb C$ with $u(0)=0$ is a finite linear combination
+of indicators of balls $a_i+p^n\mathbb Z_p$ with $|a_i|_p>p^{-n}$.
+Use a finite clopen ball cover of the compact support and a common
+fine radius (or remove contained balls in a finite ultrametric cover).
+Apply the checked ball endpoint by linearity to get absolute
+integrability and
+
+$$
+\int J(\xi)\widehat u(\xi)\,d\nu(\xi)
+ = -\frac{1}{1-p^{-1}}\int\frac{u(x)}{|x|_p}\,d\nu(x).
+$$
+
+The spatial norm is constant on each ball, and its additive Haar mass
+follows by translation from `padic_measure_dilatedBall`. This gives
+the rational additive-density version of (B.4.3.5) before changing
+variables to the multiplicative Haar measure. The subsequent task is
+to use it on $u(x)=f(1+x)|1+x|_p^{-1/2}$, extended by zero at $x=-1$,
+when $f(1)=0$. Then subtract $f(1)\mathbf1_{\mathbb Z_p^\times}$ and
+use the checked translated unit-indicator pairing. This does not
+identify the global geometric trace. For ramified continuation,
+separately check the second frequency ball in the display after
+(B.4.4.15): The extracted subscript appears to have
+$\mathfrak m_v^{-1}\mathfrak d$, whereas the annihilator of
+$\mathfrak m_v$ for the trace character is
 $\mathfrak m_v^{-1}\mathfrak d^{-1}$. The two agree over $\mathbb Q_p$.
 The subscript reading is provisional pending rendered-page review.
