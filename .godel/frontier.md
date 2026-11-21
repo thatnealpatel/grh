@@ -6,7 +6,7 @@ The geometric and divisor branches have independent runnable obligations. The fi
 
 ## Global theta inversion (Theorem 2.2.3.2, p. 82)
 
-The [rational unramified lattice theorem](../Proofs/Theorems/RationalThetaInversion.lean) proves theta inversion on the real norm section, including both zero-mode corrections for arbitrary complex Schwartz input. The [next runnable step](obligations/theta-inversion-q.md#next-runnable-step-prove-the-fixed-function-two-tail-estimates) is to bound the outer tail by Schwartz decay and use inversion to bound the small-scale remainder. This is a Chapter 2 endpoint independent of the trace comparisons and a foundation for the two-tail estimates used by the rational theta lifts. The adelic reduction, bounded-family uniformity, and the trace's Mellin subtractions are not established here.
+The [rational unramified lattice theorems](../Proofs/Theorems/RationalThetaInversion.lean) prove theta inversion on the real norm section, including both zero-mode corrections for arbitrary complex Schwartz input. The [uniform two-tail estimates](obligations/theta-inversion-q.md#checked-uniform-two-tail-estimates) specialize Theorem 2.2.3.4 to bounded families in this model, with exponential decay in log norm when both moments vanish. The [next runnable step](obligations/theta-inversion-q.md#next-runnable-step-prove-continuity-of-the-lattice-theta-function) is continuity on positive scales, using local uniform convergence, to prepare weighted integrability for the rational theta lifts. The adelic reduction and the trace's Mellin subtractions are not established here.
 
 ## Toward the trace identity (Theorem 12.5.1.1, pp. 519–520)
 

@@ -1,9 +1,9 @@
 # Rational theta inversion at the unramified tensor
 
-**Status:** The [real-lattice theorem](../../Proofs/Theorems/RationalThetaInversion.lean)
-is in Lean as `Masullo.rationalTheta_inversion`, with an independent Yah
-statement review against text extracted from the digest-matched
-[pinned edition](../sources/masullo/README.md). The reading is provisional,
+**Status:** The [real-lattice module](../../Proofs/Theorems/RationalThetaInversion.lean)
+proves inversion and uniform two-tail estimates, with independent Yah statement
+reviews against text extracted from the digest-matched
+[pinned edition](../sources/masullo/README.md). The readings are provisional,
 not visual. The adelic reduction itself is not formalized.
 
 ## Manuscript statement and rational reduction
@@ -50,31 +50,52 @@ integer samples. The theorem applies `Summable.sum_add_tsum_compl`
 with $\{0\}$ to each side before rearranging. This proof uses Mathlib's
 real Poisson summation; the manuscript invokes adelic Poisson summation.
 
-## Next runnable step: Prove the fixed-function two-tail estimates
+## Checked uniform two-tail estimates
 
-Theorem 2.2.3.4, (2.2.3.4)–(2.2.3.7), pp. 82–83, uses inversion to
-reduce the small-norm estimate to large-norm Schwartz decay on the
-Fourier side. For each fixed $b\in\mathcal S(\mathbb R,\mathbb C)$ and
-$N\in\mathbb N$, prove the rational lattice estimates with some $C>0$:
+Theorem 2.2.3.4(1)–(3), (2.2.3.4)–(2.2.3.7), pp. 82–83,
+uses inversion to reduce the small-norm estimate to large-norm decay
+on the Fourier side. Parts (4)–(5), pp. 83–85, make the estimates
+uniform on bounded sets and bring both scale thresholds to one.
+
+`Masullo.rationalTheta_uniform_tail_bounds` proves the real-lattice
+counterpart: Given a bounded set $B$ in the complex Schwartz space and
+$N\in\mathbb N$, one $C>0$ works for every $b\in B$:
 
 - At $t\ge1$, $|\theta_b(t)|\le C/t^N$.
 - At $0<t\le1$, $|\theta_b(t)-t^{-1}\widehat b(0)+b(0)|\le C t^N$.
 
-For the first bound use `SchwartzMap.decay` at $(k,d)=(N+2,0)$.
-At every nonzero integer $n$, the resulting bound is
-$C_b t^{-(N+2)}|n|^{-(N+2)}$. Compare the sum of norms against this
-majorant: `Real.summable_abs_int_rpow` restricts to the nonzero
-subtype, `Real.rpow_neg` and `Real.rpow_natCast` connect the powers,
-and `norm_tsum_le_tsum_norm` applies using the absolute convergence
-lemma above. For the second bound, apply the first to $\widehat b$
-at scale $t^{-1}\ge1$ and exponent $N+1$, not $N$, to absorb the
-factor $t^{-1}$ in inversion. Enlarge $C$ to cover both estimates.
-These estimates require no moment hypotheses on $b$; the two moments
-vanish only in the corollary for bare theta at small scales.
+At large scales the order-$(N+2,0)$ Schwartz seminorm bounds the
+lattice samples by a constant times $t^{-N}|n|^{-2}$. Mathlib's
+seminorm characterization of von Neumann boundedness makes this uniform
+on $B$. Its continuous complex-linear Fourier map takes $B$ to a bounded
+set. Apply the large-scale estimate there with exponent $N+1$ to absorb
+the prefactor $t^{-1}$ in inversion. This yields bounds all the way to
+$t=1$ without a separate middle-range argument in this lattice model.
 
-This is a fixed-function version, not the uniform bounded-family
-assertions (4)–(5). The two-moment specialization would support
-log-tail estimates in the [rational orbital theta lifts](trace-orbital-q.md#genuine-global-theta-lifts)
-without assuming a trace formula. It would not prove density, identify
-a Paley–Wiener projection, or compute the global trace's Mellin
-corrections.
+`Masullo.rationalTheta_uniform_log_bound` then gives
+$|\theta_b(e^x)|\le C e^{-N|x|}$ on $\mathbb R$ for members of $B$ whose
+two zero modes vanish. Neither the corrected tail bounds nor inversion
+assume those vanish. Independent statement review checked both signs,
+the absorbed inverse scale, the uniform quantifiers, and the moment
+hypotheses against the digest-matched extraction. The real lattice proof
+does not handle arbitrary finite test factors, bounded adelic families,
+or the archimedean fundamental-domain estimate used in the manuscript.
+
+## Next runnable step: Prove continuity of the lattice theta function
+
+Definition 2.2.3.1, pp. 81–82, uses the continuity furnished by
+Lemma 2.2.2.1(2). In this model, prove that `rationalTheta b` is
+continuous on $t>0$ for every complex Schwartz $b$. On each interval
+$t\ge a>0$, dominate the samples by
+$p_{2,0}(b)a^{-2}|n|^{-2}$ on the nonzero integer subtype.
+`continuousOn_tsum` in `Mathlib.Analysis.Normed.Group.FunctionSeries`
+takes continuous summands and this summable uniform majorant;
+`continuousOn_of_locally_continuousOn` glues the positive-scale bounds.
+Unlike the large-scale estimate, the majorant here must also work for
+arbitrarily small positive lower endpoints $a$.
+
+Continuity after $t=e^x$, together with the two-moment log bound, is an
+input to weighted $L^2$ estimates for the
+[rational orbital theta lifts](trace-orbital-q.md#genuine-global-theta-lifts).
+It does not by itself give derivatives, an adelic identification, or a
+trace comparison.
