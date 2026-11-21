@@ -165,25 +165,76 @@ boundary, full orders, two poles, and exact regularity hypotheses against
 the digest-matched extraction of pp. 605–606 and 614, not rendered pages.
 No horizontal or vertical edge bounds enter this result.
 
-## Next runnable obligation: Quantitatively separated ordinates
+## Checked quantitatively separated ordinates
 
-Toward the [bound in actual heights](#upstream-growth-check-use-height-rather-than-the-sequence-index),
-prove that there is a constant $c>0$ such that, for every integer $m$
-with $|m|\ge2$, some $T_m\in(m,m+1)$ has
-$|T_m-\Im\rho|\ge c/(1+|m|)^2$ for every open-strip zero. This is a
-project substitute for Lang's logarithmic margin, suitable for a
-polynomial bound with Schwartz tests. Use the
-[checked quadratic summability](trace-divisor-summability.md#checked-dyadic-shell-summability):
-Each zero with $\Im\rho\in[m-1,m+2]$ contributes at least
-$1/(1+1/4+(|m|+2)^2)$ to the positive weighted sum. This bounds the
-cardinality by $C(1+|m|)^2$ uniformly. The intervals of the stated radius
-about these finitely many ordinates cover length at most $2cC<1$ for
-small $c$, and the other zeros are at distance greater than $1$.
-This gives the quantitative boundary premise, **not** a bound for
-$\Lambda'/\Lambda$ on the selected segments. The latter still needs a
-checked estimate converting zero separation to growth. Absolute vertical
-integrability and exhaustion of the zero sum are also separate obligations.
-The resulting target of (B.4.2.2), written in the real parameter, is
+[`Masullo.exists_height_separated_from_zeta_zeros`](../../Proofs/Lemmas/ZetaContourHeights.lean)
+proves one uniform $c>0$ and, for **every** integer $m$, a height
+$T_m\in(m,m+1)$ satisfying $|T_m-\Im\rho|\ge c/(1+|m|)^2$ for all
+open-strip zeros. This is a project replacement for the logarithmic
+margin in Lang's height argument, invoked in (B.4.2.1), p. 614. It
+includes both signs of $m$ and gives the zero-avoidance premise of the
+finite contour. It does not supply a bound on $\Lambda'/\Lambda$.
+
+Use the [checked quadratic summability](trace-divisor-summability.md#checked-dyadic-shell-summability)
+with total weighted mass $S$. For ordinates in $(m-1,m+2)$, the
+weight denominator is at most $6(1+|m|)^2$, so positivity of every
+multiplicity bounds their distinct count by $6S(1+|m|)^2$. With
+$c=1/(24(S+1))$, the union of open intervals of radius $c/(1+|m|)^2$
+about these finitely many ordinates has Lebesgue measure at most $1/2$.
+The other zeros have distance greater than $1$ from each point in
+$(m,m+1)$. Independent Yah statement review (`height-statement`)
+checked the scope against the extraction and caught that a denominator
+constant of $5$ would not follow from this estimate at $m=0$. The
+Lean proof uses $6$. The growth reading is still provisional OCR/text,
+not rendered-page verification.
+
+## Next runnable obligation: A lower bound at the right-hand anchor
+
+Lang's §2 argument (scan printed pp. 335–336) compares the completed
+logarithmic derivative to its value on the right edge using a
+Weierstrass product, then uses the Euler product and Stirling there.
+For the rational contour, a fixed-radius disk comparison is a project
+route to the weaker polynomial bound actually needed. Do not infer
+that bound from separation alone. First prove the anchor estimate in
+Lean, for all real $t$ with $1\le |t|$:
+
+$$\|\operatorname{entireZeta}(2+it)\|\ge (3\pi)^{-1}e^{-\pi |t|/4}.$$
+
+The Dirichlet series gives $|\zeta(2+it)-1|\le \zeta(2)-1$,
+so `riemannZeta_two` and `Real.pi_lt_d2` give $|\zeta(2+it)|\ge1/3$.
+At $z=it/2\ne0$, `Complex.Gamma_add_one`, `Complex.Gamma_conj`,
+and `Complex.Gamma_mul_Gamma_one_sub` give
+$|\Gamma(1+it/2)|^2=\pi |t|/(2\sinh(\pi |t|/2))$. The elementary
+upper bound on $\sinh$ then gives $|\Gamma(1+it/2)|\ge e^{-\pi |t|/4}$.
+The completion contributes a factor of modulus $1/\pi$, and clearing
+the poles multiplies the norm by $|(2+it)(1+it)|\ge1$. These are
+already relevant pinned Mathlib interfaces, not a checked anchor proof.
+
+For the successor, center a disk at $2+it$, take a radius in $(4,5)$
+avoiding the zero radii, and strip the disk's zeros with finite
+Blaschke factors. The checked `completedZeta₀_factorial_growth` on a
+fixed real strip bounds the outer norm of `entireZeta` by $C(1+|t|)^2$.
+The factors preserve the boundary norm and only increase the norm at
+the center after division. On the zero-free quotient use a branch of
+logarithm, Borel–Carathéodory, and a fixed-radius Cauchy estimate to
+bound the logarithmic derivative for $\|s-(2+it)\|\le3$. Pinned
+Mathlib supplies `MeromorphicOn.extract_zeros_poles`,
+`Complex.exists_continuousOn_eqOn_exp_comp`,
+`Complex.borelCaratheodory_zero`, and
+`Complex.norm_deriv_le_of_forall_mem_sphere_norm_le`; the disk
+comparison is not yet formalized. Jensen at outer radius $6$ and the
+anchor bound control the sum of the orders in radius $5$. The log
+derivatives of the factors each cost $O(1+\delta^{-1})$ at distance
+at least $\delta$ from the zeros, because the denominator of each
+Blaschke factor stays bounded away from zero in the inner disk after
+normalization. At $s=2+it$ the distance to each zero is at least $1$,
+so this route can also bound that vertical edge (use the checked
+reflection for the left edge at $-1$ and compact continuity at bounded
+heights). This uses $a=2$, allowed for the finite rational contour,
+whose vertical lines are already known to be regular.
+
+Absolute vertical integrability and exhaustion of the zero sum still
+need to be checked. The target of (B.4.2.2) remains
 
 $$
 \frac{1}{2\pi}\left[\int_{\mathbb R}(\Phi f)(a+it)\,dt
