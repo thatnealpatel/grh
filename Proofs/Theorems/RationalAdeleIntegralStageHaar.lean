@@ -23,6 +23,7 @@ open scoped Padic
 namespace Masullo
 
 local notation "V" => HeightOneSpectrum (𝓞 ℚ)
+local notation:max "F" v:max => HeightOneSpectrum.adicCompletion ℚ v
 local notation:max "O" v:max => HeightOneSpectrum.adicCompletionIntegers ℚ v
 local notation "p[" v "]" => (Rat.HeightOneSpectrum.primesEquiv v : Nat.Primes)
 local notation "K" => RationalFiniteIntegers
@@ -32,47 +33,67 @@ local instance (v : V) : Fact (p[v] : ℕ).Prime := ⟨(p[v]).property⟩
 local instance : Countable V :=
   Function.Injective.countable Rat.HeightOneSpectrum.primesEquiv.injective
 
+local instance (v : V) : SecondCountableTopology (F v) :=
+  (Rat.HeightOneSpectrum.adicCompletion.padicEquiv v).toHomeomorph.secondCountableTopology
+
 local instance (v : V) : SecondCountableTopology (O v) :=
   (Rat.HeightOneSpectrum.adicCompletionIntegers.padicIntEquiv v).toHomeomorph.secondCountableTopology
 
 local instance : CompactSpace K := compactSpace_rationalFiniteIntegers
 
-private noncomputable def localIntegerInclusion (v : V) : O v →+ ℚ_[p[v]] :=
-  (Rat.HeightOneSpectrum.adicCompletion.padicEquiv v).toRingEquiv.toAddMonoidHom.comp
-    (O v).subtype.toAddMonoidHom
+/-- The full finite-place completions carry their Borel sigma-algebras. -/
+public noncomputable scoped instance rationalLocalFieldMeasurableSpace (v : V) :
+    MeasurableSpace (F v) := borel _
+
+public scoped instance rationalLocalFieldBorelSpace (v : V) : BorelSpace (F v) := ⟨rfl⟩
+
+/-- Additive Haar on the full local completion, transported from `ℚ_[p]`. -/
+@[expose]
+public noncomputable def rationalLocalFieldAddHaar (v : V) : Measure (F v) :=
+  (@padicAddHaar p[v] ⟨(p[v]).property⟩).comap (Rat.HeightOneSpectrum.adicCompletion.padicEquiv v)
+
+public instance (v : V) : (rationalLocalFieldAddHaar v).IsAddHaarMeasure :=
+  Measure.IsAddHaarMeasure.comap (mH := inferInstance) (f :=
+    (Rat.HeightOneSpectrum.adicCompletion.padicEquiv v).toRingEquiv.toAddMonoidHom)
+    (padicAddHaar p[v])
+    (Rat.HeightOneSpectrum.adicCompletion.padicEquiv v).toHomeomorph.isOpenEmbedding
+
+/-- The full local measure gives the integer ring mass one. -/
+public theorem rationalLocalFieldAddHaar_integers (v : V) :
+    rationalLocalFieldAddHaar v (O v : Set (F v)) = 1 := by
+  let e := Rat.HeightOneSpectrum.adicCompletion.padicEquiv v
+  calc
+    _ = padicAddHaar p[v] (e '' (O v : Set (F v))) :=
+      e.toHomeomorph.measurableEmbedding.comap_apply _ _
+    _ = 1 := by
+      rw [show e '' (O v : Set (F v)) = PadicInt.subring p[v] from
+        (Rat.HeightOneSpectrum.adicCompletion.padicEquiv_bijOn v).image_eq]
+      exact padicAddHaar_integralBall p[v]
 
 private theorem isOpenEmbedding_localIntegerInclusion (v : V) :
-    Topology.IsOpenEmbedding (localIntegerInclusion v) := by
-  change Topology.IsOpenEmbedding
-    (((↑) : ℤ_[p[v]] → ℚ_[p[v]]) ∘
-      (Rat.HeightOneSpectrum.adicCompletionIntegers.padicIntEquiv v).toHomeomorph)
-  exact PadicInt.isOpenEmbedding_coe.comp
-    (Rat.HeightOneSpectrum.adicCompletionIntegers.padicIntEquiv v).toHomeomorph.isOpenEmbedding
+    Topology.IsOpenEmbedding (fun x : O v ↦ (x : F v)) :=
+  (Valued.isOpen_valuationSubring (F v)).isOpenEmbedding_subtypeVal
 
 /-- The standard local additive Haar measure restricted to the integer ring,
-expressed as a measure on that subtype via the local field identification. -/
+expressed as a measure on that subtype. -/
 @[expose]
 public noncomputable def rationalLocalIntegersAddHaar (v : V) : Measure (O v) :=
-  (@padicAddHaar p[v] ⟨(p[v]).property⟩).comap
-    (fun x : O v ↦ Rat.HeightOneSpectrum.adicCompletion.padicEquiv v x)
+  (rationalLocalFieldAddHaar v).comap Subtype.val
 
 public instance rationalLocalIntegersAddHaar_isAddHaarMeasure (v : V) :
     (rationalLocalIntegersAddHaar v).IsAddHaarMeasure :=
-  Measure.IsAddHaarMeasure.comap (mH := inferInstance) (padicAddHaar p[v])
-    (isOpenEmbedding_localIntegerInclusion v)
+  Measure.IsAddHaarMeasure.comap (mH := inferInstance) (f := (O v).subtype.toAddMonoidHom)
+    (rationalLocalFieldAddHaar v) (isOpenEmbedding_localIntegerInclusion v)
 
 public instance rationalLocalIntegersAddHaar_isProbabilityMeasure (v : V) :
     IsProbabilityMeasure (rationalLocalIntegersAddHaar v) := by
   refine ⟨?_⟩
-  change (padicAddHaar p[v]).comap (localIntegerInclusion v) univ = 1
-  rw [(isOpenEmbedding_localIntegerInclusion v).measurableEmbedding.comap_apply, image_univ]
-  have hrange : range (localIntegerInclusion v) = (PadicInt.subring p[v] : Set ℚ_[p[v]]) := by
-    change range ((Rat.HeightOneSpectrum.adicCompletion.padicEquiv v) ∘
-      ((↑) : O v → v.adicCompletion ℚ)) = _
-    rw [range_comp, Subtype.range_coe]
-    exact (Rat.HeightOneSpectrum.adicCompletion.padicEquiv_bijOn v).image_eq
-  rw [hrange]
-  exact padicAddHaar_integralBall p[v]
+  rw [rationalLocalIntegersAddHaar,
+    (isOpenEmbedding_localIntegerInclusion v).measurableEmbedding.comap_apply,
+    image_univ]
+  change rationalLocalFieldAddHaar v (range (Subtype.val : O v → F v)) = 1
+  rw [Subtype.range_coe]
+  exact rationalLocalFieldAddHaar_integers v
 
 private instance : (Measure.infinitePi rationalLocalIntegersAddHaar).IsAddLeftInvariant := by
   refine ⟨fun u ↦ ?_⟩

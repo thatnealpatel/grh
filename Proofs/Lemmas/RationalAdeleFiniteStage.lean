@@ -84,6 +84,15 @@ public theorem rationalAdeleFiniteStageEmbedding_finite_notMem (S : Finset V)
   change glue S x.2 v = _
   simp [glue, hv]
 
+/-- The same stage inclusion, as a homomorphism of additive groups. -/
+@[expose]
+public noncomputable def rationalAdeleFiniteStageAddEmbedding (S : Finset V) :
+    RationalAdeleFiniteStage S →+ AdeleRing (𝓞 ℚ) ℚ :=
+  AddMonoidHom.mk' (rationalAdeleFiniteStageEmbedding S) fun x y ↦ by
+    refine Prod.ext (map_add _ _ _) (FiniteAdeleRing.ext ℚ fun v ↦ ?_)
+    change glue S (x.2 + y.2) v = glue S x.2 v + glue S y.2 v
+    by_cases hv : v ∈ S <;> simp [glue, hv]
+
 public theorem isEmbedding_rationalAdeleFiniteStageEmbedding (S : Finset V) :
     IsEmbedding (rationalAdeleFiniteStageEmbedding S) := by
   have hfin : IsEmbedding (finitePart S) := by
@@ -106,5 +115,24 @@ public theorem range_rationalAdeleFiniteStageEmbedding (S : Finset V) :
     refine ⟨x, Prod.ext (realEquiv.symm_apply_apply _) (FiniteAdeleRing.ext ℚ fun v ↦ ?_)⟩
     change glue S x.2 v = a.2 v
     by_cases hv : v ∈ S <;> simp [glue, hv, x]
+
+/-- Every stage carries the induced topology and has open image in the adeles. -/
+public theorem isOpenEmbedding_rationalAdeleFiniteStageEmbedding (S : Finset V) :
+    IsOpenEmbedding (rationalAdeleFiniteStageEmbedding S) := by
+  refine ⟨isEmbedding_rationalAdeleFiniteStageEmbedding S, ?_⟩
+  rw [range_rationalAdeleFiniteStageEmbedding]
+  exact (RestrictedProduct.isOpen_forall_imp_mem
+    (fun v : V ↦ Valued.isOpen_valuationSubring (F v))).preimage continuous_snd
+
+/-- Each adele belongs to the stage obtained by allowing all its nonintegral coordinates. -/
+public theorem iUnion_range_rationalAdeleFiniteStageEmbedding :
+    (⋃ S : Finset V, range (rationalAdeleFiniteStageEmbedding S)) = univ := by
+  refine eq_univ_of_forall fun a ↦ ?_
+  have hfinite : {v : V | a.2 v ∉ O v}.Finite := eventually_cofinite.mp a.2.property
+  refine mem_iUnion.mpr ⟨hfinite.toFinset, ?_⟩
+  rw [range_rationalAdeleFiniteStageEmbedding]
+  intro v hv
+  by_contra hnot
+  exact hv (hfinite.mem_toFinset.mpr hnot)
 
 end Masullo

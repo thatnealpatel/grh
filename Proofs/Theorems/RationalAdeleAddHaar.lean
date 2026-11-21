@@ -46,24 +46,27 @@ private noncomputable def closedWindow : PositiveCompacts (ℝ × K) where
     rw [interior_prod_eq, interior_Icc, interior_univ]
     exact (nonempty_Ioo.mpr zero_lt_one).prod univ_nonempty
 
-private noncomputable def closedStrip : PositiveCompacts A :=
+/-- The closed calibration strip for rational additive Haar, in adele coordinates. -/
+public noncomputable def rationalAdeleClosedUnitStrip : PositiveCompacts A :=
   closedWindow.map rationalAdeleIntegralEmbedding
     isOpenEmbedding_rationalAdeleIntegralEmbedding.continuous
     isOpenEmbedding_rationalAdeleIntegralEmbedding.isOpenMap
 
-private theorem image_halfOpenWindow :
-    rationalAdeleIntegralEmbedding '' (Ico 0 1 ×ˢ (univ : Set K)) = rationalAdeleUnitStrip := by
-  ext a
+private theorem mem_image_integralWindow {s : Set ℝ} {a : A} :
+    a ∈ rationalAdeleIntegralEmbedding '' (s ×ˢ (univ : Set K)) ↔
+      a ∈ rationalIntegralAdeles ∧ rationalAdeleReal a ∈ s := by
   constructor
   · rintro ⟨x, hx, rfl⟩
-    change (rationalIntegralAdelesHomeomorph x : A) ∈ rationalIntegralAdeles ∧
-      rationalAdeleReal (rationalIntegralAdelesHomeomorph x : A) ∈ Ico 0 1
     exact ⟨(rationalIntegralAdelesHomeomorph x).property,
       (rationalIntegralAdelesHomeomorph_real x).symm ▸ hx.1⟩
   · rintro ⟨ha, hr⟩
     obtain ⟨x, hx⟩ := rationalIntegralAdelesHomeomorph.surjective ⟨a, ha⟩
     refine ⟨x, ⟨?_, mem_univ _⟩, congrArg Subtype.val hx⟩
     rwa [← rationalIntegralAdelesHomeomorph_real x, hx]
+
+private theorem image_halfOpenWindow :
+    rationalAdeleIntegralEmbedding '' (Ico 0 1 ×ˢ (univ : Set K)) = rationalAdeleUnitStrip :=
+  Set.ext fun _ ↦ mem_image_integralWindow
 
 /-- The local integral rings carry their Borel sigma-algebras. -/
 public noncomputable scoped instance rationalLocalIntegersMeasurableSpace (v : V) :
@@ -72,6 +75,11 @@ public noncomputable scoped instance rationalLocalIntegersMeasurableSpace (v : V
 public scoped instance rationalLocalIntegersBorelSpace (v : V) : BorelSpace (O v) := ⟨rfl⟩
 
 public scoped instance rationalFiniteIntegersBorelSpace : BorelSpace K := Pi.borelSpace
+
+public theorem mem_rationalAdeleClosedUnitStrip {a : A} :
+    a ∈ (rationalAdeleClosedUnitStrip : Set A) ↔
+      a ∈ rationalIntegralAdeles ∧ rationalAdeleReal a ∈ Icc (0 : ℝ) 1 :=
+  mem_image_integralWindow
 
 /-- The additive Haar probability on the compact product of local integral rings. -/
 public noncomputable def rationalFiniteIntegersHaar : Measure K :=
@@ -91,7 +99,7 @@ variable [MeasurableSpace A] [BorelSpace A]
 
 /-- Additive Haar measure on the rational adeles, normalized by the closed real
 unit interval with integral finite coordinates. -/
-public noncomputable def rationalAdeleAddHaar : Measure A := Measure.addHaarMeasure closedStrip
+public noncomputable def rationalAdeleAddHaar : Measure A := Measure.addHaarMeasure rationalAdeleClosedUnitStrip
 
 public instance : rationalAdeleAddHaar.IsAddHaarMeasure := by
   unfold rationalAdeleAddHaar
@@ -100,6 +108,10 @@ public instance : rationalAdeleAddHaar.IsAddHaarMeasure := by
 public instance : rationalAdeleAddHaar.Regular := by
   unfold rationalAdeleAddHaar
   infer_instance
+
+public theorem rationalAdeleAddHaar_closedUnitStrip :
+    rationalAdeleAddHaar rationalAdeleClosedUnitStrip = 1 :=
+  Measure.addHaarMeasure_self
 
 /-- On the open integral-finite stage, the upstairs measure is Lebesgue measure
 in the real coordinate times additive Haar probability in the compact factor. -/
@@ -113,7 +125,7 @@ public theorem comap_rationalAdeleAddHaar_integral :
   have hμ : μ closedWindow = 1 := by
     change (rationalAdeleAddHaar.comap j) closedWindow = 1
     rw [hj.measurableEmbedding.comap_apply]
-    exact Measure.addHaarMeasure_self (K₀ := closedStrip)
+    exact Measure.addHaarMeasure_self (K₀ := rationalAdeleClosedUnitStrip)
   have hprod : (volume.prod rationalFiniteIntegersHaar) (closedWindow : Set (ℝ × K)) = 1 := by
     change (volume.prod rationalFiniteIntegersHaar) (Icc 0 1 ×ˢ univ) = 1
     rw [Measure.prod_prod, Real.volume_Icc, measure_univ]
