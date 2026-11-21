@@ -85,6 +85,15 @@ public theorem zetaZeroOrder_pos (ρ : criticalStripZetaZeros) : 0 < zetaZeroOrd
   rw [← analyticOrderAt_entireZeta_eq hpos hlt]
   exact analyticOrderAt_entireZeta_ne_top _
 
+/-- The natural multiplicity loses no information about the finite analytic order. -/
+public theorem zetaZeroOrder_cast_eq (ρ : criticalStripZetaZeros) :
+    (zetaZeroOrder ρ : ℕ∞) = analyticOrderAt riemannZeta (ρ : ℂ) := by
+  obtain ⟨_, hpos, hlt⟩ := mem_criticalStripZetaZeros.mp ρ.property
+  have horder := analyticOrderAt_entireZeta_eq hpos hlt
+  unfold zetaZeroOrder
+  rw [← horder]
+  exact ENat.natCast_toNat (analyticOrderAt_entireZeta_ne_top _)
+
 /-- At each critical-strip zero inside the counting set, the divisor used by
 Jensen's inequality records the actual zeta multiplicity. -/
 public theorem divisor_entireZeta_apply {U : Set ℂ} (ρ : criticalStripZetaZeros)
@@ -92,11 +101,7 @@ public theorem divisor_entireZeta_apply {U : Set ℂ} (ρ : criticalStripZetaZer
   have han : AnalyticOnNhd ℂ entireZeta U := entireZeta_analyticOnNhd.mono (subset_univ _)
   obtain ⟨_, hpos, hlt⟩ := mem_criticalStripZetaZeros.mp ρ.property
   have horder := analyticOrderAt_entireZeta_eq hpos hlt
-  have hcoe : (zetaZeroOrder ρ : ℕ∞) = analyticOrderAt riemannZeta (ρ : ℂ) := by
-    unfold zetaZeroOrder
-    rw [← horder]
-    exact ENat.natCast_toNat (analyticOrderAt_entireZeta_ne_top _)
-  rw [han.divisor_apply hρ, horder, ← hcoe]
+  rw [han.divisor_apply hρ, horder, ← zetaZeroOrder_cast_eq ρ]
   simp
 
 end Masullo
