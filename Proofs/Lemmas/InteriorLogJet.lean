@@ -18,6 +18,11 @@ log coordinates. Multiplication by this weight puts the norm in `L²(dx)` form. 
 public noncomputable def symmetricStripWeightRoot (α s x : ℝ) : ℝ :=
   Real.exp (α * |x|) * (1 + x ^ 2) ^ (s / 4)
 
+public theorem symmetricStripWeightRoot_apply (α s x : ℝ) :
+    symmetricStripWeightRoot α s x = Real.exp (α * |x|) * (1 + x ^ 2) ^ (s / 4) := by
+  unfold symmetricStripWeightRoot
+  rfl
+
 public theorem symmetricStripWeightRoot_pos (α s x : ℝ) :
     0 < symmetricStripWeightRoot α s x := by
   unfold symmetricStripWeightRoot

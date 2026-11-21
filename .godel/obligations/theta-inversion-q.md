@@ -713,23 +713,42 @@ Proposition 9.2.2.11 assumes a nondegenerate interval. Its extracted
 reciprocal weight informs the calculation but does not supply the
 width-zero proof. The printed cap still needs a rendered-page check.
 
-## Next runnable analytic step: Use smooth tests on the nondecaying tail
+## Checked obstruction on smooth compactly supported profiles
 
-Definition 9.2.2.1, p. 412, starts the real multiplicative completion on
-$S_E(\mathbb R_{>0})$. In the digest-matched extraction of Definition
-B.2.1.1, p. 593, the decay conditions allow smooth compactly supported
-profiles, but the indicator cuts above need not be smooth. Prove the
-same obstruction on smooth compactly supported log profiles, which give
-inputs to that real-line starting space after $t=e^x$.
+`Masullo.boundaryLogJet_exists_smooth_extension_iff` in
+[BoundaryLogJet.lean](../../Proofs/Props/BoundaryLogJet.lean) proves that
+requiring agreement only on smooth compactly supported profiles still
+forces $2m+1<s$ (with $s\ge 0$, $|\Re z|=\alpha$, and any natural $m$).
+The converse uses the existing boundary functional. Equality is excluded also
+at width zero. No zero or multiplicity hypothesis is used.
+`Masullo.weightedCompact_memLp` embeds each profile as the $L^2(dx)$
+class of $Wu$; the pairing is $\int u(x)x^m e^{zx}\,dx$.
 
-For $n\ge 2$, use `ContDiffBump` centered at $(n+1)/2$ with inner radius
-$(n-1)/2$ and outer radius $n/2$. It is one on $[1,n]$, takes values in
-$[0,1]$, and is supported in $[1/2,n+1/2]$. Reflect the bump when
-$\Re z<0$; use the positive side at width zero. Set $u_n=\chi_n
-\overline k/W$, using the smooth signed formula for $W$ on that side
-(`Real.rpow` has a strictly positive base). Then $u_n$ is globally smooth
-and compactly supported, and agreement forces
-$\int\chi_n|k|^2\ge\int\chi_n^2|k|^2=\|Wu_n\|_2^2$.
-The bound on $\|Wu_n\|_2$ bounds the nondecaying tail mass on the inner
-intervals, contradicting the checked power test. This route does not
-need density or an identification of the adelic completion.
+The proof selects the nondecaying tail, using the positive tail at
+width zero. For $n\ge 0$, a `ContDiffBump` equals one on $[1,n+2]$
+and vanishes outside $[1/2,n+5/2]$ in the selected orientation. With
+$g=x^m e^{zx}$ and $V=e^{(\Re z)x}(1+x^2)^{s/4}$, set
+$u_n=\chi_n\overline{g/V}/V$. The globally smooth $V$ coincides with
+$W$ on the bump support, so the kink in $W$ at zero is immaterial.
+[SmoothKernelPairing.lean](../../Proofs/Lemmas/SmoothKernelPairing.lean)
+uses $Wu_n=\chi_n\bar k$, $u_n g=\chi_n|k|^2$, and
+$\chi_n^2\le\chi_n$ to bound the weighted test norms by $\|F\|$.
+Monotone convergence bounds the full tail mass by $\|F\|^2$.
+The checked power criterion for $|x|^{2m}/(1+x^2)^{s/2}$ on that tail
+then gives the strict inequality, with logarithmic divergence at equality.
+
+Independent Yah statement review checked this interface against the
+SHA-256-matched extraction of Definition 9.2.2.1 and (9.2.2.4), p. 412,
+(9.2.2.37)–(9.2.2.41), p. 417, and (10.2.2.3)–(10.2.2.5),
+pp. 445–446. Under $t=e^x$, the smooth compact log profiles have support
+away from both endpoints and meet the decay conditions of Definition
+B.2.1.1, p. 593, in the real-line starting domain $S_E(\mathbb R_{>0})$.
+This inclusion is a source interpretation, not a Lean formalization of
+that domain. The obstruction is a project repair, not a visual check
+of the printed cap, a claim about testing on theta inputs alone, or an
+identification of the adelic completion. The p. 417 duality proposition
+assumes a nondegenerate interval, while the checked result does not.
+
+The independent [Haar window comparison](#next-haar-step-compare-the-upstairs-window-measure)
+remains runnable. Verification of the exact printed endpoint still
+requires the visual gate recorded in the frontier.

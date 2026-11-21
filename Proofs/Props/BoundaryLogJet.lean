@@ -2,8 +2,10 @@ module
 
 public import Lemmas.CompactKernelPairing
 public import Lemmas.InteriorLogJet
+public import Lemmas.SmoothKernelPairing
 import Lemmas.SobolevJetTail
 import Mathlib.MeasureTheory.Measure.Lebesgue.Integral
+import Mathlib.Analysis.SpecialFunctions.Pow.Deriv
 
 /-! # The exact boundary threshold for weighted Mellin jets
 
@@ -13,6 +15,7 @@ exponential decay, and equality in the polynomial threshold is excluded.
 -/
 
 open MeasureTheory Set
+open scoped ContDiff
 
 namespace Masullo
 
@@ -117,5 +120,78 @@ public theorem boundaryLogJet_exists_extension_iff {α s : ℝ} (hs : 0 ≤ s) {
       2 * (m : ℝ) + 1 < s := by
   exact (exists_compactKernelPairing_iff (continuous_dividedLogJetKernel α s z m)).trans
     (memLp_boundaryLogJet_iff hs hz m)
+
+/-- Even when agreement is required only on smooth compactly supported
+profiles, the boundary Mellin pairing extends to the ambient weighted
+log line exactly for `2m + 1 < s`. The profile `u` is represented by `W*u`
+in `L²(dx)`, where `W` is the square root of the symmetric strip weight.
+Width zero is allowed. -/
+public theorem boundaryLogJet_exists_smooth_extension_iff {α s : ℝ} (hs : 0 ≤ s) {z : ℂ}
+    (hz : |z.re| = α) (m : ℕ) :
+    (∃ F : Lp ℂ 2 (volume : Measure ℝ) →L[ℂ] ℂ,
+      ∀ (u : ℝ → ℂ) (hu : ContDiff ℝ ∞ u) (hc : HasCompactSupport u),
+        F ((weightedCompact_memLp (Complex.continuous_ofReal.comp
+          (continuous_symmetricStripWeightRoot α s)) hu.continuous hc).toLp _) =
+          ∫ x : ℝ, u x * ((x : ℂ) ^ m * Complex.exp (z * x))) ↔ 2 * (m : ℝ) + 1 < s := by
+  constructor
+  · rintro ⟨F, hF⟩
+    let w : ℝ → ℂ := fun x ↦ symmetricStripWeightRoot α s x
+    let g : ℝ → ℂ := fun x ↦ (x : ℂ) ^ m * Complex.exp (z * x)
+    let k : ℝ → ℂ := fun x ↦ g x / w x
+    -- Use the smooth signed weight, which agrees with `w` on the nondecaying tail.
+    let v : ℝ → ℂ := fun x ↦ (Real.exp (z.re * x) * (1 + x ^ 2) ^ (s / 4) : ℝ)
+    let u₀ : ℝ → ℂ := fun x ↦ star (g x / v x) / v x
+    have hv : ∀ x, v x ≠ 0 := fun x ↦ by
+      dsimp only [v]
+      exact_mod_cast (show 0 < Real.exp (z.re * x) * (1 + x ^ 2) ^ (s / 4) by positivity).ne'
+    have hv' : ContDiff ℝ ∞ v := Complex.ofRealCLM.contDiff.comp
+      ((by fun_prop : ContDiff ℝ ∞ (fun x : ℝ ↦ Real.exp (z.re * x))).mul
+        ((by fun_prop : ContDiff ℝ ∞ (fun x : ℝ ↦ 1 + x ^ 2)).rpow_const_of_ne
+          fun x ↦ (show 0 < 1 + x ^ 2 by positivity).ne'))
+    have hx : ContDiff ℝ ∞ (fun x : ℝ ↦ (x : ℂ)) := Complex.ofRealCLM.contDiff
+    have hg : ContDiff ℝ ∞ g := (hx.pow m).mul (contDiff_const.mul hx).cexp
+    have hu₀ : ContDiff ℝ ∞ u₀ := by
+      simpa only [u₀, div_eq_mul_inv, Function.comp_apply, Complex.conjCLE_apply,
+        Complex.star_def] using
+        (Complex.conjCLE.contDiff.comp (hg.mul (hv'.fun_inv hv))).mul (hv'.fun_inv hv)
+    have hdiv (x : ℝ) : g x = w x * k x := by
+      have hw : w x ≠ 0 := by
+        dsimp only [w]
+        exact_mod_cast (symmetricStripWeightRoot_pos α s x).ne'
+      dsimp [k]
+      field_simp
+    have htail (e : ℝ ≃ₜ ℝ) (he : ContDiff ℝ ∞ (e : ℝ → ℝ))
+        (heq : ∀ x, 0 < e x → z.re * x = α * |x|) :
+        IntegrableOn (sobolevJetPolynomial s m) (e ⁻¹' Ici 1) := by
+      have hconj (x : ℝ) (hx : 0 < e x) : w x * u₀ x = star (k x) := by
+        have hwv : w x = v x := by
+          dsimp only [w, v]
+          rw [symmetricStripWeightRoot_apply, heq x hx]
+        dsimp [k, u₀]
+        rw [hwv]
+        field_simp [hv x]
+      have hi := integrableOn_sq_norm_of_smoothKernelPairing
+        (Complex.continuous_ofReal.comp (continuous_symmetricStripWeightRoot α s)) hg.continuous
+        (continuous_dividedLogJetKernel α s z m) hu₀ e he hdiv hconj F hF
+      refine hi.congr_fun (fun x hx ↦ ?_) (e.continuous.measurable measurableSet_Ici)
+      change 1 ≤ e x at hx
+      change ‖k x‖ ^ 2 = _
+      rw [show ‖k x‖ ^ 2 = _ from norm_dividedJet_sq α s z m x,
+        heq x (zero_lt_one.trans_le hx), sub_self, mul_zero, Real.exp_zero, one_mul]
+    apply (integrableOn_sobolevJetPolynomial_Ioi_iff hs m).1
+    rcases le_total 0 z.re with h | h
+    · apply (htail (Homeomorph.refl ℝ) contDiff_id (fun x hx ↦ ?_)).mono_set Ioi_subset_Ici_self
+      change 0 < x at hx
+      rw [← hz, abs_of_nonneg h, abs_of_pos hx]
+    · have hi := htail (Homeomorph.neg ℝ) contDiff_id.neg (fun x hx ↦ by
+        change 0 < -x at hx
+        rw [← hz, abs_of_nonpos h, abs_of_neg (neg_pos.mp hx), neg_mul_neg])
+      have hn : IntegrableOn (sobolevJetPolynomial s m) (Iio (-1)) :=
+        hi.mono_set (fun x hx ↦ (lt_neg.mp hx).le)
+      simpa only [sobolevJetPolynomial_neg] using hn.comp_neg_Ioi
+  · intro hm
+    exact ⟨boundaryLogJet hs hz hm, fun u hu hc ↦ (boundaryLogJet_toLp hs hz hm u
+      (weightedCompact_memLp (Complex.continuous_ofReal.comp
+        (continuous_symmetricStripWeightRoot α s)) hu.continuous hc)).2⟩
 
 end Masullo
