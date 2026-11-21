@@ -2,7 +2,7 @@
 
 This is a working map of the trace-to-zeros argument, not a complete inventory of the paper. Paragraphs and page numbers are navigation into the [pinned edition](sources/masullo/README.md); follow the handoffs for the evidence and its limitations. The finite-place and compact-test branches have Lean declarations; the trace and divisor endpoints remain open.
 
-The geometric and divisor branches have independent runnable obligations. On the geometric branch, [test nuclear factorization through the polar-free image at a fixed annular cutoff](obligations/trace-polar-free-q.md#the-literal-upper-position-cutoff-does-not-supply-the-range): The literal upper cutoff fails even to land there in the rational real model. On the conditional divisor branch, check the [pointwise and integral majorants](obligations/trace-divisor-cutoff-profiles.md#next-and-checks) locally before building the assembly on them. The pointwise, integration, and profile drafts are unelaborated and unaudited, and equality of the full and capped distributions is still open. The finite-place branch can now tackle continuity and positivity of the descended norm.
+The geometric and divisor branches have independent runnable obligations. The finite-place support branch now supplies the vanishing of the omitted linear restrictions. On the geometric branch, [test nuclear factorization through the polar-free image at a fixed annular cutoff](obligations/trace-polar-free-q.md#the-literal-upper-position-cutoff-does-not-supply-the-range): The literal upper cutoff fails even to land there in the rational real model. On the conditional divisor branch, check the [pointwise and integral majorants](obligations/trace-divisor-cutoff-profiles.md#next-and-checks) locally before building the assembly on them. The pointwise, integration, and profile drafts are unelaborated and unaudited, and equality of the full and capped distributions is still open.
 
 ## Toward the trace identity (Theorem 12.5.1.1, pp. 519–520)
 
@@ -16,7 +16,7 @@ The [final scalar comparison](obligations/trace-assembly.json) has a visual read
 
 The [single-place norm](obligations/single-place-norm.md) and [idele-class support lemma](obligations/finite-place-support.md) are in Lean. The latter descends the norm by the product formula and proves that the entire single-place restriction vanishes given the support-band, residue-norm, and norm-one vanishing hypotheses. This applies to omitted linear local terms in (12.5.1.2), not the two-sided orbital trace.
 
-The [finite exceptional set argument](obligations/finite-place-support.md#choosing-the-finite-exceptional-set) supplies the norm-band and residue-norm hypotheses from compact support, positivity, and continuity. Next prove continuity and positivity of the descended norm (continuity in Lemmas A.1.3.3–A.1.3.4), using the existing Lean norm maps and Mathlib's idele topology. This does not require proving the norm-one quotient compact.
+The [finite exceptional set argument](obligations/finite-place-support.md#choosing-the-finite-exceptional-set) is now in Lean. The descended norm is continuous and positive, and the topological support of a compactly supported test lies in a strict norm band. Bounded ideal norms give a finite exceptional set, so no separate band or residue-norm premise is needed for vanishing outside that set. This does not supply the orbital trace comparison or the additional conditions on $S$ in the proof on p. 520.
 
 ## From trace to zeros (Chapters 1, 13, and 14)
 

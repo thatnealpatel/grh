@@ -1,6 +1,10 @@
 module
 
 public import Lemmas.SinglePlaceNorm
+public import Mathlib.Topology.Algebra.Support
+
+import Mathlib.Topology.Algebra.Group.Units
+import Mathlib.Topology.Order.Compact
 
 /-!
 # Finite-place restrictions of idele-class tests
@@ -22,6 +26,11 @@ open scoped WithZero
 
 variable {K : Type*} [Field K] [NumberField K]
 
+private theorem hasFiniteMulSupport_finiteNorm (x : IdeleGroup (𝓞 K) K) :
+    (fun v : HeightOneSpectrum (𝓞 K) ↦ ‖(x : AdeleRing (𝓞 K) K).2 v‖).HasFiniteMulSupport := by
+  let snd : AdeleRing (𝓞 K) K →* IsDedekindDomain.FiniteAdeleRing (𝓞 K) K := MonoidHom.snd _ _
+  exact NumberField.FiniteAdeleRing.hasFiniteMulSupport_norm (Units.map snd x)
+
 /-- The adelic norm as a multiplicative map on the idele group. -/
 public noncomputable def ideleNorm : IdeleGroup (𝓞 K) K →* ℝ where
   toFun x := ‖(x : AdeleRing (𝓞 K) K)‖
@@ -40,13 +49,51 @@ public noncomputable def ideleNorm : IdeleGroup (𝓞 K) K →* ℝ where
       (∏ᶠ v : HeightOneSpectrum (𝓞 K), ‖(x : AdeleRing (𝓞 K) K).2 v *
         (y : AdeleRing (𝓞 K) K).2 v‖) = _
     simp only [norm_mul, mul_pow, Finset.prod_mul_distrib]
-    let snd : AdeleRing (𝓞 K) K →* IsDedekindDomain.FiniteAdeleRing (𝓞 K) K :=
-      MonoidHom.snd _ _
-    have hfin (z : IdeleGroup (𝓞 K) K) :
-        (fun v : HeightOneSpectrum (𝓞 K) ↦ ‖(z : AdeleRing (𝓞 K) K).2 v‖).HasFiniteMulSupport :=
-      NumberField.FiniteAdeleRing.hasFiniteMulSupport_norm (Units.map snd z)
-    rw [finprod_mul_distrib (hfin x) (hfin y)]
+    rw [finprod_mul_distrib (hasFiniteMulSupport_finiteNorm x) (hasFiniteMulSupport_finiteNorm y)]
     ac_rfl
+
+/-- The idelic norm is continuous for the topology on units (Appendix A.1.3.3). -/
+public theorem continuous_ideleNorm : Continuous (ideleNorm (K := K)) := by
+  let integral : Set (IsDedekindDomain.FiniteAdeleRing (𝓞 K) K) :=
+    {a | ∀ v, a v ∈ v.adicCompletionIntegers K}
+  have hopen : IsOpen integral :=
+    RestrictedProduct.isOpen_forall_mem (fun _ ↦ Valued.isOpen_valuationSubring _)
+  let value : IdeleGroup (𝓞 K) K → AdeleRing (𝓞 K) K := (↑)
+  have hval : Continuous value := Units.continuous_val
+  have hinv : Continuous (fun x ↦ value x⁻¹) := Units.continuous_coe_inv
+  let U : Set (IdeleGroup (𝓞 K) K) :=
+    {x | (value x).2 ∈ integral ∧ (value x⁻¹).2 ∈ integral}
+  have hU : IsOpen U := (hopen.preimage hval.snd).inter (hopen.preimage hinv.snd)
+  have hOne : (1 : IdeleGroup (𝓞 K) K) ∈ U := by
+    have hone : ∀ v : HeightOneSpectrum (𝓞 K), (1 : v.adicCompletion K) ∈
+        v.adicCompletionIntegers K := fun _ ↦ one_mem _
+    exact ⟨hone, hone⟩
+  let arch (x : IdeleGroup (𝓞 K) K) : ℝ := ∏ v : InfinitePlace K, ‖(value x).1 v‖ ^ v.mult
+  have hArch : Continuous arch :=
+    continuous_finsetProd _ (fun v _ ↦ ((continuous_apply v).comp hval.fst).norm.pow v.mult)
+  -- On this identity neighborhood the finite-place factors are all one.
+  apply continuous_of_continuousAt_one ideleNorm (hArch.continuousAt.congr ?_)
+  filter_upwards [hU.mem_nhds hOne] with x hx
+  change (∀ v, (value x).2 v ∈ v.adicCompletionIntegers K) ∧
+    (∀ v, (value x⁻¹).2 v ∈ v.adicCompletionIntegers K) at hx
+  have hlocal (v : HeightOneSpectrum (𝓞 K)) : ‖(value x).2 v‖ = 1 := by
+    have norm_le_one {a : v.adicCompletion K} (ha : a ∈ v.adicCompletionIntegers K) : ‖a‖ ≤ 1 :=
+      Valued.toNormedField.norm_le_one_iff.mpr
+        ((HeightOneSpectrum.mem_adicCompletionIntegers (𝓞 K) K v).mp ha)
+    have ha := norm_le_one (hx.1 v)
+    have hb := norm_le_one (hx.2 v)
+    have hab : (value x).2 v * (value x⁻¹).2 v = 1 :=
+      congrArg (fun a : AdeleRing (𝓞 K) K ↦ a.2 v) x.val_inv
+    have hnorm : ‖(value x).2 v‖ * ‖(value x⁻¹).2 v‖ = 1 := by
+      rw [← norm_mul, hab, norm_one]
+    exact ha.antisymm (calc
+      1 = ‖(value x).2 v‖ * ‖(value x⁻¹).2 v‖ := hnorm.symm
+      _ ≤ ‖(value x).2 v‖ * 1 := mul_le_mul_of_nonneg_left hb (norm_nonneg _)
+      _ = ‖(value x).2 v‖ := mul_one _)
+  change arch x = ‖value x‖
+  rw [AdeleRing.norm_apply_of_isUnit x.isUnit]
+  change arch x = arch x * ∏ᶠ v : HeightOneSpectrum (𝓞 K), ‖(value x).2 v‖
+  simp only [hlocal, finprod_one, mul_one]
 
 /-- The product formula makes the norm well-defined on idele classes. -/
 public noncomputable def ideleClassNorm : IdeleClassGroup (𝓞 K) K →* ℝ :=
@@ -56,6 +103,23 @@ public noncomputable def ideleClassNorm : IdeleClassGroup (𝓞 K) K →* ℝ :=
     apply MonoidHom.mem_ker.mpr
     change ‖algebraMap K (AdeleRing (𝓞 K) K) (u : K)‖ = 1
     exact AdeleRing.norm_algebraMap_eq_one_of_ne_zero u.ne_zero)
+
+/-- The descended norm is continuous in the quotient topology (Appendix A.1.3.4). -/
+public theorem continuous_ideleClassNorm : Continuous (ideleClassNorm (K := K)) := by
+  apply (QuotientGroup.isQuotientMap_mk (IdeleGroup.principalSubgroup (𝓞 K) K)).continuous_iff.mpr
+  exact continuous_ideleNorm
+
+/-- The descended norm takes values in the positive reals. -/
+public theorem ideleClassNorm_pos (g : IdeleClassGroup (𝓞 K) K) : 0 < ideleClassNorm g := by
+  induction g using QuotientGroup.induction_on with
+  | _ x =>
+    change 0 < ‖(x : AdeleRing (𝓞 K) K)‖
+    rw [AdeleRing.norm_apply_of_isUnit x.isUnit]
+    obtain ⟨hArch, hFin, _⟩ := AdeleRing.isUnit_iff.mp x.isUnit
+    apply mul_pos
+    · exact Finset.prod_pos (fun v _ ↦ pow_pos (norm_pos_iff.mpr (hArch v)) _)
+    · rw [finprod_eq_prod _ (hasFiniteMulSupport_finiteNorm x)]
+      exact Finset.prod_pos (fun v _ ↦ norm_pos_iff.mpr (hFin v))
 
 /-- The norm on idele classes restricts to the given local norm at a finite place. -/
 public theorem ideleClassNorm_ofAdicCompletion (v : HeightOneSpectrum (𝓞 K))
@@ -108,5 +172,40 @@ public theorem finitePlaceRestriction_eq_zero (v : HeightOneSpectrum (𝓞 K)) (
       conv_lhs => rw [← zpow_one q]
       exact zpow_le_zpow_right₀ hq₁ (by omega)
     exact (not_lt_of_ge (hq.le.trans (hlarge.trans hn'.ge))) hupp
+
+/-- The norm of the topological support of a compactly supported test lies in a
+strict band `(T⁻¹, T)` about one. -/
+public theorem exists_ideleClassNorm_band_of_hasCompactSupport
+    (φ : IdeleClassGroup (𝓞 K) K → ℂ) (hφ : HasCompactSupport φ) :
+    ∃ T : ℝ, 1 < T ∧ ∀ g ∈ tsupport φ, ideleClassNorm g ∈ Set.Ioo T⁻¹ T := by
+  by_cases hne : (tsupport φ).Nonempty
+  · obtain ⟨lo, _, hlo⟩ := hφ.exists_isMinOn hne continuous_ideleClassNorm.continuousOn
+    obtain ⟨hi, _, hhi⟩ := hφ.exists_isMaxOn hne continuous_ideleClassNorm.continuousOn
+    obtain ⟨T, hT⟩ := exists_gt (max 1 (max (ideleClassNorm lo)⁻¹ (ideleClassNorm hi)))
+    have hT₁ : 1 < T := (le_max_left _ _).trans_lt hT
+    have hTlo : (ideleClassNorm lo)⁻¹ < T :=
+      (le_max_left _ _).trans_lt ((le_max_right _ _).trans_lt hT)
+    have hThi : ideleClassNorm hi < T :=
+      (le_max_right _ _).trans_lt ((le_max_right _ _).trans_lt hT)
+    refine ⟨T, hT₁, fun g hg ↦ ⟨?_, (hhi hg).trans_lt hThi⟩⟩
+    exact ((inv_lt_comm₀ (zero_lt_one.trans hT₁) (ideleClassNorm_pos lo)).mpr hTlo).trans_le
+      (hlo hg)
+  · refine ⟨2, by norm_num, ?_⟩
+    simp [Set.not_nonempty_iff_eq_empty.mp hne]
+
+/-- A compactly supported test vanishing on the norm-one subgroup restricts to
+zero on the entire multiplicative group at every finite place outside a finite set. -/
+public theorem exists_finitePlaceRestriction_eq_zero_of_hasCompactSupport
+    (φ : IdeleClassGroup (𝓞 K) K → ℂ) (hφ : HasCompactSupport φ)
+    (hunit : ∀ g, ideleClassNorm g = 1 → φ g = 0) :
+    ∃ S : Set (HeightOneSpectrum (𝓞 K)), S.Finite ∧ ∀ v, v ∉ S →
+      ∀ u : (v.adicCompletion K)ˣ, φ (IdeleClassGroup.ofAdicCompletion (𝓞 K) K v u) = 0 := by
+  obtain ⟨T, hT, hband⟩ := exists_ideleClassNorm_band_of_hasCompactSupport φ hφ
+  refine ⟨{v | v.asIdeal.absNorm ≤ ⌈T⌉₊},
+    Ring.HasFiniteQuotients.finite_absNorm_heightOneSpectrum_le _, ?_⟩
+  intro v hv u
+  have hq : ⌈T⌉₊ < v.asIdeal.absNorm := lt_of_not_ge hv
+  exact finitePlaceRestriction_eq_zero v T hT ((Nat.le_ceil T).trans_lt (Nat.cast_lt.mpr hq))
+    φ (fun g hg ↦ hband g (subset_tsupport φ hg)) hunit u
 
 end Masullo
