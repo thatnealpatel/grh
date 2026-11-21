@@ -4,7 +4,7 @@ public import Mathlib.MeasureTheory.Function.L1Space.Integrable
 public import Mathlib.MeasureTheory.Measure.Lebesgue.Basic
 public import Mathlib.Analysis.Complex.Basic
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
-import Mathlib.Analysis.SpecialFunctions.ImproperIntegrals
+import Lemmas.ExpAbsDecay
 import Mathlib.Analysis.SpecialFunctions.Pow.Continuity
 
 /-! # An exponential majorant for the compact-strip Hardy–Sobolev weight -/
@@ -12,17 +12,6 @@ import Mathlib.Analysis.SpecialFunctions.Pow.Continuity
 open MeasureTheory
 
 namespace Masullo
-
-private theorem integrable_exp_neg_abs : Integrable (fun x : ℝ ↦ Real.exp (-|x|)) := by
-  have hleft := (integrableOn_exp_mul_Iic (a := 1) one_pos 0).congr_fun
-    (g := fun x : ℝ ↦ Real.exp (-|x|))
-    (fun x hx ↦ by simp only [one_mul, abs_of_nonpos (show x ≤ 0 from hx), neg_neg])
-    measurableSet_Iic
-  have hright := (integrableOn_exp_mul_Ioi (a := -1) (by norm_num) 0).congr_fun
-    (g := fun x : ℝ ↦ Real.exp (-|x|))
-    (fun x hx ↦ by simp only [neg_one_mul, abs_of_pos (show 0 < x from hx)])
-    measurableSet_Ioi
-  simpa only [Set.Iic_union_Ioi, integrableOn_univ] using hleft.union hright
 
 /-- One sufficiently fast exponential decay bound controls the squared norm
 integrand for the compact-strip weight (9.2.2.4), p. 412, in log coordinates. -/
@@ -32,7 +21,9 @@ public theorem integrable_hardySobolevWeight_mul_norm_sq {f : ℝ → ℂ} (hf :
     Integrable (fun x : ℝ ↦ ‖f x‖ ^ 2 *
       max (Real.exp (2 * α * x)) (Real.exp (2 * β * x)) * (1 + x ^ 2) ^ (s / 2)) := by
   let A := max |α| |β|
-  refine (integrable_exp_neg_abs.const_mul (C ^ 2)).mono' ?_ (ae_of_all _ fun x ↦ ?_)
+  have hint : Integrable (fun x : ℝ ↦ Real.exp (-|x|)) := by
+    simpa only [neg_mul, one_mul] using integrable_exp_neg_mul_abs (r := 1) one_pos
+  refine (hint.const_mul (C ^ 2)).mono' ?_ (ae_of_all _ fun x ↦ ?_)
   · apply Continuous.aestronglyMeasurable
     exact ((hf.norm.pow 2).mul (Continuous.max (by fun_prop) (by fun_prop))).mul
       ((show Continuous (fun x : ℝ ↦ 1 + x ^ 2) by fun_prop).rpow_const

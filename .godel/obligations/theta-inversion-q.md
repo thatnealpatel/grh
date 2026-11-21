@@ -465,26 +465,68 @@ Independent Yah review checked the hypotheses, the exponent sign, the
 absence of conjugation, and the single twist against the digest-matched
 extraction, not rendered pages.
 
-## Next runnable step: Show continuity of interior jet pairings
+## Checked interior jet continuity and annihilation of the theta closure
 
-Use the symmetric strip $[-\alpha,\alpha]$ and log-Lebesgue measure.
-For $|\Re(\rho-a)|<\alpha$, first prove that
-$k(x)=x^m e^{(\rho-a)x-\alpha|x|}$ belongs to complex $L^2(dx)$.
-Write $\delta=\alpha-|\Re(\rho-a)|>0$ and use the power/factorial
-estimate with $(\delta/2)|x|$ to bound $|k|$ by a constant times
-$e^{-(\delta/2)|x|}$. The pinned Mathlib interface is
-`MeasureTheory.memLp_two_iff_integrable_sq_norm` plus the two
-half-line exponential integrals.
+For $s\ge0$ and $|\Re z|<\alpha$, `Masullo.interiorLogJet` is a
+complex continuous linear functional in the log-Lebesgue $L^2$
+coordinate $U=Wu$, with
 
-In the unweighted $L^2$ coordinate $U(x)=e^{\alpha|x|}u(x)$, the
-continuous linear functional `innerSL ℂ` at the $L^2$ class of $\bar k$
-has value $\int u(x)x^m e^{(\rho-a)x}\,dx$. Conjugate the representing
-vector so that the integral has no conjugation. The bound also holds
-with Masullo's stronger weight for $s\ge0$, because the extra factor
-$(1+x^2)^{s/2}$ in the squared norm is at least one. Compare the literal
-real-place duality in (9.2.1.27)–(9.2.1.30), pp. 409–410, and the norm
-in (9.2.2.4), p. 412.
-The closed kernel then contains the closure of the twisted inputs;
-`Masullo.integrable_rationalTheta_hardySobolev` supplies their squared
-norm bound. This step does not cover strip-boundary caps, the converse
-inclusion (density), or Haar identification.
+$$
+W(x)=e^{\alpha|x|}(1+x^2)^{s/4}.
+$$
+
+This is the square root of the symmetric strip weight in (9.2.2.4),
+p. 412. The representing vector is the $L^2$ class of the **conjugate**
+of $k=x^m e^{zx}/W(x)$, so `Masullo.interiorLogJet_toLp` gives the
+absolutely convergent bilinear integral $\int u(x)x^m e^{zx}\,dx$
+for every $u$ with $Wu\in L^2$. The strict distance to the strip
+boundary gives $r=(\alpha-|\Re z|)/2>0$; the factorial estimate
+bounds $|k|$ by $(m!/r^m)e^{-r|x|}$. Conjugating the representing
+vector changes neither the bound nor the exponent in the integral.
+This implements the reciprocal-weight Cauchy–Schwarz estimate of
+(9.2.1.33)–(9.2.1.34), pp. 409–410, not the same-weight wording of
+(9.2.1.32).
+
+In [RationalThetaJetClosure.lean](../../Proofs/Theorems/RationalThetaJetClosure.lean),
+`Masullo.rationalThetaWeightedLog_closure_subset_ker` now puts the
+closure of the two-moment rational lattice inputs twisted by $e^{ax}$
+in the kernel of each jet for $z=\rho-a$, $0<\Re\rho<1$,
+$|\Re(\rho-a)|<\alpha$, and $m<\operatorname{ord}_\rho\zeta$.
+Membership in the weighted space uses the checked two-tail squared
+norm estimate with the shifted endpoint powers. Vanishing on the
+inputs is the log-moment theorem, and continuity gives vanishing on
+the closure. This is the rational log-line annihilator inclusion in
+(10.2.2.3)–(10.2.2.6), pp. 445–446, after the single twist from
+(10.1.1.3), p. 434. It uses neither the cited finite-projector
+convergence nor the converse inclusion. The existing
+[totality audit](trace-spectral-strip-q.md#source-interface-a-missing-totality-step)
+explains the reversed nesting in Theorem 9.3.2.6, p. 426. There is no
+adelic Haar identification in this theorem.
+
+## Next runnable analytic step: Check the strict boundary threshold
+
+Keep the same log-Lebesgue coordinate and allow $|\Re z|=\alpha$,
+including $\alpha=0$. The square of the divided kernel has no
+exponential decay on at least one half-line. There it is
+$|x|^{2m}(1+x^2)^{-s/2}$, comparable on $|x|>1$ to
+$|x|^{2m-s}$ by $x^2\le 1+x^2\le2x^2$. On the other half-line
+its square is bounded above by the same polynomial expression, and
+it is continuous on compact intervals. Formalize the resulting
+$L^2$ criterion **$2m+1<s$** for $s\ge0$, and then reuse the
+bilinear integral and closed-kernel proof for the allowed orders.
+`integrableOn_Ioi_rpow_iff` gives both directions of the power test
+on $(1,\infty)$ in pinned Mathlib; reflection treats the negative
+half-line. The same criterion should give failure of bounded
+extension for the excluded jets by testing on truncations of the
+conjugate divided kernel in the $L^2$ coordinate.
+
+In the digest-matched layout extraction, (10.2.2.5), p. 446, uses
+$\lfloor(s-1)/2\rfloor+1$ as the boundary cap before taking the
+minimum with multiplicity. For the analogous singleton cap
+(10.3.1.4), p. 448, the text explicitly defines the bracket by
+$N\le x$, not $N<x$. At $s=2m+1$ the literal bound would include
+order $m$ if the multiplicity exceeds $m$, but the endpoint power is
+$x^{-1}$ and the dual norm diverges. In particular, $s=1$ fails for
+a boundary point evaluation. This reading is provisional and the
+strict criterion is a log-line repair, not an assertion about the
+rendered glyphs or a failure at the separate $s=2$ cap.
