@@ -764,30 +764,61 @@ kernel of the single character. The review did not inspect rendered
 pages. Additive Haar, Plancherel, and adelic Poisson summation are still
 open.
 
-## Next Fourier step: Clear the finite denominators of an adele
+## Checked clearing of finite adelic denominators
 
-Prove `∀ a : AdeleRing (𝓞 ℚ) ℚ, ∃ q : ℚ, ∀ v,
-(a - algebraMap ℚ (AdeleRing (𝓞 ℚ) ℚ) q).2 v ∈ v.adicCompletionIntegers ℚ`.
-This is the surjectivity input for the additive quotient comparison
-(A.1.2.2), p. 541, in the digest-matched extraction. It is also the
-first step of a direct rational annihilator proof, rather than assuming
-the reverse inclusion from the S-local argument in A.3.1.11.
+[`Masullo.exists_rational_sub_mem_integral`](../../Proofs/Theorems/RationalAdeleDenominators.lean)
+proves that for every $a\in\mathbb A_{\mathbb Q}$ there is one
+$q\in\mathbb Q$ such that $a_v-q\in\mathcal O_v$ at **every** finite
+place $v$. There is no restriction on the real coordinate.
 
-Generalize the local rational-turns construction in
-[RationalPadicPhase.lean](../../Proofs/Lemmas/RationalPadicPhase.lean)
-from a rational input to any $x\in\mathbb Q_p$: Clear denominators
-with `exists_padic_integral_numerator` and choose the nonnegative
-cyclic residue $b$, so $b/p^n$ has the same phase as $x$ and has phase
-one at every other prime. Sum those rational representatives over the
-finite nonintegral support. The character law and the checked exact
-local kernels give the stated integrality after subtraction. This
-algebraic step alone does not identify the quotient topology. Once it
-is proved, the annihilator test at $1$ forces the remaining real
-coordinate to be an integer. Subtract that integer and test against
-each $p^{-n}$: Only the $p$-factor can contribute, and integrality for
-all $n$ forces the original $p$-coordinate to vanish. This separates
-the global lattice equality from identification of the full Pontryagin
-dual or Haar normalization.
+[`Masullo.exists_padicPhase_turns`](../../Proofs/Lemmas/RationalPadicPhase.lean)
+now works for arbitrary $x\in\mathbb Q_p$, not just rational input.
+Scale $x$ by $p^n$ into $\mathbb Z_p$, choose its nonnegative residue
+$b$ modulo $p^n$, and take $t=b/p^n$. Its positive local character
+matches $x$ at $p$, equals $e^{2\pi i t}$ there, and is one at every
+other prime. Transport to the finite completions and conjugate as in
+our adelic character. Sum the rational representatives over the finite
+set of nonintegral coordinates. At each place, at most its own summand
+contributes to the character of $q$. Outside that set both characters
+are one. The exact local kernel then puts $a_v-q$ in $\mathcal O_v$.
+
+Independent Yah statement review checked the argument, including the
+empty exceptional set, against the SHA-256-matched layout extraction.
+This proves the representative/surjectivity part of (A.1.2.2), p. 541,
+over $\mathbb Q$, not the whole quotient isomorphism. The proof is a
+direct arithmetic construction, not an appeal to the manuscript's
+quotient or duality claims. Example A.3.1.11, pp. 558–559, concerns an
+$S$-local lattice and invokes a quotient and finite-index argument.
+Neither its $S$-local annihilator nor the global rational annihilator
+is a conclusion here. Rendered-page verification remains open.
+
+## Next Fourier step: Identify the rational diagonal annihilator
+
+On `A := AdeleRing (𝓞 ℚ) ℚ`, prove
+`(∀ r : ℚ, rationalAdeleAddChar (a * algebraMap ℚ A r) = 1) ↔
+ ∃ q : ℚ, a = algebraMap ℚ A q`.
+This is a direct global rational argument, not Example A.3.1.11's
+$S$-local finite-index proof.
+
+- Diagonal triviality and multiplication of rational casts give the
+  easy direction. In the other direction use
+  `exists_rational_sub_mem_integral` and note that subtracting a
+  diagonal rational preserves the tests by distributivity and the
+  character law.
+- Test at $r=1$. Use `rationalAdeleAddChar_eq_prod` with the empty
+  finite set and `Complex.exp_eq_one_iff` to show that the remaining
+  real coordinate is an integer. Subtract this diagonal integer,
+  which preserves local integrality, to make the real coordinate zero.
+- For the place corresponding to $p$, test at $r=p^{-n}$ and use a
+  singleton finite set. At every other place $p^{-n}$ is integral,
+  so those factors are one. The singleton factor and the exact local
+  kernel force $p^{-n}a_p$ to be integral for all $n$. For $a_p\ne0$,
+  `Padic.valuation_mul`, `Padic.valuation_inv`, `Padic.valuation_pow`,
+  and `Padic.valuation_p` give valuation $v_p(a_p)-n$, contradicting
+  `Padic.norm_le_one_iff_val_nonneg` for $n>v_p(a_p)$.
+
+The annihilator identity alone would not identify the full Pontryagin
+dual, normalize global additive Haar, or prove Poisson summation.
 
 ## Checked real-lattice inversion
 
@@ -1253,5 +1284,6 @@ is now checked on the separate additive branch, as is the [scaled and
 translated formula](#checked-fourier-transform-of-dilated-and-translated-integral-balls).
 The [diagonal phase cancellation](#checked-cancellation-of-the-rational-diagonal-phases)
 is now checked, as is the [rational adelic character](#checked-rational-adelic-character).
-The [finite-denominator clearing step](#next-fourier-step-clear-the-finite-denominators-of-an-adele)
-remains open.
+The [finite-denominator clearing step](#checked-clearing-of-finite-adelic-denominators)
+is checked. The [rational diagonal annihilator](#next-fourier-step-identify-the-rational-diagonal-annihilator)
+is next.

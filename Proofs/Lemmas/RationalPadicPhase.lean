@@ -58,14 +58,6 @@ private theorem rationalPadicPhase_primePower (p : Nat.Primes) (n b : ℕ) :
   congr 1
   ring
 
-private theorem exists_prime_power_phase (p : Nat.Primes) (r : ℚ) :
-    ∃ n b : ℕ, rationalPadicPhase p r = rationalPadicPhase p ((b : ℚ) / (p : ℚ) ^ n) := by
-  obtain ⟨n, a, ha⟩ := exists_padic_integral_numerator p (r : ℚ_[(p : ℕ)])
-  refine ⟨n, a.appr n, ?_⟩
-  rw [rationalPadicPhase_primePower_residue]
-  change padicStdAddChar p (r : ℚ_[(p : ℕ)]) = _
-  exact padicStdAddChar_apply_of_scaled_integral p ha
-
 private theorem cross_phase_eq_one {p q : Nat.Primes} (h : p ≠ q) (n b : ℕ) :
     rationalPadicPhase p ((b : ℚ) / (q : ℚ) ^ n) = 1 := by
   have hc : (p : ℕ).Coprime (q : ℕ) :=
@@ -76,18 +68,32 @@ private theorem cross_phase_eq_one {p q : Nat.Primes} (h : p ≠ q) (n b : ℕ) 
   rw [norm_div, norm_pow, Padic.norm_natCast_eq_one_iff.mpr hc, one_pow, div_one]
   simpa only [Int.cast_natCast] using Padic.norm_int_le_one (p := (p : ℕ)) (b : ℤ)
 
+/-- The character of any p-adic input is represented by rational turns that
+are integral at every other prime. -/
+public theorem exists_padicPhase_turns (p : Nat.Primes) :
+    letI : Fact (p : ℕ).Prime := ⟨p.property⟩
+    ∀ x : ℚ_[(p : ℕ)], ∃ t : ℚ,
+      rationalPadicPhase p t = padicStdAddChar p x ∧
+      rationalPadicPhase p t = Complex.exp (2 * Real.pi * Complex.I * (t : ℂ)) ∧
+      ∀ q : Nat.Primes, q ≠ p → rationalPadicPhase q t = 1 := by
+  let : Fact (p : ℕ).Prime := ⟨p.property⟩
+  intro x
+  obtain ⟨n, a, ha⟩ := exists_padic_integral_numerator p x
+  refine ⟨(a.appr n : ℚ) / (p : ℚ) ^ n, ?_, rationalPadicPhase_primePower p n _,
+    fun q hq ↦ cross_phase_eq_one hq n _⟩
+  rw [rationalPadicPhase_primePower_residue, padicStdAddChar_apply_of_scaled_integral p ha]
+  rfl
+
 /-- A local phase on a rational is represented by rational turns that are
 integral at every other prime. -/
 public theorem exists_rationalPadicPhase_turns (p : Nat.Primes) (r : ℚ) :
     ∃ t : ℚ, rationalPadicPhase p t = rationalPadicPhase p r ∧
       rationalPadicPhase p t = Complex.exp (2 * Real.pi * Complex.I * (t : ℂ)) ∧
-      ∀ q : Nat.Primes, q ≠ p → rationalPadicPhase q t = 1 := by
-  obtain ⟨n, b, hb⟩ := exists_prime_power_phase p r
-  exact ⟨_, hb.symm, rationalPadicPhase_primePower p n b,
-    fun q hq ↦ cross_phase_eq_one hq n b⟩
+      ∀ q : Nat.Primes, q ≠ p → rationalPadicPhase q t = 1 :=
+  exists_padicPhase_turns p (r : ℚ_[(p : ℕ)])
 
 /-- Applying a local phase to a finite sum multiplies its values. -/
-public theorem rationalPadicPhase_sum (p : Nat.Primes) (S : Finset Nat.Primes) (f : Nat.Primes → ℚ) :
+public theorem rationalPadicPhase_sum {ι : Type*} (p : Nat.Primes) (S : Finset ι) (f : ι → ℚ) :
     rationalPadicPhase p (∑ q ∈ S, f q) = ∏ q ∈ S, rationalPadicPhase p (f q) := by
   classical
   induction S using Finset.induction_on with
