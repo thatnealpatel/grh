@@ -48,7 +48,7 @@ Take $w=\rho-1/2$ for distinct nontrivial zeta zeros and $d_w=\operatorname{ord}
 
 Independent Yah statement review confirmed that the compact-set finiteness, countable index, strip bound, injectivity, and every-point gap suffice for the geometric inputs, without an assumption at the strip boundary or a statement about the central weight.
 
-For the arithmetic branch, the next step is to [transfer orders to an entire function](trace-divisor-summability.md#next-runnable-step-transfer-orders-to-an-entire-function) before proving the quadratic summability bound. The comparison on the shared tests and the weight at the center remain separate.
+For the arithmetic branch, Lean now transfers the orders to an entire function. The next step is to [bound a disk count with Jensen](trace-divisor-summability.md#next-runnable-step-bound-a-disk-count-with-jensen) before proving the quadratic summability bound. The comparison on the shared tests and the weight at the center remain separate.
 
 ## A pole test for the raw Haar reading
 
