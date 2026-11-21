@@ -792,33 +792,74 @@ $S$-local lattice and invokes a quotient and finite-index argument.
 Neither its $S$-local annihilator nor the global rational annihilator
 is a conclusion here. Rendered-page verification remains open.
 
-## Next Fourier step: Identify the rational diagonal annihilator
+## Checked rational diagonal annihilator
 
-On `A := AdeleRing (𝓞 ℚ) ℚ`, prove
-`(∀ r : ℚ, rationalAdeleAddChar (a * algebraMap ℚ A r) = 1) ↔
- ∃ q : ℚ, a = algebraMap ℚ A q`.
-This is a direct global rational argument, not Example A.3.1.11's
-$S$-local finite-index proof.
+[`Masullo.rationalAdele_orthogonal_iff`](../../Proofs/Theorems/RationalAdeleAnnihilator.lean)
+proves, for every $a$ in Mathlib's rational adele ring,
 
-- Diagonal triviality and multiplication of rational casts give the
-  easy direction. In the other direction use
-  `exists_rational_sub_mem_integral` and note that subtracting a
-  diagonal rational preserves the tests by distributivity and the
-  character law.
-- Test at $r=1$. Use `rationalAdeleAddChar_eq_prod` with the empty
-  finite set and `Complex.exp_eq_one_iff` to show that the remaining
-  real coordinate is an integer. Subtract this diagonal integer,
-  which preserves local integrality, to make the real coordinate zero.
-- For the place corresponding to $p$, test at $r=p^{-n}$ and use a
-  singleton finite set. At every other place $p^{-n}$ is integral,
-  so those factors are one. The singleton factor and the exact local
-  kernel force $p^{-n}a_p$ to be integral for all $n$. For $a_p\ne0$,
-  `Padic.valuation_mul`, `Padic.valuation_inv`, `Padic.valuation_pow`,
-  and `Padic.valuation_p` give valuation $v_p(a_p)-n$, contradicting
-  `Padic.norm_le_one_iff_val_nonneg` for $n>v_p(a_p)$.
+$$
+  (\forall r\in\mathbb Q,\ \psi(a\iota(r))=1)
+  \quad\Longleftrightarrow\quad a\in\iota(\mathbb Q).
+$$
 
-The annihilator identity alone would not identify the full Pontryagin
-dual, normalize global additive Haar, or prove Poisson summation.
+Here $\iota$ is the diagonal algebra map and $\psi$ is the repaired character
+with positive real and conjugated positive finite factors. Diagonal
+membership implies the tests by diagonal triviality and multiplicativity of
+$\iota$. Conversely, subtract a diagonal rational to clear the finite
+denominators, without changing any test value. The test at $1$ now sees
+only the real exponential, so the real coordinate is an integer.
+Subtract that diagonal integer; the finite coordinates stay integral.
+
+For the resulting adele with real coordinate zero, the test at
+$\iota(p^{-n})$ is the singleton finite factor at $p$: The inverse prime
+power is integral at all other finite places. The exact local kernel
+implies $p^{-n}a_p\in\mathbb Z_p$ for all $n$. If $a_p\ne0$, this would
+require $v_p(a_p)-n\ge0$ for every $n$; taking $n=|v_p(a_p)|+1$ gives a
+contradiction. The [prime tests lemma](../../Proofs/Lemmas/RationalAdelePrimeTests.lean)
+uses Mathlib's completion equivalence and valuation identities for this step.
+Thus the normalized adele is zero and the original is diagonal.
+
+This is a direct global rational calculation for the pairing in Example
+A.3.1.8, p. 558, with the sign repair recorded above. The statement is
+not the ambient Pontryagin-dual isomorphism asserted there. Example
+A.3.1.11, (A.3.1.9)–(A.3.1.12), pp. 558–559, pairs a finite product
+$\mathbb A_{F,S}$ with itself and asserts self-annihilation for
+$\mathcal O_{F,S}$; that assertion is not the statement checked here.
+The proof uses neither the manuscript's finite-index argument nor the
+full quotient isomorphism (A.1.2.2).
+
+Independent Yah review checked the elaborated statement and both proof
+directions against the digest-matched layout extraction, including the
+zero case and the arbitrary-prime singleton test. Example A.3.1.6,
+p. 557, describes the finite phase through the quotient identification
+with $(\mathbb Q/\mathbb Z)[p^\infty]$, not an explicit residue formula.
+The theorem uses the project's explicit sign convention; whether it
+coincides with the manuscript as printed also needs the convention
+bridge for that identification. Rendered-page verification remains open.
+
+## Next additive step: Identify the quotient topology
+
+Prove the rational case of (A.1.2.2), pp. 540–541. Let $W$ be the
+open additive subgroup of adeles with all finite coordinates integral,
+and $D$ the image of the diagonal rationals. Show
+$W/(W\cap D)\cong\mathbb A_{\mathbb Q}/D$ as topological groups and
+identify $W\cap D$ as exactly the diagonal integers. The representative
+step is already checked. For the kernel, apply the local kernels and
+`exists_int_of_all_rationalPadicPhases_eq_one`; conversely, integer casts
+belong to each local integer subring. For the topology, use
+`RestrictedProduct.isOpen_forall_mem` (as in `RationalIdeleUnitWindow.lean`)
+and `QuotientAddGroup.isOpenMap_coe` to make the restriction of the
+quotient map to $W$ an open surjection. Compare the resulting open
+quotient with `QuotientAddGroup.quotientKerEquivOfSurjective`. The empty
+[`RationalAdeleFiniteStage`](../../Proofs/Lemmas/RationalAdeleFiniteStage.lean)
+already gives the corresponding product coordinates.
+
+For the subsequent quotient Haar normalization, use the half-open strip
+$[0,1)\times\prod_p\mathbb Z_p$ as a measurable fundamental domain, not
+as a continuous section. Its closed-strip counterpart gives a compact
+surjective window. Ambient duality, global additive Haar measure,
+Plancherel, and adelic Poisson summation are not supplied by the
+annihilator calculation.
 
 ## Checked real-lattice inversion
 
@@ -1285,5 +1326,6 @@ translated formula](#checked-fourier-transform-of-dilated-and-translated-integra
 The [diagonal phase cancellation](#checked-cancellation-of-the-rational-diagonal-phases)
 is now checked, as is the [rational adelic character](#checked-rational-adelic-character).
 The [finite-denominator clearing step](#checked-clearing-of-finite-adelic-denominators)
-is checked. The [rational diagonal annihilator](#next-fourier-step-identify-the-rational-diagonal-annihilator)
+is checked, and the [global rational diagonal annihilator](#checked-rational-diagonal-annihilator)
+is now exactly the diagonal. The [additive quotient topology](#next-additive-step-identify-the-quotient-topology)
 is next.

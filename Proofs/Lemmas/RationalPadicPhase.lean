@@ -58,7 +58,9 @@ private theorem rationalPadicPhase_primePower (p : Nat.Primes) (n b : ℕ) :
   congr 1
   ring
 
-private theorem cross_phase_eq_one {p q : Nat.Primes} (h : p ≠ q) (n b : ℕ) :
+/-- A rational with a power of a different prime in its denominator has trivial phase. -/
+public theorem rationalPadicPhase_primePower_eq_one_of_ne {p q : Nat.Primes}
+    (h : p ≠ q) (n b : ℕ) :
     rationalPadicPhase p ((b : ℚ) / (q : ℚ) ^ n) = 1 := by
   have hc : (p : ℕ).Coprime (q : ℕ) :=
     (Nat.coprime_primes p.property q.property).mpr (Nat.Primes.coe_nat_inj p q |>.not.mpr h)
@@ -80,7 +82,7 @@ public theorem exists_padicPhase_turns (p : Nat.Primes) :
   intro x
   obtain ⟨n, a, ha⟩ := exists_padic_integral_numerator p x
   refine ⟨(a.appr n : ℚ) / (p : ℚ) ^ n, ?_, rationalPadicPhase_primePower p n _,
-    fun q hq ↦ cross_phase_eq_one hq n _⟩
+    fun q hq ↦ rationalPadicPhase_primePower_eq_one_of_ne hq n _⟩
   rw [rationalPadicPhase_primePower_residue, padicStdAddChar_apply_of_scaled_integral p ha]
   rfl
 

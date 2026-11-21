@@ -25,6 +25,17 @@ local notation "realEquiv" => InfinitePlace.Completion.ringEquivRealOfIsReal Rat
 /-- The real coordinate of a rational adele. -/
 public noncomputable def rationalAdeleReal (a : A) : ℝ := realEquiv (a.1 Rat.infinitePlace)
 
+public theorem rationalAdeleReal_apply (a : A) :
+    rationalAdeleReal a = realEquiv (a.1 Rat.infinitePlace) := by
+  rfl
+
+/-- The diagonal rational has its usual value at the real place. -/
+public theorem rationalAdeleReal_algebraMap (r : ℚ) :
+    rationalAdeleReal (algebraMap ℚ A r) = (r : ℝ) := by
+  rw [rationalAdeleReal, AdeleRing.algebraMap_fst_apply,
+    ← InfinitePlace.Completion.WithAbs.ratCast_equiv _ (WithAbs.toAbs _ r), map_ratCast]
+  rfl
+
 private theorem continuous_rationalAdeleReal : Continuous rationalAdeleReal :=
   (InfinitePlace.Completion.isometryEquivRealOfIsReal Rat.isReal_infinitePlace).continuous.comp
     ((continuous_apply Rat.infinitePlace).comp continuous_fst)
@@ -74,13 +85,9 @@ public theorem rationalAdeleAddChar_algebraMap (r : ℚ) :
   have hT (p : Nat.Primes) : (p : ℕ) ∣ r.den → p ∈ T := by
     intro hp
     exact Finset.mem_preimage.mpr (Nat.mem_divisors.mpr ⟨hp, r.den_ne_zero⟩)
-  have hreal : rationalAdeleReal (algebraMap ℚ A r) = (r : ℝ) := by
-    rw [rationalAdeleReal, AdeleRing.algebraMap_fst_apply,
-      ← InfinitePlace.Completion.WithAbs.ratCast_equiv _ (WithAbs.toAbs _ r), map_ratCast]
-    rfl
   have hphase (v : V) : rationalLocalFiniteAddChar v ((algebraMap ℚ A r).2 v) =
       conj (rationalPadicPhase (pOf v) r) := rationalLocalFiniteAddChar_rat v r
-  rw [rationalAdeleAddChar_eq_prod _ (T.map (pOf).symm.toEmbedding), hreal]
+  rw [rationalAdeleAddChar_eq_prod _ (T.map (pOf).symm.toEmbedding), rationalAdeleReal_algebraMap]
   · push_cast
     simp only [Finset.prod_map, Equiv.coe_toEmbedding, hphase, Equiv.apply_symm_apply]
     exact rationalDiagonal_phase_eq_one r T hT
