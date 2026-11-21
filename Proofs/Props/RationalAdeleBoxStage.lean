@@ -121,16 +121,17 @@ public theorem exists_rationalAdeleBox_eq_stageCell {M : ℕ} (hM : 0 < M) (j : 
 /-- The fixed boxes reconstruct one Schwartz profile per coset on this stage,
 with zero extension off the support. Neither centers nor scales vary with the
 profiles, so bounded coordinate sets can be used directly in the box estimates. -/
-public theorem exists_rationalAdeleBoxSum_stage_coordinates {M : ℕ} (hM : 0 < M) :
+public theorem exists_rationalAdeleBoxSum_stage_coordinates_real {M : ℕ} (hM : 0 < M) :
     ∃ (a : Fin (M ^ 2) → A) (g : Fin (M ^ 2) → J),
+      (∀ j, rationalAdeleReal (a j) = 0) ∧ (∀ j, rationalAdeleReal (g j : A) = 1) ∧
       ∀ b : Fin (M ^ 2) → 𝓢(ℝ, ℂ),
         (∀ j x, x ∈ rationalAdeleStageCell M j →
           rationalAdeleBoxSum Finset.univ (fun _ ↦ 1) b a g x = b j (rationalAdeleReal x)) ∧
         (∀ x, x ∉ rationalAdeleStageSupport M →
           rationalAdeleBoxSum Finset.univ (fun _ ↦ 1) b a g x = 0) := by
   classical
-  choose a g _ _ hbox using exists_rationalAdeleBox_eq_stageCell hM
-  refine ⟨a, g, fun b ↦ ⟨?_, ?_⟩⟩
+  choose a g ha hg hbox using exists_rationalAdeleBox_eq_stageCell hM
+  refine ⟨a, g, ha, hg, fun b ↦ ⟨?_, ?_⟩⟩
   · intro j x hx
     have hj : ∀ k, x ∈ rationalAdeleStageCell M k → k = j := by
       obtain ⟨i, _, hi⟩ := (mem_rationalAdeleStageSupport_iff_existsUnique_cell hM x).mp
@@ -143,6 +144,17 @@ public theorem exists_rationalAdeleBoxSum_stage_coordinates {M : ℕ} (hM : 0 < 
     simp only [rationalAdeleBoxSum, one_mul, hbox]
     exact Finset.sum_eq_zero fun j _ ↦
       indicator_of_notMem (fun hj ↦ hx (rationalAdeleStageCell_subset_support hM j hj)) _
+
+/-- Fixed-geometry assembly, forgetting the real coordinates of the boxes. -/
+public theorem exists_rationalAdeleBoxSum_stage_coordinates {M : ℕ} (hM : 0 < M) :
+    ∃ (a : Fin (M ^ 2) → A) (g : Fin (M ^ 2) → J),
+      ∀ b : Fin (M ^ 2) → 𝓢(ℝ, ℂ),
+        (∀ j x, x ∈ rationalAdeleStageCell M j →
+          rationalAdeleBoxSum Finset.univ (fun _ ↦ 1) b a g x = b j (rationalAdeleReal x)) ∧
+        (∀ x, x ∉ rationalAdeleStageSupport M →
+          rationalAdeleBoxSum Finset.univ (fun _ ↦ 1) b a g x = 0) := by
+  obtain ⟨a, g, _, _, h⟩ := exists_rationalAdeleBoxSum_stage_coordinates_real hM
+  exact ⟨a, g, h⟩
 
 /-- The pair `M ℤ̂ ⊂ M⁻¹ ℤ̂` can accommodate any prescribed support subgroup
 `K` and invariance subgroup `H`, in particular when `H ⊆ K`.

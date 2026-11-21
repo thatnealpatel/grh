@@ -47,16 +47,26 @@ public theorem rationalAdeleStageCoordinates_eq_on_cell {M : ℕ} (hM : 0 < M)
   rationalAdeleStageSample_eq_on_cell hM f hx
 
 /-- The inverse to sampling is the same fixed-geometry assembly used by the
-uniform box estimates, with coefficient one on each cell. -/
-public theorem exists_rationalAdeleStageCoordinates_symm_eq_boxSum {M : ℕ} (hM : 0 < M) :
-    ∃ (a : Fin (M ^ 2) → A) (g : Fin (M ^ 2) → J), ∀ b : Fin (M ^ 2) → 𝓢(ℝ, ℂ),
+uniform box estimates, with coefficient one, real center zero, and real scale one on each cell. -/
+public theorem exists_rationalAdeleStageCoordinates_symm_eq_boxSum_real {M : ℕ} (hM : 0 < M) :
+    ∃ (a : Fin (M ^ 2) → A) (g : Fin (M ^ 2) → J),
+      (∀ j, rationalAdeleReal (a j) = 0) ∧ (∀ j, rationalAdeleReal (g j : A) = 1) ∧
+      ∀ b : Fin (M ^ 2) → 𝓢(ℝ, ℂ),
       ((rationalAdeleStageCoordinates hM).symm b).val =
         rationalAdeleBoxSum Finset.univ (fun _ ↦ 1) b a g := by
-  obtain ⟨a, g, h⟩ := exists_rationalAdeleBoxSum_stage_coordinates hM
-  refine ⟨a, g, fun b ↦ ?_⟩
+  obtain ⟨a, g, ha, hg, h⟩ := exists_rationalAdeleBoxSum_stage_coordinates_real hM
+  refine ⟨a, g, ha, hg, fun b ↦ ?_⟩
   obtain ⟨u, hval, hu⟩ := exists_rationalAdeleStageSample_eq_of_assembled hM
     (rationalAdeleBoxSum Finset.univ (fun _ ↦ 1) b a g) b (h b).1 (h b).2
   have he : rationalAdeleStageCoordinates hM u = b := hu
   rw [← hval, ← he, LinearEquiv.symm_apply_apply]
+
+/-- The same box assembly without the real-coordinate conditions. -/
+public theorem exists_rationalAdeleStageCoordinates_symm_eq_boxSum {M : ℕ} (hM : 0 < M) :
+    ∃ (a : Fin (M ^ 2) → A) (g : Fin (M ^ 2) → J), ∀ b : Fin (M ^ 2) → 𝓢(ℝ, ℂ),
+      ((rationalAdeleStageCoordinates hM).symm b).val =
+        rationalAdeleBoxSum Finset.univ (fun _ ↦ 1) b a g := by
+  obtain ⟨a, g, _, _, h⟩ := exists_rationalAdeleStageCoordinates_symm_eq_boxSum_real hM
+  exact ⟨a, g, h⟩
 
 end Masullo

@@ -2183,21 +2183,82 @@ zero claim. The sign can also be tested on an unramified tensor of a
 nonnegative smooth bump with positive integral. This is an extracted,
 not visually verified, reading.
 
-### Next orbit step: Fourier covariance at every frequency
+## Checked pointwise Fourier covariance at every frequency
 
-Prove the rational pointwise case of (2.2.4.29) for arbitrary adelic
-frequency $y$: At $s=0$, the function
-$s\mapsto e^{-s}\widehat f(\tau(-s)y)$ has derivative $\widehat{Df}(y)$,
-where $\tau$ is the upstairs log-norm section. The scale derivative at
-$t=1$ is equivalent by the chain rule. First check the real profile
-identity $\mathcal F(u b')(\xi)=-\mathcal F b(\xi)-\xi(\mathcal F b)'(\xi)$:
-Use $(u b)'=b+u b'$ and Mathlib's `SchwartzMap.fourier_lineDerivOp_eq`
-and `SchwartzMap.lineDerivOp_fourier_eq` in direction $1$. Then use the
-stagewise box transform. Along $\tau(-s)y$ the finite support and finite
-phase are fixed; the phase from the real center is trivial for these
-stage boxes, whose real centers are zero. Retain the derivative of
-$e^{-s}$ in the product rule. This endpoint would still be pointwise,
-not the bounded-set operator limit of Remark 2.2.4.6.
+`Masullo.hasDerivAt_rationalAdeleFourier_LFDilation` in
+[RationalAdeleLFFourierDilation.lean](../../Proofs/Theorems/RationalAdeleLFFourierDilation.lean)
+proves, for every rational Schwartz LF test $f$ and every adelic
+frequency $y$, that
+
+$$
+\left.\frac{d}{ds}\left(e^{-s}\widehat f(\tau(-s)y)\right)\right|_{s=0}
+=\widehat{Df}(y).
+$$
+
+Here $\tau$ is the upstairs log-norm section, $D$ is the checked real
+Euler generator, and Fourier is the integral against the conjugated
+rational pairing. No moment condition is needed. At $y=0$ this gives
+$-\widehat f(0)$, in agreement with the separate zero-mode identity.
+Independent Yah statement review matched this to (2.2.4.29), pp. 92–95,
+for $\gamma(t)=\tau(\log t)$: $|\gamma(t)|=t$ and the change of parameter
+has derivative one at the base point. This is a provisional source
+reading of the digest-matched extraction, not a rendered-page check.
+
+[RationalAdeleFourierEuler.lean](../../Proofs/Lemmas/RationalAdeleFourierEuler.lean)
+derives $\mathcal F(u b')=-\mathcal F b-\xi(\mathcal F b)'$ from
+$(u b)'=b+u b'$ and Mathlib's two Schwartz identities for Fourier
+and the directional derivative in direction $1$. In the common
+factorial stage for $f$ and $Df$, the box assembly has zero real
+centers and unit real scales, now exposed in the stage assembly
+lemmas. Consequently the translated-box transform has constant
+finite support and character along $\tau(-s)y$, leaving just the
+weighted inverse dilation of each real Schwartz profile. The proof
+sums a finite family of derivatives rather than differentiating an
+adelic integral or extending from a sequentially dense subclass.
+
+### Next Fourier step: A fixed-stage continuous linear map
+
+The proof on p. 95 invokes a Fourier automorphism of $\mathcal S(A_F)$
+with its Schwartz–Bruhat topology. The corresponding upstream argument,
+Lemma D.1.6.19(2), pp. 773–775, reduces the transform to the structural
+levels $(k,\Gamma)$ and their dual levels $(\Gamma^\perp,k^\perp)$.
+At p. 774 the text explicitly notes that its cited Lemma D.1.5.2(3)
+assumes $\widehat f\in L^1$, not yet available at this step; the required
+support and invariance follow instead by translation and the integral
+for $f\in L^1$. The rational box transform already computes the integral
+without assuming Fourier-side integrability. Part (1) of D.1.6.19 is
+about invariant differential operators, not the real Euler operator;
+it does not itself supply the dilation identity.
+
+A runnable rational level obligation is to construct, for each $n$, a
+continuous complex-linear map on the profile tuples of the factorial
+stage $M=n!$, such that applying `rationalAdeleLFAssembly n` to its
+output realizes `rationalAdeleFourier` of the input assembly pointwise
+on all adeles. For a cell box with finite center $j/M$ and finite scale
+$M$, the checked box transform cuts out the common support
+$M^{-1}\widehat{\mathbb Z}$ on the frequency side. On that support its
+character is unchanged by a shift in $M\widehat{\mathbb Z}$: The
+product of $j/M$ with the shift is finite integral. Use these two
+facts to show the formula on each cell and off the support. In the
+sampled tuple it is a finite matrix of fixed coefficients applied to
+the real transforms, so use `SchwartzMap.fourierTransformCLM` and
+finite sums. This forward level map need not prove inversion or
+identify the manuscript topology.
+
+Remark 2.2.4.6, p. 92, asks for the limit in $L_\beta$: Uniform on
+bounded input families in the **target Schwartz topology**. The p. 94
+bound following (2.2.4.42) appears to omit the norm-weight term in
+(2.2.4.39); at zero frequency the full rational scale kernel quotient
+is $-1/t$, not zero. A bound of $4+16\pi|u_\infty y_\infty|$ for
+$t\in[1/2,3/2]$ suffices for fixed-frequency domination with the
+project's rational kernel, not uniform convergence of Schwartz
+seminorms. Equicontinuity of operators alone is also not that limit.
+After the forward level map, use common-stage boundedness and prove
+uniform Taylor remainders in every product Schwartz seminorm on a
+bounded family of profiles, for $s\to0$ in the same target stage.
+This is a possible repair, not yet checked. Neither (2.2.4.30)'s
+explicit phase convention nor the general number-field or manuscript
+tensor-topology comparison has been settled here.
 
 ## Checked real-lattice inversion
 
