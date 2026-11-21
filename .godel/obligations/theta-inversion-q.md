@@ -1174,32 +1174,86 @@ invariance. The Lean result specializes to $g=1$ with that term included;
 it does not assert the compact-uniform two-variable lemma. The support
 estimate (2.2.2.3) at $x=0$ is not used as an estimate for general $x$.
 This is a provisional extracted-text comparison, not a rendered-page
-reading. Only the input, integrability, and periodization hypotheses of
-`Masullo.hasSum_rationalAdele_poisson` have been discharged for this tensor.
+reading. This step supplies the input, integrability, and periodization
+hypotheses of `Masullo.hasSum_rationalAdele_poisson`. The Fourier-side
+hypothesis is discharged separately below.
 
 Validation: `lake --wfail build Proofs`, `lake env leanchecker` on
 `Lemmas.SchwartzLatticeTranslates` and
 `Theorems.RationalAdeleUnramifiedPeriodization`, and external `#check`
 and `#print axioms` on the new public declarations.
 
-## Next additive step: Fourier samples of the unramified tensor
+## Checked Fourier transform and pointwise Poisson for the unramified tensor
 
-For $f=b\otimes\mathbf 1_{\prod_p\mathbb Z_p}$, prove that the upstairs
-Fourier integral used in `Masullo.hasSum_rationalAdele_poisson`, sampled
-at a diagonal rational $r$, is $\widehat b(r)$ for $r\in\mathbb Z$ and
-zero otherwise. Use `comap_rationalAdeleAddHaar_integral`: For an integral
-frequency, the local phases on the support are trivial, and the real
-factor integrates against Lebesgue measure in the negative Fourier sign.
-For nonintegral $r$, `algebraMap_mem_rationalIntegralAdeles_iff` gives a
-place where $r$ is not integral. Translate by the integral-finite adele
-with real coordinate zero, finite coordinate $1$ there, and all other
-coordinates zero. It fixes $f$ but multiplies the Fourier integrand by a
-nontrivial scalar by the local kernel theorem. Then the integer samples of
-the real Schwartz transform are absolutely summable; apply the existing
-pointwise Poisson theorem. This route does not require the all-stage
-product measure. More general finite-place factors, the a.e. formula in
-D.1.2.7(2), and idelic Fourier scaling for Theorem 2.2.3.2, p. 82, are
-separate obligations.
+For every real Schwartz function $b:\mathbb R\to\mathbb C$, put
+$f_b(a)=b(a_\infty)\mathbf 1_{\prod_p\mathbb Z_p}(a_f)$. The theorem
+`Masullo.integral_rationalAdeleUnramified_mul_conj_char` in
+[RationalAdeleUnramifiedFourier.lean](../../Proofs/Theorems/RationalAdeleUnramifiedFourier.lean)
+computes the normalized integral at **every** adelic frequency $y$:
+
+$$
+\int_{\mathbb A_{\mathbb Q}} f_b(x)\overline{\psi(xy)}\,dx
+  = f_{\widehat b}(y).
+$$
+
+On the integral-finite stage, the finite phases on the support are
+trivial and `comap_rationalAdeleAddHaar_integral` gives real Lebesgue
+measure times a compact probability. The real sign is $-2\pi ixy$.
+Off the stage, choose an adele with real coordinate zero, coordinate
+$1$ at a nonintegral place of $y$, and zero at every other place.
+Translation by this adele preserves the tensor and the measure but
+multiplies the integral by a nontrivial scalar, forcing it to vanish.
+The pairing lemmas are in
+[RationalAdeleIntegralPairing.lean](../../Proofs/Lemmas/RationalAdeleIntegralPairing.lean).
+The proof does not need an all-stage product formula, ambient duality,
+or Plancherel.
+
+In [RationalAdeleUnramifiedPoisson.lean](../../Proofs/Theorems/RationalAdeleUnramifiedPoisson.lean),
+`Masullo.hasSum_rationalAdeleUnramified_poisson` applies the rational
+pointwise Poisson theorem, with Schwartz decay giving absolute
+summability of the integer samples of $\widehat b$. The diagonal
+rational frequencies outside $\mathbb Z$ vanish by finite integrality.
+For every adelic translate $a$, the diagonal periodization of $f_b$
+is the sum of $\widehat b(n)\psi(an)$ over $n\in\mathbb Z$, with the zero
+index included on both sides. There are no extra convergence premises.
+This adelic proof does not invoke real Poisson summation.
+
+Independent Yah statement review confirmed the measure, signs, and
+zero terms against the digest-matched PDF text. Example A.3.1.5, p. 557,
+fixes the negative real Fourier sign. Example A.3.1.6, p. 557,
+gives the centered local integral-ball calculation. Example A.3.1.8,
+p. 558, states the Gaussian tensor calculation and the mass-one
+normalization on $[0,1)\times\prod_p\mathbb Z_p$. The general real
+Schwartz factor here is a project calculation with the repaired
+standard character, not the manuscript's proof of self-duality. In the
+extracted A.3.1.8 the literal product of positive local characters is not
+trivial on the rational diagonal; our finite factors are conjugated.
+Theorem D.1.2.7(3), p. 749, gives the pointwise identity under
+continuity and Fourier-side $L^1$ in its general setting. The Lean
+application discharges those hypotheses in this tensor case using
+its checked rational counting normalization. This is text-based,
+not rendered-page verification.
+
+Validation: Full `lake --wfail build Proofs`, `leanchecker` on the new
+pairing, Fourier, and Poisson modules, and external `#check` and
+`#print axioms` on the changed public declarations.
+
+## Next additive step: Assemble the unramified adelic theta inversion
+
+To connect the checked Poisson theorem to Theorem 2.2.3.2 and
+(2.2.3.2)–(2.2.3.3), p. 82, apply it at the zero translate to the real
+Schwartz dilation $b_t(x)=b(tx)$, where $t>0$. Expose the already
+checked dilation and its Fourier calculation from
+[Lemmas/ScaledPoisson.lean](../../Proofs/Lemmas/ScaledPoisson.lean)
+without using `schwartz_scaled_poisson`, which invokes real Poisson
+summation. Compare the zero-translate diagonal sum with the lattice
+sum on the integral stage. Split off both zero terms and use
+`rationalTheta_eq_unramified_idele_sum` on the idele and its inverse
+($t=|g|$). The endpoint should state the identity on the adelic sums
+of the actual tensor and its verified transform, with the norm factor
+and both zero modes. The existing lattice theorem is not this proof
+route. The unramified theorem would not supply general idelic Fourier
+scaling or prove the result for arbitrary Schwartz–Bruhat functions.
 
 Independently, the integral-stage comparison can be strengthened by
 identifying `rationalFiniteIntegersHaar` with the product of the restrictions
@@ -1684,4 +1738,4 @@ The [complex Borel $L^1$ version](#checked-complex-weil-formula-and-absolute-sum
 is checked, as are the [quotient Fourier coefficient comparison and point
 separation](#checked-unfolding-of-the-quotient-fourier-coefficients) and
 [uniform density and Haar orthogonality](#checked-density-and-orthogonality-of-the-rational-quotient-characters).
-The [pointwise reconstruction and rational counting-series formula](#checked-pointwise-poisson-summation-with-explicit-convergence-hypotheses) are checked under explicit convergence hypotheses. The [unramified tensor periodization](#checked-periodization-of-the-rational-unramified-tensor) is now absolutely convergent at every lift and continuous on the quotient, with the input integrable upstairs. Next [compute and sum the sampled Fourier integrals](#next-additive-step-fourier-samples-of-the-unramified-tensor).
+The [pointwise reconstruction and rational counting-series formula](#checked-pointwise-poisson-summation-with-explicit-convergence-hypotheses) are checked under explicit convergence hypotheses. The [unramified tensor periodization](#checked-periodization-of-the-rational-unramified-tensor) is now absolutely convergent at every lift and continuous on the quotient, with the input integrable upstairs. The [unramified transform and pointwise Poisson formula](#checked-fourier-transform-and-pointwise-poisson-for-the-unramified-tensor) now discharge Fourier-side summability. Next [assemble adelic theta inversion for this tensor](#next-additive-step-assemble-the-unramified-adelic-theta-inversion).

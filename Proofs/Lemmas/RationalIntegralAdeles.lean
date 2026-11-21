@@ -159,6 +159,16 @@ public theorem isOpenEmbedding_rationalAdeleIntegralEmbedding :
   isOpen_rationalIntegralAdeles.isOpenEmbedding_subtypeVal.comp
     rationalIntegralAdelesHomeomorph.isOpenEmbedding
 
+public theorem range_rationalAdeleIntegralEmbedding :
+    range rationalAdeleIntegralEmbedding = (rationalIntegralAdeles : Set A) := by
+  ext a
+  constructor
+  · rintro ⟨x, rfl⟩
+    exact (rationalIntegralAdelesHomeomorph x).property
+  · intro ha
+    obtain ⟨x, hx⟩ := rationalIntegralAdelesHomeomorph.surjective ⟨a, ha⟩
+    exact ⟨x, congrArg Subtype.val hx⟩
+
 /-- Subtracting a diagonal integer puts the real coordinate in the half-open unit interval. -/
 public theorem exists_sub_intCast_real_mem_Ico (a : A) :
     ∃ z : ℤ, rationalAdeleReal (a - (z : A)) ∈ Ico (0 : ℝ) 1 := by

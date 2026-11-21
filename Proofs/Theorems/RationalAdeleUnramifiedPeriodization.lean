@@ -124,16 +124,6 @@ public theorem continuous_rationalAdeleComplexPeriodization_unramified (b : 𝓢
   exact (continuous_tsum_schwartz_add_int b).comp
     (continuous_rationalAdeleReal.comp continuous_subtype_val)
 
-private theorem range_rationalAdeleIntegralEmbedding :
-    range rationalAdeleIntegralEmbedding = (rationalIntegralAdeles : Set A) := by
-  ext a
-  constructor
-  · rintro ⟨x, rfl⟩
-    exact (rationalIntegralAdelesHomeomorph x).property
-  · intro ha
-    obtain ⟨x, hx⟩ := rationalIntegralAdelesHomeomorph.surjective ⟨a, ha⟩
-    exact ⟨x, congrArg Subtype.val hx⟩
-
 set_option linter.concreteInstances false in
 /-- The unramified tensor is integrable for normalized additive adelic Haar. -/
 public theorem integrable_rationalAdeleUnramified [MeasurableSpace A] [BorelSpace A] (b : 𝓢(ℝ, ℂ)) :
