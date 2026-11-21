@@ -10,7 +10,7 @@ For distinct zeros $\rho$ with $0<\Re\rho<1$, the needed target is
 
 $$\sum_\rho\frac{\operatorname{ord}_\rho\zeta}{1+|\rho-1/2|^2}<\infty.$$
 
-With finite positive orders, this bounds the absolute weights of the full-minus-capped sum: Subtracting the critical-line indicator changes a positive integer $m$ only to $m-1$ or leaves it unchanged. Discreteness alone does not bound this series. The [separation task](trace-divisor-uniqueness.md#next-runnable-step-separate-the-shifted-zeta-zeros) remains independent.
+With finite positive orders, this bounds the absolute weights of the full-minus-capped sum: Subtracting the critical-line indicator changes a positive integer $m$ only to $m-1$ or leaves it unchanged. Discreteness alone does not bound this series. The index type `Masullo.criticalStripZetaZeros` and its [compact-preimage finiteness](trace-divisor-uniqueness.md#checked-separation-of-the-shifted-zeta-zeros) are now in Lean. Use this same family for orders and the bounded inner disk. Neither its local finiteness nor countability controls the weighted outer shells.
 
 ## Checked growth estimate
 

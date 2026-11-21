@@ -1,6 +1,6 @@
 # Recovering the divisor from the Chapter 13 test class
 
-**Status:** Conditional project argument over $\mathbb Q$ in the trivial compact isotype. The [assembled $D=1$ uniqueness proposition](../../Proofs/Props/ZeroMassUniqueness.lean) is in Lean; its zeta application is not. Source readings are provisional, based on raw and layout text from the [digest-matched edition](../sources/masullo/README.md). This fills a downstream implication under a specified normalization; it does not supply the Chapter 13 trace or the manuscript's missing positivity criterion.
+**Status:** Conditional project argument over $\mathbb Q$ in the trivial compact isotype. The [assembled $D=1$ uniqueness proposition](../../Proofs/Props/ZeroMassUniqueness.lean) and the [geometric inputs for the shifted zeta family](../../Proofs/Lemmas/ShiftedZetaZeros.lean) are in Lean. Multiplicity-weighted summability and the full-versus-capped comparison are not. Source readings are provisional, based on raw and layout text from the [digest-matched edition](../sources/masullo/README.md). This fills a downstream implication under a specified normalization; it does not supply the Chapter 13 trace or the manuscript's missing positivity criterion.
 
 ## The common test class and the missing comparison
 
@@ -40,9 +40,15 @@ $$
 
 Take $w=\rho-1/2$ for distinct nontrivial zeta zeros and $d_w=\operatorname{ord}_\rho \zeta-\mathbf1_{\Re w=0}$. The classical count $O(T\log(2+T))$ with multiplicity gives the summability premise by dyadic decomposition, and the zeros are discrete with bounded real parts. The stated comparison is exactly the uniqueness hypothesis with $D=1$. It would imply that each noncentral zero is on the critical line and is simple. No positivity hypothesis or limit of trace widths is needed for this implication, and the proof cannot tell what weight occurs at the center. This is not the manuscript's proof, does not justify its clipped trace, and does not supply the corresponding comparison for arbitrary Hecke characters or number fields.
 
-## Next runnable step: Separate the shifted zeta zeros
+## Checked separation of the shifted zeta zeros
 
-Discharge the geometric hypotheses on the pole family independently of the trace comparison. Pinned Mathlib's `Mathlib.NumberTheory.LSeries.ZetaZeros` supplies `isClosed_riemannZetaZeros`, `isDiscrete_riemannZetaZeros`, and `IsCompact.inter_riemannZetaZeros_finite`. Use zeros in the open critical strip as the index type and translate by $-1/2$. Local finiteness in closed balls follows by pulling back the balls under translation and taking subsets; this gives countability by exhaustion and a uniform gap at each point by excluding the center and taking the minimum of finitely many positive distances inside a unit ball. Do not infer closedness of a strip intersection merely from closedness of the ambient zero set. Translation is injective and the strip gives the real-part bound. [Weighted summability with the orders](trace-divisor-summability.md), the weight at the center, and the distribution comparison remain separate. The summability route now has a checked factorial growth estimate; the transfer of orders and Jensen step are open in Lean.
+`Masullo.criticalStripZetaZeros` indexes distinct zeros with $0<\Re\rho<1$. `Masullo.shiftedZetaZero` is the injective translation $\rho\mapsto\rho-1/2$, with $|\Re(\rho-1/2)|<1/2$. For compact $K$, `shiftedZetaZero_preimage_finite` translates $K$ back, intersects it with Mathlib's ambient zeta zero set, and uses `IsCompact.inter_riemannZetaZeros_finite`. The index is countable by exhaustion by closed balls. This argument takes subsets of finite intersections; it does not assume that intersecting a closed set with the open strip preserves closedness.
+
+`shiftedZetaZero_separated` gives the gap at **every** complex point $z$, including points not indexed by a zero. Within the closed unit ball about $z$, remove $z$ from the finite set of shifted zeros. Its open complement contains a ball about $z$. Taking the smaller of that radius and one gives the gap, also for all zeros outside the unit ball. These lemmas discharge the family hypotheses of `weight_eq_zero_of_zero_mass_annihilation` with $a=1/2$, independently of the trace comparison.
+
+Independent Yah statement review confirmed that the compact-set finiteness, countable index, strip bound, injectivity, and every-point gap suffice for the geometric inputs, without an assumption at the strip boundary or a statement about the central weight.
+
+For the arithmetic branch, the next step is to [transfer orders to an entire function](trace-divisor-summability.md#next-runnable-step-transfer-orders-to-an-entire-function) before proving the quadratic summability bound. The comparison on the shared tests and the weight at the center remain separate.
 
 ## A pole test for the raw Haar reading
 
