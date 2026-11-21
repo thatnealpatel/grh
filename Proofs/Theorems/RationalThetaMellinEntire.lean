@@ -1,7 +1,7 @@
 module
 
 public import Theorems.RationalThetaMellin
-import Lemmas.LogMellinDerivative
+import Lemmas.RationalThetaMellinDerivative
 
 /-!
 # Entire rational theta Mellin transform with both zero modes removed
@@ -26,27 +26,10 @@ public theorem hasDerivAt_rationalTheta_mellin (b : 𝓢(ℝ, ℂ))
     Integrable (fun x : ℝ ↦ (x : ℂ) * (rationalTheta b (Real.exp x) * Complex.exp (z * x))) ∧
     HasDerivAt (fun w : ℂ ↦ ∫ x : ℝ, rationalTheta b (Real.exp x) * Complex.exp (w * x))
       (∫ x : ℝ, (x : ℂ) * (rationalTheta b (Real.exp x) * Complex.exp (z * x))) z := by
-  obtain ⟨N : ℕ, hN⟩ := exists_nat_ge (|z.re| + 3)
-  obtain ⟨C, hC, htail⟩ := rationalTheta_uniform_log_bound
-    (Bornology.isVonNBounded_singleton (𝕜 := ℂ) b) N
-  have hcont := (rationalTheta_continuousOn b).comp_continuous Real.continuous_exp Real.exp_pos
-  refine hasDerivAt_logMellin_of_decay hcont z (r := 1) one_pos hC.le fun x ↦ ?_
-  have hweight : z.re * x ≤ |z.re| * |x| := by
-    rw [← abs_mul]
-    exact le_abs_self _
-  rw [norm_mul, Complex.norm_exp, Complex.mul_re, Complex.ofReal_re, Complex.ofReal_im,
-    mul_zero, sub_zero]
-  calc
-    _ ≤ C * Real.exp (-(N : ℝ) * |x|) * Real.exp (|z.re| * |x|) :=
-      mul_le_mul (htail b (Set.mem_singleton b) hb hFourier x) (Real.exp_le_exp.mpr hweight)
-        (Real.exp_pos _).le (by positivity)
-    _ = C * Real.exp ((|z.re| - (N : ℝ)) * |x|) := by
-      rw [mul_assoc, ← Real.exp_add]
-      congr 2
-      ring
-    _ ≤ _ := by
-      gcongr
-      linarith
+  have hzero := hasDerivAt_rationalTheta_mellin_logMoment b hb hFourier 0 z
+  have hone := hasDerivAt_rationalTheta_mellin_logMoment b hb hFourier 1 z
+  simpa only [pow_zero, pow_one, Nat.zero_add, one_mul, mul_assoc] using
+    And.intro hzero.1 (And.intro hone.1 hzero.2)
 
 /-- The two-moment rational theta Mellin transform is entire. -/
 public theorem differentiable_rationalTheta_mellin (b : 𝓢(ℝ, ℂ))

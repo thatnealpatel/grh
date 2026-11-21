@@ -386,25 +386,68 @@ remains a separate source issue. Independent Yah review checked the two
 statements, the multiplicity convention, and the single twist against
 the digest-matched extraction, not the rendered pages.
 
-## Next runnable step: Identify derivatives with log-moment integrals
+## Checked log-moment integrals and twisted jet vanishing
 
-For each $m\in\mathbb N$, both zero modes zero, and every $z\in\mathbb C$,
-prove integrability of the integrand and the identity
+In [RationalThetaMellinLogMoments.lean](../../Proofs/Theorems/RationalThetaMellinLogMoments.lean),
+`Masullo.iteratedDeriv_rationalTheta_mellin_eq_logMoment` proves, for each
+$m\in\mathbb N$, both zero modes of $b$ zero, and every $z\in\mathbb C$,
+absolute integrability and the identity
 
 $$
 T_b^{(m)}(z)=\int_{\mathbb R} x^m \theta_b(e^x)e^{zx}\,dx.
 $$
 
-Apply `hasDerivAt_logMellin_of_decay` to the continuous profile
-$x\mapsto x^m\theta_b(e^x)$ using the uniform two-tail bound with
-$N\ge |\Re z|+4$. The polynomial cost is absorbed by
-$|x|^m\le m!e^{|x|}$ from `Real.pow_div_factorial_le_exp`. Induct with
-`iteratedDeriv_succ` and take the derivative of the previous log moment.
-Then at a zero $\rho=a+\beta+it$ the jet functional pairs
-$e^{ax}\theta_b(e^x)$ with $x^m e^{(\beta+it)x}$, inserting the twist
-only once. In the positive-sign Fourier coordinate $w$ with
-$\rho=1/2+iw$, each $w$-derivative also carries a factor $i^m$.
-Continuity on the weighted space and passage to its closure are separate
-steps. This is independent of the rational idele normalization; it
-does not supply full weighted-closure density, a zero-line product
-formula, or the trace Mellin subtractions.
+The supporting declaration `Masullo.hasDerivAt_rationalTheta_mellin_logMoment`
+uses the uniform two-tail bound with $N\ge |\Re z|+4$ and absorbs the
+polynomial cost by $|x|^m\le m!e^{|x|}$. It differentiates the moment to
+the next one by local domination. The original first-derivative theorem
+now uses the same argument at orders zero and one. The derivative formula
+agrees with the log factor and positive exponent in (9.2.1.25), p. 409.
+That formula concerns a specified one-sided Sobolev domain, whereas this
+all-parameter result uses the two-moment theta input and its two tails.
+
+`Masullo.rationalTheta_twisted_logMoment_eq_zero` gives, for
+$0<\Re\rho<1$ and $m<\operatorname{ord}_\rho\zeta$, absolute
+integrability of the displayed product and
+
+$$
+\int_{\mathbb R} \big(e^{ax}\theta_b(e^x)\big)
+  \big(x^m e^{(\rho-a)x}\big)\,dx=0\qquad(a\in\mathbb R).
+$$
+
+This matches the rational log-line input pairing for (10.2.2.3)–(10.2.2.4),
+pp. 445–446, in the digest-matched layout extraction: The pairing is
+bilinear, and for $\rho=a+\beta+it$ its kernel is $x^m e^{(\beta+it)x}$.
+Equation (10.1.1.3), p. 434, already puts the factor $e^{ax}$ on the
+input. In the positive-sign Fourier coordinate $w$ with $\rho=1/2+iw$,
+$w$-derivatives would carry the additional factor $i^m$; the checked
+identity differentiates in the Mellin parameter, not in $w$. These are
+project results on the unramified rational input, not a proof of
+Theorem 10.2.2.1 or an identification of adelic Haar measure.
+Independent Yah review checked the hypotheses, the exponent sign, the
+absence of conjugation, and the single twist against the digest-matched
+extraction, not rendered pages.
+
+## Next runnable step: Show continuity of interior jet pairings
+
+Use the symmetric strip $[-\alpha,\alpha]$ and log-Lebesgue measure.
+For $|\Re(\rho-a)|<\alpha$, first prove that
+$k(x)=x^m e^{(\rho-a)x-\alpha|x|}$ belongs to complex $L^2(dx)$.
+Write $\delta=\alpha-|\Re(\rho-a)|>0$ and use the power/factorial
+estimate with $(\delta/2)|x|$ to bound $|k|$ by a constant times
+$e^{-(\delta/2)|x|}$. The pinned Mathlib interface is
+`MeasureTheory.memLp_two_iff_integrable_sq_norm` plus the two
+half-line exponential integrals.
+
+In the unweighted $L^2$ coordinate $U(x)=e^{\alpha|x|}u(x)$, the
+continuous linear functional `innerSL ℂ` at the $L^2$ class of $\bar k$
+has value $\int u(x)x^m e^{(\rho-a)x}\,dx$. Conjugate the representing
+vector so that the integral has no conjugation. The bound also holds
+with Masullo's stronger weight for $s\ge0$, because the extra factor
+$(1+x^2)^{s/2}$ in the squared norm is at least one. Compare the literal
+real-place duality in (9.2.1.27)–(9.2.1.30), pp. 409–410, and the norm
+in (9.2.2.4), p. 412.
+The closed kernel then contains the closure of the twisted inputs;
+`Masullo.integrable_rationalTheta_hardySobolev` supplies their squared
+norm bound. This step does not cover strip-boundary caps, the converse
+inclusion (density), or Haar identification.
