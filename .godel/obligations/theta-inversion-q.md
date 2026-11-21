@@ -1891,28 +1891,84 @@ text. Validation: `lake --wfail build Proofs`, `leanchecker` on
 `#check` and `#print axioms` on the cofinality and stage endpoints
 and their new public dependencies.
 
-### Next orbit step: Identify the stage with its Schwartz coordinates
+## Checked sampling equivalence for the rational Schwartz stage
 
-Cofinality puts a prescribed finite support/invariance pair inside a
-rational stage, but does not identify the topology of the adelic test
-space. For fixed $M>0$, define the stage of functions vanishing off
-the support cylinder, invariant under finite translations by
-$M\widehat{\mathbb Z}$, and with real slices in $\mathcal S(\mathbb R)$.
-Prove the converse to box assembly: Sample along the real line at
-the finite representative $j/M$ to extract a Schwartz profile for
-each $j$. Show that two points at the same real coordinate in the
-same cell differ by an allowed finite translation, and use it to
-prove that sampling and the checked box assembly are inverse linear
-maps. This gives an explicit stage interface for transporting the
-product topology and then building split inclusions along the
-factorial levels (every positive $M$ divides some factorial).
+For $M>0$ the [stage equivalence](../../Proofs/Props/RationalAdeleStageCoordinates.lean)
+identifies the submodule of full-adele functions vanishing off the
+cylinder over $K_M=M^{-1}\widehat{\mathbb Z}$, invariant under the
+finite translations $H_M=M\widehat{\mathbb Z}$, and Schwartz on
+each fixed-finite real slice, with $\mathcal S(\mathbb R,\mathbb C)^{M^2}$.
+`rationalAdeleStageCoordinates_apply` samples the real line above
+$(j/M)_f$, with no shift of the real coordinate.
+`exists_rationalAdeleStageCoordinates_symm_eq_boxSum` recovers the
+original function everywhere by fixed boxes with coefficient one.
+The centers and scales are chosen once per level, not per profile.
 
-Theorem 2.2.3.4(4), pp. 84–85, uses a bounded adelic family in the
-strict locally convex inductive limit, not just functions with a
-common finite support. The common-stage and bounded-Schwartz-coordinate
-conclusion for such families remains open. Do not substitute a
-common support bound for a common invariance bound, or the
-projective tensor topology for the inductive one.
+The [sampling lemmas](../../Proofs/Lemmas/RationalAdeleStageSampling.lean)
+identify the cell over $j$ with the finite coset $(j/M)_f+H_M$.
+At fixed real coordinate, a point in that cell differs from the
+sample point by a finite-only translation. This gives injectivity by
+invariance and zero extension. For surjectivity, box assembly has the
+prescribed Schwartz slice in each cell, zero slice off the cylinder,
+and the same invariance, so sampling returns the original tuple.
+The equivalence does not use a topology on the stage submodule.
+
+Independent Yah statement review (`coordinates-review`, agent
+`gviZQhZ`) compared the actual stage and the hypotheses of the
+bounded-family step with the digest-matched text extraction at
+pp. 68–70 and 84–85. The equivalence specializes the quotient-stage
+construction on pp. 69–70 and uses the translated indicators of
+Example 2.1.3.1, not the [centered-only wording](#checked-poisson-summation-on-the-translated-generator-span)
+in the extracted 2.1.3.2(3). The level, labels, and sampling maps
+are project choices. No rendered-page review was used.
+
+Validation endpoints: `rationalAdeleSchwartzStage`,
+`mem_rationalAdeleStageCell_iff`, `rationalAdeleStageCoordinates`,
+`rationalAdeleStageCoordinates_apply`, and
+`exists_rationalAdeleStageCoordinates_symm_eq_boxSum`. Audit the
+public declarations in the two linked modules with `#check` and
+`#print axioms`; run `lake --wfail build Proofs` and `leanchecker`
+on both modules.
+
+### Next orbit step: Split the rational stage inclusions
+
+For positive integers $M,N$ with $N=dM$, first show that the support
+cylinder grows and the invariance subgroup shrinks. In the checked
+coordinates, on the fine sample at $k/N$ the inclusion takes value
+zero if $d\nmid k$, and otherwise copies the coarse profile at
+$(k/d)\bmod M^2$. Evaluate the membership test using the criterion
+that a finite rational diagonal is integral exactly for an integer.
+For the splitting it suffices to express the inclusion as zero or a
+coordinate projection at each fine index, and to check that $k=dj$
+samples precisely the old line. This gives a continuous linear left
+inverse by precomposition with $j\mapsto dj$, in the **product of
+Schwartz topologies**. Use `Nat.dvd_factorial` for a countable
+cofinal chain and `continuous_pi` for the product map. Neither the
+transition map nor the splitting has yet been checked in Lean.
+
+Theorem 2.2.3.4(4), pp. 84–85, needs one common stage **and** bounded
+Schwartz coordinate images for a bounded set of the full LF space.
+On p. 70, Proposition C.2.3.13(2), (C.2.3.26), pp. 682–683, is
+used for the inductive topology; it is not a bounded-set result.
+On p. 84 the finite-space result C.2.5.1(4) likewise does not
+supply boundedness on the full tensor space. The additional
+Schaefer II §6.5 input appears explicitly as a bounded-layer
+criterion in the analogous strict inductive limit in D.3.3,
+pp. 808 and 810; the external reference itself has not been verified. These are provisional text readings.
+
+A direct rational proof after splitting is to use the seminorms
+whose restrictions to each stage are continuous to define the
+locally convex inductive topology. If a family escapes every stage,
+select members at successively larger minimal levels. In the split
+coordinates, each has a nonzero component in its newest layer. Scale
+a continuous seminorm on each selected layer so that it exceeds the
+selection index at that member. The sum of these seminorms is finite
+on each stage and continuous there, so it detects unboundedness in
+the inductive topology. Coordinate projections detect boundedness
+within the common stage (`WithSeminorms.isVonNBounded_iff_seminorm_bounded`
+for the real Schwartz factor). This is a proposed proof route, not
+an LF identification. Do not replace the inductive topology by the
+pointwise or projective tensor topology.
 
 ## Checked real-lattice inversion
 
