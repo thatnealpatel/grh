@@ -427,37 +427,62 @@ scale uses the SHA-256-matched layout extraction, not rendered pages.
 This does not prove the counting-measure integration formula on
 arbitrary upstairs tests or the product characterization (A.3.2.5).
 
-## Next Haar step: Embed each finite stage upstairs
+## Checked open embedding of every rational idele stage
 
-(A.3.2.5), p. 560, invokes the restricted-product prescription recalled
-above Definition A.3.1.2, p. 556: Agreement on **every** finite stage,
-not just on the integral-unit window. For a finite set $S$ of finite
-places, the next Lean obligation is an open group embedding of
-$\mathbb R^\times\times\prod_{v\in S}\mathbb Q_v^\times\times
-\prod_{v\notin S}\mathcal O_v^\times$ into actual rational ideles,
-with image the ideles whose value and inverse are integral outside $S$.
-There is no positivity constraint in this image.
+[The finite-stage theorem](../../Proofs/Theorems/RationalIdeleFiniteStage.lean)
+uses an arbitrary `Finset` $S$ of finite places. The stage is the product
+$\mathbb R^\times\times\prod_{v\in S}F_v^\times\times
+\prod_{v\notin S}\mathcal O_v^\times$ with its product topology. The
+homomorphism `Masullo.rationalIdeleFiniteStageEmbedding` inserts these
+coordinates into Mathlib's `IdeleGroup (𝓞 ℚ) ℚ`. The coordinate equations
+identify them with the real coordinate and the full and integral finite
+coordinates, respectively. `Masullo.range_rationalIdeleFiniteStageEmbedding`
+identifies its image as the ideles whose value **and inverse** are
+integral off $S$. `Masullo.isOpenEmbedding_rationalIdeleFiniteStageEmbedding`
+proves that the map is a homeomorphism onto that open image. No sign
+restriction is imposed, even for $S=\varnothing$.
 
-In pinned Mathlib, `RestrictedProduct.unitsEquiv` is algebraic. For a
-single stage one can use `RestrictedProduct.continuous_rng_of_principal`
-to prove continuity of its finite adele value and inverse coordinatewise,
-then `RestrictedProduct.continuous_inclusion` and `Units.continuous_iff`
-to get continuity into the full idele group. The image is open by
-`RestrictedProduct.isOpen_forall_imp_mem` on both value and inverse.
-For continuity of the inverse parametrization, use local evaluation on
-both value and inverse, the induced units topology, and the subtype
-topology on integral coordinates. This avoids first proving a global
-homeomorphism for `RestrictedProduct.unitsEquiv`.
+The supporting [adele stage](../../Proofs/Lemmas/RationalAdeleFiniteStage.lean)
+embeds by first taking the restricted product along the principal filter
+on the complement of $S$, then including it into the cofinite restricted
+product. The topology at the principal stage is induced by coordinate
+evaluation. Passing to units preserves the embedding in the inverse-pair
+topology. The range condition is open since the two integrality conditions
+are preimages of an open finite adele stage under the value and inverse maps.
 
-After that topology step, pull back `rationalIdeleHaar` to each stage.
-The proposed stage product is real multiplicative Haar times the finite
-product of field-unit Haar times the compact product of the remaining
-integral-unit probabilities. Compare the two Haar measures by their
-mass on the inverse image of $K$: The real coordinate lies in $[1,e]$
-and all finite coordinates are integral units, including the ones in
-$S$. The checked local masses give product mass one there. The real-unit
-and product Borel interfaces and the stage equalities remain open.
-The additive finite Fourier self-duality problem is independent.
+Independent Yah statement review matched the interface against the pinned
+layout extraction: The open boxes in Lemma A.1.1.2(4)–(5), p. 540; the
+inverse-pair topology and restricted product in Definition A.1.3.1 and
+Lemma A.1.3.3, p. 541; and the signed factor upstairs versus the positive
+quotient coordinate in (A.2.2.1)–(A.2.2.3), p. 546. The manuscript set of
+places is $\{\infty\}\cup S$. This is the full restricted-product stage,
+not the smaller $S$-idele group in (A.1.5.2), p. 543. The restricted-product
+prescription on p. 556 uses these stages in Lemma A.3.2.4, equation
+(A.3.2.5), p. 560. The readings are from a SHA-256-matched extraction, not
+rendered pages. The Lean result is topological, not a measure comparison.
+
+## Next Haar step: Identify the full real local measure
+
+Implement the real factor of Definition A.3.2.2(1), p. 560, on
+$\mathbb R^\times$, with its Borel sigma-algebra. A concrete route is the
+sign and log-absolute-value splitting: Transport counting measure on the
+order-two sign group times log-Lebesgue measure, using counting measure
+rather than probability so each sign has mass one. Identify its pushforward
+under the real value map with $dt/|t|$ off zero. On the positive ray use
+`Masullo.map_volume_exp_eq_restrict_realMultiplicative`; on the negative
+ray use reflection. Audit the Haar instance and mass one on the inverse
+image of $[1,e]$. The positive-ray result alone does not supply a measure on
+both components.
+
+Then compare the pullback of `rationalIdeleHaar` on each checked stage with
+the product of that real Haar, the finitely many field-unit Haar measures
+in $S$, and the compact product of integral-unit probabilities off $S$.
+The open homomorphism gives the local topology for the pullback. For the
+comparison by Haar uniqueness, use the preimage of $K$: The real value
+lies in $[1,e]$, and all finite coordinates are integral units, including
+those in $S$. The local masses are one. The Borel and product measure
+interfaces, measure transport, and stage equalities remain open. The
+additive finite Fourier self-duality problem is independent.
 
 ## Checked real-lattice inversion
 
@@ -914,5 +939,6 @@ and a [checked finite-unit identification](#checked-finite-unit-identification-o
 The [local restriction comparison](#checked-local-multiplicative-haar-and-its-restriction-to-integral-units)
 is now checked. The [positive real multiplicative measure](#checked-positive-real-multiplicative-measure)
 is also checked. [Upstairs normalization and window strip mass](#checked-upstairs-haar-and-window-strip-mass)
-are checked for the constructed measure. The [finite-stage embedding](#next-haar-step-embed-each-finite-stage-upstairs)
+are checked for the constructed measure. The [finite-stage embeddings](#checked-open-embedding-of-every-rational-idele-stage)
+are checked. The [full real local measure](#next-haar-step-identify-the-full-real-local-measure)
 can run separately from checking the printed endpoint at the visual gate.
