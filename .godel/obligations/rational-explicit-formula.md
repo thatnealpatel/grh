@@ -32,8 +32,18 @@ $\Lambda(s)=F(s)/[s(s-1)]$ off $0,1$, where the checked entire function $F$
 satisfies $F(0)=F(1)=1$. The poles thus contribute $-\Phi(0)-\Phi(1)$,
 not the residues of $\Lambda$ itself. Independent Yah statement review
 checked the filter scope, order transfer requirements, multiplicities,
-and signs against pp. 605–606 and 614–615; the writer elaborated all three
-changed supporting modules and the public propositions.
+and signs against pp. 605–606 and 614–615.
+
+**Verification:** In the integration workspace for
+`fcf49e1d51df346eadec9c620559d41f1a22e3f0`, `lake --wfail build Proofs`
+passed, and `lake env leanchecker` passed on `Lemmas.ZetaZeroOrders`,
+`Lemmas.CompletedZetaOrders`, `Lemmas.TestedLogDeriv`, and
+`Props.RationalExplicitFormulaResidues`. `#check` matched the punctured-germ
+and reflection statements, and `#print axioms` reported only `propext`,
+`Classical.choice`, and `Quot.sound` for the generic principal-part lemma
+and all three public propositions. The changed Lean sources contained no
+new axiom declarations, placeholders, or unsafe substitutes. The campaign
+adopted that candidate.
 
 Under the ordinary convention that $L'(1-s)$ evaluates a derivative at
 $1-s$, the extracted plus sign in (B.4.2.3), p. 614, cannot be used. In
@@ -54,12 +64,16 @@ $\gamma>0$, to absorb the growth in $k$ by Schwartz decay in $T_k$. The
 upper bound on heights does not imply that lower bound. This is separate
 from residue factorization.
 
-For a control of the asymptotic reading (ignoring the harmless $k=0$
-endpoint), take $f(s)=\exp(\cos(2\pi s))$, $\Phi(s)=\exp(s^2)$, and
+For a control of the asymptotic reading, use $|k|\ge2$, as in the lemma.
+Taken literally at $k=0$, the displayed bound in the definition instead
+forces $f$ to vanish on a horizontal segment and hence identically;
+replacing $|k|$ by $1+|k|$ fixes that issue but not the missing lower
+bound. Take $f(s)=\exp(\cos(2\pi s))$, $\Phi(s)=\exp(s^2)$, and
 $a=-3/4,b=7/8$. On the vertical lines at $\pm1/2$ the first function has
 modulus $\exp(-\cosh(2\pi t))\le1$, and the test is uniformly Schwartz
 on every bounded vertical strip. For $k\ge2$ choose $T_{\pm k}=\pm t_k$
-with $\cosh(2\pi t_k)=\log(k+e)$, so $t_k\to\infty$ and $t_k=O(k)$.
+with $\cosh(2\pi t_k)=\log(k+e)$, so $t_k\to\infty$ and
+$t_k=O(\log\log k)$.
 Throughout either horizontal segment $|f|\le k+e$, but on
 $|\sigma|\le1/6$ the modulus of the product is at least
 $\exp(\tfrac12\cosh(2\pi t_k)-t_k^2)$. Its absolute horizontal integral
@@ -77,12 +91,17 @@ horizontal segments with a bound polynomial in the **absolute ordinate**.
 The corresponding Ch. XVII §2 passage in the
 [University of Toronto scan](https://www.math.toronto.edu/~ila/Lang%20--%20Algebraic%20number%20theory.pdf),
 printed pp. 334–336 (scan pp. 348–350), uses different proposition
-numbering. Its OCR gives $T_m\in(m,m+1)$ with a zero-free margin of scale
+numbering (scan SHA-256
+`bf9dddfd85067766cb7a11477fb92d7f436fbbd6cd7e0efcf7f87fa6836eed97`).
+Its OCR gives $T_m\in(m,m+1)$ with a zero-free margin of scale
 $1/\log|m|$, a bound of order $(\log|m|)^2$ for the completed logarithmic
 derivative on $[-b,1+b]+iT_m$ for $0<b<1$, and the right-edge bound from
 the Euler product and Stirling. Lang's §3, pp. 336–337, consumes these
 bounds on just those rectangles. This is provisional OCR evidence for
 the corresponding argument, not a reading of the exact cited numbering.
+A separate online copy returned HTTP 403 before text retrieval. Reopen the
+edition match only with an accessible copy, starting with the statement of
+Prop. 2.7 as the control.
 Masullo's (B.6.1.39)–(B.6.1.42), p. 642, concerns instead the incomplete
 Euler product with the factors in $S$ removed, including the Archimedean
 factor. The completed bound and its vertical-line companion are still
@@ -105,6 +124,17 @@ test is the kernel $(w-z)^{-1}$: Subdivide around a small square centered
 at $z$, use rectangle Cauchy–Goursat on the other boxes, and compute the
 centered square boundary integral as $2\pi i$. Use the same four
 oriented real interval integrals as Mathlib, so shared edges cancel.
+For the square calculation, translate and scale by the positive half-side
+length to the unit square. Quarter-turn invariance of $dw/w$ reduces the
+integral to four copies of the right edge, traversed upward:
+
+$$
+\int_{-1}^{1}\frac{i}{1+it}\,dt
+=\int_{-1}^{1}\frac{t+i}{1+t^2}\,dt=i\pi/2.
+$$
+
+The odd real part cancels under $t\mapsto-t$ and pinned Mathlib's
+`integral_inv_one_add_sq` evaluates the imaginary part.
 
 For the subsequent rational specialization, show no zeros outside the
 open strip in the fixed rectangle off $0,1$: On the right use pinned
