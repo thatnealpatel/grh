@@ -1,10 +1,12 @@
 module
 
 public import Mathlib.Analysis.SpecialFunctions.Sqrt
-public import Mathlib.Analysis.Complex.Exponential
+public import Mathlib.Analysis.SpecialFunctions.Exp
+public import Mathlib.MeasureTheory.Function.StronglyMeasurable.Basic
 
 /-! # The causal exponential vector for a single half-plane zero -/
 
+open MeasureTheory
 open scoped ComplexConjugate
 
 namespace Masullo
@@ -13,6 +15,26 @@ namespace Masullo
 `a.re > 0` from the boundary, in unweighted log coordinates. -/
 public noncomputable def halfLineMellinVector (a : ℂ) (x : ℝ) : ℂ :=
   if 0 ≤ x then (Real.sqrt (2 * a.re) : ℂ) * Complex.exp (-conj a * x) else 0
+
+/-- Causal extension by zero is strongly measurable, including at the edge. -/
+public theorem stronglyMeasurable_halfLineMellinVector (a : ℂ) :
+    StronglyMeasurable (halfLineMellinVector a) := by
+  have hc : Continuous (fun x : ℝ ↦ (Real.sqrt (2 * a.re) : ℂ) * Complex.exp (-conj a * x)) :=
+    continuous_const.mul (Complex.continuous_exp.comp (continuous_const.mul Complex.continuous_ofReal))
+  exact hc.stronglyMeasurable.piecewise measurableSet_Ici stronglyMeasurable_const
+
+/-- The absolute size is bounded by the value at the causal edge. -/
+public theorem norm_halfLineMellinVector_le {a : ℂ} (ha : 0 < a.re) (x : ℝ) :
+    ‖halfLineMellinVector a x‖ ≤ Real.sqrt (2 * a.re) := by
+  by_cases hx : 0 ≤ x
+  · rw [halfLineMellinVector, ite_eq_left hx, norm_mul, Complex.norm_real,
+      Real.norm_of_nonneg (Real.sqrt_nonneg _), Complex.norm_exp]
+    apply mul_le_of_le_one_right (Real.sqrt_nonneg _)
+    rw [Real.exp_le_one_iff, Complex.mul_re, Complex.ofReal_re, Complex.ofReal_im,
+      mul_zero, sub_zero, Complex.neg_re, Complex.conj_re]
+    exact mul_nonpos_of_nonpos_of_nonneg (neg_nonpos.mpr ha.le) hx
+  · rw [halfLineMellinVector, ite_eq_right hx, norm_zero]
+    exact Real.sqrt_nonneg _
 
 /-- A causal vector vanishes strictly before its support edge. -/
 public theorem halfLineMellinVector_eq_zero_of_neg (a : ℂ) {x : ℝ} (hx : x < 0) :

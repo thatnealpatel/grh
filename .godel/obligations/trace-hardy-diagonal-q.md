@@ -4,9 +4,10 @@
 and $0<\alpha<1/2$. This computes the positive-log **position** cutoff of the
 Hardy compression from the [reverse-lift control](trace-reverse-lift-q.md),
 without dividing by zeta. It does not compute the manuscript's global $S$
-piece. Lean checks the single-vector sharp overlap. The operator calculation
-and its cutoff limit below are independently reviewed mathematics, not Lean
-results.
+piece. Lean checks the single-vector overlap, its pairing with a causal
+convolution profile on a sharp cutoff, and the position limit of that pairing.
+The full operator calculation and its cutoff limit below are independently
+reviewed mathematics, not Lean results.
 
 ## Operator and source match
 
@@ -75,10 +76,29 @@ $$
 $$
 The proof restricts to the common causal support $[y,R]$, translates its
 lower edge to zero, and integrates the decaying exponential. Setting $y=0$
-and letting $R$ increase gives the normalization. Removing the sharp cutoff
-on one vector gives the shifted overlap $e^{-ay}$; integrating against $g$
-gives $\int f(y)e^{(1/2-z_j)y}\,dy$. The overlap has the reflected exponent;
-the separate global minus sign comes from taking the orthogonal complement.
+and letting $R$ increase gives the normalization.
+
+### Checked convolution pairing and position limit
+
+In [`Props.HalfLineMellinDiagonal`](../../Proofs/Props/HalfLineMellinDiagonal.lean),
+`Masullo.halfLineMellinVector_sharpCutoff_convolution` integrates that
+overlap against any $g\in L^1([0,D])$, understood to vanish off $[0,D]$.
+Its left side is the actual scalar pairing
+$$
+J(R)=\int_{[0,R]}\left(\int_{[0,D]}g(y)u_a(x-y)\,dy\right)\overline{u_a(x)}\,dx.
+$$
+The theorem retains the edge factor and sets the shifted overlap to zero
+when $y>R$. To justify Fubini, the vector is strongly measurable and
+bounded in modulus by $\sqrt{2r}$ everywhere, so the product integrand is
+bounded by $2r|g(y)|$ on the finite-width rectangle.
+`Masullo.tendsto_halfLineMellinVector_sharpCutoff_convolution` then gives
+$J(R)\to\int_{[0,D]}g(y)e^{-ay}\,dy$ as $R\to+\infty$. For $R\ge D$,
+the edge factor lies in $[0,1]$ and tends to one, so the majorant is $|g|$.
+Neither scalar theorem needs smoothness or mass zero. In the Hardy chart,
+$g(y)=e^{\alpha y}f(y)$, so the limit is $\int f(y)e^{(1/2-z_j)y}\,dy$.
+The overlap has the reflected exponent; the separate global minus sign
+comes from taking the orthogonal complement. The rank-one projection and
+trace-class construction above are not Lean declarations.
 
 ## Blaschke exhaustion and then position exhaustion
 
@@ -163,14 +183,25 @@ the full-line frequency estimates, and the exact scalar endpoint. Neither
 review establishes a manuscript level comparison; no visual check is
 claimed.
 
-**Runnable successor:** In Lean, integrate the checked shifted overlap
-against a smooth compact positive-log $g$ and explicitly prove the fixed
-sharp-cutoff double-integral identity by Fubini on $[0,R]^2$ (the causal
-triangle is measurable and the integrand is bounded there). Then take
-$R\to\infty$ on the compact $y$ support. This proves the convolution
-pairing with the full reflected Mellin test value, still for one factor.
-Separately, a manuscript-facing bridge must compare the actual global
+**Runnable successor: Check the operator-order difference in the same
+unit-band model.** The level-limit citation (11.2.1.9) has the geometric
+projection *after* convolution, whereas the kernel in (10.4.3.48) has it
+*before*. Test the exact difference $M_\rho(QC_g-C_gQ)$ without cycling a
+bounded factor through a trace at finite position cutoff. On full-line
+$L^2$ let $P_+$ and $P_-$ be the causal and anticausal support projections
+and let $S$ be the unitary inner multiplier from the reverse-lift handoff.
+Use $Q=S P_+ S^*$, commutation of $S$ with full-line convolution, and
+causality to test the reduction to the conjugate of $P_+ C_g P_-$. For
+$\operatorname{supp}g\subset[0,D]$ the cross block is confined to
+$[0,D]\times[-D,0]$; the rank-one Fourier integral above gives a concrete
+trace-class check. Determine its trace after position exhaustion and
+justify the restriction from the full line to the causal space explicitly.
+This tests only the order discrepancy, not weighted level convergence.
+
+**Remaining manuscript-facing obligation:** Compare the actual global
 level operators of (11.2.1.8)–(11.2.1.10) with an independently evaluated
-localized diagonal in the **same weighted degree and cutoff order**.
-In particular, it must account for the extra half-plane zeros and both
-Mellin subtractions before the model result can be used in (12.5.1.4).
+localized diagonal in the same weighted degree and cutoff order. In
+particular, account for the extra half-plane zeros and both Mellin
+subtractions before using the model result in (12.5.1.4). The
+[above-one geometric control](trace-to-zeros.md#first-unmatched-geometric-evaluation-and-a-positive-log-control)
+is an independent test of the missing global $S$-piece identification.
