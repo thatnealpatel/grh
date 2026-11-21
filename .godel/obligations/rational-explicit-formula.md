@@ -1200,28 +1200,80 @@ checked the normalization, domain, and scope against the text and the
 accepted interfaces. Audit scope: `Lemmas.RationalLocalNormShell`,
 `Lemmas.RationalLocalHaarDensity`, and `Theorems.RationalLocalHaarDensity`.
 
-### Next: Compare the shifted Fourier pairing on tests vanishing at one
+## Checked rational shifted Fourier pairing on tests vanishing at one
 
-For a locally constant, compactly supported complex test $f$ on $K_v^\times$
-with $f(1)=0$, prove (B.4.4.5), p. 620, via (B.4.4.7)–(8), p. 621:
-With $u(x)=f(1+x)|1+x|_v^{-1/2}$ extended by zero at $x=-1$,
-show both integrals absolutely converge and
+[`rationalLocalShifted_log_fourier`](../../Proofs/Theorems/RationalLocalShiftedFourier.lean)
+proves (B.4.4.5), p. 620, for every finite place of $\mathbb Q$ and every
+locally constant, compactly supported $f:K_v^\times\to\mathbb C$ with
+$f(1)=0$. If $u(x)$ is $f(1+x)|1+x|_v^{-1/2}$, zero at $x=-1$, then both
+integrands are absolutely integrable and
 
 $$
 -\int_{K_v} J(\xi)\widehat u(\xi)\,d\nu_v(\xi)
 = \int_{K_v^\times}\frac{f(y)|y|_v^{1/2}}{|1-y|_v}\,d\mu_v(y).
 $$
 
-The leading minus is the rational unit-mass case of (B.4.4.1), p. 619.
-Prove local constancy and compact support of the extension, transport
-the off-zero pairing via `adicCompletion.padicEquiv`, translate by
-$y=1+x$ for additive Haar, and apply the checked density identity in
-Bochner form. For general $f$, the subsequent step is to subtract
-$f(1)\mathbf1_{\mathbb Z_p^\times}$ and use the checked translated
-unit-indicator pairing. Neither step identifies the global geometric
-trace. For ramified continuation, separately check the second
-frequency ball in the display after (B.4.4.15): The extracted subscript
-appears to have $\mathfrak m_v^{-1}\mathfrak d$, whereas the annihilator
-of $\mathfrak m_v$ for the trace character is
-$\mathfrak m_v^{-1}\mathfrak d^{-1}$. The two agree over $\mathbb Q_p$.
-The subscript reading is provisional pending rendered-page review.
+Masullo defines the shifted test in (B.4.4.1)–(2), pp. 619–620, and
+uses the restriction of the logarithmic Fourier distribution and the
+substitution $y=1+x$ in (B.4.4.7)–(8), p. 621. Lean checks the required
+test conditions with `rationalLocalShiftedTest_properties`: Compact
+support on the units gives local constancy across the deleted point
+$x=-1$, and $u(0)=f(1)$ permits the off-zero computation.
+`rationalLocalLogFourier_off_zero` supplies the needed restriction by
+transporting the checked direct ball proof of (B.4.3.5) to the actual
+completion in both Fourier variables. It uses the same additive Haar
+in both variables, not a new choice of normalization. After translation,
+`rationalLocalHaar_integral_density` applies (A.3.2.3) in Bochner form,
+including the integrability implication. The coefficients
+$-(1-p^{-1})^{-1}$ and $(1-p^{-1})^{-1}$ agree after the leading minus
+of (B.4.4.1); there is no $\log p$ factor at this normalization. The
+proof does not rely on the adjacent (B.4.4.6) or its shift phase (9).
+
+Independent Yah `shifted-statement-review` (output
+`7d0e9e4ac296e96050a539d71653860e89bde6a0`) checked the endpoint's
+hypotheses, both integrability claims, and normalization against the
+pinned PDF extraction (not rendered pages). The final proof preserves
+the reviewed endpoint and normalization-bearing definitions. Audit
+scope: `Lemmas.RationalLocalShiftedTest`,
+`Lemmas.RationalLocalLogPairTransport`, and
+`Theorems.RationalLocalShiftedFourier`.
+
+### Next: Remove the identity-value hypothesis by unit subtraction
+
+Prove the rational case of (B.4.4.14), pp. 622–623, for **all** locally
+constant, compactly supported $f:K_v^\times\to\mathbb C$. On the
+right side, replace $f$ by $f-f(1)\mathbf1_{U_v}$ in the multiplicative
+kernel, where $U_v$ is the norm-one subgroup. This is precisely the two
+pieces in the definition below (B.4.4.14): An unchanged integral off
+$U_v$ and ordinary integrable subtraction on $U_v$. The obligation is
+absolute integrability of the unmodified shifted Fourier integrand and
+the subtracted multiplicative integrand, and equality of their signed
+integrals, with $\log p$ on both sides for the canonical normalization
+(B.4.4.3). The different is trivial over $\mathbb Q_p$.
+
+Use the checked shifted endpoint on $f-f(1)\mathbf1_{U_v}$. Prove that
+the norm-one indicator is an admissible test and its shifted weighted
+extension corresponds under `adicCompletion.padicEquiv` to the set
+indicator in `padicTranslatedUnits_log_fourier`. Transport that
+theorem's integrability and zero pairing, then prove linearity for the
+shifted Fourier expressions, including convergence of the inner
+integrals. This is the unit-indicator reduction in the proof on p. 623;
+the existing checked calibration replaces the unverified frequency
+ball display there. For radial compact log profiles, match the result
+to `rationalLocalRadialHaar_eq_shellSum`; this does not identify the
+global geometric trace.
+
+For ramified continuation, the second frequency ball in the display
+after (B.4.4.15), p. 623, needs its own check. The extracted subscript
+appears to have $\mathfrak m_v^{-1}\mathfrak d$, whereas the
+annihilator of $\mathfrak m_v$ for the trace character of Example
+A.3.1.10, p. 558, is $\mathfrak m_v^{-1}\mathfrak d^{-1}$. These
+coincide over $\mathbb Q_p$. The typography is provisional pending
+rendered-page review; a mathematical repair can use `Submodule.traceDual`
+and `coeIdeal_differentIdeal` over the finite extension of $\mathbb Q_p$.
+The concrete local obligation is to compute the Fourier integral of
+the indicator of $\mathfrak m_v$ with the trace character and
+self-dual measure: Its value on that trace-dual lattice is
+$\nu_v(\mathfrak m_v)$, and it is zero off it by translation. This
+requires the finite extension and its ring of integers in the actual
+completion, not just the global different.
