@@ -592,21 +592,14 @@ These are extraction-based discrepancies, not rendered-page findings.
 The checked scalar normalization uses neither the manuscript's displayed
 constant nor a contour shift.
 
-## Next runnable obligation: Evaluate the tested real Gamma term
+<a id="next-runnable-obligation-evaluate-the-tested-real-gamma-term"></a>
 
-Use the checked scalar kernel on $s=2+it$ with
-$W(t)=\Phi_g(s)+\Phi_g(1-s)$ for smooth compact log profiles $g$.
-Prove joint $L^1$ for $W(t)K(2+it,x)$ on $\mathbb R\times(0,\infty)$
-before exchanging integrals. A concrete majorant: For $0<x\le1$,
-$|1-e^{-itx}|\le |t|x$ and $1-e^{-2x}\ge 2xe^{-2x}$ imply
-$|K(2+it,x)|\le |t|/2$. For $x>1$ use
-$2e^{-2x}/(1-e^{-2})$. Both required moments of $|W|$ are finite by
-fourth-power strip decay. Do not split the two singular terms in $K$.
+## Checked real Gamma evaluation and rational explicit formula
 
-Apply the already checked `compactLogMellin_prime_power_evaluation`
-with $n=e^x$ (it accepts every positive real $n$) and with $n=1$.
-The target is absolute integrability of the following combined $x$
-kernel and the identity
+[`Masullo.compactLogMellin_GammaReal_evaluation`](../../Proofs/Props/GammaRealMellin.lean)
+evaluates (B.4.2.13), p. 616, on the right line for smooth compact log
+profiles $g$. With $s=2+it$ and $W(t)=\Phi_g(s)+\Phi_g(1-s)$, it gives
+absolute integrability of the combined $x$ kernel and
 
 $$
  \frac{1}{2\pi}\int_{\mathbb R}W(t)\frac{\Gamma_{\mathbb R}'(2+it)}{\Gamma_{\mathbb R}(2+it)}\,dt
@@ -614,11 +607,85 @@ $$
  \frac{2g(0)e^{-2x}-g(x)-e^{-x}g(-x)}{1-e^{-2x}}\,dx.
 $$
 
-Insert it in `completedZeta_contour_finite_places`, retaining both poles
-and the full zero orders. In comparing with Barner's centered convention,
-put $F(x)=e^{x/2}g(x)$, so the nonlocal numerator is
-$e^{-x/2}(F(x)+F(-x))$. The different constant subtraction schemes must
-be compared including their identity-supported terms, not by discarding
-$g(0)$. The idelic principal value and Haar comparison in
-(B.4.4.16), pp. 623–625, and the Chapter 12 global geometric comparison
-are still open. This successor is not yet a Lean declaration.
+Masullo invokes Barner's tested digamma formula and Mellin inversion in
+(B.4.2.14)–(B.4.2.16). The Lean proof uses the checked scalar
+`logDeriv_GammaReal_eq_integral` and supplies joint domination before
+Fubini. The estimate in
+[`Lemmas.GammaRealRightLine`](../../Proofs/Lemmas/GammaRealRightLine.lean)
+uses $|1-e^{-itx}|\le |t|x$ and $x\le\sinh x$ to give one product
+majorant on the whole positive half-line: $|K(2+it,x)|\le |t|e^{-x}/2$.
+Vertical strip decay gives the needed absolute moments of $W$.
+`compactLogMellin_prime_power_evaluation` at $n=1$ and $n=e^x$ then
+computes each fixed-$x$ slice. The singular $x$ terms are not integrated
+separately, and the proof does not need the manuscript's contour shift.
+
+With Barner's centered test $F(x)=e^{x/2}g(x)$, the nonlocal numerator
+is $e^{-x/2}(F(x)+F(-x))$. Barner's Gauss subtraction at pp. 145–146,
+150 retains $g(0)e^{-2x}/x$; its difference from our subtraction
+integrates to $-\gamma g(0)$ by Gauss at $z=1$. The $-\log\pi\,g(0)$
+term comes from the real prefactor. This explains the change of
+subtraction in prose; the Lean endpoint uses the checked Beta–Gamma
+route, not an assumed evaluation of Barner's subtraction.
+
+[`Masullo.completedZeta_explicit_formula`](../../Proofs/Theorems/RationalExplicitFormula.lean)
+substitutes this evaluation into the finite-place contour. This is the
+rational trivial-character compact-log case of Theorem B.4.2.2,
+(B.4.2.17), with the Mellin arguments unshifted. It retains both poles,
+the minus von Mangoldt sum, and the absolutely summable, full-order
+open-strip zero sum. The three new modules and their exported endpoints
+are the scope of the Lake and axiom audit. Independent Yah review
+(`real-term-statement`) checked the endpoint's constants, reflected
+weight, measures, and scope against the accepted dependencies,
+digest-matched Masullo layout extraction, and Barner OCR. These were
+not visual readings. No idelic or global trace identification is
+claimed.
+
+## Next runnable obligation: Check the Fourier normalization of the real principal value
+
+In the pinned extraction, (B.4.4.1)–(B.4.4.2), pp. 619–620, define the
+unnormalized-looking real term using the **negative** Fourier pairing
+$-\int_{\mathbb R}\log|\xi|\,\widehat u(\xi)\,d\xi$, with
+$u(z)=f(1+z)|1+z|^{-1/2}$ extended by zero near $z=-1$ and
+$f(y)=F(\log|y|)$. Example A.3.1.5, p. 557, specifies the standard
+$e^{-2\pi i z\xi}$ transform and self-dual Lebesgue measure. Equation
+(B.4.4.20), p. 625, sends that pairing to the full-measure cutoff
+in (B.4.3.13), p. 619, while (B.4.4.16) divides it by $M_\infty=2$.
+Connes, *Trace Formula in Noncommutative Geometry and the Zeros of the
+Riemann Zeta Function*, [arXiv:math/9811068v1](https://arxiv.org/abs/math/9811068v1),
+Appendix II (30), (32)–(37), instead uses the same additive Fourier
+pairing and the **normalized** multiplicative Haar ($dy/(2|y|)$),
+including the constant $\lambda=\log(2\pi)+\gamma$. This is a
+provisional text-based factor-of-two mismatch, already off the identity;
+rescaling a measure in the cutoff does not rescale the additive pairing.
+
+First prove the normalization control in Lean: For smooth compactly
+supported $u$ vanishing near $0$,
+
+$$
+ -\int_{\mathbb R}\log|\xi|\,\widehat u(\xi)\,d\xi
+   = \frac12\int_{\mathbb R}\frac{u(z)}{|z|}\,dz.
+$$
+
+A runnable route uses the Laplace difference for $-\log|\xi|$:
+Integrate $(e^{-a|\xi|}-e^{-a})/a$ over truncated $a$ intervals, extend
+by dominated convergence using $|\log|\xi||$, and discard the constant
+on each truncated interval by $\int\widehat u=u(0)=0$. The Fourier
+integral of $e^{-a|\xi|}$ is $2a/(a^2+4\pi^2z^2)$ by integrating
+both half-lines. Off the support gap, Fubini and the elementary
+$a$ integral give the displayed coefficient $1/2$. Test it on nonzero
+nonnegative $g$ supported in $(0,\log 2)$; the inferred half-factor
+discrepancy cannot be an identity-supported correction. Treat the
+full cutoff normalization and its Fourier pairing as distinct until
+this control is checked.
+
+For the subsequent identity term, Connes (36)–(37) retains $\lambda$.
+Use [`map_realMultiplicativeHaar_val`](../../Proofs/Theorems/RealMultiplicativeHaar.lean)
+to track both signs and the division by two when starting with full Haar.
+Folding $y=\pm e^{\pm x}$ gives the nonlocal weight
+$e^{-x/2}/(1-e^{-2x})$. The physical cutoff $|1-y|\ge\varepsilon$
+and the symmetric log cutoff differ by vanishing annular errors after
+the cutoff radii are compared. The identity subtraction contributes
+$-\log(1-e^{-2\varepsilon})+\log\varepsilon\to-\log 2$,
+leaving $\log\pi+\gamma$. The full Fourier cutoff identity, the
+finite-place idelic comparison, and the Chapter 12 global geometric
+comparison are not checked by the rational explicit formula.
