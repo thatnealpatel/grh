@@ -31,4 +31,10 @@ The uniform bound uses the vanishing of the first two derivatives of $\chi$ off 
 
 Independent Yah statement review confirmed the half-line domain, sign, decay conditions, and mass specialization. The release checks are `lake --wfail build Proofs`, `lake env leanchecker Lemmas.CutoffProfiles`, and `#check` and `#print axioms` for the public declarations.
 
-Next, prove the mass-corrected series limit. Use the uniform integral estimate and `Masullo.norm_positiveLaplaceTest_mul_weight_le` for the summable majorant $C\|d_i\|/(1+\|w_i\|^2)$ under the separate weighted summability premise, and the scalar limit for each $w_i$. Apply annihilation only to $f_N-M(f_N)h$ for a **fixed** mass-one bump $h$. The full-versus-capped distribution identity remains an explicit premise, not a consequence of the profile or limits.
+The [mass-corrected series endpoint](trace-divisor-cutoff.md#lean-endpoint-and-next-check)
+now uses the uniform integral estimate and
+`Masullo.norm_positiveLaplaceTest_mul_weight_le` for the summable majorant
+$C\|d_i\|/(1+\|w_i\|^2)$, and the scalar limit for each $w_i$. The
+annihilation hypothesis applies only to $f_N-M(f_N)h$ for a fixed mass-one
+bump $h$. The full-versus-capped distribution identity remains an explicit
+premise, not a consequence of the profiles or limits.
