@@ -29,6 +29,12 @@ local instance : CompactSpace Cq := compactSpace_rationalAdeleClasses
 public noncomputable def rationalAdeleClassCharMap (r : ℚ) : C(Cq, ℂ) :=
   ⟨rationalAdeleClassChar r, continuous_rationalAdeleClassChar r⟩
 
+@[simp]
+public theorem rationalAdeleClassCharMap_apply (r : ℚ) (c : Cq) :
+    rationalAdeleClassCharMap r c = rationalAdeleClassChar r c := by
+  unfold rationalAdeleClassCharMap
+  rfl
+
 private theorem charMap_zero : rationalAdeleClassCharMap 0 = 1 := by
   ext c
   obtain ⟨a, rfl⟩ := QuotientAddGroup.mk_surjective c

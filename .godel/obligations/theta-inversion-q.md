@@ -1103,25 +1103,72 @@ Verification commands: `lake --wfail build Proofs`, `lake env leanchecker
 Theorems.RationalAdeleClassFourierBasis`, and `#check` / `#print axioms` for
 both endpoints above.
 
-## Next additive step: pointwise reconstruction with summable coefficients
+## Checked pointwise Poisson summation with explicit convergence hypotheses
 
-For Theorem D.1.2.7(3), p. 749, reconstruct a continuous quotient function
-$g$ from its rational coefficients $b_r=\int_C g\overline{\chi_r}\,d\lambda$
-under the explicit premise $\sum_r|b_r|<\infty$. The norm-one characters
-make $\sum_r b_r\chi_r$ absolutely summable in the continuous-map sup norm.
-Use orthogonality and `MeasureTheory.integral_tsum_of_summable_integral_norm`
-to give the sum the same coefficients as $g$. For the difference $h$,
-the continuous functional $v\mapsto\int_C h\overline v\,d\lambda$ is
-conjugate-linear and vanishes on the dense span. Test against $v=h$ and use
-positivity of Haar on nonempty open sets to conclude $h=0$ pointwise.
+In [RationalAdelePoisson.lean](../../Proofs/Theorems/RationalAdelePoisson.lean),
+`Masullo.hasSum_rationalAdeleClassFourier` proves that if the coefficients
+$b_r=\int_C g\overline{\chi_r}\,d\lambda$ of a continuous quotient function
+are absolutely summable, the series $\sum_r b_r\chi_r$ converges to $g$ in
+the sup norm. Norm-one characters give absolute summability in the
+continuous-map norm. Pair the sum with each character in $L^2(C,\lambda)$;
+orthogonality identifies its coefficients with those of $g$. The difference
+annihilates the dense span, so pairing it with itself gives zero $L^2$ norm.
+Haar is positive on nonempty open sets, so the continuous-map embedding
+into $L^2$ is injective. There is no use of adelic Plancherel.
 
-Then use the checked coefficient comparison for Borel adelic $L^1$ inputs
-with everywhere absolutely summable fibers, continuous $P f$, and summable
-upstairs Fourier samples at the diagonal rational frequencies. This yields
-the counting-series formula, with no extra volume factor or invocation of
-ambient duality. Proving these hypotheses for adelic Schwartz–Bruhat inputs,
-proving the a.e. part (2), and proving the Fourier scaling law for the idelic
-application to Theorem 2.2.3.2, p. 82, are separate steps.
+`Masullo.hasSum_rationalAdele_poisson` gives the rational counting-series
+formula at **every** $x\in\mathbb A_{\mathbb Q}$. It assumes Borel
+measurability and $L^1$ integrability upstairs, everywhere absolute
+summability of the diagonal fibers, continuity of their periodization on
+$C$, and absolute summability of the upstairs Fourier integrals sampled at
+rational frequencies. The checked coefficient comparison identifies those
+samples with the quotient coefficients, and evaluation on the class of $x$
+gives the formula. The Fourier series is absolutely convergent since the
+reconstruction phases have modulus one. The sum uses $x+d$ rather than
+$x-d$; negation reindexes the diagonal. No volume factor is inserted.
+
+Independent Yah statement review checked the digest-matched layout
+extraction of Situation D.1.2.6 and Theorem D.1.2.7(3), pp. 748–749.
+This is a project proof of the rational counting-series version, not an
+application of the manuscript's general dual-measure setup. That setup
+requires a dual identification and the transported Plancherel measure;
+the quotient proof uses neither. The reading is provisional, not a visual
+check. No claim about arbitrary Schwartz–Bruhat inputs or part (2) follows.
+
+Checks: `lake --wfail build Proofs`, `lake env leanchecker` on
+`Theorems.RationalAdeleClassFourierBasis` and `Theorems.RationalAdelePoisson`,
+and external `#check` and `#print axioms` on the changed public API.
+
+## Next additive step: convergence for the unramified tensor
+
+Discharge the periodization hypotheses in
+`Masullo.hasSum_rationalAdele_poisson` for the function
+$f(a)=b(a_\infty)\,\mathbf 1_{\prod_p\mathbb Z_p}(a_f)$ with
+$b\in\mathcal S(\mathbb R,\mathbb C)$. This is the unramified case of
+(2.2.2.4), p. 78, and the $g=1$ case of Lemma 2.2.2.1, p. 77, adding the
+zero summand. On the open integral-finite stage, the surviving diagonal
+translates are exactly the integers by
+`algebraMap_mem_rationalIntegralAdeles_iff`. Prove absolute summability
+and identify the sum there with $\sum_{n\in\mathbb Z}b(a_\infty+n)$.
+`exists_rational_sub_mem_integral` and translation reindexing extend absolute
+summability to every lift. The pinned Mathlib proof of
+`Real.tsum_eq_tsum_fourier_of_rpow_decay_of_summable` uses
+`isBigO_norm_restrict_cocompact`, `Int.tendsto_coe_cofinite`, and
+`ContinuousMap.summable_of_locally_summable_norm` for precisely this real
+translated series. Reuse that convergence argument without invoking real
+Poisson summation. Descend continuity using `rationalAdeleQuotientEquiv`
+and the quotient-map property of the stage projection.
+
+After this, `comap_rationalAdeleAddHaar_integral` is enough for
+integrability of this tensor and its Fourier samples: On the open stage,
+integrate the real factor against Lebesgue measure and the finite phase
+against compact Haar probability. The latter averages to one at integral
+frequencies and zero otherwise, using the local character kernel and a
+nontrivial translation. Then the real Schwartz transform gives absolute
+summability over the surviving integer frequencies. This route does not
+require the all-stage product measure. More general finite-place factors,
+the a.e. formula in D.1.2.7(2), and idelic Fourier scaling for Theorem
+2.2.3.2, p. 82, are separate obligations.
 
 Independently, the integral-stage comparison can be strengthened by
 identifying `rationalFiniteIntegersHaar` with the product of the restrictions
@@ -1606,4 +1653,4 @@ The [complex Borel $L^1$ version](#checked-complex-weil-formula-and-absolute-sum
 is checked, as are the [quotient Fourier coefficient comparison and point
 separation](#checked-unfolding-of-the-quotient-fourier-coefficients) and
 [uniform density and Haar orthogonality](#checked-density-and-orthogonality-of-the-rational-quotient-characters).
-Next [prove pointwise reconstruction with summable coefficients](#next-additive-step-pointwise-reconstruction-with-summable-coefficients).
+The [pointwise reconstruction and rational counting-series formula](#checked-pointwise-poisson-summation-with-explicit-convergence-hypotheses) are checked under explicit convergence hypotheses. Next [discharge the periodization hypotheses for the unramified tensor](#next-additive-step-convergence-for-the-unramified-tensor).
