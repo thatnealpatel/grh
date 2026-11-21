@@ -365,43 +365,82 @@ layout extraction and Lang OCR. These source readings remain provisional,
 not visual checks. The theorem does not claim bounds on every inward pair
 of vertical lines or for other Hecke characters.
 
-## Next runnable obligation: Exhaust the rational completed-zeta contour
+## Checked exhaustion of the rational completed-zeta contour
 
-Prove (B.4.2.2), p. 614, at $a=2$ for entire $\Phi$ satisfying a uniform
-fourth-power decay bound $|\Phi(\sigma+it)|\le B/(1+|t|)^4$ for
-$-1\le\sigma\le2$. This is an explicit consequence required of the
-manuscript's uniformly Schwartz entire Mellin transform
-(Proposition B.2.1.9(2), p. 598, and Definition B.2.2.1, p. 600),
-not a conclusion of the contour theorem. The existing *quadratic*
-`CompactTestLaplace` estimate alone does not provide this input.
-
-Take the separately selected heights in intervals indexed by $n+2$ and
-$-(n+2)$ for the top and bottom of the finite rectangle. Their separation
-excludes boundary zeros, and they tend to the two infinities. Apply
-`rectangleIntegral_completedZeta_logDeriv`, with its checked orientation
-rather than the horizontal signs in the text extraction of (B.3.2.4),
-p. 606. The interval integral norm bound
-`intervalIntegral.norm_integral_le_of_norm_le_const` bounds each
-horizontal contribution by $3BC/(1+|T_m|)$, hence by a quantity tending
-to zero. On both vertical lines the norm is bounded by a constant times
-$(1+|t|)^{-3}$; `integrable_one_add_norm` gives the integrable majorant,
-and apply dominated convergence to the interval indicators. Dominate the
-full-order terms of the zero sum by a constant times
-$m_\rho/(1+\|\rho-1/2\|^2)$ using the strip bound on $\Re\rho$ and
-`summable_zetaZeroOrder_div_one_add_norm_sq`. The exhausting finite zero
-sets are cofinal among finite subsets, so their sums converge to the
-absolute sum.
-
-The target, with the two vertical integrands integrable and the series
-absolutely summable, is
+[`Masullo.completedZeta_contour_identity`](../../Proofs/Theorems/RationalExplicitFormulaExhaustion.lean)
+proves (B.4.2.2), p. 614, over $\mathbb Q$ at $a=2$. Let
+$G(s)=\Phi(s)\Lambda'(s)/\Lambda(s)$, with $\Phi$ entire and
+$|\Phi(\sigma+it)|\le B/(1+|t|)^4$ uniformly on $-1\le\sigma\le2$.
+Both vertical parameter integrands are integrable, the tested full-order
+zero sum is absolutely summable, and
 
 $$
-\frac{1}{2\pi}\left[\int_{\mathbb R}(\Phi\Lambda'/\Lambda)(2+it)\,dt
--\int_{\mathbb R}(\Phi\Lambda'/\Lambda)(-1+it)\,dt\right]
+\frac{1}{2\pi}\left[\int_{\mathbb R}G(2+it)\,dt
+-\int_{\mathbb R}G(-1+it)\,dt\right]
 = -\Phi(0)-\Phi(1)+\sum_{0<\Re\rho<1}m_\rho\Phi(\rho).
 $$
 
-The local Euler and Archimedean integral evaluations, and matching their
-normalizations to (B.4.4.16), pp. 623–625, still follow this contour step.
-None of this supplies the global $S$-piece comparison, RH over $\mathbb Q$,
-or the general GRH endpoint.
+Masullo supplies the limit argument in (B.3.2.3)–(B.3.2.5), p. 606:
+Horizontal edges disappear and the absolutely convergent vertical integrals
+remain. The uniform fourth-power bound is a sufficient input from the
+vertical Schwartz property (B.2.2.1), p. 600, with $N=4$ on a closed
+substrip of a larger open strip and compactness at the remaining heights.
+Proposition B.2.1.9(1)–(2), pp. 598–599, is the manuscript's Mellin test
+source; the theorem does not formalize that proposition.
+
+The checked repair uses the actual-height [edge bounds](#checked-growth-on-the-completed-zeta-contour-edges)
+in place of an index-to-height inference. It independently selects top
+heights in $(n+2,n+3)$ and bottom heights in $(-n-2,-n-1)$, omitting all
+zeros on the edges. The [finite contour theorem](#checked-finite-completed-zeta-contour)
+uses the tested principal parts and counterclockwise orientation; the
+reversed horizontal signs in the extraction of (B.3.2.4) do not affect
+the limit. In [`Lemmas.ZetaContourExhaustion`](../../Proofs/Lemmas/ZetaContourExhaustion.lean),
+the horizontal integrals are bounded by $3BC/(1+|t|)$ at the selected
+heights. The inverse-cubic vertical majorant is integrable, and Mathlib's
+`MeasureTheory.intervalIntegral_tendsto_integral` passes to each whole
+line. The checked quadratic divisor weight dominates the tested orders.
+`tendsto_sum_zetaZeros_boundedIm` passes from finite height windows to the
+unconditional sum for any exhausting lower and upper endpoints, so the
+asymmetric windows and the symmetric prescription in (B.4.2.2) have the
+same limit. Finally $ds=i\,dt$ cancels $i$ from $2\pi i$.
+
+Independent Yah statement review (`exhaustion-statement`) confirmed the
+hypotheses, orientation, normalization, full orders, and limit plan
+against the digest-matched layout extraction of pp. 598–600, 604–606,
+and 614. This is not a rendered-page reading. The repaired growth rates suffice
+for the limit. The declaration is a
+rational specialization, not the explicit formula with the local
+terms evaluated and not a global trace comparison.
+
+## Next runnable obligation: Reflect and split the rational contour
+
+First prove the one-line form of (B.4.2.4), p. 615, with the rational
+trivial-character conductor term zero. Under the same hypotheses, show
+absolute integrability and replace the left of the checked contour
+identity by
+
+$$
+\frac{1}{2\pi}\int_{\mathbb R}
+  [\Phi(2+it)+\Phi(-1-it)]\frac{\Lambda'}{\Lambda}(2+it)\,dt.
+$$
+
+Use the checked `completedZeta_logDeriv_reflection` (minus sign, as
+needed by (B.4.2.4), not the sign extracted in (B.4.2.3)), then substitute
+$t\mapsto-t$ in the left integral using invariance of Lebesgue measure
+under negation. In particular, the reflected test is $\Phi(1-s)$ at
+$s=2+it$, not $\Phi(-1+it)$ at the same $t$. This is also the sign and
+argument control for the test samples in (B.4.2.8)–(B.4.2.11), p. 615.
+
+Then for (B.4.2.5)–(B.4.2.7), split $\Lambda=\Gamma_{\mathbb R}\zeta$
+on a neighborhood of the right line, where both factors are nonzero.
+`ArithmeticFunction.LSeries_vonMangoldt_eq_deriv_riemannZeta_div`
+in pinned Mathlib identifies $-\zeta'/\zeta$ on $\Re s>1$ with the von
+Mangoldt series; `ArithmeticFunction.LSeriesSummable_vonMangoldt` at
+$s=2$ supplies a summable majorant independent of $t$. Discharge the
+test-times-series integral interchange before doing Fourier inversion
+on actual Mellin profiles. For smooth compact positive-log profiles,
+`CompactTestLaplace` only supplies a quadratic estimate; a specialization
+of the contour theorem to those profiles still needs entire dependence
+and the uniform fourth-power bound. The Archimedean evaluation, the
+normalizations in (B.4.4.16), pp. 623–625, and the independent global
+$S$-piece comparison remain open.
