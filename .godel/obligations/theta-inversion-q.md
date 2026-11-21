@@ -927,25 +927,57 @@ with counting measure on the diagonal. The checked result computes the
 upstairs mass that fixes its scale, not the induced-measure theorem. No
 ambient Pontryagin duality, Plancherel, or Poisson summation is used.
 
-## Next additive step: Induce probability Haar on the quotient
+## Checked probability Haar on the additive rational quotient
 
-On the Borel quotient $\mathbb A_{\mathbb Q}/\mathbb Q$, prove that
-`(rationalAdeleAddHaar.restrict rationalAdeleUnitStrip).map QuotientAddGroup.mk`
-is additive Haar probability. The `map_apply` and `restrict_apply` formulas
-give total mass one immediately. For translation invariance, lift the
-translating class to an adele $a$. The translate of the strip by $a$ is
-another fundamental domain: Use `IsAddFundamentalDomain.vadd_of_comm`
-(ambient translations commute with the diagonal action). The saturated
-preimage of any Borel quotient set has the same intersection mass on either
-domain by `IsAddFundamentalDomain.measure_set_eq`; the other side of the
-comparison is upstairs Haar translation invariance. The diagonal is
-countable as an image of $\mathbb Q$. This gives a direct route without first
-constructing a Polish structure on the ambient restricted product. Use
-compactness and Hausdorffness of the checked quotient to compare with
-`Measure.addHaarMeasure` normalized at the whole quotient. The quotient
-integration formula with diagonal counting measure can then be expressed
-using the disjoint translate cover; keep it separate from invariance if not
-proved in the same step.
+In [RationalAdeleClassHaar.lean](../../Proofs/Theorems/RationalAdeleClassHaar.lean),
+`Masullo.rationalAdeleClassHaar` is the pushforward of `rationalAdeleAddHaar`
+restricted to the half-open strip, along the actual quotient map
+$\pi:\mathbb A_{\mathbb Q}\to\mathbb A_{\mathbb Q}/\mathbb Q$. Both
+measurable spaces are assumed Borel for their given topologies.
+`Masullo.measurePreserving_rationalAdeleClass_mk` gives the corresponding
+measure-preserving map. The pushforward has total mass one by the checked
+strip mass. To prove invariance, lift a translating class to an adele $a$.
+Its translate of the strip is another fundamental domain by
+`IsAddFundamentalDomain.vadd_of_comm`. The preimage of a Borel quotient
+set is invariant under the countable rational diagonal, so Mathlib's
+`IsAddFundamentalDomain.measure_set_eq` compares its intersection masses
+on the two domains. This and upstairs translation invariance prove the
+quotient invariance. On the compact Hausdorff quotient, proportionality
+of Haar measures and total mass one give `Masullo.eq_rationalAdeleClassHaar`:
+Every additive Haar probability is this measure. Comparison with Haar
+normalized on the whole compact group also gives regularity.
+
+Independent Yah statement review checked the rational specialization
+against the digest-matched extraction of Example A.2.1.3, pp. 545–546,
+Definition A.3.1.1, (A.3.1.1), p. 555, and Example A.3.1.8, p. 558. The
+source normalizes the quotient from upstairs Haar and counting measure
+on the diagonal, using Theorem C.4.4.3, (C.4.4.5), p. 718, in the proof of
+Lemma A.3.1.3, p. 556. The direct pushforward argument proves probability
+Haar on the quotient, not yet its characterization by that counting
+integral. It does not prove the all-stage local product formula, or use
+adelic self-duality. The source reading is provisional, not visual.
+
+## Next additive step: Weil's formula with diagonal counting measure
+
+For Borel $f:\mathbb A_{\mathbb Q}\to[0,\infty]$, prove
+$$
+\int_{\mathbb A_{\mathbb Q}} f\,d\mu
+  = \int_{\mathbb A_{\mathbb Q}/\mathbb Q}
+      \sum_{d\in\mathbb Q} f(s(c)+d)\,d\lambda(c),
+$$
+where $\mu$ is the checked upstairs Haar, $\lambda$ is the checked
+quotient probability, and $s(c)$ is the unique half-open strip
+representative. The section only needs to be Borel:
+Exhaust the strip by the compact windows
+$[0,1-1/(n+1)]\times\prod_v O_v$ in the integral stage. The quotient map
+on each is a continuous injection into a Hausdorff space and hence a
+homeomorphism onto a closed image. Use those countably many images to
+check preimages under $s$. Pull back the quotient integral to the strip
+by `measurePreserving_rationalAdeleClass_mk`, then apply the pinned
+`IsAddFundamentalDomain.lintegral_eq_tsum''` and exchange the nonnegative
+sum with the strip integral. Reindex by translation to check independence
+of the representative. This is the nonnegative rational case of (C.4.4.5);
+the complex $L^1$ or vector-valued statements are separate.
 
 Independently, the integral-stage comparison can be strengthened by
 identifying `rationalFiniteIntegersHaar` with the product of the restrictions
@@ -1424,5 +1456,6 @@ is checked, and the [global rational diagonal annihilator](#checked-rational-dia
 is now exactly the diagonal. The [additive quotient topology](#checked-additive-quotient-topology-over-the-rationals)
 is checked. The [half-open additive fundamental domain](#checked-half-open-additive-fundamental-domain)
 is also checked, as is the [upstairs unit-strip mass](#checked-additive-haar-normalization-over-the-rationals).
-[Induce probability Haar on the quotient](#next-additive-step-induce-probability-haar-on-the-quotient)
+The [additive quotient probability Haar](#checked-probability-haar-on-the-additive-rational-quotient)
+is checked. Prove [Weil's formula with diagonal counting measure](#next-additive-step-weils-formula-with-diagonal-counting-measure)
 next.
