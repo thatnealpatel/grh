@@ -1139,36 +1139,67 @@ Checks: `lake --wfail build Proofs`, `lake env leanchecker` on
 `Theorems.RationalAdeleClassFourierBasis` and `Theorems.RationalAdelePoisson`,
 and external `#check` and `#print axioms` on the changed public API.
 
-## Next additive step: convergence for the unramified tensor
+## Checked periodization of the rational unramified tensor
 
-Discharge the periodization hypotheses in
-`Masullo.hasSum_rationalAdele_poisson` for the function
-$f(a)=b(a_\infty)\,\mathbf 1_{\prod_p\mathbb Z_p}(a_f)$ with
-$b\in\mathcal S(\mathbb R,\mathbb C)$. This is the unramified case of
-(2.2.2.4), p. 78, and the $g=1$ case of Lemma 2.2.2.1, p. 77, adding the
-zero summand. On the open integral-finite stage, the surviving diagonal
-translates are exactly the integers by
-`algebraMap_mem_rationalIntegralAdeles_iff`. Prove absolute summability
-and identify the sum there with $\sum_{n\in\mathbb Z}b(a_\infty+n)$.
-`exists_rational_sub_mem_integral` and translation reindexing extend absolute
-summability to every lift. The pinned Mathlib proof of
-`Real.tsum_eq_tsum_fourier_of_rpow_decay_of_summable` uses
-`isBigO_norm_restrict_cocompact`, `Int.tendsto_coe_cofinite`, and
-`ContinuousMap.summable_of_locally_summable_norm` for precisely this real
-translated series. Reuse that convergence argument without invoking real
-Poisson summation. Descend continuity using `rationalAdeleQuotientEquiv`
-and the quotient-map property of the stage projection.
+In [RationalAdeleUnramifiedPeriodization.lean](../../Proofs/Theorems/RationalAdeleUnramifiedPeriodization.lean),
+`Masullo.rationalAdeleUnramified b` is the actual adelic test
+$f(a)=b(a_\infty)\mathbf 1_{\prod_p\mathbb Z_p}(a_f)$ for complex real
+Schwartz $b$. It is continuous because the integral-finite stage is an
+open and closed additive subgroup. It is integrable for the normalized
+additive Haar: Pull back the measure restricted to the stage to Lebesgue
+measure times compact Haar probability, then use the real Schwartz $L^1$
+bound. Thus it is also Borel measurable.
 
-After this, `comap_rationalAdeleAddHaar_integral` is enough for
-integrability of this tensor and its Fourier samples: On the open stage,
-integrate the real factor against Lebesgue measure and the finite phase
-against compact Haar probability. The latter averages to one at integral
-frequencies and zero otherwise, using the local character kernel and a
-nontrivial translation. Then the real Schwartz transform gives absolute
-summability over the surviving integer frequencies. This route does not
-require the all-stage product measure. More general finite-place factors,
-the a.e. formula in D.1.2.7(2), and idelic Fourier scaling for Theorem
-2.2.3.2, p. 82, are separate obligations.
+For $a$ in the integral-finite stage,
+`Masullo.rationalAdeleComplexPeriodization_unramified_mk` identifies the
+quotient periodization at $[a]$ with $\sum_{n\in\mathbb Z} b(a_\infty+n)$,
+including the zero index. The support condition on $a+d$ is exactly
+$d\in\mathbb Z$ among diagonal $d$. This sum is absolutely convergent:
+[SchwartzLatticeTranslates.lean](../../Proofs/Lemmas/SchwartzLatticeTranslates.lean)
+uses inverse-square decay of the real translates in the sup norm on
+compact intervals, via Mathlib's `isBigO_norm_restrict_cocompact`. It does
+not use real Poisson summation. For any adele, clear finite denominators
+by a diagonal rational shift, and reindex by translation of the diagonal.
+This gives `Masullo.summable_norm_rationalAdeleUnramified_add` at every
+lift, not just almost everywhere. The real translated sum is continuous,
+so the checked integral-stage quotient map gives
+`Masullo.continuous_rationalAdeleComplexPeriodization_unramified` without
+requiring continuity of the half-open strip representative.
+
+Independent Yah statement review used the digest-matched layout
+extraction of Lemma 2.2.2.1(1), (2.2.2.1), p. 77, the tensors in
+(2.2.2.4), p. 78, and Theorem D.1.2.7(3), p. 749. The manuscript sums
+nonzero indices in (2.2.2.1) before restoring the zero term for additive
+invariance. The Lean result specializes to $g=1$ with that term included;
+it does not assert the compact-uniform two-variable lemma. The support
+estimate (2.2.2.3) at $x=0$ is not used as an estimate for general $x$.
+This is a provisional extracted-text comparison, not a rendered-page
+reading. Only the input, integrability, and periodization hypotheses of
+`Masullo.hasSum_rationalAdele_poisson` have been discharged for this tensor.
+
+Validation: `lake --wfail build Proofs`, `lake env leanchecker` on
+`Lemmas.SchwartzLatticeTranslates` and
+`Theorems.RationalAdeleUnramifiedPeriodization`, and external `#check`
+and `#print axioms` on the new public declarations.
+
+## Next additive step: Fourier samples of the unramified tensor
+
+For $f=b\otimes\mathbf 1_{\prod_p\mathbb Z_p}$, prove that the upstairs
+Fourier integral used in `Masullo.hasSum_rationalAdele_poisson`, sampled
+at a diagonal rational $r$, is $\widehat b(r)$ for $r\in\mathbb Z$ and
+zero otherwise. Use `comap_rationalAdeleAddHaar_integral`: For an integral
+frequency, the local phases on the support are trivial, and the real
+factor integrates against Lebesgue measure in the negative Fourier sign.
+For nonintegral $r$, `algebraMap_mem_rationalIntegralAdeles_iff` gives a
+place where $r$ is not integral. Translate by the integral-finite adele
+with real coordinate zero, finite coordinate $1$ there, and all other
+coordinates zero. It fixes $f$ but multiplies the Fourier integrand by a
+nontrivial scalar by the local kernel theorem. Then the integer samples of
+the real Schwartz transform are absolutely summable; apply the existing
+pointwise Poisson theorem. This route does not require the all-stage
+product measure. More general finite-place factors, the a.e. formula in
+D.1.2.7(2), and idelic Fourier scaling for Theorem 2.2.3.2, p. 82, are
+separate obligations.
 
 Independently, the integral-stage comparison can be strengthened by
 identifying `rationalFiniteIntegersHaar` with the product of the restrictions
@@ -1653,4 +1684,4 @@ The [complex Borel $L^1$ version](#checked-complex-weil-formula-and-absolute-sum
 is checked, as are the [quotient Fourier coefficient comparison and point
 separation](#checked-unfolding-of-the-quotient-fourier-coefficients) and
 [uniform density and Haar orthogonality](#checked-density-and-orthogonality-of-the-rational-quotient-characters).
-The [pointwise reconstruction and rational counting-series formula](#checked-pointwise-poisson-summation-with-explicit-convergence-hypotheses) are checked under explicit convergence hypotheses. Next [discharge the periodization hypotheses for the unramified tensor](#next-additive-step-convergence-for-the-unramified-tensor).
+The [pointwise reconstruction and rational counting-series formula](#checked-pointwise-poisson-summation-with-explicit-convergence-hypotheses) are checked under explicit convergence hypotheses. The [unramified tensor periodization](#checked-periodization-of-the-rational-unramified-tensor) is now absolutely convergent at every lift and continuous on the quotient, with the input integrable upstairs. Next [compute and sum the sampled Fourier integrals](#next-additive-step-fourier-samples-of-the-unramified-tensor).
