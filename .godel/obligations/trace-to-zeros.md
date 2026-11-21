@@ -129,9 +129,12 @@ topology of one possible bridge: Matching uncut local and global generators
 does not extend to a bounded injection of positive-width Hilbert levels,
 even for this rational band. The same pairing after compact convolution
 and fixed position truncation does give a nuclear forward leg. The
-[reverse lift test](trace-level-transport-q.md#next-fixed-cutoff-test-lift-the-compressed-global-operator)
-is still needed to apply the trace-transfer lemma to the compressed
-global operator, and would not by itself identify the two Mellin terms.
+[Poisson edge](trace-level-transport-q.md#the-poisson-edge-separates-the-cutoff-traces)
+shows that two moving lower cutoffs at scale $1/B$ can keep the local
+traces uniformly separated with identical global compressions in that
+model. The [reverse lift test](trace-level-transport-q.md#next-fixed-cutoff-test-lift-the-compressed-global-operator)
+remains open for overlapping windows; its finite Möbius inverse gives a
+necessary $L^2$ condition, not an identification of the Mellin terms.
 
 ## Fixed-parameter subtraction over the rationals
 
