@@ -837,29 +837,60 @@ The theorem uses the project's explicit sign convention; whether it
 coincides with the manuscript as printed also needs the convention
 bridge for that identification. Rendered-page verification remains open.
 
-## Next additive step: Identify the quotient topology
+<a name="next-additive-step-identify-the-quotient-topology"></a>
 
-Prove the rational case of (A.1.2.2), pp. 540–541. Let $W$ be the
-open additive subgroup of adeles with all finite coordinates integral,
-and $D$ the image of the diagonal rationals. Show
-$W/(W\cap D)\cong\mathbb A_{\mathbb Q}/D$ as topological groups and
-identify $W\cap D$ as exactly the diagonal integers. The representative
-step is already checked. For the kernel, apply the local kernels and
-`exists_int_of_all_rationalPadicPhases_eq_one`; conversely, integer casts
-belong to each local integer subring. For the topology, use
-`RestrictedProduct.isOpen_forall_mem` (as in `RationalIdeleUnitWindow.lean`)
-and `QuotientAddGroup.isOpenMap_coe` to make the restriction of the
-quotient map to $W$ an open surjection. Compare the resulting open
-quotient with `QuotientAddGroup.quotientKerEquivOfSurjective`. The empty
-[`RationalAdeleFiniteStage`](../../Proofs/Lemmas/RationalAdeleFiniteStage.lean)
-already gives the corresponding product coordinates.
+## Checked additive quotient topology over the rationals
 
-For the subsequent quotient Haar normalization, use the half-open strip
-$[0,1)\times\prod_p\mathbb Z_p$ as a measurable fundamental domain, not
-as a continuous section. Its closed-strip counterpart gives a compact
-surjective window. Ambient duality, global additive Haar measure,
-Plancherel, and adelic Poisson summation are not supplied by the
-annihilator calculation.
+In [RationalAdeleClassTopology.lean](../../Proofs/Theorems/RationalAdeleClassTopology.lean),
+`Masullo.rationalAdeleQuotientEquiv` identifies $W/\mathbb Z$ with
+$\mathbb A_{\mathbb Q}/\mathbb Q$ by a continuous additive equivalence, with
+`Masullo.rationalAdeleQuotientEquiv_mk` specifying the map on representatives.
+Here $W$ is the open additive subgroup with every finite coordinate integral,
+and both groups are the actual Mathlib topological quotients. Finite denominator
+clearing gives surjectivity, the local integral kernels identify the kernel
+with the integer diagonal, and openness of $W$ makes the restricted quotient
+map open. The inverse continuity follows from the two quotient topologies,
+not merely from continuity and bijectivity.
+
+`Masullo.discreteTopology_rationalDiagonal` isolates zero by intersecting $W$
+with the real interval $(-1,1)$. `Masullo.isClosed_rationalDiagonal` then uses
+the closedness of a discrete subgroup in a Hausdorff topological group, and
+`Masullo.t2Space_rationalAdeleClasses` gives Hausdorffness of the quotient.
+`Masullo.compactSpace_rationalAdeleClasses` uses the closed strip $[0,1]$
+in the real coordinate and the compact product of local integral rings,
+transported via [the empty-stage homeomorphism](../../Proofs/Lemmas/RationalIntegralAdeles.lean).
+Subtracting the floor from a representative in $W$ puts it in this compact
+window. The proof does not use the global pairing or self-duality.
+
+Independent Yah statement review checked (A.1.2.1) and (A.1.2.2),
+pp. 540–541, in the digest-matched layout extraction. This handles the rational
+quotient isomorphism and discrete, closed diagonal and compact Hausdorff quotient
+claims, in local product coordinates. The comparison of the product of local
+integral rings with the manuscript's abstract ideal-adic completion is not
+formalized here, and neither are unique divisibility, functoriality, or the
+general number field. Rendered-page verification remains open.
+
+## Next additive step: Check the half-open fundamental domain
+
+Example A.2.1.3, (A.2.1.5)–(A.2.1.6), pp. 545–546, asserts the disjoint
+translate cover of $\mathbb A_{\mathbb Q}$ by the rational translates of
+$[0,1)\times\prod_p\mathbb Z_p$ (digest-matched text extraction). Use
+`rationalIntegralAdelesHomeomorph` to identify the coordinates. Start from
+`exists_rational_sub_mem_integral` and subtract the floor of the real coordinate
+for existence; for uniqueness the difference of representatives is a diagonal
+integer with real coordinate in $(-1,1)$. Prove Borel measurability by the
+intersection of the open integral-finite stage with the preimage of $[0,1)$
+under the continuous real coordinate. Package the resulting exact translate
+cover with `MeasureTheory.IsAddFundamentalDomain.mk'` under Borel hypotheses.
+The strip is a measurable fundamental domain, not a continuous section.
+
+This supplies the domain for covolume one in Definition A.3.1.1, (A.3.1.1),
+p. 555, and Example A.3.1.8, p. 558. Only after proving that the upstairs
+restricted-product Haar measure gives the strip mass one can one identify
+its pushforward from the strip with normalized quotient Haar. The local measure
+inputs are $dx$ and the checked mass-one integral-ball normalizations,
+as in Definition A.3.1.2 and Lemma A.3.1.3, p. 556. This step does not
+supply ambient duality, Plancherel, or adelic Poisson summation.
 
 ## Checked real-lattice inversion
 
@@ -1327,5 +1358,6 @@ The [diagonal phase cancellation](#checked-cancellation-of-the-rational-diagonal
 is now checked, as is the [rational adelic character](#checked-rational-adelic-character).
 The [finite-denominator clearing step](#checked-clearing-of-finite-adelic-denominators)
 is checked, and the [global rational diagonal annihilator](#checked-rational-diagonal-annihilator)
-is now exactly the diagonal. The [additive quotient topology](#next-additive-step-identify-the-quotient-topology)
+is now exactly the diagonal. The [additive quotient topology](#checked-additive-quotient-topology-over-the-rationals)
+is checked. The [half-open additive fundamental domain](#next-additive-step-check-the-half-open-fundamental-domain)
 is next.

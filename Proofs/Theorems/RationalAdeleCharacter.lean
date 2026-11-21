@@ -36,7 +36,7 @@ public theorem rationalAdeleReal_algebraMap (r : ℚ) :
     ← InfinitePlace.Completion.WithAbs.ratCast_equiv _ (WithAbs.toAbs _ r), map_ratCast]
   rfl
 
-private theorem continuous_rationalAdeleReal : Continuous rationalAdeleReal :=
+public theorem continuous_rationalAdeleReal : Continuous rationalAdeleReal :=
   (InfinitePlace.Completion.isometryEquivRealOfIsReal Rat.isReal_infinitePlace).continuous.comp
     ((continuous_apply Rat.infinitePlace).comp continuous_fst)
 
