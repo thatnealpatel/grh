@@ -1635,30 +1635,67 @@ $\Gamma=\mathbb Z$, $K=[0,1]$, and $x=1$, excluding only $K\cap\Gamma$
 still leaves a singular term at $\xi=-1$. The bounded Schwartz majorant
 above does not require that comparison.
 
-### Next orbit step: Large-norm decay on the translated box span
+## Checked fixed-test tails on rational idele classes
 
-Target Theorem 2.2.3.4(1), (2.2.3.4), pp. 82–84, before invoking the
-uniform bounded-family assertion. A runnable first obligation, with
-$F$ a single `rationalAdeleBox`, is the Lean statement
-`∀ m : ℕ, ∃ C T : ℝ, 0 < C ∧ 1 ≤ T ∧ ∀ d : IdeleClassGroup (𝓞 ℚ) ℚ,
-T ≤ ideleClassNorm d → ‖rationalAdeleClassTheta F d‖ ≤
-C / ideleClassNorm d ^ m`. Start with the corresponding bound on the
-**sum of term norms** upstairs; the class result is its consequence.
+[The class estimates](../../Proofs/Theorems/RationalAdeleThetaTails.lean)
+prove Theorem 2.2.3.4(1)–(2), (2.2.3.4)–(2.2.3.5), pp. 82–84, over
+$\mathbb Q$ for each fixed finite translated box sum $f$. For every
+$m\in\mathbb N$ there are positive constants and thresholds (which
+may depend on the test and on $m$) bounding $|\theta_f(d)|$ by
+$C|d|^{-m}$ at large norm and bounding
+$|\theta_f(d)-|d|^{-1}\widehat f(0)+f(0)|$ by $C'|d|^m$ at small norm.
+The estimate is uniform in the class, not in the test.
 
-At an arbitrary lift $k$, normalize $g^{-1}k$ by $r$ as above and now
-reindex by $q/r$. Clear finite denominators of $a'=g^{-1}a$ once with a
-positive integer $D$. Finite integrality of $h\iota(q/r)-a'$ forces
-$Dq/r=n\in\mathbb Z$, because $h$ is a finite unit. The real argument is
-$t n/D-a'_\infty$ for $t=|k|/|g|$. For $t$ sufficiently large and
-$n\ne0$, its magnitude is at least $t|n|/(2D)$. Take a Schwartz
-seminorm of order at least $\max(2,m)$, sum the inverse powers on the
-nonzero integer lattice, and combine finite boxes. Use
-`integral_rationalAdeleBoxSum_mul_conj_char` for an absolute bound on
-the Fourier side: Its phase has norm one and its centered boxes have
-inverse scales, so Fourier stability is not a prerequisite. Inversion
-then supplies the small-norm estimate with the two corrections in
-(2.2.3.5). This route would prove fixed-test estimates, not the LF
-bounded-family assertion of parts (4)–(5).
+The [absolute-sample bounds](../../Proofs/Lemmas/RationalAdeleBoxTail.lean)
+apply before descent. For a single box of scale $g$, reindex by a
+principal rational unit so that $g^{-1}k$ is represented by an idele
+with finite-unit components and positive real component $|k|/|g|$.
+Clear the finite denominators of the fixed box-coordinate center $g^{-1}a$
+by one integer $D>0$. Each surviving nonzero index in the reindexed orbit
+then lies in $(1/D)\mathbb Z$, with real argument $|k|n/(|g|D)-(g^{-1}a)_\infty$.
+For $|k|/(|g|D)\ge\max(1,2|(g^{-1}a)_\infty|)$ its magnitude is at
+least $|k||n|/(2|g|D)$. A Schwartz seminorm of order $(m+2,0)$ gives a
+summable inverse-square majorant times $|k|^{-m}$. This uses the finite
+restriction of the chosen representative in (2.2.3.8), not the actual
+real projection of an arbitrary lift. The proof controls the total
+absolute sum after reindexing, not a common majorant on the original
+indices for all lifts.
+
+On the Fourier side the integral formula gives a pointwise norm envelope
+by centered boxes with scales $g_i^{-1}$, weighting each by
+$|c_i||g_i|$. The conjugated translation phase has norm one. The
+absolute Fourier tail at order $m+1$ offsets the factor $|d|^{-1}$
+in the class inversion formula, with both zero-mode signs as in
+(2.2.3.5). No Fourier-stability premise is needed.
+
+Independent Yah statement review against
+`1101354ae42f9bb3b277b5e46363a7ea71225000` matched the thresholds,
+nonzero indices, chosen representative, Fourier envelope, and exponent
+loss to the accepted hypotheses and digest-matched source extraction.
+This is not a rendered-page reading. The extraction also warrants
+care with the general-field diagonal-section scaling in (2.2.3.10)
+and (2.2.3.12): The linear dependence on idelic norm used here is specific
+to $\mathbb Q$.
+
+Validation endpoints: `rationalAdeleBoxSum_theta_large_norm`,
+`rationalAdeleBoxSum_theta_small_norm`,
+`rationalAdeleBoxSum_absolute_theta_tail`, and
+`rationalAdeleBoxSum_absolute_fourier_theta_tail`. Use
+`lake --wfail build Proofs`, `leanchecker` on both linked modules, and
+`#print axioms` on the four endpoints.
+
+### Next orbit step: Fill the compact middle range for fixed tests
+
+Prove that $\{d: u\le |d|\le v\}$ is compact for $0<u\le v$.
+Generalize the private `isCompact_rationalIdeleClass_normStrip` in
+[RationalIdeleWindowMeasure.lean](../../Proofs/Lemmas/RationalIdeleWindowMeasure.lean):
+Use the image of $[\log u,\log v]$ times the compact norm-one subgroup
+under `rationalIdeleClassLogSplit`. The two class theta tails and
+continuity then allow threshold one in the fixed-test estimates. With
+both zero modes zero, target the global bound of (2.2.3.6),
+$|\theta_f(d)|\le C\exp(-m|\log|d||)$. This does not establish the
+bounded-family claim of parts (4)–(5), which needs control of the
+Schwartz–Bruhat LF topology and bounded families of test functions.
 
 ## Checked real-lattice inversion
 
