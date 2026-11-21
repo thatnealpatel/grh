@@ -169,23 +169,46 @@ product of finite units as in (A.2.2.3). Independent Yah review checked
 these distinctions against the digest-matched layout extraction, not
 rendered pages.
 
-## Independent next step: Represent the norm-one classes by finite units
+## Checked compactness of the rational norm-one classes
 
-For the compactness step of Theorem A.1.4.3(1), pp. 542–543, and the
-rational description (A.2.2.3), p. 546, construct the continuous
-surjection from $\prod_v\mathcal O_v^\times$ onto $C_{\mathbb Q}^1$:
-Insert the finite units and set the real coordinate to one, then take
-the quotient class. The checked principal normalization supplies
-surjectivity: At norm one it makes the real coordinate exactly one and
-all finite valuations one. For continuity use
-`RestrictedProduct.continuous_rng_of_top` at the all-integral
-stage `⊤`, then `RestrictedProduct.continuous_inclusion` to the
-cofinite product; check both values and inverses by
-`Units.continuous_iff`. For compactness of the source, Mathlib's
-`Rat.HeightOneSpectrum.adicCompletionIntegers.padicIntEquiv` identifies
-each integer ring with a compact `PadicInt`; the Mathlib `Units`
-topology preserves compactness of units of these compact Hausdorff
-rings. None of this needs the weighted jet pairing.
+[The compactness theorem](../../Proofs/Theorems/RationalIdeleClassCompact.lean),
+`Masullo.compactSpace_rationalIdeleClassNormOne`, proves the compactness
+part of Theorem A.1.4.3(1), pp. 542–543, for $F=\mathbb Q$. It uses
+the finite units in (A.2.2.3), p. 546, without claiming that the two
+factors in that equation have been identified as topological groups.
+
+The [supporting map](../../Proofs/Lemmas/RationalFiniteUnits.lean),
+`Masullo.rationalFiniteUnitClass`, inserts a family of local integral
+units with infinite coordinate one and takes its class. Checked
+principal normalization makes that map surjective: On a norm-one
+class it gives real coordinate exactly one and finite valuations one,
+not finite coordinates one. Continuity in the idele units topology is
+checked on both values and inverses by inclusion of the all-integral
+stage into the cofinite restricted product. Mathlib's `padicIntEquiv`
+and compactness of units of a compact Hausdorff topological ring give
+compactness of the domain, a product of compact spaces. Independent
+Yah review checked the endpoint and this argument against the
+digest-matched layout extraction, not rendered pages. Compactness by
+continuous image does not prove that the quotient is Hausdorff.
+
+## Independent next Haar step: Show the rational principal subgroup is closed
+
+Formalize the discreteness argument of Lemma A.1.3.4(1)–(2), p. 542,
+for $\mathbb Q$. Take the identity neighborhood with positive real
+coordinate and both the finite value and its inverse in the
+all-integral stage. `RestrictedProduct.isOpen_forall_mem` gives the
+finite open condition since each completion's valuation ring is open.
+On a principal idele, the two finite conditions force all valuations
+to be one. Its idelic norm is one by the product formula, so the checked
+`ideleNorm_eq_abs_rationalIdeleReal` makes its real absolute value one.
+Positivity and the injective rational embedding into the real field
+then force the principal idele to be one. Use
+`discreteTopology_iff_isOpen_singleton_one`,
+`Subgroup.isClosed_of_discreteTopology`, and the quotient topology's
+separation instance from a closed normal subgroup. Local compactness
+of the class group can then use the checked log-section splitting with
+the compact norm-one factor. The strict boundary-jet test below is
+independent of this step.
 
 The later measure target is the pushforward of the manuscript's quotient
 Haar measure by log norm, namely $dx$. Definition A.3.2.1, pp. 559–560,
