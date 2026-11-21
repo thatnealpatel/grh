@@ -1930,21 +1930,56 @@ public declarations in the two linked modules with `#check` and
 `#print axioms`; run `lake --wfail build Proofs` and `leanchecker`
 on both modules.
 
-### Next orbit step: Split the rational stage inclusions
+## Checked split inclusions of the rational Schwartz stages
 
-For positive integers $M,N$ with $N=dM$, first show that the support
-cylinder grows and the invariance subgroup shrinks. In the checked
-coordinates, on the fine sample at $k/N$ the inclusion takes value
-zero if $d\nmid k$, and otherwise copies the coarse profile at
-$(k/d)\bmod M^2$. Evaluate the membership test using the criterion
-that a finite rational diagonal is integral exactly for an integer.
-For the splitting it suffices to express the inclusion as zero or a
-coordinate projection at each fine index, and to check that $k=dj$
-samples precisely the old line. This gives a continuous linear left
-inverse by precomposition with $j\mapsto dj$, in the **product of
-Schwartz topologies**. Use `Nat.dvd_factorial` for a countable
-cofinal chain and `continuous_pi` for the product map. Neither the
-transition map nor the splitting has yet been checked in Lean.
+For positive levels $M\mid N$, [RationalAdeleStageTransition.lean](../../Proofs/Props/RationalAdeleStageTransition.lean)
+proves the inclusion of Schwartz stages as submodules of functions on
+full adeles. Support grows from $M^{-1}\widehat{\mathbb Z}$ to
+$N^{-1}\widehat{\mathbb Z}$ and the required group of finite
+translations shrinks from $M\widehat{\mathbb Z}$ to
+$N\widehat{\mathbb Z}$. `rationalAdeleStageTransition` expresses
+that same-function inclusion in the product Schwartz coordinates;
+`rationalAdeleStageTransition_assemble` checks the agreement after
+assembly on all adeles.
+
+A fine representative outside coarse support gives the zero component.
+If the representative belongs to coarse cell $j$, the component is
+the projection onto the entire Schwartz profile $b_j$. These are
+checked geometric tests, not a numerical formula for coarse indices.
+Every fine subcell of a coarse cell copies its profile, not just the
+selected old line. Writing $d=N/M$, the continuous linear
+`rationalAdeleStageRetract` selects the fine component $dj$ for each
+old index $j$; its finite coordinate is exactly the old $j/M$. The
+checked left-inverse identity makes the transition a topological
+embedding for the product Schwartz topologies, independently of any
+topology on a union of stages.
+
+Independent Yah statement review (`stage-inclusion-review`, agent
+`DTWDAxN`) checked the inclusion directions, the subcell repetition,
+and the selected representative against the accepted stage definitions
+and the digest-matched layout extraction. The proof of Proposition
+2.1.3.2, pp. 69–70 (especially (2.1.3.3)), splits an injection on finite
+adelic factors by a continuous linear section on the tensor stages.
+The maps here specialize that splitting to rational box coordinates;
+the representative choices and coordinate formulas are ours. The
+review used extracted text, not rendered-page verification. Validation
+targets: The full `lake --wfail build Proofs`, `leanchecker` on the
+transition, coordinates, and sampling modules, and `#check` and
+`#print axioms` for their new public endpoints.
+
+### Next orbit step: Construct the factorial-stage residual maps
+
+Use levels $M_n=(n+1)!$ (`Nat.factorial_dvd_factorial`,
+`Nat.dvd_factorial`) and their algebraic union. Sample a union element
+along every line of level $M_n$ to obtain $E_n f$; the Schwartz-slice
+condition of any stage containing $f$ justifies these samples even if
+$f$ is not in stage $n$. On each fixed stage these maps are continuous:
+Each sample is either zero or a coordinate projection by the same
+support and cell tests. Write $T_n$ for the checked transition from
+$n$ to $n+1$. Prove that $E_{n+1}-T_n E_n$ vanishes on stage $n$,
+and on stage $n+1$ vanishes only on the image of stage $n$. This gives
+continuous maps on each stage that detect a new layer without first
+formalizing a direct-sum decomposition.
 
 Theorem 2.2.3.4(4), pp. 84–85, needs one common stage **and** bounded
 Schwartz coordinate images for a bounded set of the full LF space.
@@ -1954,21 +1989,19 @@ On p. 84 the finite-space result C.2.5.1(4) likewise does not
 supply boundedness on the full tensor space. The additional
 Schaefer II §6.5 input appears explicitly as a bounded-layer
 criterion in the analogous strict inductive limit in D.3.3,
-pp. 808 and 810; the external reference itself has not been verified. These are provisional text readings.
+pp. 808 and 810; the external reference itself has not been verified.
+These are provisional text readings.
 
-A direct rational proof after splitting is to use the seminorms
-whose restrictions to each stage are continuous to define the
-locally convex inductive topology. If a family escapes every stage,
-select members at successively larger minimal levels. In the split
-coordinates, each has a nonzero component in its newest layer. Scale
-a continuous seminorm on each selected layer so that it exceeds the
-selection index at that member. The sum of these seminorms is finite
-on each stage and continuous there, so it detects unboundedness in
-the inductive topology. Coordinate projections detect boundedness
-within the common stage (`WithSeminorms.isVonNBounded_iff_seminorm_bounded`
-for the real Schwartz factor). This is a proposed proof route, not
-an LF identification. Do not replace the inductive topology by the
-pointwise or projective tensor topology.
+A direct rational proof would use the seminorms whose restrictions
+to each stage are continuous to define the locally convex inductive
+topology. If a family escapes all stages, choose members at strictly
+increasing minimal stages. Each has a nonzero residual at its newest
+layer. Pick and scale a Schwartz seminorm on that residual to exceed
+the stage index there. Their sum is finite on each stage and has
+continuous restriction, so it detects unboundedness. The maps $E_n$
+then test coordinate boundedness in a common stage. This is a proposed
+proof route, not an LF identification. Do not replace the inductive
+topology by the pointwise or projective tensor topology.
 
 ## Checked real-lattice inversion
 

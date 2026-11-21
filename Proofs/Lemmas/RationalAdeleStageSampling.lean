@@ -56,7 +56,9 @@ public theorem mem_rationalAdeleStageCell_iff {M : ℕ} (hM : 0 < M)
     rw [add_sub_cancel_left, ← mul_assoc, hu, one_mul]
     exact hz
 
-private theorem representative_mem_cell {M : ℕ} (hM : 0 < M) (j : Fin (M ^ 2)) (t : ℝ) :
+/-- The representative line lies in its cell at every real coordinate. -/
+public theorem rationalAdeleStageRepresentative_mem_cell {M : ℕ} (hM : 0 < M)
+    (j : Fin (M ^ 2)) (t : ℝ) :
     rationalAdeleAt t (rationalAdeleStageRepresentative M j) ∈ rationalAdeleStageCell M j :=
   (mem_rationalAdeleStageCell_iff hM j _).mpr
     ⟨0, rationalFiniteIntegralAdeles.zero_mem, by simp⟩
@@ -170,6 +172,14 @@ public theorem rationalAdeleStageSample_apply {M : ℕ} (f : rationalAdeleSchwar
       f.val (rationalAdeleAt t (rationalAdeleStageRepresentative M j)) :=
   sample_apply f j t
 
+/-- A stage function takes the same value throughout its finite cell at a
+fixed real coordinate. -/
+public theorem rationalAdeleStageSample_eq_on_cell {M : ℕ} (hM : 0 < M)
+    (f : rationalAdeleSchwartzStage M) {x : A} {j : Fin (M ^ 2)}
+    (hx : x ∈ rationalAdeleStageCell M j) :
+    rationalAdeleStageSample M f j (rationalAdeleReal x) = f.val x :=
+  sample_eq_on_cell hM f hx
+
 public theorem rationalAdeleStageSample_injective {M : ℕ} (hM : 0 < M) :
     Function.Injective (rationalAdeleStageSample M) := sample_injective hM
 
@@ -184,7 +194,7 @@ public theorem exists_rationalAdeleStageSample_eq_of_assembled {M : ℕ} (hM : 0
   funext j
   ext t
   rw [rationalAdeleStageSample_apply]
-  exact (hcell j _ (representative_mem_cell hM j t)).trans
+  exact (hcell j _ (rationalAdeleStageRepresentative_mem_cell hM j t)).trans
     (congrArg (b j) (rationalAdeleReal_at t _))
 
 end Masullo

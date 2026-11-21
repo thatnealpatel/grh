@@ -39,6 +39,13 @@ public theorem rationalAdeleStageCoordinates_apply {M : ℕ} (hM : 0 < M)
       f.val (rationalAdeleAt t (rationalAdeleStageRepresentative M j)) :=
   rationalAdeleStageSample_apply f j t
 
+/-- Within a cell, only the real coordinate affects the value. -/
+public theorem rationalAdeleStageCoordinates_eq_on_cell {M : ℕ} (hM : 0 < M)
+    (f : rationalAdeleSchwartzStage M) {x : A} {j : Fin (M ^ 2)}
+    (hx : x ∈ rationalAdeleStageCell M j) :
+    rationalAdeleStageCoordinates hM f j (rationalAdeleReal x) = f.val x :=
+  rationalAdeleStageSample_eq_on_cell hM f hx
+
 /-- The inverse to sampling is the same fixed-geometry assembly used by the
 uniform box estimates, with coefficient one on each cell. -/
 public theorem exists_rationalAdeleStageCoordinates_symm_eq_boxSum {M : ℕ} (hM : 0 < M) :
