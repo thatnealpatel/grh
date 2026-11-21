@@ -18,7 +18,7 @@ open scoped Classical SchwartzMap
 namespace Masullo
 
 /-- The contribution of a nonzero rational to the unramified adelic theta sum. -/
-public noncomputable def rationalThetaIdeleTerm (b : 𝓢(ℝ, ℂ))
+@[expose] public noncomputable def rationalThetaIdeleTerm (b : 𝓢(ℝ, ℂ))
     (a : IdeleGroup (𝓞 ℚ) ℚ) (q : ℚˣ) : ℂ :=
   let aq := IdeleGroup.unitEmbedding (𝓞 ℚ) ℚ q * a
   if ∀ v : HeightOneSpectrum (𝓞 ℚ), (aq : AdeleRing (𝓞 ℚ) ℚ).2 v ∈ v.adicCompletionIntegers ℚ

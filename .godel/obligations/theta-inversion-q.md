@@ -1238,30 +1238,73 @@ Validation: Full `lake --wfail build Proofs`, `leanchecker` on the new
 pairing, Fourier, and Poisson modules, and external `#check` and
 `#print axioms` on the changed public declarations.
 
-## Next additive step: Assemble the unramified adelic theta inversion
+## Checked adelic theta inversion for the unramified tensor
 
-To connect the checked Poisson theorem to Theorem 2.2.3.2 and
-(2.2.3.2)–(2.2.3.3), p. 82, apply it at the zero translate to the real
-Schwartz dilation $b_t(x)=b(tx)$, where $t>0$. Expose the already
-checked dilation and its Fourier calculation from
-[Lemmas/ScaledPoisson.lean](../../Proofs/Lemmas/ScaledPoisson.lean)
-without using `schwartz_scaled_poisson`, which invokes real Poisson
-summation. Compare the zero-translate diagonal sum with the lattice
-sum on the integral stage. Split off both zero terms and use
-`rationalTheta_eq_unramified_idele_sum` on the idele and its inverse
-($t=|g|$). The endpoint should state the identity on the adelic sums
-of the actual tensor and its verified transform, with the norm factor
-and both zero modes. The existing lattice theorem is not this proof
-route. The unramified theorem would not supply general idelic Fourier
-scaling or prove the result for arbitrary Schwartz–Bruhat functions.
+For $f_b(x)=b(x_\infty)\mathbf 1_{\prod_p\mathbb Z_p}(x_f)$, the theorem
+`Masullo.rationalAdeleUnramified_theta_inversion` in
+[RationalAdeleThetaInversion.lean](../../Proofs/Theorems/RationalAdeleThetaInversion.lean)
+proves at **every** rational idele $g$ that
 
-Independently, the integral-stage comparison can be strengthened by
-identifying `rationalFiniteIntegersHaar` with the product of the restrictions
-of the checked $p$-adic measures (`padicAddHaar_integralBall`) to their
-integral rings. This gives the compact factor of the restricted-product
-formula of Lemma A.3.1.3. The multiplicative
-[stage comparison](#checked-finite-stage-product-of-local-haar-measures)
-gives the analogous measure interfaces for extending to all stages.
+$$
+\sum_{q\in\mathbb Q^\times} f_b(qg)
+ = |g|^{-1}\sum_{q\in\mathbb Q^\times} f_{\widehat b}(qg^{-1})
+   + |g|^{-1} f_{\widehat b}(0) - f_b(0).
+$$
+
+The checked additive Fourier integral identifies $f_{\widehat b}$
+with $\widehat{f_b}$ at every adele, including zero.
+`Masullo.summable_norm_rationalAdeleUnramified_idele` gives absolute
+summability of the actual tensor evaluations, also for the Fourier
+sum. Neither theorem requires either zero mode to vanish.
+
+The proof first identifies the adelic evaluations with the terms of
+`rationalTheta_eq_unramified_idele_sum`. That theorem accounts for all
+finite coordinates and for the real sign by principal rescaling and
+reindexing. It gives scales $t=|g|>0$ and $t^{-1}=|g^{-1}|$ on the
+respective sides, so the remaining dilation is only on the real
+Schwartz factor: Apply the checked pointwise **adelic** Poisson theorem
+at the zero translate to the tensor with real factor $b(t\,\cdot)$.
+The real Fourier change of variables contributes the Jacobian $t^{-1}$.
+Removing the zero summands gives the two displayed corrections. This
+proof does not invoke real Poisson summation or assume that an arbitrary
+idele multiplication preserves the finite support of the tensor.
+The two sums depend only on the idelic norm by the norm-fiber theorem;
+the endpoint is stated on representatives, not as a new bundled map on
+the class group.
+
+Independent Yah statement review checked (2.2.3.1) and (2.2.3.2),
+pp. 81–82, Remark 2.2.3.3, p. 82, and Examples A.3.1.5 and A.3.1.8,
+pp. 557–558, against the SHA-256-matched layout extraction. The
+positive sign of the Fourier zero-mode correction, the inverse idele,
+and the mass-one quotient normalization match the source. The proof
+uses the full Poisson sum and explicitly removes the zero terms;
+it does not use the intermediate (2.2.3.3), which in the extraction
+uses $\Psi_F$ even though (2.2.2.1), p. 77, defines that sum on
+$F^\times$. This is a provisional text audit, not rendered verification.
+It formalizes (2.2.3.2) only for the rational unramified tensor, not
+arbitrary Schwartz–Bruhat functions, number fields, or general
+idelic Fourier scaling.
+
+Validation: Full `lake --wfail build Proofs`, `leanchecker` for the new
+and touched modules, and external `#check` and `#print axioms` for
+the two endpoints and the exposed supporting declarations.
+
+## Next additive step: Identify the product of local additive Haar probabilities
+
+For the integral-finite stage in Lemma A.3.1.3 and (A.3.1.3), p. 556,
+identify `rationalFiniteIntegersHaar` with `Measure.infinitePi` of the
+local integral-ring probabilities over `HeightOneSpectrum (𝓞 ℚ)`.
+Use `Rat.HeightOneSpectrum.adicCompletionIntegers.padicIntEquiv` and
+its compatibility with `adicCompletion.padicEquiv` to identify each
+probability with the restriction of `padicAddHaar` to the unit ball,
+viewed as a measure on the corresponding integral-ring subtype. The
+checked `padicAddHaar_integralBall` gives mass one. Prove translation
+invariance of the product via `Measure.infinitePi_map_pi` and deduce
+the equality by uniqueness of normalized Haar on the compact product.
+[Lemmas.RationalLocalUnitHaar](../../Proofs/Lemmas/RationalLocalUnitHaar.lean)
+provides the multiplicative analogue. This obligation only changes the
+compact factor of the checked integral-stage formula; unrestricted
+additive stages and the resulting global characterization remain open.
 
 ## Checked real-lattice inversion
 
@@ -1738,4 +1781,4 @@ The [complex Borel $L^1$ version](#checked-complex-weil-formula-and-absolute-sum
 is checked, as are the [quotient Fourier coefficient comparison and point
 separation](#checked-unfolding-of-the-quotient-fourier-coefficients) and
 [uniform density and Haar orthogonality](#checked-density-and-orthogonality-of-the-rational-quotient-characters).
-The [pointwise reconstruction and rational counting-series formula](#checked-pointwise-poisson-summation-with-explicit-convergence-hypotheses) are checked under explicit convergence hypotheses. The [unramified tensor periodization](#checked-periodization-of-the-rational-unramified-tensor) is now absolutely convergent at every lift and continuous on the quotient, with the input integrable upstairs. The [unramified transform and pointwise Poisson formula](#checked-fourier-transform-and-pointwise-poisson-for-the-unramified-tensor) now discharge Fourier-side summability. Next [assemble adelic theta inversion for this tensor](#next-additive-step-assemble-the-unramified-adelic-theta-inversion).
+The [pointwise reconstruction and rational counting-series formula](#checked-pointwise-poisson-summation-with-explicit-convergence-hypotheses) are checked under explicit convergence hypotheses. The [unramified tensor periodization](#checked-periodization-of-the-rational-unramified-tensor) is now absolutely convergent at every lift and continuous on the quotient, with the input integrable upstairs. The [unramified transform and pointwise Poisson formula](#checked-fourier-transform-and-pointwise-poisson-for-the-unramified-tensor) now discharge Fourier-side summability. The [adelic theta inversion theorem](#checked-adelic-theta-inversion-for-the-unramified-tensor) now applies to the actual tensor sums at every idele. Next [identify the product of local additive Haar probabilities](#next-additive-step-identify-the-product-of-local-additive-haar-probabilities).

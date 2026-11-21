@@ -20,15 +20,18 @@ open scoped FourierTransform SchwartzMap
 
 namespace Masullo
 
-private noncomputable def dilateSchwartz (b : 𝓢(ℝ, ℂ)) (t : ℝ) (ht : t ≠ 0) : 𝓢(ℝ, ℂ) :=
+/-- Precompose a real Schwartz function with a nonzero real dilation. -/
+public noncomputable def dilateSchwartz (b : 𝓢(ℝ, ℂ)) (t : ℝ) (ht : t ≠ 0) : 𝓢(ℝ, ℂ) :=
   SchwartzMap.compCLMOfContinuousLinearEquiv ℂ
     (ContinuousLinearEquiv.unitsEquivAut ℝ (Units.mk0 t ht)) b
 
-private theorem dilateSchwartz_apply (b : 𝓢(ℝ, ℂ)) (t : ℝ) (ht : t ≠ 0) (x : ℝ) :
+public theorem dilateSchwartz_apply (b : 𝓢(ℝ, ℂ)) (t : ℝ) (ht : t ≠ 0) (x : ℝ) :
     dilateSchwartz b t ht x = b (t * x) := by
   simp [dilateSchwartz, mul_comm]
 
-private theorem fourier_dilateSchwartz (b : 𝓢(ℝ, ℂ)) {t : ℝ} (ht : 0 < t) (u : ℝ) :
+/-- With the negative Fourier phase, positive dilation `t` sends frequency `u`
+to `t⁻¹ * u` and multiplies the transform by the Jacobian `t⁻¹`. -/
+public theorem fourier_dilateSchwartz (b : 𝓢(ℝ, ℂ)) {t : ℝ} (ht : 0 < t) (u : ℝ) :
     𝓕 (dilateSchwartz b t ht.ne') u = t⁻¹ • 𝓕 b (t⁻¹ * u) := by
   simp only [SchwartzMap.fourier_coe, Real.fourier_real_eq_integral_exp_smul,
     dilateSchwartz_apply]
@@ -50,6 +53,19 @@ public theorem summable_norm_schwartz_int_mul (b : 𝓢(ℝ, ℂ)) {t : ℝ} (ht
       ((dilateSchwartz b t ht).isBigO_cocompact_rpow (-2)).comp_tendsto
         Int.tendsto_coe_cofinite
   exact hs.norm
+
+/-- Separate the zero mode of the absolutely summable dilated lattice. -/
+public theorem tsum_schwartz_int_mul_eq_zero_add (b : 𝓢(ℝ, ℂ)) {t : ℝ} (ht : t ≠ 0) :
+    (∑' n : ℤ, b (t * n)) = b 0 + ∑' n : {n : ℤ // n ≠ 0}, b (t * (n : ℤ)) := by
+  have hs := (summable_norm_schwartz_int_mul b ht).of_norm
+  let S : Set ℤ := (↑({0} : Finset ℤ) : Set ℤ)ᶜ
+  let e : (S : Type) ≃ {n : ℤ // n ≠ 0} :=
+    Equiv.subtypeEquivRight (fun n ↦ by simp [S])
+  calc
+    (∑' n : ℤ, b (t * n)) = b 0 + ∑' n : S, b (t * n) := by
+      simpa only [Finset.sum_singleton, Int.cast_zero, mul_zero] using
+        (hs.sum_add_tsum_compl (s := ({0} : Finset ℤ))).symm
+    _ = _ := congrArg (b 0 + ·) (e.tsum_eq (fun n ↦ b (t * (n : ℤ))))
 
 /-- Poisson summation at zero for the dilated Schwartz function. -/
 public theorem schwartz_scaled_poisson (b : 𝓢(ℝ, ℂ)) {t : ℝ} (ht : 0 < t) :
