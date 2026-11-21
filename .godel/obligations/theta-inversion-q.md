@@ -1684,18 +1684,75 @@ Validation endpoints: `rationalAdeleBoxSum_theta_large_norm`,
 `lake --wfail build Proofs`, `leanchecker` on both linked modules, and
 `#print axioms` on the four endpoints.
 
-### Next orbit step: Fill the compact middle range for fixed tests
+## Checked global log-norm decay for fixed box sums
 
-Prove that $\{d: u\le |d|\le v\}$ is compact for $0<u\le v$.
-Generalize the private `isCompact_rationalIdeleClass_normStrip` in
-[RationalIdeleWindowMeasure.lean](../../Proofs/Lemmas/RationalIdeleWindowMeasure.lean):
-Use the image of $[\log u,\log v]$ times the compact norm-one subgroup
-under `rationalIdeleClassLogSplit`. The two class theta tails and
-continuity then allow threshold one in the fixed-test estimates. With
-both zero modes zero, target the global bound of (2.2.3.6),
-$|\theta_f(d)|\le C\exp(-m|\log|d||)$. This does not establish the
-bounded-family claim of parts (4)–(5), which needs control of the
-Schwartz–Bruhat LF topology and bounded families of test functions.
+[Closed positive norm bands](../../Proofs/Theorems/RationalIdeleClassCompact.lean)
+are compact in the actual rational idele class topology.
+`Masullo.isCompact_rationalIdeleClass_normStrip` assumes only $0<u$:
+For $u\le v$, the band $[u,v]$ is the image of $[\log u,\log v]$
+times the compact norm-one subgroup under `rationalIdeleClassLogSplit`.
+When $v<u$ the band is empty. The Haar construction now uses the
+$[1,e]$ specialization of this theorem rather than a separate proof.
+
+`Masullo.rationalAdeleBoxSum_theta_log_bound` in
+[RationalAdeleThetaTails.lean](../../Proofs/Theorems/RationalAdeleThetaTails.lean)
+proves, for fixed $f$ in the finite translated rational box span with
+$f(0)=\widehat f(0)=0$ and every $m\in\mathbb N$, that one $K>0$ satisfies
+
+$$
+|\theta_f(d)|\le K\exp(-m|\log|d||)
+$$
+
+for **every** rational idele class $d$. The vanishing assumptions remove
+the corrections in the small-norm estimate; neither tail changes its
+exponent. Between the two thresholds, bound the continuous function
+$|\theta_f(d)|/\exp(-m|\log|d||)$ on the compact norm band. Taking the
+maximum of that bound and the two tail constants gives the result.
+
+Independent Yah statement review in `dispatch-JtYJzWQ` checked both
+interfaces against the accepted dependencies and the digest-matched
+layout extraction. Theorem 2.2.3.4(3), (2.2.3.6), p. 83, gives the
+two-tail version. The all-class extension follows the middle-range
+strategy of (5), pp. 85–86, for one test only. In the extraction,
+(2.2.3.14) bounds the *unweighted* theta on the band; that bound must
+be rescaled by the maximum of the reciprocal decay weight before
+taking the maximum with the tail constants. The Lean proof bounds the
+weighted quantity directly. This is not a visual reading or a proof
+of the LF bounded-family assertion. It does not separately move the
+thresholds of the uncorrected large and corrected small tails to one.
+
+Validation endpoints: `isCompact_rationalIdeleClass_normStrip` and
+`rationalAdeleBoxSum_theta_log_bound`. Use `lake --wfail build Proofs`,
+`leanchecker` on both linked modules and `Lemmas.RationalIdeleWindowMeasure`,
+and `#print axioms` on both endpoints.
+
+### Next orbit step: A common bound on fixed finite box families
+
+For fixed finite box geometry $(a_i,g_i)$ and fixed coefficients $c_i$,
+let each real factor $b_i$ range over a von Neumann bounded set of
+complex Schwartz maps. Prove the two estimates (2.2.3.4)–(2.2.3.5) with
+common constants and threshold one for this parameterized family.
+This isolates the quantitative part of (4)–(5) without assuming an
+adelic LF bornology. Check it first for one translated box by replacing
+`schwartz_tail_term` in the proof of `exists_box_tail_majorant` in
+[Lemmas/RationalAdeleBoxTail.lean](../../Proofs/Lemmas/RationalAdeleBoxTail.lean)
+with a uniform seminorm estimate valid also at the lower endpoint.
+
+After finite-unit normalization the real argument is $y=t n-x$ with
+$t=|d|/(|g|D)>0$ and $0\ne n\in\mathbb Z$. Use
+$t|n|\le |y|+|x|\le(1+|x|)\max(1,|y|)$. The order-$0$ and
+order-$(m+2)$ Schwartz seminorms bound
+$\max(1,|y|)^{m+2}|b_i(y)|$. This yields a bound by a fixed multiple
+of $t^{-(m+2)}|n|^{-(m+2)}$ before summation. For $|d|\ge1$, the two
+extra inverse powers of $|d|$ only help; this controls the middle range
+without a compactness assertion for a varying family of theta functions.
+Reuse the seminorm boundedness and `FourierTransform.fourierCLM`
+argument of `Masullo.rationalTheta_uniform_tail_bounds` on the real
+factors in the centered Fourier-box envelope, and use order $m+1$ for
+the inverted estimate. The remaining source bridge from arbitrary
+bounded adelic sets to such finite-stage families must be addressed
+separately: See Proposition 2.1.3.2(2), Proposition C.2.5.1(4), and the
+bounded-set claim in the proof on p. 84. No such bridge is used here.
 
 ## Checked real-lattice inversion
 

@@ -79,27 +79,6 @@ local instance : SigmaCompactSpace RationalIdeleClasses :=
   ⟨rationalIdeleClassLogSplit.surjective.range_eq ▸
     isSigmaCompact_range rationalIdeleClassLogSplit.continuous⟩
 
-/-- A compact norm strip on the rational quotient. -/
-private theorem isCompact_rationalIdeleClass_normStrip :
-    IsCompact {c : RationalIdeleClasses | ideleClassNorm c ∈ Icc 1 (Real.exp 1)} := by
-  let e := rationalIdeleClassLogSplit
-  have hcompact : IsCompact ((Multiplicative.ofAdd '' Icc (0 : ℝ) 1) ×ˢ
-      (univ : Set rationalIdeleClassNormOne)) :=
-    (isCompact_Icc.image continuous_ofAdd).prod isCompact_univ
-  convert hcompact.image e.continuous using 1
-  ext c
-  change _ ↔ c ∈ e.toEquiv '' _
-  rw [e.toEquiv.image_eq_preimage_symm]
-  change (1 ≤ ideleClassNorm c ∧ ideleClassNorm c ≤ Real.exp 1) ↔
-    ((rationalIdeleClassLogSplit.symm c).1 ∈ Multiplicative.ofAdd '' Icc (0 : ℝ) 1 ∧ True)
-  rw [and_true, rationalIdeleClassLogSplit_symm_fst]
-  have hlog : rationalIdeleClassLogNorm c = Multiplicative.ofAdd (Real.log (ideleClassNorm c)) :=
-    congrArg Multiplicative.ofAdd (rationalIdeleClassLogNorm_apply c)
-  rw [hlog]
-  rw [Multiplicative.ofAdd.injective.mem_set_image, mem_Icc,
-    Real.le_log_iff_exp_le (ideleClassNorm_pos c), Real.exp_zero,
-    Real.log_le_iff_le_exp (ideleClassNorm_pos c)]
-
 private theorem continuous_rationalIdeleNorm : Continuous (ideleNorm : Ideles → ℝ) := by
   simpa only [Function.comp_def, ideleClassNorm_mk] using
     (continuous_ideleClassNorm : Continuous (ideleClassNorm : RationalIdeleClasses → ℝ)).comp
@@ -111,7 +90,7 @@ with nonempty interior in the full rational idele group. -/
   carrier := rationalIdeleUnitWindow ∩ {a | ideleNorm a ∈ Icc 1 (Real.exp 1)}
   isCompact' := by
     let e := rationalIdeleUnitWindowHomeomorph
-    have h := isCompact_rationalIdeleClass_normStrip.image
+    have h := (isCompact_rationalIdeleClass_normStrip (v := Real.exp 1) zero_lt_one).image
       (continuous_subtype_val.comp e.symm.continuous)
     convert h using 1
     ext a
@@ -161,8 +140,9 @@ public theorem eq_rationalIdeleClassHaar_of_normStrip (μ : Measure RationalIdel
       Icc 1 (Real.exp 1)} = 1 := by
     rw [rationalIdeleClassHaar_normStrip (by rw [← Real.exp_zero]; gcongr; norm_num),
       Real.log_exp, ENNReal.ofReal_one]
+  have hcompact := isCompact_rationalIdeleClass_normStrip (v := Real.exp 1) zero_lt_one
   have hscale := Measure.measure_isMulInvariant_eq_smul_of_isCompact_closure
-    μ rationalIdeleClassHaar isCompact_rationalIdeleClass_normStrip.closure
+    μ rationalIdeleClassHaar hcompact.closure
   rw [h, hmass] at hscale
   change 1 = (↑(μ.haarScalarFactor rationalIdeleClassHaar) : ℝ≥0∞) * 1 at hscale
   rw [mul_one] at hscale
