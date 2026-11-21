@@ -191,33 +191,62 @@ Yah review checked the endpoint and this argument against the
 digest-matched layout extraction, not rendered pages. Compactness by
 continuous image does not prove that the quotient is Hausdorff.
 
-## Independent next Haar step: Show the rational principal subgroup is closed
+## Checked discreteness and quotient topology over the rationals
 
-Formalize the discreteness argument of Lemma A.1.3.4(1)–(2), p. 542,
-for $\mathbb Q$. Take the identity neighborhood with positive real
-coordinate and both the finite value and its inverse in the
-all-integral stage. `RestrictedProduct.isOpen_forall_mem` gives the
-finite open condition since each completion's valuation ring is open.
-On a principal idele, the two finite conditions force all valuations
-to be one. Its idelic norm is one by the product formula, so the checked
-`ideleNorm_eq_abs_rationalIdeleReal` makes its real absolute value one.
-Positivity and the injective rational embedding into the real field
-then force the principal idele to be one. Use
-`discreteTopology_iff_isOpen_singleton_one`,
-`Subgroup.isClosed_of_discreteTopology`, and the quotient topology's
-separation instance from a closed normal subgroup. Local compactness
-of the class group can then use the checked log-section splitting with
-the compact norm-one factor. The strict boundary-jet test below is
-independent of this step.
+[RationalIdeleClassTopology.lean](../../Proofs/Theorems/RationalIdeleClassTopology.lean)
+proves the rational case of Lemma A.1.3.4(1)–(2), p. 542. The principal
+subgroup is discrete in the induced topology (`discreteTopology_rationalPrincipalIdeles`)
+and closed (`isClosed_rationalPrincipalIdeles`). The actual idele class
+quotient is Hausdorff (`t2Space_rationalIdeleClassGroup`) and locally
+compact (`locallyCompactSpace_rationalIdeleClassGroup`). The latter uses
+our checked split over the real log-norm line and compact norm-one
+classes, not a claim about the order of the manuscript's argument.
 
-The later measure target is the pushforward of the manuscript's quotient
+The [finite-unit window](../../Proofs/Lemmas/RationalIdeleUnitWindow.lean)
+has positive real coordinate and both the finite value and its inverse
+in the all-integral stage. Its openness uses the two projections of the
+units topology of Definition A.1.3.1, p. 541, and
+`RestrictedProduct.isOpen_forall_mem`. The two finite conditions force
+valuation one everywhere. On a principal idele the product formula
+then gives real absolute value one, and positivity and injectivity of
+the rational cast force the identity. The proof takes the preimage in
+the principal subgroup, not in the abstract discrete source group.
+Independent Yah statement review checked the source scope and the two
+units-topology projections against the digest-matched layout extraction,
+not rendered pages. This does not treat arbitrary number fields or
+functoriality, or identify or normalize Haar measure.
+
+## Independent next Haar step: Exhibit a fundamental domain for principal ideles
+
+Show that the positive-real, finite-unit window above projects
+bijectively onto `IdeleClassGroup (𝓞 ℚ) ℚ`. For surjectivity use
+`exists_rational_principal_mul_norm_section` and positivity of the
+norm. An idele with finite valuations one also has inverse valuations
+one since the product of each pair of coordinates is one. For
+injectivity show the window is an open subgroup: Multiplication and
+inversion preserve real positivity and the two finite integrality
+conditions. Then `QuotientGroup.eq_iff_div_mem` puts the quotient of
+two representatives of the same class in both the principal subgroup
+and the window, where the identity-isolation argument applies. Use
+`QuotientGroup.isOpenMap_coe` and openness of the window to get a
+homeomorphism on restriction. This is a proposed project construction of
+a specific fundamental domain, not a claim that p. 561 chooses it.
+
+The measure target is the pushforward of the manuscript's quotient
 Haar measure by log norm, namely $dx$. Definition A.3.2.1, pp. 559–560,
-specifies quotient Haar with counting measure on $\mathbb Q^\times$ and
-$dt/t$ on the norm quotient; (A.3.2.1) gives mass one for the norm-one
-factor over $\mathbb Q$. A.3.3.1, p. 561, describes the product upstairs
-and the measure of a strip over a norm-one fundamental domain. The
-checked topological splitting makes log norm the first projection but
-does not construct the quotient measure or identify its normalization.
+uses counting measure on $\mathbb Q^\times$ and $dt/t$ on the norm
+quotient; (A.3.2.1) gives mass one for the norm-one factor over
+$\mathbb Q$. Lemma A.3.2.4, (A.3.2.5), p. 560, specifies the restricted
+product measure upstairs. Section A.3.3.1, p. 561, computes strip volumes
+on a norm-one fundamental domain. For our window, the measure to
+compare is the **restriction** of the upstairs Haar measure, not the
+pushforward of the unrestricted measure with infinite principal fibers.
+Mathlib's `measurePreserving_quotientGroup_mk_of_QuotientMeasureEqMeasurePreimage`
+expresses the restricted comparison once a measurable fundamental
+domain and the measure relation are proved. In the log split, the
+pushforward of $dx\otimes\mu_1$ under the first projection is $dx$
+for $\mu_1$ of mass one (`Measure.map_fst_prod`); identifying that product
+with the chosen quotient measure remains a separate proof.
 
 ## Checked real-lattice inversion
 
