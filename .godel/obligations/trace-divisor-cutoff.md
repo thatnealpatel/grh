@@ -72,7 +72,7 @@ The boundary-layer majorant depends on $n$; it is **not** an integrable dominati
 
 An independent Yah review checked the differentiated expression, support separation, weighted mean-value estimate, and pinned APIs. It also noted that a reusable $C^2$ pointwise helper is not itself a source of admissible $C_c^\infty$ tests: At the annihilation step use the smooth exponential specialization.
 
-## Lean endpoint and next check
+## Lean endpoint
 
 `Masullo.hasSum_subtractedReciprocals_of_annihilation` constructs a fixed
 normalized real smooth bump (cast to complex) with support in $[1,3]$. The
@@ -86,7 +86,4 @@ coefficient, and explicit status of the annihilation premise. Release checks:
 `lake --wfail build Proofs`, `lake env leanchecker Lemmas.CutoffSeries`, and
 `#check` and `#print axioms` for the public endpoint.
 
-**Next:** [Assemble the conditional uniqueness proposition](trace-divisor-resolvent.md#next-runnable-step-assemble-the-conditional-uniqueness-proposition).
-Use the open half-plane to give eventual equality at the anchor and rewrite
-each reciprocal difference to the single subtracted term before summing. The
-rational full-versus-capped comparison and its normalization are still open.
+The [conditional uniqueness proposition](trace-divisor-resolvent.md#assembled-conditional-uniqueness) uses this identity on the open half-plane to give eventual equality at the anchor. It rewrites each reciprocal difference before summing. The rational full-versus-capped comparison and its normalization are still open.

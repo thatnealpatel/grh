@@ -1,6 +1,6 @@
 # Recovering the divisor from the Chapter 13 test class
 
-**Status:** Conditional project argument over $\mathbb Q$ in the trivial compact isotype. The $D=1$ cutoff and residue steps are in Lean, but the assembled proposition and its application are not. Source readings are provisional, based on raw and layout text from the [digest-matched edition](../sources/masullo/README.md). This fills a downstream implication under a specified normalization; it does not supply the Chapter 13 trace or the manuscript's missing positivity criterion.
+**Status:** Conditional project argument over $\mathbb Q$ in the trivial compact isotype. The [assembled $D=1$ uniqueness proposition](../../Proofs/Props/ZeroMassUniqueness.lean) is in Lean; its zeta application is not. Source readings are provisional, based on raw and layout text from the [digest-matched edition](../sources/masullo/README.md). This fills a downstream implication under a specified normalization; it does not supply the Chapter 13 trace or the manuscript's missing positivity criterion.
 
 ## The common test class and the missing comparison
 
@@ -40,6 +40,10 @@ $$
 
 Take $w=\rho-1/2$ for distinct nontrivial zeta zeros and $d_w=\operatorname{ord}_\rho \zeta-\mathbf1_{\Re w=0}$. The classical count $O(T\log(2+T))$ with multiplicity gives the summability premise by dyadic decomposition, and the zeros are discrete with bounded real parts. The stated comparison is exactly the uniqueness hypothesis with $D=1$. It would imply that each noncentral zero is on the critical line and is simple. No positivity hypothesis or limit of trace widths is needed for this implication, and the proof cannot tell what weight occurs at the center. This is not the manuscript's proof, does not justify its clipped trace, and does not supply the corresponding comparison for arbitrary Hecke characters or number fields.
 
+## Next runnable step: Separate the shifted zeta zeros
+
+Discharge the geometric hypotheses on the pole family independently of the trace comparison. Pinned Mathlib's `Mathlib.NumberTheory.LSeries.ZetaZeros` supplies `isClosed_riemannZetaZeros`, `isDiscrete_riemannZetaZeros`, and `IsCompact.inter_riemannZetaZeros_finite`. Use zeros in the open critical strip as the index type and translate by $-1/2$. Local finiteness in closed balls follows by pulling back the balls under translation and taking subsets; this gives countability by exhaustion and a uniform gap at each point by excluding the center and taking the minimum of finitely many positive distances inside a unit ball. Do not infer closedness of a strip intersection merely from closedness of the ambient zero set. Translation is injective and the strip gives the real-part bound. Weighted summability with the orders, the weight at the center, and the distribution comparison remain separate.
+
 ## A pole test for the raw Haar reading
 
 If (13.3.1.4) uses raw $\mu_v$ and (13.3.1.5) ranges over the same finite places as (B.4.4.16), the two asserted formulas are incompatible on this radial test class. Both finite-place displays have the same extracted index set and over $\mathbb Q$ the unit volumes are one. This leaves exactly one extra real-place term in the difference between the full and capped sums. In fact the real additive Tamagawa measure is Lebesgue (Example A.3.1.5, p. 557), so using both signs in Definition A.3.2.2, p. 560, gives the ordinary kernel
@@ -54,4 +58,4 @@ initially for $\Re z>1/2$. The subtraction removes the singularity of the integr
 
 **Independent Yah review:** The review independently checked the pinned text and challenged the uniqueness proof and pole test. It confirmed the factor $1/M_v$, the finite sum comparison under the common index convention, and the possibility of hidden central weight. No rendered pages or Lean check were used.
 
-The reusable formalization target is the uniqueness lemma, with discreteness, the weighted summability estimate, and the test-class annihilation as inputs. The [cutoff interface](trace-divisor-cutoff.md) maps the first analytic step to pinned Mathlib, with the compact-test integration-by-parts estimate first. The [checked residue step](trace-divisor-resolvent.md) isolates the second as `Masullo.subtractedResolvent_weight_eq_zero`, taking the locally agreed subtracted identity as input and not the full uniqueness conclusion. Do not turn the capped trace or the geometric normalization match into an axiom in `Proofs`. For the source branch, resolve the local normalization before citing (13.3.1.3) as the comparison premise.
+The [cutoff interface](trace-divisor-cutoff.md) and [resolvent handoff](trace-divisor-resolvent.md#assembled-conditional-uniqueness) explain the checked composition. It does not use a capped-trace or geometric-normalization axiom. For the source branch, resolve the local normalization before citing (13.3.1.3) as the comparison premise.

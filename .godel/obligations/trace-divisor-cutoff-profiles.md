@@ -31,7 +31,7 @@ The uniform bound uses the vanishing of the first two derivatives of $\chi$ off 
 
 Independent Yah statement review confirmed the half-line domain, sign, decay conditions, and mass specialization. The release checks are `lake --wfail build Proofs`, `lake env leanchecker Lemmas.CutoffProfiles`, and `#check` and `#print axioms` for the public declarations.
 
-The [mass-corrected series endpoint](trace-divisor-cutoff.md#lean-endpoint-and-next-check)
+The [mass-corrected series endpoint](trace-divisor-cutoff.md#lean-endpoint)
 now uses the uniform integral estimate and
 `Masullo.norm_positiveLaplaceTest_mul_weight_le` for the summable majorant
 $C\|d_i\|/(1+\|w_i\|^2)$, and the scalar limit for each $w_i$. The
