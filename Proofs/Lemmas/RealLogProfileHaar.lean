@@ -64,45 +64,48 @@ public theorem additive_test {F : ℝ → ℂ} (hF : ContDiff ℝ ∞ F) (hc : H
     exact hy (by simp only [v, hz, mul_zero, ite_self])
   exact ⟨hvc.comp (contDiff_const.add contDiff_id), hv.comp_isClosedEmbedding (Homeomorph.addLeft (1 : ℝ)).isClosedEmbedding⟩
 
-/-- Translate both the test and the cutoff by `y = 1 + z`, preserving Lebesgue measure. -/
-public theorem translate_cutoff (u : ℝ → ℂ) (ε : ℝ) :
-    (IntegrableOn (fun z ↦ u z / ((|z| : ℝ) : ℂ)) {z | ε ≤ |z|} ↔
-      IntegrableOn (fun y ↦ u (y - 1) / ((|1 - y| : ℝ) : ℂ)) {y | ε ≤ |1 - y|}) ∧
-    (∫ z in {z | ε ≤ |z|}, u z / ((|z| : ℝ) : ℂ)) =
-      ∫ y in {y | ε ≤ |1 - y|}, u (y - 1) / ((|1 - y| : ℝ) : ℂ) := by
+/-- Translate the density and integration set by `y = 1 + z`. -/
+public theorem translate_set (u : ℝ → ℂ) (s : Set ℝ) :
+    let e : ℝ → ℝ := fun z ↦ 1 + z
+    (IntegrableOn (fun z ↦ u z / ((|z| : ℝ) : ℂ)) (e ⁻¹' s) ↔
+      IntegrableOn (fun y ↦ u (y - 1) / ((|1 - y| : ℝ) : ℂ)) s) ∧
+    (∫ z in e ⁻¹' s, u z / ((|z| : ℝ) : ℂ)) =
+      ∫ y in s, u (y - 1) / ((|1 - y| : ℝ) : ℂ) := by
   let e := MeasurableEquiv.addLeft (1 : ℝ)
   let g (y : ℝ) := u (y - 1) / ((|1 - y| : ℝ) : ℂ)
-  let s : Set ℝ := {y | ε ≤ |1 - y|}
   have he : volume.map e = (volume : Measure ℝ) := (measurePreserving_add_left volume (1 : ℝ)).map_eq
   have hg : g ∘ e = fun z ↦ u z / ((|z| : ℝ) : ℂ) := by
     funext z
     have h₁ : 1 + z - 1 = z := by ring
     have h₂ : 1 - (1 + z) = -z := by ring
     simp [g, e, h₁, h₂]
-  have hs : e ⁻¹' s = {z | ε ≤ |z|} := by
-    ext z
-    simp [s, e]
   have hi := e.measurableEmbedding.integrableOn_map_iff (μ := volume) (f := g) (s := s)
-  rw [he, hg, hs] at hi
+  rw [he, hg] at hi
   have h := e.measurableEmbedding.setIntegral_map (μ := volume) g s
   change (∫ y in s, g y ∂volume.map e) = ∫ z in e ⁻¹' s, (g ∘ e) z at h
-  rw [he, hg, hs] at h
+  rw [he, hg] at h
   exact ⟨hi.symm, h.symm⟩
+
+/-- Translate both the test and the physical cutoff, preserving Lebesgue measure. -/
+public theorem translate_cutoff (u : ℝ → ℂ) (ε : ℝ) :
+    (IntegrableOn (fun z ↦ u z / ((|z| : ℝ) : ℂ)) {z | ε ≤ |z|} ↔
+      IntegrableOn (fun y ↦ u (y - 1) / ((|1 - y| : ℝ) : ℂ)) {y | ε ≤ |1 - y|}) ∧
+    (∫ z in {z | ε ≤ |z|}, u z / ((|z| : ℝ) : ℂ)) =
+      ∫ y in {y | ε ≤ |1 - y|}, u (y - 1) / ((|1 - y| : ℝ) : ℂ) := by
+  simpa using translate_set u {y | ε ≤ |1 - y|}
 
 /-- Push real local Haar to its density in the value coordinate. This works
 on both sign components, and the additive measure ignores the null singleton. -/
-public theorem density_cutoff (F : ℝ → ℂ) (ε : ℝ) :
+public theorem density_set (F : ℝ → ℂ) {s : Set ℝ} (hs : MeasurableSet s) :
     let w (y : ℝ) := F (Real.log |y|) * ((|y| ^ (1 / 2 : ℝ) : ℝ) : ℂ) / ((|1 - y| : ℝ) : ℂ)
-    let s : Set ℝ := {y | ε ≤ |1 - y|}
     let g (y : ℝ) := realLogProfileAdditive F (y - 1) / ((|1 - y| : ℝ) : ℂ)
     (IntegrableOn (w ∘ (Units.val : ℝˣ → ℝ)) (Units.val ⁻¹' s) realMultiplicativeHaar ↔ IntegrableOn g s) ∧
       (∫ y in Units.val ⁻¹' s, w y ∂realMultiplicativeHaar) = ∫ y in s, g y := by
-  intro w s g
+  intro w g
   let j : MeasurableEmbedding (Units.val : ℝˣ → ℝ) := Units.isOpenEmbedding_val.measurableEmbedding
   let ρ (y : ℝ) := ENNReal.ofReal |y|⁻¹
   have hρ : Measurable ρ := by dsimp [ρ]; fun_prop
   have hρtop : ∀ᵐ y ∂volume.restrict s, ρ y < ⊤ := .of_forall fun _ ↦ ENNReal.ofReal_lt_top
-  have hs : MeasurableSet s := measurableSet_le measurable_const (by fun_prop)
   have hη : (realMultiplicativeHaar.map Units.val) = volume.withDensity ρ := by
     rw [map_realMultiplicativeHaar_val, restrict_compl_singleton]
   have hg : (fun y ↦ (ρ y).toReal • w y) =ᵐ[volume.restrict s] g := by
@@ -124,6 +127,15 @@ public theorem density_cutoff (F : ℝ → ℂ) (ε : ℝ) :
   · rw [← j.setIntegral_map, hη, setIntegral_withDensity_eq_setIntegral_toReal_smul₀
       hρ.aemeasurable hρtop w hs]
     exact integral_congr_ae hg
+
+/-- The pushforward density on the physical cutoff. -/
+public theorem density_cutoff (F : ℝ → ℂ) (ε : ℝ) :
+    let w (y : ℝ) := F (Real.log |y|) * ((|y| ^ (1 / 2 : ℝ) : ℝ) : ℂ) / ((|1 - y| : ℝ) : ℂ)
+    let s : Set ℝ := {y | ε ≤ |1 - y|}
+    let g (y : ℝ) := realLogProfileAdditive F (y - 1) / ((|1 - y| : ℝ) : ℂ)
+    (IntegrableOn (w ∘ (Units.val : ℝˣ → ℝ)) (Units.val ⁻¹' s) realMultiplicativeHaar ↔ IntegrableOn g s) ∧
+      (∫ y in Units.val ⁻¹' s, w y ∂realMultiplicativeHaar) = ∫ y in s, g y :=
+  density_set F (measurableSet_le measurable_const (by fun_prop))
 
 end RealLogProfileHaar
 end Masullo

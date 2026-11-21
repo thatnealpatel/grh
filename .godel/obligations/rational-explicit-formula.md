@@ -863,27 +863,54 @@ checks (`propext`, `Classical.choice`, and `Quot.sound` only). The
 `audit-local` command took about 11.5 seconds, versus about 101 seconds
 for the prior cold audit. The replay and axiom checks were not skipped.
 
-## Next runnable obligation: Compare physical and symmetric log cutoffs
+<a id="next-runnable-obligation-compare-physical-and-symmetric-log-cutoffs"></a>
 
-For the same $F$ and normalized Haar integrand, prove that the difference
-between the integrals cut at $|1-y|\ge\varepsilon$ and at
-$|\log|y||\ge\varepsilon$ tends to zero as $\varepsilon\to0^+$. Keep the
-identity value arbitrary here, so the result also covers Appendix B.
-At $y>0$ the physical log thresholds are $\log(1+\varepsilon)$ and
-$-\log(1-\varepsilon)$, whose ratios to
-$\varepsilon$ tend to one; bound the discrepancies by the resulting
-log-ratios using an $O(1/|\log y|)$ majorant. At $y<0$ the deleted log
-interval has length $2\varepsilon$ and bounded density. This comparison
-also permits inversion of the finite part, since inversion preserves
-the symmetric log cutoff and the Haar integrand apart from replacing
-$F(t)$ by $F(-t)$.
+## Checked comparison of physical and symmetric log cutoffs
 
-After the cutoff comparison, folding
-$y=\pm e^{\pm x}$ gives the weight $e^{-x/2}/(1-e^{-2x})$ for $x>0$.
-The identity subtraction contributes
-$-\log(1-e^{-2\varepsilon})+\log\varepsilon\to-\log 2$, leaving
-$\log\pi+\gamma$. Compare with the negative of the checked
+[`Props.RealLogProfileHaar`](../../Proofs/Props/RealLogProfileHaar.lean)
+now checks absolute integrability of the same half-Haar kernel on
+$|\log|y||\ge\varepsilon>0$, that its integral minus the physical-cutoff
+integral tends to zero, and that the compensated log cutoff has the same
+Fourier pairing and contact term as the physical one. The three endpoints
+are `real_log_profile_haar_log_cutoff_integrable`,
+`real_log_profile_haar_cutoff_difference`, and
+`real_log_profile_haar_log_principalValue`. No endpoint assumes $F(0)=0$.
+
+Masullo supplies the physical cutoff (B.4.3.13), p. 619, and its translated
+multiplicative coordinates (B.4.4.1)–(2), pp. 619–620. The extracted inverse
+replacement after (12.4.1.25)–(28), p. 519, is asserted for the finite sums;
+it does not identify the two finite cutoff domains. The project repair
+`RealLogCutoff.tendsto_logAddSet_compensated` compares the cutoffs in the
+additive coordinate $z=y-1$. The existing absolutely integrable unit
+subtraction restores both deleted neighborhoods, at $z=0,-2$, by dominated
+convergence. The singular model $F(0)\mathbf1_{|z|\le1}/|z|$ lives on the
+nonnegative $y$ ray, and its two remaining integrals have endpoints
+$a_+=e^\varepsilon-1$ and $a_-=1-e^{-\varepsilon}$. From the exact integrals
+and $a_\pm/\varepsilon\to1$, the residual constant is zero. The cutoff
+difference then follows by subtracting the two compensated limits, with
+identical counterterms. This repair allows an inversion-invariant cutoff;
+it does not establish the global finite-sum replacement or operator limit.
+
+Independent Yah statement review (`log-cutoff-review`) checked both sign
+components, the counterterm, and the proposed statements against the
+accepted Lean interface and the digest-verified extraction. The manuscript
+reading remains provisional until visual verification. The local audit
+scope is `Lemmas.RealLogProfileHaar`, `Lemmas.RealLogCutoff`, and
+`Props.RealLogProfileHaar`, with the three endpoints above.
+
+## Next runnable obligation: Match the rational real Haar and Gamma terms
+
+Compare the symmetric compensated cutoff with the negative of the checked
 [`compactLogMellin_GammaReal_evaluation`](../../Proofs/Props/GammaRealMellin.lean)
-using $g(t)=e^{-t/2}F(t)$, so that $g(x)+e^{-x}g(-x)$ becomes
-$e^{-x/2}(F(x)+F(-x))$. Finite-place idelic comparison and the global
-geometric comparison remain separate obligations.
+for $g(t)=e^{-t/2}F(t)$. This is the rational trivial-character comparison
+between (B.4.2.13)–(15), pp. 615–616, and (B.4.4.16), p. 623, with the
+normalization repairs already recorded above. First fold the two signs
+and the two log rays into $x>0$: At each positive cutoff the combined
+weight on $F(x)+F(-x)$ is $e^{-x/2}/(1-e^{-2x})$. Then subtract
+$2F(0)e^{-2x}/(1-e^{-2x})$ inside the integral and integrate that
+subtraction exactly. Its cutoff integral plus $F(0)\log\varepsilon$
+tends to $-F(0)\log 2$, leaving $\log\pi+\gamma$ in the complete local
+functional. Use the checked Gamma theorem for integrability of the
+combined kernel, not separate absolute convergence of its summands at
+zero. Finite-place idelic comparison and the global geometric comparison
+remain separate obligations.
