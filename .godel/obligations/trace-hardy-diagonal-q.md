@@ -26,8 +26,9 @@ formulas changes the designated order of cutoff, convolution, and projection.
 **Provisional source comparison from the digest-matched layout extraction:**
 Definition 10.1.1.1(1), (10.1.1.3), p. 433, takes the global theta closure
 in the full weighted space. Definition 10.4.1.3, p. 457, uses the order
-$M_\rho P_a^{\mathrm{geom}}A(\phi)$ for geometrically truncated convolution;
-the kernel discussion at (10.4.3.48)–(10.4.3.50), pp. 473–474, also treats
+$M_\rho P_a^{\mathrm{geom}}A(\phi)$ for geometrically truncated convolution.
+Definition 10.4.1.5, (10.4.1.12)–(10.4.1.13), and the kernel discussion at
+(10.4.3.48)–(10.4.3.50), pp. 473–474, also treat
 $M_\rho A(\phi)P_a^{\mathrm{geom}}$. The two orders should not be identified
 at finite cutoff by cycling bounded factors through an unproved trace.
 Theorem 11.2.1.4(2), (11.2.1.8)–(11.2.1.10), p. 489, concerns the
@@ -179,12 +180,25 @@ terms or of the two Mellin corrections is proved here.
 **Review evidence:** `hardy-review` (`szKmRqB`) checked the fixed-cutoff
 model, singular factor exclusion, and source comparison from layout text.
 `hardy-limit-review` (`MeeZPoo`) checked trace-class Fourier inversion,
-the full-line frequency estimates, and the exact scalar endpoint. Neither
-review establishes a manuscript level comparison; no visual check is
-claimed.
+the full-line frequency estimates, and the exact scalar endpoint.
+`causal-statement` (`mjfcaeQ`, reviewing the proposed statements from base
+`7a245e695d23aae7b37e32fbeb3cc82c6ec147aa`) independently derived the Fubini
+identity and limit, checked the sign and exponent, and verified that the
+all-real endpoints require set integrals, not oriented intervals. Its
+source review distinguishes Definitions 10.4.1.3 and 10.4.1.5 and confirms
+which order occurs in (11.2.1.9); none of the reviews establishes a manuscript
+level comparison. No visual check is claimed.
 
-**Runnable successor: Check the operator-order difference in the same
-unit-band model.** The level-limit citation (11.2.1.9) has the geometric
+**Lean verification:** The Lean changes in `f5ed775e6f8861bc9d13fdc244c4a6449077040c`
+passed `lake --wfail build Proofs` and `lake env leanchecker` for
+`Lemmas.HalfLineMellinVector` and `Props.HalfLineMellinDiagonal`.
+`#check` confirmed the two new public scalar endpoints, and `#print axioms`
+reported exactly `propext`, `Classical.choice`, and `Quot.sound` for both
+endpoints and the new measurability and norm lemmas.
+
+## Runnable successor: Check the operator-order difference in the same unit-band model
+
+The level-limit citation (11.2.1.9) has the geometric
 projection *after* convolution, whereas the kernel in (10.4.3.48) has it
 *before*. Test the exact difference $M_\rho(QC_g-C_gQ)$ without cycling a
 bounded factor through a trace at finite position cutoff. On full-line
