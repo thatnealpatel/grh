@@ -947,9 +947,17 @@ $(\log\pi+\gamma)F(0)$ in the complete local functional, with the sign
 opposite to the tested Gamma constant. Independent Yah review
 (`review-archimedean`) checked the proposed identity, the half twist,
 and the contact and subtraction constants against the accepted interfaces
-and the digest-verified extraction. The manuscript reading is provisional,
-not a visual check. The audit scope is `Lemmas.RealLogHaarFold` and
-`Props.RealHaarGamma`, with the two endpoints above.
+and the digest-verified extraction. The final statement review
+(`review-final-arch`, output `5e91af6e2c1d7b84eaf4a6471953e8baaaf2e015`)
+confirmed the rational trivial-character local scope. The manuscript
+reading is provisional, not a visual check.
+
+The exact adopted proof revision `d8c745d9cf6c8ef244b605f9d17c609f26d549c6`
+passed `audit-local`: Full `lake --wfail build Proofs`, separate kernel
+replay of `Lemmas.RealLogHaarFold` and `Props.RealHaarGamma`, and axiom and
+provenance checks on both endpoints above. Both use only `propext`,
+`Classical.choice`, and `Quot.sound`. The endpoint types were also
+inspected in the built environment.
 
 This closes the real local comparison only. It does not identify the
 actual global $S$-piece, its operator limit, or its Mellin subtractions.
@@ -984,6 +992,46 @@ $g(x)=e^{-x/2}F(x)$, times $\log p$. First check the paired shell identity
 in the actual rational local completion, not in an unconnected abstract
 valuation model. That checks the **subtracted Haar side** of (B.4.4.14).
 It does not yet identify the additive Fourier distribution on the unit
-cutoff, a separate calibration at the unramified character. The existing
-`padicStdAddChar_eq_one_iff` gives its conductor condition; the printed
-proof's calibration and different should not be assumed as Lean results.
+cutoff, a separate calibration at the unramified character in the next
+section.
+
+## Upstream calibration test: The translated rational unit indicator
+
+The extracted proof of Lemma B.4.4.5, pp. 622–623, reduces (B.4.4.14)
+to (B.4.4.5) on tests vanishing at the identity, plus a check on the unit
+indicator. The earlier proof of Lemma B.4.4.3, (B.4.4.7)–(9), p. 621,
+uses the translated test in (B.4.4.2). The unit-indicator check is not an
+integral over the multiplicative unit shell: The logarithm
+in (B.4.4.1) is evaluated on the **additive Fourier transform of the
+translated test**, not on that test's original support. The vanishing
+of the logarithm on integral units, invoked at the end of the older
+proof, does not by itself establish this pairing. The key calculation
+following (B.4.4.15), p. 623, gives a different and usable route via
+two Fourier-transformed balls. This reading is based on text extraction.
+
+A separate runnable Lean obligation, not needed for the paired Haar
+shell identity, is as follows. On `ℚ_[p]`, put $B=\mathbb Z_p$,
+$\nu=\texttt{padicAddHaar}\ p$ (so $\nu(B)=1$), and use the negative
+standard-character Fourier kernel of `padicTranslatedBall_fourier`.
+Prove integrability and exact vanishing of
+
+$$
+\int_{\mathbb Q_p} \frac{\log|\xi|_p}{\log p}\,\widehat{u_p}(\xi)\,d\nu(\xi),
+\qquad u_p=\mathbf1_B-\mathbf1_{-1+pB}.
+$$
+
+Here $u_p(y)=\mathbf1_{B^\times}(1+y)|1+y|_p^{-1/2}$, extended by zero
+at $y=-1$, so this uses the test required by (B.4.4.2). Instantiate
+`padicIntegralBall_fourier` and `padicTranslatedBall_fourier` at $n=1$,
+$a=-1$ to obtain $\widehat{u_p}=\mathbf1_B-p^{-1}\alpha_{p,0}\mathbf1_{p^{-1}B}$.
+For a concrete check, $J=\log|\xi|_p/\log p$ should integrate to
+$-1/(p-1)$ on $B$ by summing the masses $(1-p^{-1})p^{-k}$ of
+$|\xi|_p=p^{-k}$ for $k\ge 0$ (the singleton $0$ has mass zero). On $B$,
+$\alpha_{p,0}=1$ by `padicStdAddChar_eq_one_iff`.
+On $p^{-1}B\setminus B$, $J=1$ and the integral of $\alpha_{p,0}$ is
+$-1$: Apply the translated-ball transform to the additive ball
+$p^{-1}B$ via scaling, or scale to $B$ and use
+`padicIntegralBall_fourier` at frequency $p^{-1}$. Thus the predicted
+pairing is $(1-p^{-1})(-1/(p-1))+p^{-1}=0$. This is a proposed
+calibration check, not a checked Lean result. It does not prove the
+comparison for arbitrary radial profiles or any ramified normalization.
