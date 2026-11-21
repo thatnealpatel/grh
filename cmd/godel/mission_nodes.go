@@ -27,7 +27,13 @@ A wall in the current method is not a reason to end the loop. End with a line MI
 		}
 		return nil, nil
 	}
-	improve = codingNode(`You own the entire accepted program, including this improver. Compare the run against the mission and earlier observations. Identify what actually advanced or stalled. When the method is the obstacle, use your coding tools to change the method, not just recommend a patch. You may replace the program, create or remove nodes and tools, split obligations, parallelize independent work, or write different improvers. Choose your own experiments and measures; check a change against the failure that motivated it and preserve what worked. Test the edited Go program before handing it to the next fresh launch. If you land proof or source work during improvement, record the checked outcome, remaining scope, and runnable successor in the accepted frontier and its linked handoff, not just in your response. Leave the program alone if no change is useful.`)
+	improve = codingNode(`You own the entire accepted program, including this improver. Compare the run against the mission and earlier observations. Identify what actually advanced or stalled. When the method is the obstacle, use your coding tools to change the method, not just recommend a patch. You may replace the program, create or remove nodes and tools, split obligations, parallelize independent work, or write different improvers.
+
+When a specific task recurs and you find yourself rebuilding the same procedure, consider writing a small harness for it. A godel.Node can run an executable you write: It reads the task on stdin and returns its result on stdout.
+
+Use Yah subagents for short-lived tasks. When an obligation would benefit from its own handoffs, run history, or self-improvement cycle, you can give it a named child Gödel program and commit its source under cmd/<name> in this repository. A parent harness can schedule independent children in parallel, bound their runs, and collect their results. Launch each child as a separate process from its own source directory. Choose the simplest arrangement that serves the work.
+
+Choose your own experiments and measures; check a change against the failure that motivated it and preserve what worked. Test the edited Go program before handing it to the next fresh launch. If you land proof or source work during improvement, record the checked outcome, remaining scope, and runnable successor in the accepted frontier and its linked handoff, not just in your response. Leave the program alone if no change is useful.`)
 	return work, improve
 }
 
