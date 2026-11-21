@@ -124,6 +124,15 @@ trace identification in (11.3.2.1). This is a falsification test for an
 uncorrected identification, not a disproof of the global trace or a test
 class sufficient by itself for uniqueness.
 
+The [fixed-band transport control](trace-level-transport-q.md) audits the
+topology of one possible bridge: Matching uncut local and global generators
+does not extend to a bounded injection of positive-width Hilbert levels,
+even for this rational band. The same pairing after compact convolution
+and fixed position truncation does give a nuclear forward leg. The
+[reverse lift test](trace-level-transport-q.md#next-fixed-cutoff-test-lift-the-compressed-global-operator)
+is still needed to apply the trace-transfer lemma to the compressed
+global operator, and would not by itself identify the two Mellin terms.
+
 ## Fixed-parameter subtraction over the rationals
 
 **Source comparison (provisional, independently checked in Yah against the digest-matched extraction).** The positive-log radial specialization of the displayed local integral in (12.5.1.1), p. 519, uses $g_\infty=\pm e^x$ with $dx$ on each sign. Its kernel is
