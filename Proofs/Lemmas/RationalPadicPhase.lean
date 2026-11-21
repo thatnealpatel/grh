@@ -14,6 +14,11 @@ local instance (p : Nat.Primes) : Fact (p : ℕ).Prime := ⟨p.property⟩
 public noncomputable def rationalPadicPhase (p : Nat.Primes) : AddChar ℚ ℂ :=
   (padicStdAddChar p).compAddMonoidHom (Rat.castHom ℚ_[(p : ℕ)]).toAddMonoidHom
 
+public theorem rationalPadicPhase_apply (p : Nat.Primes) (r : ℚ) :
+    letI : Fact (p : ℕ).Prime := ⟨p.property⟩
+    rationalPadicPhase p r = padicStdAddChar (p : ℕ) (r : ℚ_[(p : ℕ)]) := by
+  rfl
+
 /-- Precisely the primes dividing the reduced denominator can contribute to
     the finite diagonal phase. -/
 public theorem rationalPadicPhase_eq_one_iff (p : Nat.Primes) (r : ℚ) :

@@ -721,25 +721,73 @@ The checked public endpoints are `Masullo.prod_rationalPadicPhase` and
 `Masullo.rationalDiagonal_phase_eq_one`. The local endpoint is
 `Masullo.rationalPadicPhase_eq_one_iff`.
 
-## Next Fourier step: Construct the rational adelic character
+## Checked rational adelic character
 
-On `AdeleRing (𝓞 ℚ) ℚ`, pair the positive real exponential with the
-finite *conjugated* character transported by
-`Rat.HeightOneSpectrum.adicCompletion.padicEquiv`. Its integral-subring
-restriction is `adicCompletionIntegers.padicIntEquiv`. First show the
-local factor is one on that integral subring, then use the restricted
-product condition to prove finite multiplicative support. Define the
-finite factor with `finprod`; use `finprod_mul_distrib` to prove
-additivity in character form. On each cofinite principal stage it
-reduces to the finite product on the complementary places by
-`finprod_eq_prod_of_mulSupport_subset`. This gives a route to continuity
-via `RestrictedProduct.continuous_dom_prod_left`, with the real place
-unchanged. Use `Rat.HeightOneSpectrum.primesEquiv` to reindex a finite set
-containing the denominator primes, and use the rational algebra map
-compatibility of `padicEquiv` to apply the diagonal cancellation theorem.
-The next endpoint is the continuous character, with its value one on
-the diagonal rational algebra map. The full annihilator identity,
-additive adelic Haar, and adelic Poisson summation are separate steps.
+[The rational adelic character](../../Proofs/Theorems/RationalAdeleCharacter.lean)
+is an `AddChar` on the actual additive group of `AdeleRing (𝓞 ℚ) ℚ`.
+For the signed real coordinate $a_\infty$ and any finite set $S$
+containing the nonintegral finite coordinates,
+
+$$
+\psi(a)=e^{2\pi i a_\infty}\prod_{v\in S}\overline{\psi_{p(v)}(a_v)}.
+$$
+
+Here $a_v$ is transported to $\mathbb Q_{p(v)}$ via Mathlib's continuous
+rational algebra equivalence. The [finite factor](../../Proofs/Lemmas/RationalAdeleFiniteCharacter.lean)
+is one at a place exactly when that coordinate is integral. Cofinite
+integrality gives finite multiplicative support, so `finprod` is a
+finite product, including for the character law. For continuity, use the
+final topology on the finite restricted product: On each cofinite
+principal stage the exceptional set is fixed, so the product is
+continuous there, and combining it with the real factor gives
+continuity upstairs. Each factor has norm one.
+
+The public endpoints are `Masullo.rationalAdeleAddChar_eq_prod`,
+`Masullo.continuous_rationalAdeleAddChar`, `Masullo.norm_rationalAdeleAddChar`,
+and `Masullo.rationalAdeleAddChar_algebraMap`. The last proves
+$\psi(\iota(r))=1$ for every $r\in\mathbb Q$. The algebra maps identify
+the real and finite inputs with the canonical rational casts; the
+finite set is reindexed by `Rat.HeightOneSpectrum.primesEquiv`, and
+the checked diagonal phase identity gives the cancellation.
+
+Independent Yah statement review used the digest-matched layout
+extraction of Examples A.3.1.5–6, A.3.1.8, and A.3.1.11, pp. 557–559.
+The finite conjugation repairs the extracted same-sign product for
+the lattice pairing. This does not establish a defect in ambient
+self-duality. In particular, writing the Fourier kernel as
+$\overline{\psi(xy)}$ gives the **positive** sign at the finite places;
+conjugate the checked negative-sign ball formula for real indicators.
+For the pairing $(a,b)\mapsto\psi(ab)$ the diagonal identity supplies
+only inclusion of the rational diagonal in its annihilator. The
+annihilator tests against **all** diagonal rationals and is not the
+kernel of the single character. The review did not inspect rendered
+pages. Additive Haar, Plancherel, and adelic Poisson summation are still
+open.
+
+## Next Fourier step: Clear the finite denominators of an adele
+
+Prove `∀ a : AdeleRing (𝓞 ℚ) ℚ, ∃ q : ℚ, ∀ v,
+(a - algebraMap ℚ (AdeleRing (𝓞 ℚ) ℚ) q).2 v ∈ v.adicCompletionIntegers ℚ`.
+This is the surjectivity input for the additive quotient comparison
+(A.1.2.2), p. 541, in the digest-matched extraction. It is also the
+first step of a direct rational annihilator proof, rather than assuming
+the reverse inclusion from the S-local argument in A.3.1.11.
+
+Generalize the local rational-turns construction in
+[RationalPadicPhase.lean](../../Proofs/Lemmas/RationalPadicPhase.lean)
+from a rational input to any $x\in\mathbb Q_p$: Clear denominators
+with `exists_padic_integral_numerator` and choose the nonnegative
+cyclic residue $b$, so $b/p^n$ has the same phase as $x$ and has phase
+one at every other prime. Sum those rational representatives over the
+finite nonintegral support. The character law and the checked exact
+local kernels give the stated integrality after subtraction. This
+algebraic step alone does not identify the quotient topology. Once it
+is proved, the annihilator test at $1$ forces the remaining real
+coordinate to be an integer. Subtract that integer and test against
+each $p^{-n}$: Only the $p$-factor can contribute, and integrality for
+all $n$ forces the original $p$-coordinate to vanish. This separates
+the global lattice equality from identification of the full Pontryagin
+dual or Haar normalization.
 
 ## Checked real-lattice inversion
 
@@ -1204,5 +1252,6 @@ is checked over $\mathbb Q$. The [centered local Fourier indicator](#checked-fou
 is now checked on the separate additive branch, as is the [scaled and
 translated formula](#checked-fourier-transform-of-dilated-and-translated-integral-balls).
 The [diagonal phase cancellation](#checked-cancellation-of-the-rational-diagonal-phases)
-is now checked. The [global character construction](#next-fourier-step-construct-the-rational-adelic-character)
+is now checked, as is the [rational adelic character](#checked-rational-adelic-character).
+The [finite-denominator clearing step](#next-fourier-step-clear-the-finite-denominators-of-an-adele)
 remains open.
