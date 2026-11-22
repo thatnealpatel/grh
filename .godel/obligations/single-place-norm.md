@@ -1630,22 +1630,51 @@ and axioms for `finiteBoxLocalFourier`, `finiteBox_fourier_finprod`, and
 mathematical statement review in Yah session `01a20482-db51-7fa6-bd56-fdff5ef6ac22`
 (reviewer `chDkZnH`).
 
-**Next: Construct the general additive stage measure needed to compare
-this factor product with the global integral.** Masullo gives the
-restricted-product characterization and the product of the local
-normalizations in Lemma A.3.1.3, (A.3.1.3), PDF p. 556, with quotient
-normalization in Definition A.3.1.1, p. 555 (provisional text reading).
-For the first Lean input, use stages `AdeleFiniteStage K S` containing
-all places of nonunit integer-ball mass (`finiteBox_centeredMass_finprod`
-at unit radius). Equip them with the product of the trace measure
-(transported to the infinite adele coordinates), normalized local Haar
-on the full fields in $S$, and probability restrictions on the integer
-subrings off $S$. This cofinal family suffices to prove compatibility
-under restriction and glue over the open cover; quotient normalization
-is a separate check.
-`Lemmas.AdeleFiniteStage` supplies the general embedding and range;
-`Theorems.RationalAdeleFiniteStageHaar` gives a checked rational comparison,
-not the general additive result. Then choose a stage containing the
-box and all exceptional character and mass places at a given diagonal
-frequency and prove the Fubini factorization there. The global Fourier
-identification and inversion for the ramified Gaussian are still open.
+#### Additive Haar on the actual finite stages
+
+[`adeleFiniteStageHaar`](../../Proofs/Theorems/AdeleFiniteStageHaar.lean)
+is the Borel product on `AdeleFiniteStage K S` for any number field $K$ and
+finite set $S$ of finite places. Its Archimedean factor is
+`archimedeanTraceMeasure K` carried to the infinite adele ring by
+`archimedeanEuclideanToAdele K`. The two finite-place factors are the
+finite product of `finiteCompletionNormalizedHaar` on the full fields in
+$S$ and the infinite probability product of the **actual comaps** of those
+measures along $\mathcal O_v\hookrightarrow K_v$ off $S$.
+`adeleFiniteStageHaar_isAddHaarMeasure` proves this is additive Haar under
+exactly the omitted mass condition $\nu_v(\mathcal O_v)=1$ for $v\notin S$;
+this includes $S=\varnothing$ if all the masses are one. No topological
+or measurable structure on $K$ is an extra hypothesis. The support
+module proves that each such comap is probability, then that the tail
+product is translation invariant and Haar on the compact product.
+
+The restricted-product prescription before Definition A.3.1.2, PDF p. 556,
+supplies the stage shape, and that definition supplies $dx$, $2\,dx\,dy$,
+and the inverse square-root different norm at the finite places. This
+is the stage input to Lemma A.3.1.3, (A.3.1.3), and not yet the equality of
+the product with the global quotient-normalized measure. The stage here
+has integral tail coordinates; it is not the finite Cartesian product
+$\mathbf A_{F,S}$ in the separate $S$-local claim. Reading provisional:
+Pinned Markdown and numbered PDF layout, without rendered-page inspection.
+
+Replay: `lake build --wfail +Lemmas.AdeleFiniteStageMeasure
++Theorems.AdeleFiniteStageHaar +Theorems.FiniteBoxPoisson`. Import the three
+modules together, `#check @` and `#print axioms` on the stage definition and
+Haar theorem, and `#print Masullo.adeleFiniteStageHaar` for the factors.
+
+**Next: Compare the stage products with a single global additive Haar
+measure on the cofinal stages.** Exhibit a finite exceptional set $E$
+using `finiteBox_centeredMass_finprod` at unit radius. For every $S\supseteq E$,
+show the comap along `adeleFiniteStageEmbedding K S` equals
+`adeleFiniteStageHaar K S`. Use a common calibration box (any compact
+Archimedean set with nonempty interior times all finite integer rings).
+Prove that this box has stage mass equal to its transported Archimedean
+mass times the product of the exceptional integer masses, and compare
+by Haar uniqueness on the open stage, as in
+[`exists_ideleRestrictedProductHaar`](../../Proofs/Theorems/IdeleRestrictedProductHaar.lean).
+The general embedding and range are already in `Lemmas.AdeleFiniteStage`;
+prove openness and the cofinal cover for this comparison. The quotient
+normalization in Definition A.3.1.1, p. 555, is separate. After the global
+comparison, the translated box still needs a Fubini factorization in a
+stage containing it and all exceptional mass and character places at the
+given frequency. The global Fourier identification and inversion for
+the ramified Gaussian remain open.
