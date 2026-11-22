@@ -184,23 +184,78 @@ and applicability review: `two-cut-moment-statement` (`fAcdExh`),
 Yah `01a20597-4e49-7616-916c-6623d59bbe85`, which also owns the
 candidate build and fresh signature and axiom checks.
 
-**Next formal check: Detect the Fourier zero mode from averaged
-theta.** In the same rational LF model,
-`rationalAdeleClassTheta_LFFiniteUnitAverage` and
-`rationalAdeleLFFiniteUnitAverage_zero_modes` already reduce the
-project's normalized finite-unit average to class theta of an LF
-test without changing either moment. On that test, the checked
-`rationalAdeleLF_uniform_theta_tails` at $m=0$ on a singleton already
-bounds $\theta(d)-r^{-1}\widehat f(0)+f(0)$ for $r=\|d\|\le1$.
-Along the positive log section, multiply by $r$ and send $r$ to $0$.
-Formalize the resulting limit, so equal averaged theta functions
-force equal Fourier zero modes and the cut output is excluded from
-the project's averaged two-moment range. This reuses the project
-estimate, not a new derivation of the manuscript bounds. The
-[tail note](../obligations/theta-inversion-q.md#checked-uniform-theta-estimates-for-rational-lf-bounded-families)
-maps it to Theorem 2.2.3.4, pp. 82–86, via extraction, not rendered
-inspection. The exact identification of the project average with
-the printed projection and the closedness claim remain separate.
+## Checked exclusion from the averaged two-moment range
+
+In [RationalThetaAverageFourierZero.lean][average-zero],
+`Masullo.tendsto_rationalAdeleClassThetaFiniteUnitAverage_exp_mul`
+proves, for every rational adelic LF test $h$,
+$$
+e^x\Theta_{\rm av}(h)(\tau(x))\longrightarrow \widehat h(0)
+\qquad(x\to-\infty),
+$$
+where $\tau(x)$ is the actual rational idele class log section at
+`Multiplicative.ofAdd x`. The project finite-unit mean is ordinary
+class theta of the averaged LF test, with both moments unchanged.
+The [LF tail estimate][lf-tails] at $m=0$ for that singleton bounds
+the corrected remainder on $x\le 0$. Since $\|\tau(x)\|=e^x$,
+multiplying by $e^x$ makes both the bounded remainder and the spatial
+zero-mode term tend to zero. The auxiliary measurable and Borel
+structures on the **additive** adele quotient are chosen locally;
+all three endpoints assume only the measurable and Borel structures
+on the adeles. The limit assumes no vanishing or parity conditions.
+
+`Masullo.rationalAdeleClassThetaFiniteUnitAverage_fourier_zero_eq`
+uses uniqueness of this limit when two averaged class functions
+coincide. With the literal cut witness above,
+`Masullo.rationalAdeleLiteralTwoCut_averagedTheta_not_mem_range`
+then gives $f$ with both moments zero and $g=1_U f$ with
+$\Theta_{\rm av}(g)$ outside the image of **all** two-moment LF tests
+under the same average. It excludes a different representative, not
+just preservation of the moments on the supplied one. The accepted
+`range_rationalAdeleClassThetaFiniteUnitAverage` identifies that range
+with the project's radial two-moment class-theta range.
+
+The cut mapping inherits the rendered notes above for §1.3.2,
+pp. 26–27, and [the fixed-stage note][stage] for (1.3.2.1), p. 25.
+It is the rational trivial-character case with $S=\{\infty,2\}$ and
+$P_1=\{2\}$, not the disjoint product of (1.3.2.2). The tail's
+comparison to Theorem 2.2.3.4, pp. 82–86, is extraction-based and
+not a premise of the Lean proof. This is a result for the project
+average, not a Lean identification with the printed projection or
+its principal-value image. It does not address closedness.
+
+Independent fixed-statement and exact-source applicability review:
+`averaged-zero-statement` (`dKRAfMW`), Yah
+`01a205a2-07e1-72b0-947f-e912f7a93ca1`. The same owning session records
+the dependency probe (including the local quotient instances),
+integrated build, fresh signatures and axiom reports, and adoption.
+No new manuscript reading was used.
+
+**Next check:** Identify the project finite mean on rational LF
+class theta with the normalized `rationalNormOneHaar` integral of
+$k\mapsto\Theta(h)(kd)$ at a class $d$. Class theta is continuous by
+`continuous_rationalAdeleClassTheta_LF`, so the compact slices are
+integrable. The existing averaging theorem gives the averaged LF
+test, and the pullback and test invariance theorems already give
+norm-one invariance of its theta (the calculation in
+`rationalAdeleLFFiniteUnitAverage_mem_radial` does not use the
+moment conditions for that step). Integrating the resulting constant
+slice and commuting the original finite sum with the integral by
+Haar translation would check the remaining equality; no new theta
+limit or finite-quotient topology is needed for this route. The
+[weighted pairing note][pairing] maps the integral to (2.2.5.2),
+p. 95, and counting Haar to (2.2.5.7), p. 96; the
+[rational Haar note][unit-haar] maps normalization to
+(A.3.2.1)–(A.3.2.2), pp. 559–560. These specific mappings are based
+on extraction, not newly verified readings. For the trivial
+character, inversion of the compact translation does not change
+the Haar integral. Agreement with the printed principal-value
+operator and closedness are separate obligations.
+
+[average-zero]: ../../Proofs/Theorems/RationalThetaAverageFourierZero.lean
+[lf-tails]: ../obligations/theta-inversion-q.md#checked-uniform-theta-estimates-for-rational-lf-bounded-families
+[pairing]: ../obligations/single-place-norm.md#weighted-gaussian-decay-at-small-norm
+[unit-haar]: ../obligations/theta-inversion-q.md#checked-product-of-local-haar-probabilities-on-the-rational-quotient
 
 [two-cut]: ../../Proofs/Theorems/RationalAdeleLiteralTwoCut.lean
 [stage]: fixed-stage-theta-representatives.md
