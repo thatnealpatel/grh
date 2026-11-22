@@ -127,7 +127,7 @@ public theorem finiteHeckeCharacterEulerProduct_eq_dirichlet_of_local
   letI : Fact (Nat.Prime 5) := ⟨by decide⟩
   (quadraticChar (ZMod 5)).ringHomComp (Int.castRingHom ℂ)
 
-private theorem dirichletNegFour_ne_one : dirichletNegFour ≠ 1 := by
+public theorem dirichletNegFour_ne_one : dirichletNegFour ≠ 1 := by
   intro h
   have h3 := congrArg (fun χ : DirichletCharacter ℂ 4 ↦ χ (3 : ZMod 4)) h
   have hunit : IsUnit (3 : ZMod 4) := isUnit_iff_exists_inv.mpr ⟨3, by decide⟩
@@ -136,7 +136,7 @@ private theorem dirichletNegFour_ne_one : dirichletNegFour ≠ 1 := by
   have hx : ZMod.χ₄ (3 : ZMod 4) = -1 := by decide
   norm_num [dirichletNegFour, MulChar.ringHomComp_apply, hx] at h3
 
-private theorem dirichletFive_ne_one : dirichletFive ≠ 1 := by
+public theorem dirichletFive_ne_one : dirichletFive ≠ 1 := by
   intro h
   have h2 := congrArg (fun χ : DirichletCharacter ℂ 5 ↦ χ (2 : ZMod 5)) h
   have hne : (2 : ZMod 5) ≠ 0 := by decide

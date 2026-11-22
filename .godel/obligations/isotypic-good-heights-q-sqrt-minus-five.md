@@ -1,7 +1,8 @@
 # Common good heights for the quadratic class denominator
 
-**Result (ordinary mathematics):** Put $D=L(\cdot,\chi_{-4})L(\cdot,\chi_5)$,
-the entire finite denominator identified in the
+**Result (also proved in Lean for the explicit product):** Put
+$D=L(\cdot,\chi_{-4})L(\cdot,\chi_5)$, the entire finite denominator
+identified in the
 [prime-by-prime calculation](isotypic-euler-factorization-q-sqrt-minus-five.md).
 There are constants $C,A>0$ such that every real $H\ge1$ admits a
 $T\in(H,H+1)$ with
@@ -19,15 +20,20 @@ polynomial reciprocal bounds for both individual factors.
 
 ## Source interface
 
-The previously reviewed rendered pp. 308–309 of the
-[pinned edition](../sources/masullo/README.md) distinguish the omitted
-product in the initial quotient from the retained product printed in
+The [accepted inverse-range note](isotypic-inverse-range-q-sqrt-minus-five.md)
+records independent visual inspection of pp. 308–309 of the
+[pinned edition](../sources/masullo/README.md). It distinguishes the
+omitted product in the initial quotient from the retained product in
 (6.3.2.16)–(17), p. 309, §6.3.2. Here we bound the omitted product
 $D$, not the retained Archimedean factor or a completed $L$-function.
-The readings of (B.6.1.35) and (B.6.1.45), pp. 641–643, in this check
-are provisional: Chapter Markdown and numbered layout extraction,
-not an independent rendered-page check. Neither estimate is assumed
-below. The result does not certify the general Appendix B argument.
+Masullo's upper-growth input on p. 642, (B.6.1.37), is a provisional
+reading from the Appendix B Markdown and numbered PDF layout: A
+polynomial upper bound for the omitted product on a bounded strip
+for large $|\Im s|$. The radius-six estimate here serves the same
+purpose for this explicit product, with different scope. It does not
+assume (B.6.1.37) or the other provisionally read estimates on
+pp. 641–643, (B.6.1.35) and (B.6.1.45), and does not certify the general
+Appendix B argument.
 
 ## Upper growth and anchor
 
@@ -152,11 +158,31 @@ this step.
   conditional only on the radius-six circle upper bound $C_0H^k$ for
   real $H\ge H_0\ge1$. It needs no Hecke identification hypothesis.
 
-The remaining analytic Lean premise is exactly that upper bound.
-Formalize the centered periodic primitives and the holomorphic
-integral identity for $\Re s>-5$ to obtain it with $k=12$. The
-actual-class-character Euler identity remains a separate arithmetic
-Lean premise. The [inverse-range realization](isotypic-inverse-range-q-sqrt-minus-five.md)
+The upper-growth premise is discharged for the explicit product:
+
+- [Centered periodic primitives](../../Proofs/Lemmas/DirichletPeriodicPrimitives.lean)
+  start from the actual step partial sums of a nontrivial character;
+  periodicity, measurability, boundedness, and right continuity hold at
+  every stage. The [improper integration-by-parts step](../../Proofs/Lemmas/BoundedPrimitiveIntegral.lean)
+  applies even when the initial sum jumps.
+- [`dirichlet_LFunction_eq_five_primitives`](../../Proofs/Lemmas/DirichletLFunctionGrowth.lean)
+  identifies the five-step expression with Mathlib's `LFunction`
+  by partial summation on $\Re s>1$ and holomorphic uniqueness on
+  $\Re s>-5$. `exists_norm_dirichlet_five_primitive_tail_le` bounds
+  the remainder **without** its rising prefactor uniformly on the
+  closed half-plane $\Re s\ge-4$. The degree-six estimate for each
+  factor holds on that same closed half-plane.
+- [`qSqrtNegFiveDirichletProduct_circle_growth`](../../Proofs/Theorems/IdealClassGoodHeights.lean)
+  gives one $C_0\ge1$ for all real $H\ge1$ and every point on the
+  required circle, with $k=12$. `qSqrtNegFiveDirichletProduct_good_heights`
+  applies the conditional endpoint at $H_0=1$ with this bound.
+
+There is no growth hypothesis left for the explicit product. The
+next separate check needed to transfer it to the actual Hecke
+function in Lean is the [grouped local polynomial identity](isotypic-euler-factorization-q-sqrt-minus-five.md)
+for the constructed class character at **every** rational prime,
+including the field-ramified primes $2$ and $5$. This result is only
+for the reciprocal itself, not its derivatives. The [inverse-range realization](isotypic-inverse-range-q-sqrt-minus-five.md)
 still uses provisional readings of the completed and complex local
 normalizations (pp. 123 and 129), the interior-strip Schwartz
 convention (pp. 800–801, Definition D.3.1.3), and the local image

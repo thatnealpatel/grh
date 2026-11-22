@@ -174,12 +174,11 @@ conditional on the grouped local polynomial identity. The actual
 class-character specialization of that identity is not yet in Lean.
 
 The [horizontal reciprocal estimate](isotypic-good-heights-q-sqrt-minus-five.md)
-is now unconditional for this explicit denominator in ordinary
-mathematics. Lean derives it from one remaining upper-growth premise:
-$|D(z)|\le C_0 H^k$ on the radius-six circle about $2+i(H+1/2)$
-for all real $H\ge H_0$. The next analytic formalization is to discharge
-that premise (e.g. with five bounded centered periodic primitives of
-each character sum). The reflected identity and the archimedean image
+is now unconditional in Lean for the explicit denominator $D$. Five
+centered periodic primitives give $|D(z)|\le C_0 H^{12}$ on the
+radius-six circle about $2+i(H+1/2)$ for every real $H\ge1$. This
+supplies the $m=0$ good-height estimate, not bounds on reciprocal
+derivatives or a formal identification with the Hecke denominator. The reflected identity and the archimedean image
 criterion still need a formal model. The latter and the exact
 completed/local normalizations and Schwartz convention above still
 use provisional source readings.

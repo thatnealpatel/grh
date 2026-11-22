@@ -2,6 +2,7 @@ module
 
 public import Lemmas.DirichletRightAnchor
 import Lemmas.AnalyticGoodHeightDisk
+import Lemmas.DirichletLFunctionGrowth
 import Lemmas.LogLossGoodHeight
 import Mathlib.Analysis.Complex.Norm
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
@@ -11,8 +12,8 @@ import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
 For the repaired horizontal-edge argument in Masullo, p. 309, §6.3.2,
 apply one disk argument to the product of the two L-functions. The
-analytic premise left in this module is an upper growth bound on the
-outer moving circles, not any reciprocal bound or zero spacing estimate.
+five-primitive estimate supplies the upper bound on the outer moving
+circles, without a reciprocal bound or a zero spacing estimate.
 -/
 
 open Complex Metric Set
@@ -157,5 +158,56 @@ public theorem qSqrtNegFiveDirichletProduct_good_heights_of_circle_growth
   rw [norm_inv, ← Real.exp_log (norm_pos_iff.mpr hn), ← Real.exp_neg,
     Real.rpow_def_of_pos hTpos, ← Real.exp_add]
   exact Real.exp_le_exp.mpr (by simpa only [mul_comm (Real.log T) A] using hL)
+
+/-- Exponent-twelve upper growth on every outer moving circle, including
+its leftmost point `re z = -4`. The constant is independent of `H`. -/
+public theorem qSqrtNegFiveDirichletProduct_circle_growth :
+    ∃ C₀ : ℝ, 1 ≤ C₀ ∧ ∀ H ≥ (1 : ℝ),
+      ∀ z ∈ sphere (2 + ((H + 1 / 2 : ℝ) : ℂ) * I) 6,
+        ‖qSqrtNegFiveDirichletProduct z‖ ≤ C₀ * H ^ (12 : ℕ) := by
+  obtain ⟨C₄, hC₄, h₄⟩ := exists_dirichlet_LFunction_growth_closed_halfPlane
+    dirichletNegFour dirichletNegFour_ne_one
+  obtain ⟨C₅, hC₅, h₅⟩ := exists_dirichlet_LFunction_growth_closed_halfPlane
+    dirichletFive dirichletFive_ne_one
+  refine ⟨C₄ * C₅ * 16 ^ 12,
+    one_le_mul_of_one_le_of_one_le (one_le_mul_of_one_le_of_one_le hC₄ hC₅) (by norm_num),
+    fun H hH z hz ↦ ?_⟩
+  let c : ℂ := 2 + ((H + 1 / 2 : ℝ) : ℂ) * I
+  have hd : ‖z - c‖ = 6 := by simpa only [mem_sphere, dist_eq_norm] using hz
+  have hre : -4 ≤ z.re := by
+    have hr := Complex.abs_re_le_norm (z - c)
+    rw [hd, sub_re, show c.re = 2 by simp [c]] at hr
+    linarith [(abs_le.mp hr).1]
+  have hc : ‖c‖ ≤ H + 5 / 2 := by
+    dsimp [c]
+    refine (norm_add_le _ _).trans ?_
+    rw [norm_mul, norm_I, mul_one, norm_real,
+      Real.norm_of_nonneg (by linarith : 0 ≤ H + 1 / 2)]
+    norm_num
+    linarith
+  have hz' : ‖z‖ ≤ 6 + (H + 5 / 2) := by
+    calc
+      ‖z‖ = ‖(z - c) + c‖ := by rw [sub_add_cancel]
+      _ ≤ ‖z - c‖ + ‖c‖ := norm_add_le _ _
+      _ ≤ 6 + (H + 5 / 2) := by rw [hd]; gcongr
+  have hzH : ‖z‖ + 6 ≤ 16 * H := by linarith
+  rw [qSqrtNegFiveDirichletProduct, norm_mul]
+  calc
+    _ ≤ (C₄ * (‖z‖ + 6) ^ 6) * (C₅ * (‖z‖ + 6) ^ 6) :=
+      mul_le_mul (h₄ z hre) (h₅ z hre) (norm_nonneg _) (by positivity)
+    _ = C₄ * C₅ * (‖z‖ + 6) ^ 12 := by ring
+    _ ≤ C₄ * C₅ * (16 * H) ^ 12 := by gcongr
+    _ = C₄ * C₅ * 16 ^ 12 * H ^ 12 := by rw [mul_pow, mul_assoc (C₄ * C₅)]
+
+/-- Unconditional common good heights for the explicit class denominator.
+No analytic growth hypothesis or Hecke identification is needed. -/
+public theorem qSqrtNegFiveDirichletProduct_good_heights :
+    ∃ C A : ℝ, 0 < C ∧ 0 < A ∧ ∀ H ≥ (1 : ℝ), ∃ T ∈ Ioo H (H + 1),
+      ∀ σ ∈ Icc (-1 / 2 : ℝ) 2,
+        let s := (σ : ℂ) + (T : ℂ) * I
+        qSqrtNegFiveDirichletProduct s ≠ 0 ∧
+          ‖(qSqrtNegFiveDirichletProduct s)⁻¹‖ ≤ C * T ^ A := by
+  obtain ⟨C₀, hC, hGrowth⟩ := qSqrtNegFiveDirichletProduct_circle_growth
+  exact qSqrtNegFiveDirichletProduct_good_heights_of_circle_growth hC le_rfl hGrowth
 
 end Masullo

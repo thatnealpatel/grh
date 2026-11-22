@@ -102,8 +102,8 @@ The endpoint does not instantiate that premise for the number field.
 For p. 309's analytic argument, the denominator to estimate on
 $-1/2\le\Re s\le2$ is precisely the entire Dirichlet product above.
 The [common good-height proof](isotypic-good-heights-q-sqrt-minus-five.md)
-now supplies the $m=0$ polynomial reciprocal bound for p. 309 directly,
-without the provisional readings of pp. 641–643, (B.6.1.35) and
+supplies the $m=0$ polynomial reciprocal bound in Lean for this
+explicit product, without assuming the provisional estimates of pp. 641–643, (B.6.1.35) and
 (B.6.1.45). One moving disk counts all zeros of the product with
 multiplicity; averaging the **total** logarithmic loss bounds it by
 $O(\log H)$ at one common height. The prior lift still uses the provisional local
@@ -112,8 +112,9 @@ provisional completed and complex local normalizations on pp. 123 and
 129, and the compact-strip Schwartz convention, Definition D.3.1.3,
 pp. 800–801, identified in its [holomorphy section](isotypic-inverse-range-q-sqrt-minus-five.md#holomorphy-and-overlap).
 
-**Open Lean premises:** Formalize the polynomial upper circle growth
-of the explicit product to make its common-height estimate
-unconditional in Lean. Separately, instantiate the all-prime grouped
-polynomial identity for the actual class character using the norm
-test above.
+**Open Lean premise for the Hecke transfer:** Construct the actual
+class character on idèle classes and instantiate the all-prime grouped
+polynomial identity using the norm test above. Start with the split-prime
+sign from the norm congruences and check the two ramified factors
+separately. The explicit product's circle growth and common-height
+estimate are already unconditional in Lean.
