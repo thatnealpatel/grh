@@ -169,15 +169,17 @@ separate `#check` confirmed the endpoint type. The only axioms are
 `propext`, `Classical.choice`, and `Quot.sound`; the changed Lean source
 has no placeholders or unsafe substitutes.
 
-The analytic specialization above is not a Lean theorem. The pinned
-[`FiniteHeckeCharacterEulerProduct`](../../Proofs/Theorems/FiniteHeckeCharacterEulerProduct.lean)
-addresses the finite product on $\Re s>1$, not its continuation or
-its reciprocal at the separated heights. The exact analytic premise
-for a formal specialization is a continued finite function with the
-reflected identity and a uniform polynomial reciprocal bound on
-arbitrarily far opposite edges covering $[-1/2,2]$. In a Lean
-follow-up, test whether the accepted moving-disk zero-count and
-horizontal-height machinery for the rational explicit formula can
-supply the $m=0$ reciprocal bound for this actual continued class
-character, rather than extrapolating the right-line Euler result.
-The archimedean image criterion would also need a formal model.
+The [finite Euler factorization](isotypic-euler-factorization-q-sqrt-minus-five.md)
+identifies $D=L(\cdot,\chi_{-4})L(\cdot,\chi_5)$ by a prime-by-prime
+class-norm proof in ordinary mathematics. Lean proves the entire
+Dirichlet product and the comparison with the accepted Hecke product
+conditional on the grouped local polynomial identity. The actual
+class-character specialization of that identity is not yet in Lean.
+
+The reciprocal estimate remains a separate analytic premise. Test
+whether a moving-disk factorization for this explicit product, with
+a good right-half-plane anchor and a bound on the **total** loss from
+nearby zeros, yields the $m=0$ estimate at common good heights for
+$[-1/2,2]$. This would discharge the horizontal-edge estimate rather
+than extrapolating the right-line Euler result. The reflected identity
+and the archimedean image criterion also need a formal model.
