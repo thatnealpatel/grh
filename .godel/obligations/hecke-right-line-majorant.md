@@ -584,38 +584,79 @@ session `01a2013b-713a-7232-b3a6-8f5ebb0898b2`. As in the complex case,
 this is not measure transport to the completion units, a global
 Schwartz–Bruhat test construction, or a Fourier identity.
 
-### Next: Assemble the Hecke product and its right-half-plane logarithmic derivative
+## Checked completed Hecke Euler product on the right half-plane
 
-Use (3.2.1.2)–(5), p. 123, to define the product over any number field
-and any unitary Mathlib Hecke character. Choose the place parameters
-from the checked restriction theorems above, using real $b$ and
-complex $|n|/2$ as the shifts and the same normalized radial frequency.
-Use `NumberField.InfinitePlace`'s `Fintype` and `logDeriv_prod` for the
-finite Archimedean product. Multiply it by
-`finiteHeckeCharacterEulerProduct χ` for the non-Archimedean part.
+Lemma 3.2.1.1 and Definition 3.2.1.2, p. 123, give the completed product
+(3.2.1.2)–(5); (3.2.1.7), p. 124, gives its finite part. In
+[`CompletedHeckeEulerProduct.lean`](../../Proofs/Theorems/CompletedHeckeEulerProduct.lean),
+`localHeckeGammaFactor_real` and `localHeckeGammaFactor_complex` match
+its Gamma factors to the actual completion restrictions of (3.1.2.4),
+p. 121, choosing the parameters once per place. The real shift is the
+parity $b$; the complex shift is $|n|/2$, with no extra factor of two.
+Both retain $i\tau$ in the exponent of the normalized local norm.
+The manuscript comparison is provisional (Markdown and PDF layout).
 
-The runnable endpoint for (B.4.2.5)–(7), p. 615, is nonvanishing and
-complex differentiability on $\Re s>1$, with
+For every unitary Mathlib Hecke character of a number field and
+$\Re s>1$, `completedHeckeEulerProduct_logDeriv` proves that the
+product is nonzero and complex differentiable, and proves
 
 $$
 \logDeriv L(s,\chi) = \sum_{v\mid\infty}\logDeriv L_v(s,\chi)
   -\sum_{(v,m),\,v\nmid\infty,\,m>0}\operatorname{finiteHeckeTerm}(\chi,s,v,m).
 $$
 
-Keep the second sum as a `HasSum` with value the Archimedean sum minus
-`logDeriv L`, using `finiteHeckeCharacterEulerProduct_logDeriv`. The
-same statement applies to `heckeConjugate χ` using its checked unitary
-lemma. Do not assert an all-height bound on the Archimedean sum from
-uniform estimates for the finite sum. The source comparison for this
-next step used Markdown and PDF layout, not rendered pages.
+To justify the split in (B.4.2.5)–(7), p. 615, Lean uses the finite
+product rule at infinity. Convergence on the integration line alone
+does not justify differentiation. The accepted finite-product repair,
+`finiteHeckeCharacterEulerProduct_logDeriv`, differentiates using
+locally uniform convergence on the open half-plane. The joint
+finite-place series is stated as `HasSum` with value the Archimedean sum
+minus the completed logarithmic derivative. The existing finite
+majorant supplies absolute domination; the new theorem does not infer
+a uniform all-height bound on the Archimedean terms. Specializing to
+`heckeConjugate χ`
+gives the second split with the same local conventions. Yah reviewer
+`ywHnZGk` independently reviewed the statement and its source
+correspondence (review output `3b4c5ea7eeb3517288df10c6d3b69e336f2ce9dc`).
 
-**Still open:** Measure transport of the local scalar integrals,
-identification with the global zeta integral, meromorphic continuation,
-divisor data, and contour growth in (B.4.2.1)–(4). Even the assembled
-right-half-plane identity will not establish any of these. The local
-pair does not establish the full test class of (B.4.2.15) or (17),
-the ramified Fourier terms, or the global trace comparison. See the
-separate [local conductor obligation](#open-ramified-local-conductor-power-in-the-general-reflection)
+### Next: Calibrate the finite local zeta integrals to the Haar measure
+
+Before identifying the completed product with the global zeta integral,
+check the finite test normalization. Definition 3.4.3.2, (3.4.3.7)–(8),
+p. 152, uses the integer-ring indicator for an unramified character and
+the inverse character on integer units for a ramified character. But
+(3.3.1.7), p. 130, pairs with the multiplicative Tamagawa measure, whose
+unit mass $M_v$ in (A.3.2.2), p. 560, is the local discriminant factor,
+not in general $1$. In particular, the inverse-character test pairs to
+$M_v$ (the norm twist is $1$ on units), whereas (3.4.3.11) and (13),
+p. 153, would give $1$ with the ramified Euler factor. Field ramification
+can also affect $M_v$ when the character is unramified. The reading is
+provisional (Markdown and PDF layout), and the Haar comparison is not
+yet proved in Lean.
+
+**Runnable obligation:** Work on the actual `(v.adicCompletion K)ˣ`.
+For multiplicatively invariant Borel measure of finite positive integer-unit
+mass $M_v$, prove absolute integrability for $\Re s>0$ and evaluate the
+bilinear integral of each printed finite test against the restricted
+unitary character times $|x|_v^s$. The result should be
+$M_v L_v(s,\chi)$, with $L_v=1$ in the ramified-character case. On the
+unramified test, partition into $\pi_v^k\mathcal O_v^\times$, $k\ge0$.
+`Valuation.exists_pow_Uniformizer` supplies the integer-ring
+factorization, `MeasureTheory.measure_preimage_mul` gives equal shell
+masses, and `uniformizer_norm_cpow` gives the geometric ratio. On the
+ramified test use pointwise cancellation on the unit group. Dividing
+the finite test by $M_v$, or using unit-mass Haar instead, should then
+give exactly the Euler factor. Do not replace the Tamagawa measure
+silently: (A.3.2.5), p. 560, uses it in the global restricted product,
+with just finitely many nonunit masses. The global repair must account
+for the accumulated scalar as well as the complex angular correction.
+
+**Still open:** Transport of the Archimedean scalar integrals to the
+completion units, the corrected global zeta integral identification,
+meromorphic continuation, divisor data, and contour growth in
+(B.4.2.1)–(4). The broader test class, ramified Fourier terms, and global
+trace remain open as well. See the separate
+[local conductor obligation](#open-ramified-local-conductor-power-in-the-general-reflection)
 for the missing epsilon factor upstream of the checked reflection.
 
 ## Reproduce the endpoint audit
@@ -716,6 +757,15 @@ For the real Gaussian pairing:
 go run ./cmd/godel audit-local "$CANDIDATE" \
   Lemmas.EvenRealIntegral Theorems.RealGaussianMellin -- \
   Masullo.even_real_integral Masullo.realGaussianZetaDensity_integral
+```
+
+For the completed product and split logarithmic derivative:
+
+```sh
+go run ./cmd/godel audit-local "$CANDIDATE" Theorems.CompletedHeckeEulerProduct -- \
+  Masullo.localHeckeGammaFactor Masullo.localHeckeGammaFactor_real \
+  Masullo.localHeckeGammaFactor_complex Masullo.completedHeckeEulerProduct \
+  Masullo.completedHeckeEulerProduct_logDeriv
 ```
 
 For the compact-log tested shifted pair:
