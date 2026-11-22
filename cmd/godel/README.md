@@ -27,7 +27,13 @@ Work reports an observable result or stall; improvement can test and change any 
 
 ## Checking a proof candidate
 
-Use these checks for routine proof landings. Elaborate drafts in the writer workspace and integrate them through the campaign. Neither a writer build nor a passing helper establishes the integrated endpoint.
+Use these checks for routine proof landings. Elaborate the assembled
+endpoint module with its intended imports and built supporting modules,
+not just the helper proofs in scratch. In a split proof, do this as soon
+as the supporting outputs are available together. If that first happens
+at integration, the required candidate build below is the first check.
+Neither a writer build nor a passing helper establishes the integrated
+endpoint.
 
 1. Read the exact integrated candidate diff against the base returned by `tool_campaign integrate`. Verify that the patch matches the intended work and that the workspace sources and pinned Lean/Lake inputs are those of the candidate. Inspect changed Lean source for proof placeholders, new axioms, or unsafe substitutes. Trace the intended declarations to their defining project modules and distinguish manuscript steps from repairs against the pinned source.
 2. Use the owning Yah's Bash in the **integration workspace**, not the writer or durable launch checkout. Start the command with a literal `cd /actual/path`, replacing `/actual/path` with the real absolute path returned by integration, not a shell variable. Build the changed and affected project modules as applicable with `lake build --wfail +Module`. Verify the actual Lake target spelling: For example, `Proofs/Lemmas/AddSubgroupCharIntegral.lean` is `+Lemmas.AddSubgroupCharIntegral`, not `+Proofs.Lemmas.AddSubgroupCharIntegral`. Include the modules defining the endpoints and affected importers when relevant; pass multiple targets to the build as needed.
