@@ -56,7 +56,8 @@ private theorem maximalIdeal_eq_span (π : O) (hπ : w (π : F) = exp (-1 : ℤ)
   · rw [← exp_log h, ← exp_zero, exp_lt_exp, exp_le_exp]
     omega
 
-private theorem mem_completionIdeal_pow_iff (x : O) (n : ℕ) :
+/-- The valuation bound equivalent to membership in a power of the local maximal ideal. -/
+public theorem mem_completionIdeal_pow_iff (x : O) (n : ℕ) :
     x ∈ m ^ n ↔ w (x : F) ≤ exp (-(n : ℤ)) := by
   obtain ⟨a, ha⟩ := v.intValuation_exists_uniformizer
   have hπ := (completionValuation_algebraMap v a).trans ha

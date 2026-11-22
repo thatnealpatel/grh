@@ -1238,3 +1238,67 @@ to the ramified tests, after proving their finite-coset decomposition.
 None of these steps is supplied by the Archimedean result. Retain both
 zero modes in the passage to the nonzero-orbit sums, before norm-one
 averaging.
+
+#### Checked diagonal pullback of a finite box
+
+[`Masullo.exists_finiteBox_diagonalCoset`](../../Proofs/Theorems/FiniteBoxDiagonalCoset.lean)
+proves for every number field $K$, every finite adele $a$, and every
+unit $g$ of the finite adele ring, that there is $x_0\in K$ such that
+for every $x\in K$,
+
+$$
+   \big(\forall v<\infty,\; |x-a_v|_v\le |g_v|_v\big)
+   \quad\Longleftrightarrow\quad x-x_0\in I(g).
+$$
+
+Here $I(g)$ is the existing fractional ideal of the finite idele, and
+$x$ and $x_0$ use the actual completion maps. Taking $x=x_0$ proves
+nonemptiness. No principality, integrality of $a$ or $g$, or restriction
+on the degree, ramification, or class group of $K$ is required.
+
+Masullo's Lemma 2.2.2.1(3), (2.2.2.3), PDF pp. 78–80, uses a finite
+support bound, not an exact description of a translated box.
+The finite projection of the additive covering (A.2.1.3), Lemma
+A.2.1.2(1), PDF p. 545, gives existence at unit radius, while Theorem
+2.2.3.2, PDF p. 82, invokes adelic Riemann–Roch. This project proof
+supplies the exact diagonal index set needed by the shifted lattice
+argument. These source correspondences are provisional
+Markdown/layout readings, without rendered-page inspection.
+
+The proof clears both the center and radius by one nonzero global
+integer. The valuation bounds of the scaled radius are the local
+extensions of a nonzero integral ideal. The canonical integral CRT
+provides an integer representative of the scaled center modulo these
+extensions at **all** finite places; dividing by the denominator gives
+$x_0$. Ultrametricity reduces the translated inequalities to the
+homogeneous ones, and `mem_finiteIdeleIdeal_iff` identifies those with
+membership in $I(g)$ by fractional-ideal counts. In particular, the
+zero difference is included.
+
+Independent Yah statement review: Session
+`01a20447-557d-705c-895c-7a7e44094b93`, `full-box-review` (`IvDojse`,
+read-only output `a15d3cbfb4e30bc317f4fb9d8d4301397122252d`) reviewed
+the all-place endpoints, scaling and signs. The integral CRT statements
+were separately reviewed by `box-review` (`AETvkdM`, read-only output
+`b29df76cbc0edf37095dfdff51ba01b86e61a6fd`). Replay from the exact
+integration workspace:
+
+```sh
+go run ./cmd/godel audit-local "$CANDIDATE" \
+  Lemmas.FiniteCompletionPrimePow Lemmas.FiniteIdeleIdealCoordinates \
+  Lemmas.IdeleCompactDenominators Lemmas.FiniteBoxCongruences \
+  Lemmas.FiniteAdeleDenominators Lemmas.FiniteIdeleIdealMembership \
+  Theorems.FiniteBoxDiagonalCoset -- \
+  Masullo.exists_ringOfIntegers_sub_mem_finiteCompletionIdeal \
+  Masullo.sub_mem_finiteCompletionIdeal_iff \
+  Masullo.exists_finiteAdele_clearDenominator Masullo.mem_finiteIdeleIdeal_iff \
+  Masullo.exists_ideal_finiteIdeleIdeal_of_integral Masullo.exists_finiteBox_diagonalCoset
+```
+
+**Next:** For $B_g=\prod_v g_v\mathcal O_v$, prove that the diagonal
+pullback of its trace-character annihilator is exactly $I(g)^\vee$.
+The local condition is $y g_v\in\mathfrak D_v^{-1}$ for every $v$.
+Use the completed codifferent comparison and the homogeneous membership
+criterion to identify this with the global trace dual, then match the
+translation phase and the box mass. This result alone computes neither
+of those factors nor evaluates the adelic Fourier integral.

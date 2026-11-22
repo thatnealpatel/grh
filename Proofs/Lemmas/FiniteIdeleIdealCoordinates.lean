@@ -17,6 +17,21 @@ local notation "V" => HeightOneSpectrum (𝓞 K)
 local notation "F" => FiniteAdeleRing (𝓞 K) K
 local notation "J" => FractionalIdeal (𝓞 K)⁰ K
 
+/-- A nonzero fractional ideal with no negative prime exponents is integral. -/
+public theorem le_one_of_count_nonneg {j : J} (hj : j ≠ 0)
+    (h : ∀ v : V, 0 ≤ FractionalIdeal.count K v j) : j ≤ 1 := by
+  classical
+  have hs : Function.HasFiniteMulSupport (fun v : V ↦ (v.asIdeal : J) ^ FractionalIdeal.count K v j) := by
+    change {v : V | ¬ (v.asIdeal : J) ^ FractionalIdeal.count K v j = 1}.Finite
+    apply eventually_cofinite.mp
+    filter_upwards [FractionalIdeal.finite_factors j] with v hv
+    rw [hv, zpow_zero]
+  rw [← FractionalIdeal.finprod_heightOneSpectrum_factorization' K hj, finprod_eq_prod _ hs]
+  apply Finset.prod_le_one₀ (fun _ _ ↦ FractionalIdeal.zero_le _)
+  intro v _
+  rw [← Int.toNat_of_nonneg (h v), zpow_natCast]
+  exact pow_le_one₀ (FractionalIdeal.zero_le _) FractionalIdeal.coeIdeal_le_one
+
 public theorem fractionalIdeal_units_ext_count {I J' : Jˣ}
     (h : ∀ v : V, FractionalIdeal.count K v (I : J) = FractionalIdeal.count K v (J' : J)) :
     I = J' := by
