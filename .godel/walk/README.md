@@ -29,6 +29,13 @@ object on stdout and sends diagnostics to stderr.
   Omit an old dependency only if the reviewer finds that it does not apply.
   This replaces the record in place, without advancing or rewinding coverage.
 
+Review one passage per request; land one finding or a short contiguous group
+that another reader can assess without access to the live workspace. An open
+finding may land if it identifies the printed claim, distinguishes the
+rendered and extracted sources, and names the precise missing step (for
+example, the closed-embedding argument for the global theta quotient). Do not
+wait for chapter completion or a proof of the open claim.
+
 A record contains `passage`, `printed_finding`, `formal`, and optional
 `references`, `conclusion_evidence`, and `dependencies`. In `formal`, use
 `status` (`open`, `established`, `refuted`, or `not_applicable`), `scope`, and
