@@ -1670,20 +1670,111 @@ the explicit canonical Borel Haar of `finiteBoxLocalFourier`, and that
 the omitted factors are comaps. All eight inspected declarations used
 only `propext`, `Classical.choice`, and `Quot.sound`.
 
-**Next: Compare the stage products with a single global additive Haar
-measure on the cofinal stages.** Exhibit a finite exceptional set $E$
-using `finiteBox_centeredMass_finprod` at unit radius. For every $S\supseteq E$,
-show the comap along `adeleFiniteStageEmbedding K S` equals
-`adeleFiniteStageHaar K S`. Use a common calibration box (any compact
-Archimedean set with nonempty interior times all finite integer rings).
-Prove that this box has stage mass equal to its transported Archimedean
-mass times the product of the exceptional integer masses, and compare
-by Haar uniqueness on the open stage, as in
-[`exists_ideleRestrictedProductHaar`](../../Proofs/Theorems/IdeleRestrictedProductHaar.lean).
-The general embedding and range are already in `Lemmas.AdeleFiniteStage`;
-prove openness and the cofinal cover for this comparison. The quotient
-normalization in Definition A.3.1.1, p. 555, is separate. After the global
-comparison, the translated box still needs a Fubini factorization in a
-stage containing it and all exceptional mass and character places at the
-given frequency. The global Fourier identification and inversion for
-the ramified Gaussian remain open.
+#### Restricted-product additive Haar on the actual adeles
+
+[`Theorems.AdeleRestrictedProductHaar`](../../Proofs/Theorems/AdeleRestrictedProductHaar.lean)
+works over every number field $K$, with the Borel structure of the actual
+adele topology. Put $m_v=\nu_v(\mathcal O_v)$ for the previously checked
+local additive Haar $\nu_v$. `exists_finiteCompletionIntegerMass_exceptions`
+proves that $\{v:m_v\ne1\}$ is finite: Use the finite-support half of
+`finiteBox_centeredMass_finprod` at unit radius, and finiteness of the
+mass of the compact integer ring to pass from real to extended masses.
+
+For any finite set $E$ containing those exceptions,
+`exists_adeleRestrictedProductHaar` constructs regular additive Haar $\mu$
+and characterizes it among **all Borel measures** $\lambda$ by
+$$
+\lambda=\mu\quad\Longleftrightarrow\quad
+\forall S\supseteq E,\quad j_S^*\lambda=\mu_S.
+$$
+Here $j_S$ is the actual open stage embedding, and $\mu_S$ is the stage
+Haar above. The theorem also gives, for every Borel $B$ in the infinite
+adeles,
+$$
+\mu(B\times\textstyle\prod_{v<\infty}\mathcal O_v)
+  =\nu_\infty(B)\prod_{v\in E}m_v,
+$$
+where $\nu_\infty$ is the transported `archimedeanTraceMeasure K`. The
+proof scales upstairs Haar on the common compact positive integral-finite
+box. On every cofinal stage the box has the same mass, since newly
+included places have $m_v=1$. Haar uniqueness identifies the stage
+comaps. Countable cover by Borel stage images gives the stated uniqueness,
+without Haar, regularity, or σ-finiteness assumptions on $\lambda$.
+
+Masullo's restricted-product prescription before Definition A.3.1.2,
+PDF p. 556, supplies the stage shape and invokes existence and uniqueness.
+Definition A.3.1.2 supplies the local scales. To use a probability product
+of actual integer-ring restrictions, Lean takes only the cofinal stages
+containing the exceptions; a non-unit local mass cannot be discarded in
+an omitted factor. This constructs the product $\nu'$ in the proof of
+Lemma A.3.1.3, (A.3.1.3), p. 556, **not** the equality $\nu'=\nu$.
+Definition A.3.1.1, p. 555, requires mass one for the counting-induced
+quotient. The remaining bridge is a Borel fundamental domain for diagonal
+$K$, with the counting quotient identity and mass one. Use a full
+$[K:\mathbb Q]$-dimensional integral-basis Archimedean parallelotope: The
+extracted (A.2.1.1), p. 545, sums only to $r_1+r_2$. The separate $S$-local
+claim concerns a finite product **without** the integral tail. For
+$K=\mathbb Q(i)$ and $S=S_\infty$, the trace-product covolume of
+$\mathbb Z[i]$ is $2$ (the unit square has measure $2\,dx\,dy$), so that
+product is not counting-quotient-normalized. These readings are
+provisional: Pinned Markdown and numbered PDF layout; no rendered-page
+visual verification.
+
+Check record: Lean candidate `c363549d11af7aa056a75a8ab0b71160a60bdf49`
+on `92f3aa50fba0f19a23ca95ab16ff69e0c94cbca6`, owning Yah session
+`01a20499-69f0-72e1-8653-addac09cd2dc`. Independent mathematical statement
+review `lOZnIHc` checked the two endpoint signatures, including the
+canonical Borel setting, the exceptional-set premise, and the universal
+measure quantifier. It did not attest the build. The owning integration
+workspace passed `lake build --wfail` on 67 changed, affected, and
+support targets. A fresh joint import checked the built binders and
+normalizations, and all 20 axiom reports listed only `propext`,
+`Classical.choice`, and `Quot.sound`.
+Replay with at least:
+
+```sh
+lake build --wfail +Lemmas.AdeleFiniteStage +Lemmas.AdeleFiniteStageMeasure \
+  +Lemmas.AdeleRestrictedProductMeasure +Theorems.AdeleFiniteStageHaar \
+  +Theorems.AdeleRestrictedProductHaar +Theorems.FiniteBoxCenteredMass
+```
+
+Import these modules together in a fresh file. For both public endpoints,
+run `#check @Masullo.<name>` and `#print axioms Masullo.<name>`; print
+`finiteCompletionIntegerMass`, `adeleFiniteStageHaar`, and
+`adeleFiniteStageOutsideFactor` to recover the local normalization and
+verify that the tail uses the actual comaps. The proof candidate uses
+Lean `v4.36.0` and Mathlib `fc4f59e577feb1a4956671bc04ac18aaaf8cd842`.
+
+**Next: Identify the actual global Fourier integral for one translated
+finite box.** Use this $\mu$, a finite adele $a$, a finite idele $g$, a
+complex Schwartz Archimedean factor $\phi$, and any diagonal $y\in K$,
+including zero. For $F$ the tensor of $\phi$ and the indicator of
+$a+g\prod_v\mathcal O_v$, prove integrability and
+$$
+\int_{\mathbf A_K}F(z)\,\overline{\psi(zy)}\,d\mu(z)
+  = \widehat\phi_{\rm tr}(\iota y)
+    \prod_{v<\infty}\operatorname{finiteBoxLocalFourier}(a,g,y,v).
+$$
+Here $\psi$ must be the continuous global character from the positive
+Archimedean phase and the product of conjugates of the positive finite
+trace phases. The [diagonal phase repair](finite-diagonal-phase.md)
+checks its diagonal value, not the global character. One runnable first
+step is the actual finite-adele character: Use local triviality on
+$\mathcal O_v$ and the eventual integrality of each finite adele to prove
+finite support and additivity. Apply `RestrictedProduct.continuous_dom`
+to the resulting finite products of continuous trace characters on the
+stages (cf. `Lemmas.RationalAdeleFiniteCharacter`). Use
+`finiteCompletion_traceChar_eq_one_of_integral` for the unit tail, not a
+claim that the conductor is exactly $\mathcal O_v$. Masullo's (2.2.4.32), p. 92,
+supplies the conjugated Fourier kernel and tensor shape, but the finite
+integrand must use the integration variable. Use the corrected sign so
+its finite factors are precisely `finiteBoxLocalFourier`.
+
+For the factorization choose $S\supseteq E$ with $a$, $g$, $g^{-1}$, and
+$y$ integral off $S$. There the finite box is $\mathcal O_v$ and the
+phase and integral are both one. Transfer the support-restricted
+integral with `MeasurableEmbedding.map_comap`, then use finite-product
+Fubini, the probability tail, and the transported Archimedean integral.
+This yields the existing right-hand summand of `finiteBox_diagonal_poisson`
+without a new convergence hypothesis. Quotient normalization, inversion
+for the ramified Gaussian, and GRH remain separate open obligations.
