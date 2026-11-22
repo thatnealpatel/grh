@@ -37,6 +37,19 @@ The command compares `Proofs/` and the pinned Lake inputs on disk with the candi
 
 Compare the built signatures in the audit output with the independently reviewed statements, and inspect changed Lean sources for new axioms, proof placeholders, or unsafe substitutes. The theorem must be proved in the project and depend only on `propext`, `Classical.choice`, and `Quot.sound`. Record the candidate ID, declarations, and results. Adopt that exact ID only on success. If a proof needs repair, edit in a writer workspace, integrate, and repeat the checks on the new candidate. The older `cmd/godel check` uses a designated remote worker and is not part of this workflow.
 
+### Integrating a direct edit
+
+Open `tool_campaign new` on the accepted hash you inspected. Once the
+edit is ready, call `tool_campaign integrate` with `description` but
+without `on` or `outputs`. The campaign finalizes the direct work and
+integrates it on the current accepted target. Check the returned base
+and patch before running the audit or tests, especially if another
+campaign has advanced the target. Passing the old accepted hash as
+`on` after the target moves can be rejected as an unknown integration
+candidate. A superseded accepted commit is not a pending candidate.
+Explicit pending-candidate stacks and conflict repair use the campaign
+tool's separate `on` and Change-Id rules.
+
 ### Recovering a checked but unadopted proof
 
 A stale adoption means the target moved, not that the proof failed. Read `tool_campaign status` again and reconcile the checked patch with the new accepted tree. If it is still needed, integrate the registered output against the fresh base. If the base moves again before integration resolves it, refresh status before choosing the base. A commit readable in jj is not necessarily a registered output in this campaign. If the prior output is not in `status` with `verbose=true`, inspect the old candidate's patch against its parent and restore only the needed changes in a new direct workspace on the current base. Compare the resulting patch with the reviewed one; do not overwrite later work or change the graph manually.
