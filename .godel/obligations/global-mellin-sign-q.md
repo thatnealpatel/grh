@@ -154,5 +154,5 @@ separates the opposite-weight scalar repair from the pullback action.
 The [finite normalization check](finite-gaussian-tamagawa.md) then
 compares the local Tamagawa pairing with the Euler convention at the
 place over 2 of $\mathbb Q(i)$. The
-[unadopted modulus-three local proof](hecke-right-line-majorant.md#open-ramified-local-conductor-power-in-the-general-reflection)
-remains a separate recovery item, not an input to either check.
+[checked modulus-three Fourier shell](hecke-right-line-majorant.md#ramified-local-conductor-power-the-modulus-three-test)
+is a separate local result, not an input to either check.

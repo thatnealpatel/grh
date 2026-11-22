@@ -42,4 +42,6 @@ is now resolved at the place over 2 of $\mathbb Q(i)$. It is independent
 of the complex angular check, and neither local result is a global
 factorization.
 
-The general-field restricted-product Haar and completed-product identification, conductor assembly, reflected-line integrability, and contour exhaustion are separate. The earlier [global Mellin sign](global-mellin-sign-q.md) is unchanged, and the [unadopted modulus-three Fourier recovery](hecke-right-line-majorant.md#open-ramified-local-conductor-power-in-the-general-reflection) has a full saved-revision pointer in the accepted note.
+The general-field restricted-product Haar and completed-product identification, conductor assembly, reflected-line integrability, and contour exhaustion are separate. The earlier [global Mellin sign](global-mellin-sign-q.md) is unchanged, and the
+[checked modulus-three Fourier shell](hecke-right-line-majorant.md#ramified-local-conductor-power-the-modulus-three-test)
+is a separate local result, not an identification of the completed product.

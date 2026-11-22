@@ -309,59 +309,138 @@ conductor dependence, and endpoint scope. All manuscript comparisons
 here are based on pinned chapter Markdown and numbered PDF layout
 extraction, not independent inspection of rendered pages.
 
-### Open: Ramified local conductor power in the general reflection
+### Ramified local conductor power: The modulus-three test
 
-The next general conductor obligation is not another reflection lemma.
-At a ramified finite place, both local Euler factors are one, so
-(3.3.1.32), p. 136, specialized to the place, requires
-$\rho_v(c)=\epsilon_v(c)$. On the norm-twist line
-$c=\chi_v|\cdot|_v^s$, the extracted (3.3.1.30), p. 136, puts only
-$N(\mathfrak d_v)^{s-1/2}$ outside a Gauss sum with no displayed
-$s$-dependence, whereas the ramified $\rho_v$ formula at p. 133 and
-(3.3.2.24), p. 141, puts $N(\mathfrak d_v\mathfrak f_v)^{s-1/2}$
-outside the root number. The factor $N(\mathfrak f_v)^{s-1/2}$
-cannot be absorbed into a constant when $\mathfrak f_v$ is nontrivial.
-This is a provisional mismatch of the two local formulas, not a
-reading of the rendered typography or a disproof of the functional
-equation. On the unramified and Archimedean components, (3.3.1.28)–(29),
-p. 135, supplies the different powers and constant phases, respectively.
+**Scope of the source verdict:** The finite-place calculation is independent
+of the printed real factor. Applying it to the printed $S$-local identity
+also uses the product norm after (3.1.2.1), p. 120, the odd Gamma factor
+(3.2.1.4), p. 123, and the constant real epsilon rule accompanying
+(3.3.1.28), p. 135. These three readings remain provisional (pinned Markdown
+and layout extraction). The rendered findings below are inherited from the
+prior independent reviewers, not a new visual audit of this recovery.
 
-**Runnable control:** Start at $\mathbb Q_3$ with the nontrivial
-character of $(\mathbb Z/3\mathbb Z)^\times$ extended by $\chi_v(3)=1$.
-In (3.3.1.7), p. 130, take the unit-supported test
-$f(u)=\chi_v(u)^{-1}$. Compute its additive Fourier transform on the
-shell $3^{-1}\mathbb Z_3^\times$ and show it vanishes off that shell.
-Using the same Haar measure on both multiplicative integrals, compare
-$Z_v(f,\chi_v|\cdot|_v^s)$ and
-$Z_v(\widehat f,\chi_v^{-1}|\cdot|_v^{1-s})$ and check their ratio
-against $3^{s-1/2}\rho_0$ with constant $\rho_0\ne 0$. This separates
-the two printed formulas since the different is trivial but the
-conductor norm is $3$. Generalizing the shell computation and assembling
-it for the actual completed Hecke function in (3.2.1.6) must still
-prove $\epsilon(s)=C\exp(\log(A_\chi)(s-1/2))$ with
-$A_\chi=|N(\mathfrak d_{F/\mathbb Q})|N(\mathfrak f_\chi)$ in the
-manuscript's normalization. The Lean reflection needs only the germ of
-this equality where the contour meets ordinary nonzero points.
+**Rendered source.** In the [pinned edition](../sources/masullo/README.md),
+(3.3.1.30), p. 136, prints only $N(\mathfrak d_v)^{s-1/2}$ outside the
+Gauss sum. Although $\rho_0$ is written with a norm twist as an argument,
+the displayed formula uses $N(\mathfrak f)^{-1/2}$, the fixed values
+$\chi_v(u)$, and the additive phases at $u/\pi_v^{v(\mathfrak d_v\mathfrak f)}$.
+It is independent of $s$. In (3.3.2.24), p. 141, the ramified factor
+instead uses $N(\mathfrak d_v\mathfrak f_{\chi})^{s-1/2}\rho_0(\chi)$.
+The rendered (3.3.1.2), p. 129, is forward over reflected, and (3.3.1.32),
+p. 136, multiplies $\epsilon_S(c)$ by $L_S(c)/L_S(\widehat c)$, not
+its reciprocal. The reading was checked independently in grayscale
+Poppler pixel crops from the digest-verified PDF, with layout extraction
+used only to locate the formulas. Source reviewer `slUqigK` and
+independent reviewer `iIPBBIA` checked these equations in the prior modulus-three review.
 
-**Unadopted modulus-three recovery (prior handoff):** The reviewed
-`Proofs/Theorems/PadicRamifiedThreeFourier.lean` is preserved with the
-note draft in `1080bf8534b18b6574115607db70f09046e97d73`, based on
-`a575167bc66f178a8bc4d014d69e692f50fc6a80`; the independently
-elaborated writer output is `674ae752f7fbcc647c9e93bd55b7dd6f582a838a`.
-It checks the signed unit-coset transform at every frequency and
-nonvanishing exactly on $3^{-1}\mathbb Z_3^\times$. The writer module
-was kernel-replayed with only the three allowed axioms. The exact Gauss
-phase and the ratio $\sqrt{3}$ of the two forward-over-reflected values
-(with the real Gamma ratio removed) are ordinary calculations. Prior
-review verified rendered pp. 136 and 141, (3.3.1.30), (3.3.1.32), and
-(3.3.2.24); the product norm on p. 120 and constant real epsilon rule
-at (3.3.1.28), p. 135, remain provisional. Integration of the saved
-patch at `0ae987b585b5254b0e4920098e74eec919aba5b0` conflicted in this
-note and was not audited or adopted. Recover the needed paths on a
-fresh accepted base, preserving the intervening Gaussian work and note
-updates, then run the exact-candidate audit and fresh-import checks.
-This recovery is separate from the global sign result and does not
-assemble the general conductor.
+**In-scope control.** On $\mathbb Q_3^\times$ take the nontrivial
+character $\chi$ of $(\mathbb Z/3\mathbb Z)^\times$, extended by
+$\chi(3)=1$. It has conductor $(3)$ (nontrivial on units, trivial on
+$1+3\mathbb Z_3$), and $\mathbb Q_3/\mathbb Q_3$ has trivial different.
+The product with the real sign is trivial on $\{\pm 3^n:n\in\mathbb Z\}$:
+The two signs cancel at $-1$, and both values at $3$ are one. The
+product norm is also trivial on this diagonal. Hence the norm twists
+are characters of the printed $J_{\mathbb Q,\{\infty,3\}}$ (quotient
+in §2.3, p. 99), and $s=1/4,3/4$ lie in the open strip. Reviewer
+`iIPBBIA` inspected the quotient on the rendered page. The explicit
+product norm immediately after (3.1.2.1), p. 120, remains a provisional
+Markdown and layout reading.
+
+**Two-coset computation.** The test is
+$f=\chi^{-1}\mathbf1_{\mathbb Z_3^\times}
+=\mathbf1_{1+3\mathbb Z_3}-\mathbf1_{2+3\mathbb Z_3}$.
+The checked `padicTranslatedBall_fourier` in
+[`Theorems.PadicIntegralBallFourier`](../../Proofs/Theorems/PadicIntegralBallFourier.lean)
+with additive unit-ball mass one gives
+$$
+\widehat f(y)=\tfrac13(\overline{\psi(y)}-\overline{\psi(2y)})
+                  \mathbf1_{3^{-1}\mathbb Z_3}(y).
+$$
+Both phases are one for integral $y$. For $y=u/3$ with $u$ a unit,
+the two residues give $\widehat f(u/3)=A\chi(u)$, where
+$A=(\zeta_3^{-1}-\zeta_3^{-2})/3=-i/\sqrt{3}$ for the conjugate of the
+positive cyclic-residue character used in this Lean transform.
+The rendered (A.3.1.5), p. 557, prints the unbarred phase in its
+right-hand formula; using that phase instead conjugates $A$ and has no
+effect on the comparison. The computation uses the checked support
+formula, not the intermediate translated frequency expression on p. 557.
+[`Theorems.PadicRamifiedThreeFourier`](../../Proofs/Theorems/PadicRamifiedThreeFourier.lean)
+checks the actual additive Haar integral for all $y$ and that it is
+nonzero exactly when $\lVert 3y\rVert_3=1$, including at $y=1/3$.
+The shell is $3^{-1}\mathbb Z_3^\times$, not the whole dilated integral
+ball. Independent reviewer `iIPBBIA` (Yah session
+`01a20139-f336-7f57-8132-28ebf173ba5b`) checked the exact implementation
+and statement against the test and kernel-replayed writer output
+`674ae752f7fbcc647c9e93bd55b7dd6f582a838a`. The recovery preserves the
+reviewed file byte for byte. The four public endpoints are listed in the
+audit command below. The evaluation of $A$ is not a Lean endpoint.
+
+Write $m>0$ for the mass of $\mathbb Z_3^\times$ under any fixed
+multiplicative Haar. In (3.3.1.7), p. 130, the forward integral is $m$.
+On the reflected shell, multiplication by $1/3$ preserves the mass,
+$|u/3|_3=3$, and the character cancels since $\chi(3)=1$. The reflected
+integral is $m A3^{1-s}$. Both integrals converge absolutely for every
+complex $s$ by the compact supports away from zero. The forward-over-
+reflected quotient is therefore $R_3(s)=A^{-1}3^{s-1}$, or
+$i3^{s-1/2}$ in the checked convention. These Mellin evaluations are
+ordinary mathematics using the checked additive formula.
+
+**Discriminant.** Both $3$-adic Euler factors are one, by (3.2.1.2),
+p. 123, and the ramified case stated in the proof after (3.3.1.33),
+p. 137. The first omits the ramified place, and the second explicitly
+sets the local factor to one. Both conventions were read on the
+rendered pages. In the tensor with the real test
+$h(t)=t e^{-\pi t^2}$, the two real zeta integrals are the odd Gamma
+factors at $s$ and $1-s$, the latter times a constant nonzero Fourier
+phase. For the negative Fourier kernel, $\widehat h=-ih$ and the real
+forward/reflected quotient after Gamma normalization is $+i$. The
+comparison does not require equality with the printed constant phase.
+Dividing out the odd Gamma ratio from (3.2.1.4), p. 123, therefore leaves
+only an $s$-independent real phase. Only the constant-in-$s$
+feature of the printed real rule in the discussion of (3.3.1.28),
+p. 135, is needed; that rule is a provisional text and layout reading.
+In this normalized $S$-quotient, the ratio of the value at $3/4$ to
+that at $1/4$ is $\sqrt{3}$, not the $1$ required by (3.3.1.30) and
+(3.3.1.32), and not the $1/\sqrt{3}$ from the reversed conductor exponent.
+It agrees with (3.3.2.24) in its conductor power, independently of
+constant phases. Subject to the source-scope readings above, this is a
+counterexample to compatibility of the printed formulas within their
+common scope, not to the local functional equation with the repaired
+factor. For this place and character, inserting $N(\mathfrak f)^{s-1/2}$
+in (3.3.1.30) repairs the power; the comparison does not adjudicate the
+manuscript's constant phase conventions.
+
+**Appendix B interface.** The local contribution has logarithmic
+derivative $+\log 3$. This is a forward-over-reflected **local zeta**
+quotient; the exponential in (3.2.1.6), p. 123, is the
+reflected-over-forward **completed $L$** quotient. If the global Poisson
+identity and Euler normalization give that exponential the same
+conductor power, its derivative contributes $-\log 3$ in the left-line
+logarithmic derivative and $+\log 3$ to the contact in (B.4.2.4), p. 615,
+after subtracting the left leg. This does not supply the exponential
+functional equation input for `completed_logDeriv_reflection`.
+The reflected parameter $\widehat c=|\cdot|c^{-1}$ (3.1.1.4), p. 119,
+and the orientation of (3.2.1.6) were read on rendered pages. Independent
+reviewer `iIPBBIA` also checked the real/finite tensor integral and local
+zeta measure in (3.3.1.7), p. 130, and the $L_S$ product definition
+(3.3.1.25), pp. 134–135, on the rendered pages. The global Euler
+assembly and its identification with the global zeta integral are not
+checked here; the source product description after (3.2.1.6), p. 123,
+remains provisional for that purpose. The prior rendered review of
+(B.4.2.3), p. 614, confirmed the sign issue explained above; the local
+test does not justify that displayed differentiation.
+
+**Next bounded check:** At arbitrary rational $p$, replace the two
+cosets by the units modulo $p^n$ for a primitive character of exact
+conductor $p^n$ and $\chi(p)=1$. Check vanishing at lower-conductor
+frequencies by nontriviality on the kernel of reduction modulo $p^{n-1}$,
+and nonvanishing on the remaining shell by finite Fourier inversion.
+This would extend the verified orientation of the local power to
+$p^{n(s-1/2)}$ over rational completions. Separate open premises are
+the inverse-different support and self-dual measure over finite
+extensions, and assembly and identification of the globally completed
+Hecke product (including the Archimedean normalization, reflected
+right-line integrability, and contour exhaustion).
 
 ### Separate global Fourier sign
 
@@ -981,10 +1060,11 @@ normalization nor evaluation of the exceptional mass product by the
 discriminant follows from exhaustion.
 
 **Still open:** Meromorphic continuation, divisor data, and contour
-growth in (B.4.2.1)–(4), the broader test class, ramified Fourier terms,
-and global trace. The [local conductor obligation](#open-ramified-local-conductor-power-in-the-general-reflection)
-remains upstream of the checked reflection. Before using the eigenspace
-claim, reconcile the [rendered pullback action](complex-gaussian-angular.md#the-weight-one-control-and-its-scope)
+growth in (B.4.2.1)–(4), the broader test class, general ramified Fourier terms,
+and global trace. The [local conductor test](#ramified-local-conductor-power-the-modulus-three-test)
+checks the modulus-three power, not the exponential input to the reflection.
+Before using the eigenspace claim, reconcile the
+[rendered pullback action](complex-gaussian-angular.md#the-weight-one-control-and-its-scope)
 $T(f\circ m_g)$ in (3.4.3.1), p. 151, with (3.3.1.7), p. 130:
 Left invariance makes the bilinear pairing transform by $c(g)^{-1}$,
 not the printed $c(g)$. Replacing $m_g$ by $m_{g^{-1}}$ changes the
@@ -1068,6 +1148,17 @@ go run ./cmd/godel audit-local "$CANDIDATE" \
   Masullo.completed_reflect_left_integral \
   Masullo.completedDirichlet_logDeriv_reflection \
   Masullo.completedDirichlet_reflect_left_integral
+```
+
+For the signed unit-coset transform and its exact nonvanishing shell:
+
+```sh
+go run ./cmd/godel audit-local "$CANDIDATE" \
+  Theorems.PadicRamifiedThreeFourier -- \
+  Masullo.padicRamifiedThreeTest \
+  Masullo.padicRamifiedThree_fourier \
+  Masullo.padicRamifiedThree_fourier_ne_zero_iff \
+  Masullo.padicRamifiedThree_fourier_at_inv_ne_zero
 ```
 
 For the one-parameter classification and Archimedean restriction:
