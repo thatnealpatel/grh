@@ -62,6 +62,14 @@ public noncomputable def adeleFiniteStageEmbedding (S : Finset V) :
     change glue K S (x.2 * y.2) v = glue K S x.2 v * glue K S y.2 v
     by_cases hv : v ∈ S <;> simp [glue, hv]
 
+/-- The very same map, viewed as an additive homomorphism. -/
+@[expose] public noncomputable def adeleFiniteStageAddEmbedding (S : Finset V) :
+    AdeleFiniteStage K S →+ AdeleRing (𝓞 K) K :=
+  AddMonoidHom.mk' (adeleFiniteStageEmbedding K S) fun x y ↦ by
+    refine Prod.ext rfl (FiniteAdeleRing.ext K fun v ↦ ?_)
+    change glue K S (x.2 + y.2) v = glue K S x.2 v + glue K S y.2 v
+    by_cases hv : v ∈ S <;> simp [glue, hv]
+
 public theorem adeleFiniteStageEmbedding_infinite (S : Finset V) (x : AdeleFiniteStage K S) :
     (adeleFiniteStageEmbedding K S x).1 = x.1 := by
   rfl
@@ -100,5 +108,26 @@ public theorem range_adeleFiniteStageEmbedding (S : Finset V) :
     refine ⟨x, Prod.ext rfl (FiniteAdeleRing.ext K fun v ↦ ?_)⟩
     change glue K S x.2 v = a.2 v
     by_cases hv : v ∈ S <;> simp [glue, hv, x]
+
+/-- The actual stage has the induced topology and is open in the adeles. -/
+public theorem isOpenEmbedding_adeleFiniteStageEmbedding (S : Finset V) :
+    IsOpenEmbedding (adeleFiniteStageEmbedding K S) := by
+  refine ⟨isEmbedding_adeleFiniteStageEmbedding K S, ?_⟩
+  rw [range_adeleFiniteStageEmbedding]
+  exact (RestrictedProduct.isOpen_forall_imp_mem
+    (fun v : V ↦ Valued.isOpen_valuationSubring (F v))).preimage continuous_snd
+
+open Classical in
+/-- The stages containing any prescribed finite set `E` still cover all adeles. -/
+public theorem iUnion_range_adeleFiniteStageEmbedding (E : Finset V) :
+    (⋃ S : Finset V, range (adeleFiniteStageEmbedding K (E ∪ S))) = univ := by
+  classical
+  refine eq_univ_of_forall fun a ↦ ?_
+  have hfinite : {v : V | a.2 v ∉ O v}.Finite := eventually_cofinite.mp a.2.property
+  refine mem_iUnion.mpr ⟨hfinite.toFinset, ?_⟩
+  rw [range_adeleFiniteStageEmbedding]
+  intro v hv
+  by_contra hnot
+  exact hv (Finset.mem_union_right E (hfinite.mem_toFinset.mpr hnot))
 
 end Masullo
