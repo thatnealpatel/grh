@@ -180,14 +180,53 @@ The upper-growth premise is discharged for the explicit product:
 There is no growth hypothesis left for the explicit product. The
 [all-prime grouped identity](isotypic-euler-factorization-q-sqrt-minus-five.md#checked-all-prime-grouped-identity)
 now identifies it in Lean with the actual finite Hecke product on
-$\Re s>1$ for the constructed class character. The good-height
-estimate on the continued function is only for the reciprocal itself,
-not its derivatives. A bounded next check is to extend the estimate to
-polynomially small disks around the same good segment. The total log
-loss bounds each zero's vertical distance from below; on a disk of
-radius at most half that lower bound, each zero factor loses at most
-another factor of two. With $N=O(\log H)$, this still costs a polynomial
-and would supply the neighborhood required by Cauchy estimates. The [inverse-range realization](isotypic-inverse-range-q-sqrt-minus-five.md)
+$\Re s>1$ for the constructed class character.
+
+## Closed disks at the same good height
+
+[`Masullo.qSqrtNegFiveDirichletProduct_good_height_disks`](../../Proofs/Theorems/IdealClassGoodHeightDisks.lean)
+proves that there are $c,C,A,B>0$ such that for every real $H\ge1$,
+one $T\in(H,H+1)$ works for every $\sigma\in[-1/2,2]$ and every
+$z$ with $|z-(\sigma+iT)|\le cT^{-B}$:
+
+$$
+D(z)\ne 0,\qquad |D(z)^{-1}|\le CT^A.
+$$
+
+The proof reuses the height from the segment theorem, not a separate
+height for each disk. Write $s=\sigma+iT$ and $a=2+i(H+1/2)$.
+The center satisfies $|s-a|\le3$. For any $w$ with $|w-s|\le1$,
+the unit circle about $w$ lies within distance $5$ of $a$.
+Maximum modulus extends the radius-six growth bound to that circle,
+and the unit-radius Cauchy estimate gives $|D'(w)|\le C_0T^{12}$.
+The convex mean-value estimate on the closed unit disk about $s$
+then controls motion in every direction, also at the endpoint centers
+$\sigma=-1/2,2$. With segment constants $C_s,A$, the choices
+$B=A+12$ and $c=\min(1,(2C_sC_0)^{-1})$ limit the motion to at most
+$(2C_sT^A)^{-1}$, half the guaranteed center modulus. The new
+reciprocal bound has $C=2C_s$.
+
+The [accepted rendered reading](isotypic-inverse-range-q-sqrt-minus-five.md#printed-versus-corrected-denominators)
+of Masullo, pp. 308–309, §6.3.2, (6.3.2.16)–(17), supplies the
+omitted-versus-retained distinction. The estimate is for the corrected
+forward denominator, not the printed retained factor. No new source
+reading is needed. The Lean statement uses the explicit entire $D$ and
+no Hecke identification hypothesis. The separate half-plane identity
+identifies the convergent finite Euler product only on $\Re s>1$.
+
+Independent statement and reduction review: Yah
+`01a2034f-03ff-70f0-801f-c1abcd71ab17`, agent `uwQNjpH`. The review
+checked the quantifier order, full closed disks, reuse of the height,
+and applicability of the inherited reading. No unverified manuscript
+normalization is used in the disk proof.
+
+**Next check:** Apply the disk Cauchy estimate to $D^{-1}$ at each
+center. With the same $T$ and constants, the target for every natural
+$m$ is $|(D^{-1})^{(m)}(s)|\le m!\,C c^{-m} T^{A+Bm}$. The disk
+nonvanishing should supply differentiability on the open ball and
+continuity on its closure, the hypotheses of that estimate. This would
+check the reciprocal derivatives, not the reflected identity or the
+local image criterion. The [inverse-range realization](isotypic-inverse-range-q-sqrt-minus-five.md)
 still uses provisional readings of the completed and complex local
 normalizations (pp. 123 and 129), the interior-strip Schwartz
 convention (pp. 800–801, Definition D.3.1.3), and the local image
