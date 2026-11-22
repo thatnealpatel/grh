@@ -52,18 +52,18 @@ func (f *fakeHistory) matchesNote(ctx context.Context, rev, _ string, data []byt
 
 func newAudit(t *testing.T, h *fakeHistory) *auditor {
 	t.Helper()
-	a := &auditor{repo: h, file: filepath.Join(t.TempDir(), "journal.json"), wait: noDelay}
+	a := &auditor{repo: h, file: filepath.Join(t.TempDir(), "journal.json"), wait: unexpectedWait}
 	if err := a.load(testID, rev(1)); err != nil {
 		t.Fatal(err)
 	}
 	return a
 }
 
-func noDelay(ctx context.Context) error { return ctx.Err() }
+func unexpectedWait(context.Context) error { return errors.New("unexpected idle wait") }
 
 func restart(t *testing.T, a *auditor) *auditor {
 	t.Helper()
-	b := &auditor{repo: a.repo, file: a.file, wait: noDelay}
+	b := &auditor{repo: a.repo, file: a.file, wait: unexpectedWait}
 	if err := b.load(testID, ""); err != nil {
 		t.Fatal(err)
 	}
@@ -254,60 +254,6 @@ func TestAuditRejectsInvalidOrInterruptedReports(t *testing.T) {
 	}
 	if w := restart(t, a).state.Examined; w != rev(1) {
 		t.Fatalf("watermark advanced to %s", w)
-	}
-}
-
-func TestAuditWaitsAfterCheckpointEvenWithBacklog(t *testing.T) {
-	for _, verdict := range []string{"clean", "finding"} {
-		t.Run(verdict, func(t *testing.T) {
-			synctest.Test(t, func(t *testing.T) {
-				h := &fakeHistory{accepted: []string{rev(1), rev(2), rev(3)}, patches: map[string][]change{}, blobs: map[string][]byte{}}
-				a := newAudit(t, h)
-				a.wait = waitForProgress
-				start := time.Now()
-				s := plan(t, a)
-				accept := func() error { return a.acceptReview(t.Context(), s, report(s, clean())) }
-				if verdict == "finding" {
-					r := reply{Verdict: "finding", Evidence: "Missing dependency.", Finding: "Claim unproved.", Repair: "Prove dependency."}
-					if err := a.acceptReview(t.Context(), s, report(s, r)); err != nil {
-						t.Fatal(err)
-					}
-					h.accepted = append(h.accepted, rev(4))
-					h.patches[rev(4)] = []change{{"A", notePath(s.Target)}}
-					h.blobs[rev(4)] = a.state.Pending.note()
-					text := fmt.Sprintf(`{"target":%q,"accepted_revision":%q}`, s.Target, rev(4))
-					accept = func() error { return a.acceptPublication(t.Context(), text) }
-				}
-				if elapsed := time.Since(start); elapsed != 0 {
-					t.Fatalf("first review or finding continuation waited %s", elapsed)
-				}
-				done := make(chan error, 1)
-				go func() { done <- accept() }()
-				synctest.Wait()
-				if got := restart(t, a).state.Examined; got != rev(2) {
-					t.Fatalf("checkpoint not durable before waiting: %s", got)
-				}
-				time.Sleep(10*time.Minute - time.Second)
-				select {
-				case err := <-done:
-					t.Fatalf("pass returned before 10 minutes: %v", err)
-				default:
-				}
-				time.Sleep(time.Second)
-				synctest.Wait()
-				select {
-				case err := <-done:
-					if err != nil {
-						t.Fatal(err)
-					}
-				default:
-					t.Fatal("pass did not return at 10 minutes")
-				}
-				if next := plan(t, a); next.Target != rev(3) || time.Since(start) != 10*time.Minute {
-					t.Fatalf("backlog not reviewed immediately after one wait: %+v at %s", next, time.Since(start))
-				}
-			})
-		})
 	}
 }
 

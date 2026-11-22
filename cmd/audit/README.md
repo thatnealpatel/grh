@@ -4,9 +4,10 @@
 examines each successive accepted commit, including claims and handoffs later
 reverted. Each pass pins the next accepted parent and child; newer accepted
 work waits for a later pass. On launch, the first check is immediate. After a
-completed review (including accepted publication, if needed), it waits ten
-minutes before the next pass, even with a backlog. When caught up, it polls
-every ten minutes and starts no Yah reviewer. These waits are interruptible.
+completed review (including accepted publication, if needed), it checks for
+the next commit without a scheduled delay. Only when caught up does it wait
+ten minutes before polling again. The idle wait is interruptible and starts
+no Yah reviewer.
 The auditor does not repair proofs, gate producer landings, or certify RH/GRH.
 
 ## Launch and restart

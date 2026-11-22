@@ -28,10 +28,7 @@ func (a *auditor) prepare(ctx context.Context) (*scope, error) {
 			if err := a.finishReview(ctx, *p, landed); err != nil {
 				return nil, err
 			}
-			// A recovered publication completed
-			// the pass and waited. Read the tip
-			// again: work may have landed during
-			// that interval.
+			// Recompute the backlog from the recovered checkpoint.
 			continue
 		}
 		for len(ahead) != 0 {
@@ -183,10 +180,5 @@ func (a *auditor) finishReview(ctx context.Context, r record, note string) error
 		j.Findings = append(slices.Clone(j.Findings), finding{Note: note, Path: notePath(r.Scope.Target)})
 	}
 	j.Examined, j.Latest, j.Pending = r.Scope.Target, &r, nil
-	if err := a.save(ctx, j); err != nil {
-		return err
-	}
-	// The pass is durable even if the
-	// process stops during this wait.
-	return a.wait(ctx)
+	return a.save(ctx, j)
 }
