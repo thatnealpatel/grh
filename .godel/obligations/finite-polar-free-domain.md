@@ -375,22 +375,77 @@ has $t=\log|x|$ and mass one per sign. The checked
 uses that same $t$; its manuscript mapping of the real split in
 (3.1.2.3), p. 121, remains provisional. No pixels were reread here.
 
-**Next bounded check:** For fixed parity $\epsilon\in\{0,1\}$ and
-$z\in\mathbb C$, let $f_\epsilon(t)=b(e^t)+(-1)^\epsilon b(-e^t)$.
-Use the new negative tail and the positive-tail Schwartz seminorm of
-order $(K,0)$, with $K\ge |\Re z|+3$, to check in Lean that
-$\|f_\epsilon(t)e^{zt}\|\le C e^{-3|t|}$ on the whole line. This
-is the missing input to
-[`hasDerivAt_logMellin_of_decay`](../../Proofs/Lemmas/LogMellinDerivative.lean)
-with $r=1$; that theorem already supplies complex differentiation,
-absolute integrability, and its first log moment. The checked real
-restriction and the usual norm power give $z=s+i\tau$, with parity
-constant on each sign; the defining pairing uses the raw character,
-not a Gaussian-normalized zeta factor. The folded log integral is the
-target of this check. Transport back to the actual completion-unit
-pairing, assembling the finite tensor sum with the
-[compact-away shell result](finite-local-zeta-residue.md), and descent
-on the character space remain separate.
-This closed-image check does not prove real or tensor entireness,
-character descent, or anything about the completed tensor, and it
-does not rehabilitate the printed finite factor or projective map.
+This closed-image and tail check does not prove tensor entireness,
+character descent, or anything about the completed tensor, and it does
+not rehabilitate the printed finite factor or projective map.
+
+## Checked entireness of the raw real log-Mellin pairing
+
+[`Lemmas.RealSchwartzFlatMellin`](../../Proofs/Lemmas/RealSchwartzFlatMellin.lean)
+checks the real log-coordinate input to the repaired forward direction
+of Lemma 5.3.4.2(2), pp. 259–261. Let $b\in\mathcal S(\mathbb R,\mathbb C)$
+with $b^{(j)}(0)=0$ for every $j\in\mathbb N$, and set
+$f_\epsilon(t)=b(e^t)+(-1)^\epsilon b(-e^t)$.
+The Lean statements use any $\epsilon\in\mathbb N$, so include both
+parities without an extra bound on the index.
+
+* `exists_realSchwartzParityLog_mellin_bound`: At each $z\in\mathbb C$,
+  some $C_z\ge0$ bounds $\|f_\epsilon(t)e^{zt}\|$ by $C_z e^{-3|t|}$
+  for all $t\in\mathbb R$.
+* `hasDerivAt_realSchwartzParityLog_mellin`: The integrand and its
+  product with $t$ are absolutely integrable against Lebesgue measure
+  for every $z$. The first log moment is the complex derivative of
+  $z\mapsto\int_{\mathbb R} f_\epsilon(t)e^{zt}\,dt$ at $z$.
+* `differentiable_realSchwartzParityLog_mellin`: This raw integral is
+  complex differentiable on all of $\mathbb C$.
+
+Choose one natural $K$ with $|\Re z|+3\le(K:\mathbb R)$. The previous
+negative tail bounds each ray for $t\le0$ by $A e^{Kt}$. At each
+$y=\pm e^t$, the order-$(K,0)$ Schwartz seminorm $B$ bounds
+$\|y\|^K\|b(y)\|$, so for $t\ge0$ each ray is bounded by $B e^{-Kt}$.
+The parity coefficient has norm one, and $\|e^{zt}\|=e^{(\Re z)t}$.
+Thus $2\max(A,B)$ works across both half-lines. The folded profile is
+continuous, so `hasDerivAt_logMellin_of_decay` applies at $r=1$. No
+support gap, a priori convergence strip, or decay premise is assumed.
+Independent statement and reduction review: Yah transcript
+`01a204b4-d84a-7569-a9f4-8dde8fe945d6`, agent `tycBfXz`, against
+`56a97650d2239fe3b5aaff0a1a0dee08975e82e0`. The review checked the
+hypotheses, signs, split estimates, differentiation interface, and
+applicability of the inherited source readings.
+
+**Manuscript scope:** Inherit the rendered jet condition, (5.3.3.10),
+p. 252, and Definition 5.3.4.1, p. 259, from the
+[domain audit](#the-finite-only-repair-is-not-projectively-continuous);
+the raw bilinear pairing (3.3.1.7), p. 130, and restriction by insertion
+in §3.1.2.2, p. 121, from the
+[angular audit](complex-gaussian-angular.md#rendered-readings); and
+full real Haar A.3.2.2(1), p. 560, and the usual rational real norm
+(A.2.2.2), p. 546, from the
+[real-prime audit](trace-real-prime-q.md#source-and-domain). The
+[checked restriction](hecke-right-line-majorant.md#real-archimedean-restriction-parity-and-radial-frequency)
+and [signed Haar](single-place-norm.md#checked-signed-real-log-haar)
+use the same $t=\log|y|$; $z=s+i\tau$ is the raw exponent, not the
+argument of a Gamma factor or a normalized pairing. The manuscript
+mapping of the real split (3.1.2.3), p. 121, is provisional and is not
+needed for the estimate or for using the checked coordinate identities.
+No pages were reread for this proof.
+
+**Next bounded check:** Transport the raw integral to full Haar on the
+actual real completion units, establishing absolute integrability and
+value equality for each $s\in\mathbb C$ with a fixed unitary character.
+For $y=\operatorname{extensionEmbeddingOfIsReal}(hv)(u.\mathrm{val})$, the accepted
+`realCompletionHaar_map_logSign` sends $u$ to $(\log\|u.\mathrm{val}\|,\operatorname{sign} y)$
+with target Lebesgue times counting measure, mass one per sign. The
+accepted `exists_archimedeanHeckeRestriction_real` and real norm identity
+identify the character and module power in those coordinates: Use
+`positive_cpow_add_radial` at $|y|>0$ and $z=s+i\tau$. This needs the
+raw pairing, restriction, and full-Haar readings cited above, not a
+printed Gamma evaluation. Folded integrability for a single parity
+would not justify integration over the signs. At the same $z$, taking
+half the sum and half the difference of the checked even and odd
+weighted integrands gives separate integrability of both rays. That
+allows a pushforward argument for the actual unit integral, with no
+half-Haar factor and no restriction to the positive sign.
+[Finite-shell assembly](finite-local-zeta-residue.md) for the repaired
+algebraic tensor, character descent, and any extension to a completed
+tensor remain separate.
