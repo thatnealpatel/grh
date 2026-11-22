@@ -90,6 +90,24 @@ private theorem finite_transportedAlgebra (p : ℕ) [Fact p.Prime]
   subst p
   exact finiteCompletionIntegers_moduleFinite v
 
+private theorem free_transportedAlgebra (p : ℕ) [Fact p.Prime]
+    (v : HeightOneSpectrum (𝓞 K)) (h : (finiteCompletionBasePrime v : ℕ) = p) :
+    letI := transportedAlgebra p v h
+    Module.Free ℤ_[p] (v.adicCompletionIntegers K) := by
+  subst p
+  exact finiteCompletionIntegers_moduleFree v
+
+/-- The local integer lattice is free over the common base prime, with the
+scalar action used by the integral base-change equivalence. -/
+public theorem finiteCompletionOverPrime_moduleFree (p : ℕ) [Fact p.Prime] (v : V[p]) :
+    Module.Free ℤ_[p] O[v] :=
+  free_transportedAlgebra p v.1 (finiteCompletionBasePrime_eq_of_dvd_primeSpan p v)
+
+/-- The local integer lattice is finite over the common base prime. -/
+public theorem finiteCompletionOverPrime_moduleFinite (p : ℕ) [Fact p.Prime] (v : V[p]) :
+    Module.Finite ℤ_[p] O[v] :=
+  finite_transportedAlgebra p v.1 (finiteCompletionBasePrime_eq_of_dvd_primeSpan p v)
+
 variable (p : ℕ) [hp : Fact p.Prime]
 
 local notation "A" => ℤ_[p] ⊗[ℤ] 𝓞 K
@@ -185,8 +203,7 @@ private theorem baseChangeHom_surjective : Function.Surjective (baseChangeHom (K
   classical
   let : Finite V[p] := (Ideal.finite_factors (I := P[p])
     (mt Ideal.span_singleton_eq_bot.mp (Nat.cast_ne_zero.mpr hp.out.ne_zero)))
-  let (v : V[p]) : Module.Finite ℤ_[p] O[v] :=
-    finite_transportedAlgebra p v.1 (finiteCompletionBasePrime_eq_of_dvd_primeSpan p v)
+  let (v : V[p]) : Module.Finite ℤ_[p] O[v] := finiteCompletionOverPrime_moduleFinite p v
   rw [← funext (baseChangeHom p).toLinearMap_apply]
   have : Module.Finite ℤ_[p] B := inferInstance
   refine LinearMap.surjective_of_surjective_comp_mkQ (baseChangeHom (K := K) p).toLinearMap

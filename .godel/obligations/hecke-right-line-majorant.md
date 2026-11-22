@@ -1567,24 +1567,66 @@ normalized on-place norm extending a power of it. At the place over $2$
 in $\mathbb Q(i)$ this must give $q_v^{-n_v}=1/4$ and unit mass $1/2$,
 not unit mass one.
 
-The next trace-level obligation at a fixed $p$ is the equality, for
-every $x\in\mathcal O_K$,
+### Checked: Integral traces in the fixed-prime splitting
+
+[`FiniteCompletionIntegralTrace.lean`](../../Proofs/Lemmas/FiniteCompletionIntegralTrace.lean)
+proves for every $t\in A_p=\mathbb Z_p\otimes_{\mathbb Z}\mathcal O_K$
+that $\operatorname{Tr}_{A_p/\mathbb Z_p}(t)$ equals the sum of the integral
+traces of the coordinates of $\Phi_p(t)$, where $\Phi_p$ is the canonical
+equivalence above. In particular, for every $x\in\mathcal O_K$,
 
 $$\sum_{v\mid p}\operatorname{Tr}_{\mathcal O_{K_v}/\mathbb Z_p}(i_v(x))
   = (\operatorname{Tr}_{\mathcal O_K/\mathbb Z}(x):\mathbb Z_p).$$
 
-Use the checked tensor formula at $1\otimes x$. Transport multiplication
-by this tensor across the integral equivalence, express the trace of
-coordinatewise multiplication as the sum of traces, and use
-`LinearMap.trace_baseChange` on multiplication by $x$. For the product
-trace, use the direct-sum basis obtained from the finite free local
-integer bases. Applying the equality to products gives the trace form
-on global integers; then extend by bilinearity to the whole tensor.
-This is a proposed route, not yet checked. The resulting orthogonal
-blocks are needed to transport the trace dual to individual product
-coordinates. `Algebra.trace_localization` and
-`Algebra.discr_localizationLocalization` connect integral traces and
-determinants to the actual fraction fields.
+The trace is invariant under $\Phi_p$. In the product basis indexed by
+pairs of a place and a local basis vector, the diagonal of multiplication
+has the local diagonals as its blocks. For $1\otimes x$, the canonical
+tensor formula identifies the local arguments, and trace base change
+identifies the global value. Applying the result to $tt'$ gives the
+orthogonal block description of the integral trace pairing. No caller
+assumption of freeness, finiteness, or choice of a local scalar map is
+needed.
+
+Masullo uses the local trace character and inverse-different transform
+in (A.3.1.8), p. 558, and prescribes the local multiplicative Haar mass
+in (A.3.2.2), p. 560. Neither passage supplies a comparison with the
+global trace. The splitting is project support, not a theorem of the
+manuscript. The passage reading is provisional (Markdown and numbered
+layout, no rendered inspection).
+
+Independent Yah statement review: Session
+`01a20219-83c4-7160-8911-997347ffb8eb`, child `review-fixed-prime-trace`
+(agent `XbuQqsQ`, read-only output
+`0afd45eef0d4c5338391c7c428bcd8244613d1e3`). The review checked the exact
+place subtype, the transported local scalars and finite-free lattices,
+and both trace statements. Reproduce the endpoint audit with:
+
+```sh
+go run ./cmd/godel audit-local "$CANDIDATE" \
+  Lemmas.FiniteCompletionIntegralBaseChange Lemmas.FiniteCompletionIntegralTrace -- \
+  Masullo.finiteCompletionOverPrime_moduleFree \
+  Masullo.finiteCompletionOverPrime_moduleFinite \
+  Masullo.finiteCompletionOverPrimeFintype \
+  Masullo.finiteCompletionIntegralBaseChange_trace \
+  Masullo.finiteCompletionIntegralBaseChange_trace_global
+```
+
+The trace identity does not yet compare the trace-dual lattices in the
+fraction algebras or identify the local different. The next step is to
+extend $\Phi_p$ to a $\mathbb Q_p$-algebra equivalence
+
+$$\mathbb Q_p\otimes_{\mathbb Z_p} A_p\;\simeq\;\prod_{v\mid p} K_v,$$
+
+with $a\otimes t\mapsto (a\,\Phi_p(t)_v)_v$, using the canonical inclusions
+of the completion integer rings. Transport the checked local
+`finiteCompletionIntegers_isLocalization` to the common base prime, and
+use `IsLocalization.iff_map_piEvalRingHom` for the product at the image
+of the nonzero base integers. `Algebra.trace_localization` then compares
+the localized traces, and testing against integral vectors supported in
+one coordinate isolates the local trace-dual condition. To identify
+that coordinate lattice with the extension of the global codifferent,
+carry the globally trace-dual basis through base change and prove that
+its span is the trace dual of the full base-changed integer lattice.
 
 The local identity
 is not a consequence of equality of the aggregate products. Once it is
