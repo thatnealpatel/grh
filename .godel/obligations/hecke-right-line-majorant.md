@@ -2058,25 +2058,11 @@ go run ./cmd/godel audit-local "$CANDIDATE" \
   Masullo.exists_discriminantNormalizedIdeleHeckeGaussian_zetaIntegral
 ```
 
-**Next shared normalization input:** Formalize the single-place norm
-section of (A.2.2.10), Lemma A.2.2.6, PDF p. 547, in logarithmic
-coordinates. For each `v : InfinitePlace K`, construct a continuous
-monoid homomorphism `sᵥ : Multiplicative ℝ →ₜ* IdeleGroup (𝓞 K) K`
-inserting the positive real scalar $\exp(x/v.\mathrm{mult})$ into
-$v$ and one elsewhere, and prove `ideleNorm (sᵥ x) = Real.exp x.toAdd`.
-Descend via `QuotientGroup.mk'` and use `ideleClassNorm_mk` to obtain
-an actual section on classes, with no supplied splitting. This is
-(A.1.3.6), p. 542, and supplies the radial coordinate for (A.2.2.12),
-p. 547. The source statement and proof were read in Markdown and layout,
-not checked visually. Existing inputs are
-`continuous_ideleClassGroup_ofCompletion`, the real/complex ring and
-isometry equivalences in Mathlib's `Completion/InfinitePlace.lean`,
-`ideleFiniteStageEmbedding_single_infinite`, and `ideleNorm` and
-`ideleClassNorm` in `Lemmas.FinitePlaceSupport`. Use
-`Theorems.RationalIdeleLogSection` as an implementation control, not a
-substitute for either complex or general-field coordinates. The general
-norm-one compactness theorem A.1.4.3(1), p. 542, and the quotient Haar
-calibration remain separate obligations.
+**Shared normalization input:** The [single-place section](single-place-norm.md#archimedean-log-section-on-ideles-and-classes)
+now gives (A.2.2.10), PDF p. 547, and its descent in (A.1.3.6),
+p. 542, on the actual ideles and class group. The next step is the
+topological product splitting (A.2.2.12). Norm-one compactness and the
+quotient Haar calibration remain separate obligations.
 
 **Still open:** Meromorphic continuation, divisor data, and contour
 growth in (B.4.2.1)–(4), the broader test class, general ramified Fourier terms,
