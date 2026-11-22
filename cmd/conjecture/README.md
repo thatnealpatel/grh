@@ -36,7 +36,8 @@ No-change paths do not start the publisher. There is no remote upload.
 The Go transitions bound the run, check the report envelope, pin the evidence,
 and derive card paths from the disposition and slug. Research stages have a
 filtered Yah tool set without workspace writes or shell tools. They receive
-request-local packets rather than prior conversational history. All stage
+request-local packets rather than prior conversational history. Every Yah stage
+runs from the project root; only the packets and pinned evidence live in scratch. All stage
 prompts append the Alpöge exclusion, and the coordinator must pass it to each
 scout. This setup is not a filesystem sandbox; the read tool is not confined
 to the exported files.

@@ -115,13 +115,14 @@ func (r investigation) node(stage role, p packet, next func(godel.Result) (*gode
 	if err := errors.Join(err, f.Close()); err != nil {
 		return nil, err
 	}
-	// Shell code is fixed. Both the prompt and the input
-	// filename are argv, not shell syntax; Yah sees only
-	// this stage's fresh packet on stdin.
-	dir, prompt := r.scratch, commonPrompt+"\n\n"+stage.prompt
+	// Shell code is fixed. Both the prompt and
+	// the input filename are argv, not shell
+	// syntax; Yah sees only this stage's fresh
+	// packet on stdin.
+	prompt := commonPrompt + "\n\n" + stage.prompt
 	env := []string{"YAH_DEFAULT_MODEL=" + luna, "YAH_DEFAULT_TOOLS=" + stage.tools, "YAH_INBOX=off"}
 	if stage == publisher {
-		dir, prompt = r.root, stage.prompt
+		prompt = stage.prompt
 		env = append(env, "YAH_CAMPAIGN_TARGET="+r.target)
 	}
 	args := []string{"-c", `exec timeout --kill-after=5s 12m yah "$@" < "$0"`, f.Name(), "-effort", "medium", "-append", exclusion + "\n\n" + prompt}
@@ -133,7 +134,7 @@ func (r investigation) node(stage role, p packet, next func(godel.Result) (*gode
 		args = append(args, "-yolo")
 	}
 	return &godel.Node{
-		Exec: "sh", Args: args, Directory: dir, Env: env,
+		Exec: "sh", Args: args, Directory: r.root, Env: env,
 		Next: func(result godel.Result) (*godel.Node, error) {
 			if err := r.ctx.Err(); err != nil {
 				return nil, err

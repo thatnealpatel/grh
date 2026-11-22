@@ -13,6 +13,7 @@ import (
 	"patel.codes/godel"
 )
 
+const projectRoot = "/fixture/grh"
 const revision = "0123456789abcdef0123456789abcdef01234567"
 
 var (
@@ -44,8 +45,8 @@ func handoff(t *testing.T, n *godel.Node, stage role) packet {
 	if n.Args[5] != "-append" || !strings.Contains(n.Args[6], exclusion) {
 		t.Fatalf("%s missing appended source exclusion", stage.name)
 	}
-	if (stage != publisher && n.Directory != filepath.Dir(n.Args[2])) || !slices.Contains(n.Env, "YAH_DEFAULT_TOOLS="+stage.tools) {
-		t.Fatalf("%s not confined to the expected scratch directory/tool list: %+v", stage.name, n)
+	if (n.Directory != projectRoot || filepath.Dir(n.Args[2]) == projectRoot) || !slices.Contains(n.Env, "YAH_DEFAULT_TOOLS="+stage.tools) {
+		t.Fatalf("%s wrong project root, packet location, or tool list: %+v", stage.name, n)
 	}
 	data, err := os.ReadFile(n.Args[2])
 	if err != nil {
@@ -86,7 +87,7 @@ func start(t *testing.T, r investigation) *godel.Node {
 
 func TestNoChange(t *testing.T) {
 	t.Parallel()
-	r := investigation{ctx: t.Context(), scratch: t.TempDir()}
+	r := investigation{ctx: t.Context(), scratch: t.TempDir(), root: projectRoot}
 	n := step(t, start(t, r), selector, selection{Action: "stop", Reason: "no worthwhile claim"})
 	terminal(t, n, "no_change")
 	n = step(t, start(t, r), selector, choice)
@@ -105,7 +106,7 @@ func TestNoChange(t *testing.T) {
 
 func TestScoutHandoff(t *testing.T) {
 	t.Parallel()
-	r := investigation{ctx: t.Context(), scratch: t.TempDir()}
+	r := investigation{ctx: t.Context(), scratch: t.TempDir(), root: projectRoot}
 	n := step(t, start(t, r), selector, choice)
 	p := handoff(t, n, scouts)
 	if p.Choice == nil || *p.Choice != choice || p.Scouts != nil {
@@ -125,7 +126,7 @@ func TestCancelAtScoutHandoff(t *testing.T) {
 	t.Parallel()
 	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
-	r := investigation{ctx: ctx, scratch: t.TempDir()}
+	r := investigation{ctx: ctx, scratch: t.TempDir(), root: projectRoot}
 	n := step(t, start(t, r), selector, choice)
 	data, err := json.Marshal(joined)
 	if err != nil {
@@ -139,7 +140,7 @@ func TestCancelAtScoutHandoff(t *testing.T) {
 
 func TestReviseAndRechallenge(t *testing.T) {
 	t.Parallel()
-	r := investigation{ctx: t.Context(), scratch: t.TempDir()}
+	r := investigation{ctx: t.Context(), scratch: t.TempDir(), root: projectRoot}
 	n := step(t, start(t, r), selector, choice)
 	n = step(t, n, scouts, joined)
 	n = step(t, n, constructor, candidate)
@@ -172,7 +173,7 @@ func TestReviseAndRechallenge(t *testing.T) {
 
 func TestPrimaryGateAndPublication(t *testing.T) {
 	t.Parallel()
-	r := investigation{ctx: t.Context(), scratch: t.TempDir(), root: t.TempDir(), target: "main"}
+	r := investigation{ctx: t.Context(), scratch: t.TempDir(), root: projectRoot, target: "main"}
 	lead := "arXiv:1234.56789v2, Theorem 2"
 	s := joined
 	s.Leads = []string{lead}
