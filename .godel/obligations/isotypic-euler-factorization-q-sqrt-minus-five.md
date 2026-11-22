@@ -20,14 +20,12 @@ product and the character-ramification wording in rendered pixel crops.
 The split-sign review independently confirmed (3.2.1.7), p. 124, and the
 retained $L_S$ in (6.3.2.16)–(17), p. 309, on the rendered pages.
 The sign computation below concerns the finite product in the repair, not
-the retained product in those two fractions. Since a local unit has
-zero finite ideal valuation, the ideal-class character is trivial on
-all local units, including those above $2$ and $5$. Thus $S_\chi$ is
-empty. The single-place uniformizer has ideal class $[\mathfrak p_v]$
-(or its inverse under the opposite ideal convention, which gives the
-same sign). The right-hand side below has no archimedean factor or
-power of $20$; the different enters the **reflected quotient**, not
-this equality of finite functions.
+the retained product in those two fractions. The [checked pullback](#checked-idelic-realization-and-local-factors)
+is trivial on local units everywhere, including above $2$ and $5$, so
+$S_\chi$ is empty. Its single-place uniformizer represents the positive
+class $[\mathfrak p_v]$ in the convention used here. The right-hand side
+below has no archimedean factor or power of $20$; the different enters
+the **reflected quotient**, not this equality of finite functions.
 
 ## The norm test and the grouped Euler polynomials
 
@@ -123,9 +121,9 @@ The norm theorem supplies the split-sign representative without a
 further existence hypothesis. The
 [two-class dichotomy](#checked-two-class-dichotomy) uses the same place.
 This is the arithmetic input to the $1+X$ denominator of the repaired
-omitted product, not a checked local Euler factor. Triviality
-on local units and the uniformizer evaluation for an actual idelic
-character are separate. It does not justify the switch on p. 309,
+omitted product. The [checked pullback](#checked-idelic-realization-and-local-factors)
+now transfers that sign to the local polynomial when the input character
+is $-1$ on this class. It does not justify the switch on p. 309,
 (6.3.2.16)–(18); the visual source readings above are inherited.
 
 ### Checked arithmetic at five
@@ -144,10 +142,10 @@ and the class of $(a)$ is the identity.
 These endpoints are unconditional: Every ideal-class character takes
 value $1$ on the identity class, without any two-class premise. This
 supplies the norm and class for the proposed $1-X$ denominator of the
-repaired omitted product. The actual local-unit and uniformizer
-evaluations still need the idelic realization in Lean. No manuscript
-premise enters the ideal arithmetic, and this does not justify the
-printed switch on p. 309, (6.3.2.16)–(18).
+repaired omitted product, now realized at this place by the
+[checked pullback](#checked-idelic-realization-and-local-factors).
+No manuscript premise enters the ideal arithmetic, and this does not
+justify the printed switch on p. 309, (6.3.2.16)–(18).
 
 ### Checked bound on class representatives
 
@@ -201,9 +199,55 @@ The split-sign module exposes the unchanged definition of the place
 class so the norm-two branch can use its `ClassGroup.mk0` body across
 the module boundary.
 
+### Checked idelic realization and local factors
+
+[`IdealClassHeckeCharacter`](../../Proofs/Theorems/IdealClassHeckeCharacter.lean)
+constructs, for every number field $K$ and multiplicative character
+$\varphi:\operatorname{Cl}(\mathcal O_K)\to\mathbb C^\times$, the
+Mathlib `HeckeCharacter` $\chi=\varphi\circ\mathrm{ideleClassIdealClass}$.
+Continuity descends via the actual quotient topology from strict
+exactness on ideles; $\varphi$ is continuous for the discrete topology.
+The norm-one hypothesis is used only to transfer unitarity from
+$\varphi$ to $\chi$, not to construct $\chi$ or evaluate its factors.
+
+The supporting `ideleFinitePart_apply` identifies the coordinate used
+in `count_finiteIdeleIdeal` with the finite projection. Inserting an
+integral unit gives valuation one at every place and hence all counts
+zero. Inserting a uniformizer at $v$ gives multiplicative valuation
+`WithZero.exp (-1)` there, so the **negative** log gives count $+1$ at
+$v$ and zero elsewhere. The resulting fractional ideal is exactly
+$\mathfrak p_v$, and `ideleClassIdealClass_ofAdicCompletion_uniformizer`
+identifies its class as `ClassGroup.mk0`, not its inverse.
+`idealClassHeckeCharacter_isUnramifiedAt` retains every finite factor;
+`idealClassHeckeCharacter_localValue` computes its coefficient as
+$\varphi([\mathfrak p_v])$, with no choice of uniformizer in the endpoint.
+
+This is the local input to §3.2.1, (3.2.1.1), p. 122, and Definition
+3.2.1.4, (3.2.1.7), p. 124, of the pinned edition. It uses the inherited
+[rendered product and uniformizer readings](#manuscript-interface),
+[normalized Euler convention](finite-gaussian-tamagawa.md), and
+[rendered local-unit criterion](hecke-right-line-majorant.md#exact-conductor-of-the-pulled-back-unit-character)
+after (3.1.2.6), p. 121, checked there by `NkpINOg` (Yah
+`01a202a5-f688-75bf-848e-9695477371bb`). A worker-rendered crop of
+§3.1.2, p. 120, also shows local restriction via insertion into one
+coordinate followed by the quotient. Independent review `wHYyxOT`
+(transcript Yah `01a202b4-3d37-77b9-aec2-ec46e15ba1d1`) checked all
+eight signatures, the positive count and `mk0` orientation, and the
+applicability of the inherited source evidence and layout extraction.
+That review did not newly inspect pixels on p. 120.
+
+A fresh import checks the normalized inverse local polynomial for
+arbitrary $K$, definitional agreement with `qSqrtNegFivePlaceClass`,
+and the local polynomials $1+X$ above $2$ (with $\varphi([\mathfrak
+p_2])=-1$) and $1-X$ above $5$, as well as the existing sign at every
+odd residue-degree-one place. These are per-place checks, not a
+verification of all grouped rational-prime factors.
+
+### Remaining grouped identity
+
 The grouped local polynomial identity for the actual quadratic class
-character, including its construction on idèle classes, is still open
-in Lean. [`HeckeDirichletFactorization`](../../Proofs/Theorems/HeckeDirichletFactorization.lean)
+character is still open in Lean.
+[`HeckeDirichletFactorization`](../../Proofs/Theorems/HeckeDirichletFactorization.lean)
 proves `Masullo.finiteHeckeCharacterEulerProduct_eq_dirichlet_of_local`
 by regrouping the convergent product over the finite fibers of
 contraction to $\mathbb Z$ and evaluating the local polynomials at
@@ -233,8 +277,8 @@ grouped polynomial identity for a constructed idèle-class character.
 **Next arithmetic check:** For a rational prime $p$ for which $(p)$ is
 prime in the full integer ring, identify the prime fiber with the single
 principal ideal $(p)$ and prove its residue degree is two. This would
-supply the multiplicity, class sign, and exponent for $1-X^2$, conditional
-on the idelic realization. The splitting criterion and its comparison
-with the Dirichlet signs, and the local-unit and uniformizer evaluations
-for the idelic realization, remain separate. The explicit product's
-circle growth and common-height estimate are already unconditional in Lean.
+supply the multiplicity, class sign, and exponent for $1-X^2$ using the
+checked pullback. The splitting criterion and its comparison with the
+Dirichlet signs, and the all-prime grouped equality, remain separate.
+The explicit product's circle growth and common-height estimate are
+already unconditional in Lean.

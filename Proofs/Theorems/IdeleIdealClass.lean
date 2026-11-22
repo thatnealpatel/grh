@@ -35,6 +35,12 @@ local notation "V" => HeightOneSpectrum (𝓞 K)
 public noncomputable def ideleFinitePart : I →* Fˣ :=
   Units.map (MonoidHom.snd (InfiniteAdeleRing K) F)
 
+/-- The finite projection preserves each finite coordinate of the underlying adele. -/
+public theorem ideleFinitePart_apply (g : I) (v : V) :
+    ((ideleFinitePart g : Fˣ) : F) v = (g : A).2 v := by
+  unfold ideleFinitePart
+  rfl
+
 private theorem ideleFinitePart_surjective : Function.Surjective (ideleFinitePart (K := K)) := by
   intro f
   refine ⟨MulEquiv.prodUnits.symm (1, f), ?_⟩
