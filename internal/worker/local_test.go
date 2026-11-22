@@ -2,7 +2,6 @@ package worker
 
 import (
 	"bytes"
-	"io"
 	"os"
 	"path/filepath"
 	"strings"
@@ -16,6 +15,7 @@ func TestCheckLocal(t *testing.T) {
 		{"stale source", "workspace does not match"},
 		{"extra source", "extra file"},
 		{"outside module", "not a candidate module"},
+		{"bad joint import", "import project modules together"},
 		{"bad kernel check", "lake env leanchecker"},
 		{"missing receipt", "missing project declaration audit"},
 		{"missing signature", "no type signature for Example.ok"},
@@ -23,7 +23,7 @@ func TestCheckLocal(t *testing.T) {
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			var extra []string
-			if tc.name == "multiple modules" {
+			if tc.name == "multiple modules" || tc.name == "bad joint import" {
 				extra = []string{"Second"}
 			}
 			root, rev := repository(t, extra...)
@@ -47,7 +47,20 @@ func TestCheckLocal(t *testing.T) {
 set -eu
 case "$*" in
   '--wfail build Proofs') touch built ;;
-  'env leanchecker -v Props.Example') test -f built; test "$SCENARIO" != 'bad kernel check'; touch replayed ;;
+  'env lean --stdin')
+    test -f built
+    cat > imports.lean
+    if [ "$SCENARIO" = 'multiple modules' ] || [ "$SCENARIO" = 'bad joint import' ]; then
+      printf '%s\n' 'import Props.Example' 'import Props.Second' | cmp - imports.lean
+    else
+      printf '%s\n' 'import Props.Example' | cmp - imports.lean
+    fi
+    if [ "$SCENARIO" = 'bad joint import' ]; then
+      echo 'duplicate declaration Example.ok'
+      exit 1
+    fi
+    touch coimported ;;
+  'env leanchecker -v Props.Example') test -f coimported; test "$SCENARIO" != 'bad kernel check'; touch replayed ;;
   'env leanchecker -v Props.Second') test -f replayed; touch second ;;
   'env lean --json --stdin')
     test -f replayed
@@ -69,8 +82,8 @@ case "$*" in
   *) exit 12 ;;
 esac
 `, 0700)
-			var out bytes.Buffer
-			err := CheckLocal(t.Context(), root, rev, modules, []string{"Example.ok"}, &out, io.Discard)
+			var out, diagnostics bytes.Buffer
+			err := CheckLocal(t.Context(), root, rev, modules, []string{"Example.ok"}, &out, &diagnostics)
 			if tc.want == "" {
 				if err != nil || !strings.Contains(out.String(), "audit passed for "+rev) ||
 					!strings.Contains(out.String(), "Example.ok : True") {
@@ -82,6 +95,13 @@ esac
 				t.Fatalf("want failure containing %q and no receipt, got %v and %q", tc.want, err, out.String())
 			}
 			switch tc.name {
+			case "bad joint import":
+				if !strings.Contains(diagnostics.String(), "duplicate declaration Example.ok") {
+					t.Fatalf("missing Lean import error in diagnostics: %q", diagnostics.String())
+				}
+				if _, err := os.Stat(filepath.Join(root, "replayed")); !os.IsNotExist(err) {
+					t.Fatalf("started the scoped replay despite a failed joint import: %v", err)
+				}
 			case "stale source", "extra source", "outside module":
 				if _, err := os.Stat(filepath.Join(root, "built")); !os.IsNotExist(err) {
 					t.Fatalf("started a build from mismatched inputs: %v", err)

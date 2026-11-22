@@ -16,11 +16,11 @@ import (
 )
 
 // CheckLocal builds the pinned project in a campaign integration workspace,
-// replays the supplied modules, and reports the built endpoint signatures and
-// axioms. It compares the disk build inputs with the exact revision without
-// snapshotting or changing the jj graph. Use a trusted toolchain and Lake
-// cache. Independent statement review and selecting all affected modules and
-// endpoints remain the caller's job.
+// imports the project modules together, replays the supplied modules, and
+// reports the built endpoint signatures and axioms. It compares disk inputs
+// with the exact revision without snapshotting or changing the jj graph. Use a
+// trusted toolchain and Lake cache. Independent statement review and selecting
+// all affected modules and endpoints remain the caller's job.
 func CheckLocal(ctx context.Context, root, revision string, modules, decls []string, out, diagnostics io.Writer) error {
 	if !commitID.MatchString(revision) || len(modules) == 0 || len(decls) == 0 {
 		return errors.New("expected full jj commit ID, project modules, and declarations")
@@ -52,10 +52,25 @@ func CheckLocal(ctx context.Context, root, revision string, modules, decls []str
 	if err := verify(); err != nil {
 		return fmt.Errorf("workspace does not match %s: %w", revision, err)
 	}
+	imports, err := localProjectImports(os.DirFS(root))
+	if err != nil {
+		return fmt.Errorf("list project imports: %w", err)
+	}
 	c := cmd("lake", "--wfail", "build", "Proofs")
 	c.Stdout = diagnostics
 	if err := c.Run(); err != nil {
 		return fmt.Errorf("lake --wfail build Proofs: %w", errors.Join(ctx.Err(), err))
+	}
+	// Separate modules can compile even
+	// when importing them together fails
+	// with duplicate declarations. Keep
+	// this import-only check separate from
+	// the selected-module audit.
+	c = cmd("lake", "env", "lean", "--stdin")
+	c.Stdin = strings.NewReader(imports)
+	c.Stdout = diagnostics
+	if err := c.Run(); err != nil {
+		return fmt.Errorf("import project modules together: %w", errors.Join(ctx.Err(), err))
 	}
 	// Lean 4.36 replays multiple targets
 	// concurrently within one process.
@@ -90,6 +105,28 @@ func CheckLocal(ctx context.Context, root, revision string, modules, decls []str
 	}
 	_, err = fmt.Fprintf(out, "Local build and kernel/endpoint audit passed for %s (%s).\n", revision, strings.Join(modules, ", "))
 	return err
+}
+
+func localProjectImports(tree fs.FS) (string, error) {
+	var imports strings.Builder
+	err := fs.WalkDir(tree, "Proofs", func(name string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+		if d.IsDir() || !strings.HasSuffix(name, ".lean") {
+			return nil
+		}
+		rel := strings.TrimSuffix(strings.TrimPrefix(name, "Proofs/"), ".lean")
+		mod := strings.ReplaceAll(rel, "/", ".")
+		area, _, nested := strings.Cut(rel, "/")
+		if !nested || (area != "Props" && area != "Theorems" && area != "Lemmas") ||
+			strings.Contains(rel, ".") || !leanName.MatchString(mod) {
+			return fmt.Errorf("unsupported project module path %q", name)
+		}
+		fmt.Fprintf(&imports, "import %s\n", mod)
+		return nil
+	})
+	return imports.String(), err
 }
 
 func compareLocalInputs(root string, archive []byte, modules []string) error {
