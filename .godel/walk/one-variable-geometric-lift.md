@@ -50,5 +50,44 @@ and diagonal control is the reviewer's. The later passages were read
 from chapter Markdown and PDF extraction and are provisional, not
 rendered-page checks. No Lean result is used.
 
+## The first-coordinate preview
+
+**Printed passage.** §1.3, printed p. 21, paragraph beginning
+“This is one of the aspects we will be discussing.” Masullo says
+he will lift the kernel in the first of its two variables, from
+C_F × C_F to GL₁(A_F) × C_F. The wording “first of the two”
+and the target product were spot-checked in rendered pixel crops
+of the same pinned PDF. The paragraph as a whole was read in
+chapter Markdown, layout extraction, and raster OCR. It announces
+a construction, but does not give one.
+
+The p. 24 recipe is on two idelic coordinates and cuts in the
+argument written as y, on a provisional reading of the chapter
+Markdown and PDF extraction. The final bullet of §1.3.2, p. 27,
+calls y the first variable by convention, though listed second.
+The convention wording was spot-checked in rendered pixels and
+cross-checked with raster OCR. Thus a difference in argument order
+need not be a contradiction. It still matters which variable is
+kept idelic: It must be the argument on which the divisorial
+indicators act.
+
+**Open comparison.** Even if the p. 24 lift has absolute orbit
+recovery, plain orbit summation in its non-cut argument does not
+produce the advertised summable lift. Write K(x,y) for the
+simultaneously F×-invariant lift, with y the cut variable. For
+any h₀ in F×, K(hx,h₀y) = K(h₀⁻¹hx,y), so where the orbit sum
+converges absolutely, ∑ₕ K(hx,h₀y) = ∑ₕ K(hx,y) by reindexing.
+The sum is then principal-invariant in both variables. A further
+orbit sum in y diverges wherever this value is nonzero. One can
+instead multiply the quotient kernel pulled back in y by a
+normalized one-variable indentation, which restores orbit
+recovery. That choice alone does not identify the terms cut from
+K or compare their averaged skewered diagonals. The missing step
+is a construction for the actual geometric lift, retaining y and
+showing orbit recovery and the quotient-Haar diagonal comparison
+with (1.3.1.12) under compatible averages. The reindexing and
+the distinction between the two constructions are the reviewer's
+observations, not a formal verification of Masullo's preview.
+
 [source]: ../sources/masullo/README.md
 [spectral]: ../obligations/trace-spectral.md#from-the-weighted-kernel-to-the-haar-diagonal
