@@ -1706,6 +1706,56 @@ go run ./cmd/godel audit-local "$CANDIDATE" \
   Masullo.finiteCompletionFractionBaseChange_traceDual_iff
 ```
 
+### Local discriminant as the trace-dual index
+
+[`FiniteCompletionTraceIndex.lean`](../../Proofs/Lemmas/FiniteCompletionTraceIndex.lean)
+works at every actual finite place $v$ of a number field. Write
+$R=\mathbb Z_p$, $F=K_v$, $O=\mathcal O_{K_v}$, and
+$D=\{x\in F:\operatorname{Tr}_{F/\mathbb Q_p}(xO)\subseteq R\}$.
+The map $I:O\to D$ is the actual completion inclusion: Localization
+identifies the field trace of a product of integers with the image of
+its integral trace. For any finite $R$-basis $b$ of $O$, localize $b$
+and take the field trace-dual basis. Its $R$-span is $D$, and the
+coordinate map sends $x$ to $(\operatorname{Tr}(xb_i))_i$. On $I(O)$
+this map is the integral Gram matrix acting on the coordinates in $b$.
+It follows that the inverse coordinate map identifies the Gram cokernel
+with $D/I(O)$; the representative equation checks the induced map.
+
+The Gram map is injective since both the lattice inclusion and the
+trace-coordinate map are injective. Apply the p-adic determinant/index
+lemma to it and transport the cardinality across the equivalence:
+
+$$\bigl\|\operatorname{disc}_R(b)\bigr\|_p
+  = \frac{1}{\#(D/I(O))}.$$
+
+The quotient is finite: If its totalized `Nat.card` were zero, the
+identity would force the integral discriminant to vanish, but its image
+is the nonzero discriminant of the localized field basis. No global
+codifferent identification or measure hypothesis enters this proof.
+
+Masullo prescribes the square root of the discriminant norm in
+(A.3.1.2), PDF p. 556, and (A.3.2.2), p. 560, and uses it with the
+inverse-different indicator in (A.3.1.8), p. 558. The lattice index
+calculation above is project support, not a derivation in those
+passages, and does not construct those Haar measures. The reading
+here is provisional: Markdown and numbered PDF text, not rendered pages.
+
+Independent statement review: Yah session
+`01a20246-e109-7bf5-96da-9dfbadedc2b3`, children
+`review-local-trace-index` (`IpUpRRd`, read-only output
+`6469256dc6472ffd6ca1c1dc66f75e24e0031a45`) and
+`review-trace-index-supplements` (`ncTdWcU`). Reproduce the endpoint
+and kernel audit in the integration workspace:
+
+```sh
+go run ./cmd/godel audit-local "$CANDIDATE" Lemmas.FiniteCompletionTraceIndex -- \
+  Masullo.finiteCompletionIntegersToTraceDual \
+  Masullo.finiteCompletionTraceGramQuotientEquiv \
+  Masullo.finiteCompletionTraceGramQuotientEquiv_symm_mk \
+  Masullo.finiteCompletion_norm_discr_eq_inv_card_traceDual_quotient \
+  Masullo.finite_finiteCompletionTraceDual_quotient
+```
+
 **Next:** Identify each local trace dual with the
 $\mathcal O_{K_v}$-span of the image of the global codifferent in $K_v$.
 Use `Algebra.TensorProduct.cancelBaseChange` and localization of
@@ -1717,10 +1767,13 @@ the $\mathbb Z_p$-span of the extended dual basis gives the full trace
 dual by the basis-coordinate criterion (see
 `Module.Basis.traceDual_repr_apply` and
 `LinearMap.BilinForm.dualSubmodule_span_of_basis`). Project via the
-checked trace-dual equivalence. This comparison, the resulting local
-different, and the placewise discriminant identity are not yet proved.
-The local identity does not follow from equality of aggregate products.
-After proving it, identify the local Haar scales using the exact stage
+checked trace-dual equivalence. This comparison and the resulting local
+different are not yet proved. Separately, to compute the local index as
+$q_v^{d_v}$, view $D$ as a fractional ideal of the completion DVR, compare
+$D/O$ with the quotient by its different, and count the residue quotients
+of the resulting prime power. The local norm formula does not follow
+from equality of aggregate products. Then identify the local Haar scales
+using the exact stage
 restrictions of (A.3.2.5), p. 560, in the raw Gaussian theorem. Keep
 the actual finite unit masses. Quotient Haar is still separate.
 
