@@ -30,12 +30,15 @@ the corrected profile convention; including $x=0$ would not change the
 integral. The statement does not assume that the entire weighted class
 integral is absolutely convergent outside the right half-plane.
 
-**Evidence:** Owning Yah session `01a20550-d5a6-78a3-9def-ba66465b8227`;
-independent fixed-statement/source review `zero-modes-review`
-(`vpqNcax`). The owning session records the exact integrated candidate,
-base, warning-failing build, fresh built signature and axiom report,
-and adoption decision. The source reading is provisional from pinned
-Markdown and numbered PDF layout.
+**Evidence:** Accepted candidate
+`867506623c5f4e04ff9002f6e75bd7db1381eadf`, owning Yah session
+`01a20550-d5a6-78a3-9def-ba66465b8227`. The warning-failing build and
+fresh signature and axiom check passed, with only the allowed axioms.
+Independent reviewer `vpqNcax` (report
+`078537ae74629095a2942c495a1026daa2dc41ce`) inspected tight Braille
+raster crops of PDF pp. 97, 124, and 125 for the signs, Fourier hat,
+and radial factor. The wider reading, including p. 98 and the
+normalization dependencies, is provisional from Markdown and layout.
 
 **Next: Assemble the continuation.** Use
 `existsUnique_unitary_oneParameterCharacter` on the actual continuous

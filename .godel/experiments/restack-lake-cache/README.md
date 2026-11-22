@@ -90,3 +90,47 @@ source, pins, and build environment. Continue comparing the exact patch
 and running the build and fresh import on the replacement candidate.
 Do not learn a polling rule from this run or treat the previous verdict
 as evidence for the replacement. No executable, routing, or proof change.
+
+## Live follow-up: Corrected Gaussian Mellin entireness
+
+Work run `01a20546-eaa7-7d18-a842-172deb3eb3a4` matches work session
+`01a20546-ebfe-7af6-b8e4-93c438e74314` by input and final response.
+The improvement context and owning session
+`01a20550-d5a6-78a3-9def-ba66465b8227` link the work handoff to this
+follow-up; the run record had no stored improvement response at
+inspection. The launch archive in both sessions was
+`68a509c25584718e1aa34b0ba36f1e75b3dc9daa`. Its `cmd/godel` and
+`internal/godel` trees match the work landing and the entireness
+landing. The [work replay](../fixed-statement-review/#follow-up-weighted-small-norm-gaussian)
+separates the earlier draft failures from its stale adoption.
+
+Improvement landed the scalar zero modes at
+`867506623c5f4e04ff9002f6e75bd7db1381eadf` while coordinator `YjLYOPn`
+assembled the independently reviewed entireness result (writer output
+`6d8d2fa42e4b410c22b0f6ef33337922f73a31cb`, reviewer `WigsKzk`). The
+first owner candidate `d436d9dc3397badb62e80ec893188ee6d72bf348`
+built nine project modules. The first provenance command looked for
+`lakefile.lean` rather than `lakefile.toml`; the corrected check compared
+the actual inputs before the build. The first candidate and restack
+`889f934585126bd2e495e509c190e618c2295152` both passed but did not land:
+The intervening adoptions added no Lean inputs to either restack.
+
+Both restacks compared the entire patch and the unchanged Lean inputs,
+then seeded `lib` and `ir` directly and ran the same warning-failing
+build. Neither restack logged a module rebuild. Their fresh joint
+signature and axiom reports matched the first byte for byte. Only
+`733c290eb19976bcb4dc15f00835ef3872bb0fc3` was adopted. See the
+[entireness handoff](../../obligations/single-place-norm.md#entire-corrected-gaussian-radial-mellin-transform)
+for the result and its remaining mathematical scope.
+
+A separate successor probe initially could not import the scalar zero
+modes: That module was accepted but had not been built in the seeded
+cache. Building its real target closed the import failure and the
+three scratch examples elaborated. This is not the historical
+nonexistent-target failure and does not justify widening the proof
+landing gate.
+
+**Decision:** Keep the optional cache recipe and the current campaign
+checks. This run confirms reuse on unchanged Lean inputs, not avoidance
+of the adoption race. Do not install a polling or retry node. No
+measured speed comparison was made.

@@ -2550,17 +2550,40 @@ or new declarations with complete `#print axioms` reports (only
 checks and full candidate identity are recorded by agent `main` in the
 same session; writer verification alone is not an adoption check.
 
-**Next: Evaluate the removed terms on the same witnesses.** Derive
-$\chi(\tau(e^x))=e^{i\lambda x}$ from `Lemmas.OneParameterCharacter`
-for the specific section, with $\lambda\in\mathbb R$. For $\Re s>1$
-prove integrability and evaluate the removed integral as
+**Owning check.** Accepted candidate
+`733c290eb19976bcb4dc15f00835ef3872bb0fc3`, on
+`c6ba655a2bd4172c960654957aa0f0f4a2f8ad26`, passed `lake build --wfail`
+(8613 jobs) in `integration-lVtdOuA`. The exact patch was unchanged
+from both checked stale candidates. The fresh joint report for the six
+reviewed declarations has SHA256
+`ecf353f8e2749bbca3c76bc4de85030ca8d89bedfbac3838704c9221e8414f3c`
+and contains only the allowed axioms. See `owner-entire-final-restack`
+in the owning session.
+
+**Next: Assemble the continuation on the same witnesses.** The scalar
+half-line evaluation is already accepted as
+[`integral_logMellin_zeroModes`](gaussian-zero-modes.md). The missing
+bridge is to apply `existsUnique_unitary_oneParameterCharacter` to the
+actual section composed with $\chi$, so $\chi(\tau(e^x))=e^{i\lambda x}$
+for a unique real $\lambda$. On $\Re s>1$, use integrability from the
+corrected theorem on the same witnesses and from the scalar theorem
+with $a=b\widehat f(0)$ and second coefficient $bf(0)$. The raw weighted
+profile is pointwise the corrected weighted profile plus these modes;
+`integral_add` recovers the raw radial value as
 $$
+\int_{\mathbb R}p(x)e^{sx}\,dx +
 b\left(\frac{\widehat f(0)}{s+i\lambda-1}
        -\frac{f(0)}{s+i\lambda}\right).
 $$
-Add it to the corrected entire integral, retaining the raw discriminant
-factor in the right-half-plane identity. This is the remaining
-fixed-Gaussian continuation step toward Theorem 3.2.2.1(1a),(3);
-its pole statements require proof. No all-class absolute integrability
-outside the original right half-plane, functional equation, RH or GRH
-is established here.
+Retain the inverse square root of the absolute discriminant until
+rescaling to the completed Euler product. Prove meromorphy with at
+most simple poles at $-i\lambda$ and $1-i\lambda$, and entireness when
+the restriction to $C_K^1$ is nontrivial. The trivial restriction by
+itself does not force $\lambda=0$. Section-frequency classification,
+pointwise restoration with `integral_add`, and meromorphy of the
+scalar form with an entire remainder separately elaborated as scratch
+examples; no assembled or independently reviewed Lean endpoint was
+checked. This is the remaining fixed-Gaussian continuation step toward
+Theorem 3.2.2.1(1a),(3). No all-class absolute integrability outside the
+original right half-plane, functional equation, RH, or GRH is
+established here.
