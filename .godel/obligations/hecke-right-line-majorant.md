@@ -1,7 +1,8 @@
 # An absolute majorant for the Hecke right line
 
 **Scope:** The finite Euler product differentiation, two-index
-summation, and integration in (B.4.2.5)–(9), for any number field,
+summation, integration, and Mellin inversion in (B.4.2.5)–(11),
+for any number field,
 without a completed or meromorphically continued Hecke L-function.
 
 ## Source and needed estimate
@@ -138,48 +139,85 @@ pinned Mathlib. Its required normalization, unit-modulus consequence,
 and explicit ramified-place convention are provided by the results
 above. This was extracted-text review, not visual verification.
 
-## Next: Evaluate the two finite right-line integrals
+## Checked: Separate Mellin inversion of the finite right-line integrals
 
-In (B.4.2.10)–(11), p. 615, Masullo invokes Mellin inversion to turn
-both vertical integrals into point samples. Check the extracted
-constants and orientation against an upward contour with
-$ds=i\,dt$ and normalization $1/(2\pi i)$ in (B.4.2.4). A runnable
-project obligation for any number field is as follows. Take
-$a>1$, $s=a+it$, $\Phi(s)=\int_{\mathbb R}g(x)e^{sx}\,dx$ for smooth
-compactly supported $g$, and let $y=m\log q_v$ with $m=k+1$.
-Separate the two right-line profiles, $g(x)e^{ax}$ and
-$g(-x)e^{(a-1)x}$. For the two weights $\Phi(s)$ and $\Phi(1-s)$,
-respectively, show that integrating $e^{-sy}$ with $dt/(2\pi)$
-gives $g(y)$ and $e^{-y}g(-y)$. This gives a common normalization,
-with no relative minus sign at the scalar inversion step. The
-negative sign on each prime-power term comes from the logarithmic
-derivatives. Apply `finiteHecke_right_line_integrals` separately to
-the two coefficient families and use the character theorem to obtain
-the finite-part formula as an absolutely summable joint series. The
-two families can be independent unitary Hecke characters at this
-stage; identifying the reflected one with the conjugate via the
-functional equation is not needed for these right-line evaluations.
+Masullo evaluates the two terms by Mellin/Fourier inversion in
+(B.4.2.10)–(11), p. 615. Compare the upward-line convention in
+(B.4.2.4) and the two local expansions in (B.4.2.7). Provisionally,
+the extraction of (B.4.2.10) displays ordinary $dt$ without the
+$1/(2\pi)$ needed for point evaluation, while (B.4.2.11) displays
+$-i$ multiplying the sample for a positive unnormalized $ds$ term.
+Neither should be used as printed in the extraction. Both integrals
+in (B.4.2.4) have the same normalization $ds/(2\pi i)=dt/(2\pi)$;
+the reflection in the weight does not reverse the upward line. This
+is a mathematical normalization check, not a verified visual reading.
 
-Start from `Lemmas.CompactLogMellinInversion` and
-`compactLogMellin_prime_power_evaluation` in
-`Theorems.RationalExplicitFormulaFinitePlaces`. Those give the
-Fourier rescaling and inversion at $a=2$ for the **sum** of the two
-weights; do not apply the summed identity with a single coefficient
-when the characters differ. `compactLogMellin_vertical_decay` in
-`Props.CompactLogMellin` controls both profiles on any fixed pair of
-lines. The proposed step covers smooth compact log tests, not the
-full test class in Theorem B.4.2.2. The shifted test convention of
-(B.4.2.17) uses $g(x)=e^{-x/2}\varphi(e^x)$, so both samples then
-have the factor $q_v^{-m/2}$.
+`compactLogMellin_right_line_evaluation` and
+`compactLogMellin_reflected_right_line_evaluation` in
+[`Lemmas.CompactLogMellinInversion`](../../Proofs/Lemmas/CompactLogMellinInversion.lean)
+prove the separate scalar identities for all real $a,y$, with smooth
+compact log profile $g$, $\Phi(s)=\int g(x)e^{sx}\,dx$, and $s=a+it$.
+After multiplication by $e^{-sy}$ and integration against
+$dt/(2\pi)$, the weights $\Phi(s)$ and $\Phi(1-s)$ give $g(y)$ and
+$e^{-y}g(-y)$, respectively. The proof uses angular-frequency Fourier
+inversion of the weighted profile, then the substitution $x\mapsto -x$
+in the Mellin weight for the reflected evaluation. The earlier
+combined rational formula shares the same rescaling proof.
 
-**Still open:** The Archimedean factors in (3.2.1.3)–(5), completed
-product, continuation, divisor and conductor data, and contour
-growth premises in (B.4.2.1)–(4) are not provided by the finite series.
-Neither are the ramified Fourier terms or the global trace
-comparison. For the contour reflection, check the orientation of
-(3.2.1.6) against (B.4.2.3): Differentiating
-$L(1-s,\bar\chi)=\epsilon(s,\chi)L(s,\chi)$ gives a minus sign on the
-reflected logarithmic derivative before contour reversal.
+[`Theorems.FiniteHeckeRightLineInversion`](../../Proofs/Theorems/FiniteHeckeRightLineInversion.lean)
+uses the checked joint $L^1$ interchange before applying those
+identities at $y=m\log q_v$, $m=k+1$. For every $a>1$ it evaluates
+each integrable log-derivative term as a negative absolutely
+summable joint series on places $\times\mathbb N$:
+
+- `finiteHecke_direct_right_line`: $(\log q_v)z_\chi(v)^m g(y)$.
+- `finiteHecke_reflected_right_line`: $(\log q_v)z_\psi(v)^m e^{-y}g(-y)$.
+
+The minus sign on each sum is the one in (B.4.2.7), and the separate
+unitary characters preserve the different coefficients. The proof
+covers the finite product and smooth compact log tests; it does not
+establish the rest of (B.4.2.17), p. 616, or the general test class.
+For the shifted convention in that equation, taking
+$g(x)=e^{-x/2}\varphi(e^x)$ gives $q_v^{-m/2}$ in both samples.
+
+**Independent statement review:** `hecke-inversion-review` (`yfLWwpY`,
+parent Yah session `01a200d7-35e1-7637-a950-298bbf2f3b00`, accepted
+base `54d6c5b85297d0eda931e2ed551077449db713c3`) checked the two scalar
+and character formulas against pp. 615–616 of the digest-verified
+manuscript and the accepted Lean interfaces. It confirmed the same
+normalized sign and reciprocal norm factor and distinguished the
+standalone right-line results from the missing global contour link.
+This was extracted-text review, not visual verification.
+
+## Next: Identify the reflected coefficients of the conjugate character
+
+The reflected term in (B.4.2.7), (B.4.2.11), p. 615, and (B.4.2.17),
+p. 616, uses $\bar\chi$, not a free character. Construct it by
+postcomposing the continuous multiplicative map `HeckeCharacter`
+with complex conjugation. Prove it is unitary when $\chi$ is, has
+the same `IsUnramifiedAt` predicates, and satisfies
+`finiteHeckeCoefficient (conjugate χ) v = conj (finiteHeckeCoefficient χ v)`
+for every place. Use `HeckeCharacter.isUnramifiedAt_iff` on local
+units and `IsUnramifiedAt.localValue_eq` at a common uniformizer;
+`MulChar.ofUnitHom_coe` controls restriction on local units, and the
+omitted places have two zero coefficients. Instantiate the reflected
+endpoint and combine the two finite integrals for this single pair.
+This is runnable without analytic continuation or a functional equation.
+
+**Still open:** The Archimedean factors in (3.2.1.3)–(5), the completed
+product, continuation, divisor and conductor data, and contour growth
+premises in (B.4.2.1)–(4) do not follow from these finite evaluations.
+Neither do the ramified Fourier terms or the global trace comparison.
+For the contour, the cited (3.2.1.6), p. 123, gives an everywhere
+nonvanishing entire epsilon factor, not its constant logarithmic
+derivative on its own. Away from zeros and poles, differentiation
+of $L(1-s,\bar\chi)=\epsilon(s,\chi)L(s,\chi)$ gives
+$(L'/L)(s,\chi)=-(L'/L)(1-s,\bar\chi)-\epsilon'/\epsilon$.
+The provisional extraction of (B.4.2.3), p. 614, has a plus sign
+on the reflected derivative. The consuming contour subtracts the
+left upward integral before substituting $t\mapsto -t$, yielding
+a plus on the new upward reflected leg in (B.4.2.4). The conductor
+term still needs a checked epsilon formula with the correct sign.
 
 ## Reproduce the endpoint audit
 
@@ -202,4 +240,17 @@ go run ./cmd/godel audit-local "$CANDIDATE" \
   Masullo.finiteHecke_localPolynomial_eval_inv \
   Masullo.finiteHeckeEulerFactor_eq_one_of_ramified \
   Masullo.finiteHeckeCharacterEulerProduct_logDeriv
+```
+
+For the separate evaluations and the unchanged combined rational scalar
+statement, replay both changed modules:
+
+```sh
+go run ./cmd/godel audit-local "$CANDIDATE" \
+  Lemmas.CompactLogMellinInversion Theorems.FiniteHeckeRightLineInversion -- \
+  Masullo.compactLogMellin_right_line_evaluation \
+  Masullo.compactLogMellin_reflected_right_line_evaluation \
+  Masullo.compactLogMellin_reflected_inversion \
+  Masullo.finiteHecke_direct_right_line \
+  Masullo.finiteHecke_reflected_right_line
 ```
