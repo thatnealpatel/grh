@@ -46,11 +46,13 @@ local notation "Places" => HeightOneSpectrum (𝓞 QSqrtNegFive)
 public noncomputable def qSqrtNegFivePlaceClass (v : Places) : ClassGroup (𝓞 QSqrtNegFive) :=
   ClassGroup.mk0 ⟨v.asIdeal, mem_nonZeroDivisors_iff_ne_zero.mpr v.ne_bot⟩
 
-private theorem placeClass_eq_one_iff (v : Places) :
+/-- The integral class of a place is trivial exactly when its ideal is principal. -/
+public theorem qSqrtNegFive_placeClass_eq_one_iff (v : Places) :
     qSqrtNegFivePlaceClass v = 1 ↔ v.asIdeal.IsPrincipal :=
   ClassGroup.mk0_eq_one_iff _
 
-private theorem span_absNorm_eq_coordinates (a : 𝓞 QSqrtNegFive) :
+/-- The absolute norm of an integral principal ideal in the basis `1, √-5`. -/
+public theorem qSqrtNegFive_span_absNorm_eq_coordinates (a : 𝓞 QSqrtNegFive) :
     ((Ideal.span {a}).absNorm : ℤ) =
       (qSqrtNegFiveIntegersEquiv a).re ^ 2 + 5 * (qSqrtNegFiveIntegersEquiv a).im ^ 2 := by
   rw [Ideal.absNorm_span_singleton, ← Algebra.norm_eq_of_algEquiv qSqrtNegFiveIntegersEquiv a,
@@ -80,7 +82,7 @@ private theorem product_span_of_nonprincipal (v₂ v : Places)
     (hclasses : ∀ c : ClassGroup (𝓞 QSqrtNegFive), c = 1 ∨ c = qSqrtNegFivePlaceClass v₂)
     (hv : ¬ v.asIdeal.IsPrincipal) :
     ∃ a : 𝓞 QSqrtNegFive, v.asIdeal * v₂.asIdeal = Ideal.span {a} := by
-  have hv' : qSqrtNegFivePlaceClass v ≠ 1 := mt (placeClass_eq_one_iff v).mp hv
+  have hv' : qSqrtNegFivePlaceClass v ≠ 1 := mt (qSqrtNegFive_placeClass_eq_one_iff v).mp hv
   have h := (hclasses (qSqrtNegFivePlaceClass v)).resolve_left hv'
   have h₂ : qSqrtNegFivePlaceClass v₂ ≠ 1 := h ▸ hv'
   have hinv := (hclasses (qSqrtNegFivePlaceClass v₂)⁻¹).resolve_left (by simpa using h₂)
@@ -106,14 +108,14 @@ public theorem qSqrtNegFive_split_isPrincipal_iff (v₂ v : Places)
     change v.asIdeal = Ideal.span {a} at ha
     have h : (p : ℤ) = (qSqrtNegFiveIntegersEquiv a).re ^ 2 +
         5 * (qSqrtNegFiveIntegersEquiv a).im ^ 2 := by
-      rw [← hN, ha, span_absNorm_eq_coordinates]
+      rw [← hN, ha, qSqrtNegFive_span_absNorm_eq_coordinates]
     have hmod := congrArg (· % 4) h
     rw [coordinates_emod_four] at hmod
     have : (p : ℤ) % 4 = 1 := by omega
     exact iff_of_true hv (by exact_mod_cast this)
   · obtain ⟨a, ha⟩ := product_span_of_nonprincipal v₂ v hclasses hv
     have hNa : (Ideal.span {a}).absNorm = p * 2 := by rw [← ha, map_mul, hN, h₂]
-    have h := span_absNorm_eq_coordinates a
+    have h := qSqrtNegFive_span_absNorm_eq_coordinates a
     rw [hNa, Nat.cast_mul, Nat.cast_ofNat] at h
     have hmod := congrArg (· % 4) h
     rw [coordinates_emod_four] at hmod
@@ -139,8 +141,8 @@ public theorem qSqrtNegFive_split_classCharacter (v₂ v : Places)
   rw [dirichletNegFour, MulChar.ringHomComp_apply, ZMod.χ₄_nat_eq_if_mod_four, hp]
   simp only [one_ne_zero, ite_false]
   split_ifs with hmod
-  · rw [(placeClass_eq_one_iff v).mpr (h.mpr hmod), map_one, map_one]
-  · have hv : qSqrtNegFivePlaceClass v ≠ 1 := fun he ↦ hmod (h.mp ((placeClass_eq_one_iff v).mp he))
+  · rw [(qSqrtNegFive_placeClass_eq_one_iff v).mpr (h.mpr hmod), map_one, map_one]
+  · have hv : qSqrtNegFivePlaceClass v ≠ 1 := fun he ↦ hmod (h.mp ((qSqrtNegFive_placeClass_eq_one_iff v).mp he))
     rw [(hclasses (qSqrtNegFivePlaceClass v)).resolve_left hv, hχ, map_neg, map_one]
 
 end Masullo

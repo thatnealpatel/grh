@@ -105,6 +105,29 @@ places of an odd split prime. At $5$ this would apply once its degree-one
 place is identified; the lemma does not prove that identification or the
 local factor.
 
+### Checked arithmetic at two
+
+[`IdealClassPrimeTwo`](../../Proofs/Theorems/IdealClassPrimeTwo.lean)
+now constructs `Masullo.qSqrtNegFivePrimeTwo` as a height-one place of
+$\mathcal O_{\mathbb Q(\sqrt{-5})}$. The reduction sends $x+ya$ to
+$x+y$ in $\mathbb F_2$. Its kernel is $(2,1+a)$: If $x+y$ is even,
+then so is $x-y$, and $x+ya=(x-y)+y(1+a)$. The residue ring is
+`ZMod 2`, giving absolute ideal norm $2$, and contraction to $\mathbb Z$
+is $(2)$. In any prime ideal containing $2$, primality applied to
+$(1+a)^2=2(a-2)$ puts $1+a$ in that prime. The kernel is maximal,
+so this proves uniqueness among all prime ideals containing $2$.
+The integral generator norm formula excludes principality: If
+$x^2+5y^2=2$, then $y=0$, and $x^2=2$ is impossible modulo $4$.
+The place class is consequently nonidentity.
+
+The norm theorem supplies the split-sign representative without a
+further existence hypothesis. The two-class dichotomy itself is not
+proved. This is the arithmetic input to the $1+X$ denominator of the
+repaired omitted product, not a checked local Euler factor. Triviality
+on local units and the uniformizer evaluation for an actual idelic
+character are separate. It does not justify the switch on p. 309,
+(6.3.2.16)–(18); the visual source readings above are inherited.
+
 The grouped local polynomial identity for the actual quadratic class
 character, including its construction on idèle classes, is still open
 in Lean. [`HeckeDirichletFactorization`](../../Proofs/Theorems/HeckeDirichletFactorization.lean)
@@ -134,10 +157,11 @@ pp. 800–801, identified in its [holomorphy section](isotypic-inverse-range-q-s
 
 **Open Lean premise for the Hecke transfer:** Instantiate the all-prime
 grouped polynomial identity for a constructed idèle-class character.
-The split sign is available under the stated class-group inputs. Next,
-identify the unique primes and residue norms above $2$ and $5$ and check
-their surviving local factors, including triviality on local units for
-the idelic realization. The class-group inputs, the split/inert relation
-to the Dirichlet signs, and the inert case also remain to be discharged.
+**Next arithmetic check:** Reduce $a$ to zero modulo $5$ to identify
+the unique prime above $5$, and verify that it is $(a)$ of norm $5$.
+This supplies the identity class and residue norm for the proposed
+$1-X$ denominator. The class-group dichotomy, the idelic realization
+(local-unit triviality and uniformizer evaluation), the split/inert
+relation to the Dirichlet signs, and the inert case remain separate.
 The explicit product's circle growth and common-height estimate are
 already unconditional in Lean.

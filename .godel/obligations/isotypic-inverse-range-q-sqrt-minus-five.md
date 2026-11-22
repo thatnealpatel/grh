@@ -172,10 +172,12 @@ class-norm proof in ordinary mathematics. Lean proves the entire
 Dirichlet product and the comparison with the accepted Hecke product
 conditional on the grouped local polynomial identity. The
 [split-prime sign theorem](../../Proofs/Theorems/IdealClassSplitPrimeSign.lean)
-now checks the ideal-level norm test given the two-class dichotomy and
-norm-two representative. The full class-character specialization is
-not yet in Lean. Next, identify the places over $2$ and $5$ and check
-their factors for the idelic realization.
+checks the ideal-level norm test given the two-class dichotomy and
+norm-two representative. The [arithmetic at two](isotypic-euler-factorization-q-sqrt-minus-five.md#checked-arithmetic-at-two)
+now supplies that representative and its nonidentity class in Lean.
+The next arithmetic check is the unique prime above $5$, its residue
+norm, and its principality. The idelic character and its local factors
+remain separate.
 
 The [horizontal reciprocal estimate](isotypic-good-heights-q-sqrt-minus-five.md)
 is now unconditional in Lean for the explicit denominator $D$. Five

@@ -182,9 +182,12 @@ transfer to the actual Hecke function in Lean still requires the
 [grouped local polynomial identity](isotypic-euler-factorization-q-sqrt-minus-five.md)
 for the constructed class character at **every** rational prime. The
 [split-prime sign](../../Proofs/Theorems/IdealClassSplitPrimeSign.lean)
-is now checked given the class-group inputs. The next separate check
-is to identify the places over $2$ and $5$ and show that their local
-factors survive for the idelic character. This result is only
+is checked under the two-class dichotomy and norm-two input. The
+[arithmetic at two](isotypic-euler-factorization-q-sqrt-minus-five.md#checked-arithmetic-at-two)
+now supplies the norm-two place with nonidentity class. Next, check the
+unique place above $5$, its residue norm, and its principality. Neither
+the idelic realization nor the surviving local factors follow from
+those arithmetic results alone. The good-height estimate is only
 for the reciprocal itself, not its derivatives. The [inverse-range realization](isotypic-inverse-range-q-sqrt-minus-five.md)
 still uses provisional readings of the completed and complex local
 normalizations (pp. 123 and 129), the interior-strip Schwartz
