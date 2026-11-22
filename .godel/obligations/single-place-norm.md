@@ -707,8 +707,8 @@ Haar with every admissible stage restriction, its norm-one Haar factor
 in the exact Lebesgue log split, and the Haar predicate and numerical
 mass of `η`. Its parameters are any infinite sector place and any
 ideal-class section (available by `ideleIdealClass_normOne_surjective`).
-This construction does not restrict upstairs Haar to the norm-one fibre
-and does not yet construct counting-normalized Haar on the full classes.
+This construction does not restrict upstairs Haar to the norm-one fibre.
+The full-class transport below uses its norm-one factor.
 
 Independent Yah statement review: Session
 `01a20321-beae-7d49-8fe9-5c1015370cb1`, child `review-norm-one-quotient`
@@ -737,35 +737,78 @@ go run ./cmd/godel audit-local "$CANDIDATE" \
   Masullo.exists_discriminantNormalizedIdeleClassNormOneHaar
 ```
 
-### Next normalization step: Transport the counting formula to the full classes
+### Full-class counting Weil and the absolutely integrable weighted pairing
 
-Let `μ`, `ν`, `η` be as above, `σ` the canonical log splitting of the
-ideles, and `τ` the matching `ideleClassLogSplit`. Put
-`ηC := (logVolume.prod η).map τ`. Prove Haar and the full-class analogue
-of the counting Weil formulas: For Borel `f : I → ℂ` with `Integrable f μ`,
-produce Borel `F ∈ L¹(ηC)` satisfying `F (QuotientGroup.mk x) =
-∑' a : Kˣ, f (IdeleGroup.unitEmbedding (𝓞 K) K a * x)`, with a.e.
-absolute summability and `∫ F dηC = ∫ f dμ`; also prove the Borel
-nonnegative version. This identifies `ηC` with the full-class scale
-used in Definition A.3.2.1, pp. 559–560.
+[`Theorems.IdeleClassWeil`](../../Proofs/Theorems/IdeleClassWeil.lean)
+uses the full-class measure `ηC = (logVolume.prod η₁).map τ`, where `τ`
+is the matching class log split and `η₁` the norm-one counting quotient.
+It is Haar under the norm-one Haar and domain-finiteness hypotheses
+above. The norm quotient has `dt/t` **relative to** `η₁`, not by direct
+pushforward of `ηC` along the norm. The source normalization is Definition
+A.3.2.1 and (A.3.2.1), pp. 559–560, with the split (A.2.2.12), p. 547.
+The canonical single-place section is homomorphic, as required for the
+group split.
 
-One route is to apply `ideleClassLogSplit_mk` and the homomorphism laws
-to identify the quotient in split coordinates with `Prod.map id q₁` and
-the diagonal action with the action on just the second coordinate.
-Then `univ ×ˢ D` is a fundamental domain by the pointwise unique
-principal translation. `Measure.prod_restrict` and `Measure.map_prod_map`
-should identify its restriction pushforward with `logVolume.prod η`.
-For measurable descent use `IsOpenQuotientMap.prodMap` with inverse
-charts `univ ×ˢ U` and generalize the finite-subcover proof to a
-Lindelöf target via `isLindelof_univ.elim_countable_subcover`. Apply the
-generic periodization lemmas once on the product; this avoids separate
-measurability in a sliced Fubini argument.
+If `μ` has that same split with factor `ν`, the Lean bridge identifies
+`ηC` with the pushforward of `μ` restricted to `E = σ '' (univ ×ˢ D)`.
+This is the restriction prescription of Proposition D.1.2.4,
+(D.1.2.5), p. 748, on the actual ideles. The principal action fixes the
+log coordinate and acts by the known norm-one translations. Thus `E`
+is an actual Borel fundamental domain, not a restriction of `μ` to one
+norm fibre. Open quotient charts crossed with the log line give Borel
+descent by a countable cover. The manuscript's pointwise domain and
+cited Weil formula do not alone give this descent in Lean.
 
-For the Mellin identity (3.2.2.11), p. 127, apply this to the pullback
-weighted integrand `x ↦ f x * c (QuotientGroup.mk x)` when it is Borel
-and `L¹(μ)`. The quotient character is constant on each principal
-orbit, so it factors out of the absolutely summable series a.e.
-This leaves the convergence and continuation claims of Theorem 3.2.2.1,
-pp. 124–127, outside the transport theorem. In particular, it does not
-identify a potentially regularized theta transform with the raw
-periodization outside the latter's absolute-integrability domain.
+`lintegral_ideleClass_Weil` and `integral_ideleClass_Weil` give the
+counting specialization of (D.1.2.1), p. 747, on the full classes, for
+Borel nonnegative and complex inputs respectively. They give a Borel
+periodization at every representative using `tsum`, with absolute
+summability for all representatives of almost every class in the
+complex `L¹` case. `integral_ideleClass_Weil_weighted` applies the complex
+formula to `f * (c ∘ q)` and factors out the class weight. It proves
+(3.2.2.11), p. 127, at the level of Borel weighted `L¹`: The integral of
+the weighted periodization equals the upstairs weighted integral. The
+weighted series is absolutely summable for all representatives of
+almost every class; this does not assert unweighted convergence where
+`c` vanishes. To match the manuscript's continuous Schwartz periodization,
+use (2.2.3.1), pp. 81–82, and its absolute convergence premise, Lemma
+2.2.2.1, p. 77. Do not infer integrability upstairs from integrability of
+the signed sum downstairs. These results neither establish the full
+Schwartz test-class convergence hypotheses nor prove continuation.
+
+Independent Yah statement review: Session
+`01a20333-c7b0-7d23-8abe-9c3a178e97d6`, child `review-full-weil`
+(`POrGJML`, read-only output `75240b93cca96c7448c530b01b679a91306dfcd4`).
+Both readers used Markdown and numbered layout, without rendering;
+source readings remain provisional. Exact-candidate replay:
+
+```sh
+go run ./cmd/godel audit-local "$CANDIDATE" \
+  Lemmas.FundamentalDomainQuotientMeasure Lemmas.IdeleFullPeriodization \
+  Theorems.IdeleClassWeil -- \
+  Masullo.measurable_of_comp_openQuotientMap Masullo.ideleFullQuotient_split \
+  Masullo.ideleFullPrincipal_split Masullo.ideleFullPrincipalIndex \
+  Masullo.ideleFullPrincipalIndex_tsum Masullo.ideleFullFundamentalDomain \
+  Masullo.measurable_ideleFullQuotient Masullo.measurableSet_ideleFullFundamentalDomain \
+  Masullo.isFundamentalDomain_ideleFullFundamentalDomain \
+  Masullo.measurable_comp_ideleFullQuotient_iff \
+  Masullo.exists_measurable_ideleFullQuotient_lift \
+  Masullo.ideleClassQuotientMeasure Masullo.ideleClassQuotientMeasure_isHaarMeasure \
+  Masullo.ideleClassQuotientMeasure_eq_map_restrict Masullo.lintegral_ideleClass_Weil \
+  Masullo.integral_ideleClass_Weil Masullo.integral_ideleClass_Weil_weighted
+```
+
+### Next normalization step: Separate the radial Mellin and norm-one pairing
+
+On the same absolutely integrable domain, take the weighted periodization
+`F * c` supplied above. Transport it along `τ` to the product and apply
+Bochner Fubini. For a continuous quasi-character `c`, with `ω` its
+restriction to `C₁`, the factorization
+`c (τ (t,h)) = c (τ (t,1)) * ω h` identifies the inner integral with the
+homogeneous theta pairing of (2.2.5.2), p. 95, wherever the slice is
+integrable. The runnable Borel obligation is a.e. log-slice
+integrability of `h ↦ F (τ (t,h)) * ω h`, integrability of its radial
+pairing with `c (τ (t,1))`, and equality of its iterated integral to the
+upstairs weighted integral. Use that `c` is nonzero on the split
+section; this is not an every-slice convergence or meromorphy claim.
+This is the absolutely integrable part of (3.2.2.5), pp. 125, 127.

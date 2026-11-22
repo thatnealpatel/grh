@@ -3,6 +3,7 @@ module
 public import Mathlib.MeasureTheory.Group.FundamentalDomain
 import Mathlib.MeasureTheory.Integral.DominatedConvergence
 import Mathlib.MeasureTheory.Constructions.BorelSpace.Basic
+public import Mathlib.Topology.Compactness.Lindelof
 
 /-! Support for a countable fundamental-domain quotient. The invariance and
 nonnegative integral arguments come from the checked `QuotientMeasureControl`
@@ -15,11 +16,11 @@ namespace Masullo
 
 section Descent
 
-variable {G Q E : Type*} [TopologicalSpace G] [TopologicalSpace Q] [CompactSpace Q]
+variable {G Q E : Type*} [TopologicalSpace G] [TopologicalSpace Q] [LindelofSpace Q]
     [MeasurableSpace G] [MeasurableSpace Q] [BorelSpace G] [BorelSpace Q] [MeasurableSpace E]
     {q : G → Q}
 
-/-- Continuous inverse charts on a compact target detect Borel measurability. -/
+/-- Continuous inverse charts on a Lindelöf target detect Borel measurability. -/
 public theorem measurable_of_comp_openQuotientMap (hq : IsOpenQuotientMap q)
     (hlocal : ∀ x, ∃ U : Set G, IsOpen U ∧ x ∈ U ∧ InjOn q U)
     {F : Q → E} (hF : Measurable (F ∘ q)) : Measurable F := by
@@ -29,7 +30,7 @@ public theorem measurable_of_comp_openQuotientMap (hq : IsOpenQuotientMap q)
     intro y _
     obtain ⟨x, rfl⟩ := hq.surjective y
     exact mem_iUnion.mpr ⟨x, mem_image_of_mem q (hmem x)⟩
-  obtain ⟨T, hT⟩ := isCompact_univ.elim_finite_subcover _ (fun x ↦ hq.isOpenMap _ (hU x)) hcover
+  obtain ⟨T, hTc, hT⟩ := isLindelof_univ.elim_countable_subcover _ (fun x ↦ hq.isOpenMap _ (hU x)) hcover
   intro A hA
   have hchart (x : G) : MeasurableSet ((F ⁻¹' A) ∩ (q '' U x)) := by
     let e := Equiv.Set.imageOfInjOn q (U x) (hinj x)
@@ -62,7 +63,7 @@ public theorem measurable_of_comp_openQuotientMap (hq : IsOpenQuotientMap q)
       obtain ⟨_, _, h, _⟩ := mem_iUnion₂.mp hy
       exact h
   rw [hEq]
-  exact MeasurableSet.biUnion T.countable_toSet fun x _ ↦ hchart x
+  exact MeasurableSet.biUnion hTc fun x _ ↦ hchart x
 
 end Descent
 
