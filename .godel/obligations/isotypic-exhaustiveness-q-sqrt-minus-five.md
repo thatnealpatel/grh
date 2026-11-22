@@ -201,10 +201,11 @@ This independent check confirms the identification but does not identify
 $C_{F,S}$ with $C_F$ or supply the subsequent converse-theorem range
 calculation.
 
-**Next consequential check:** At $S=S_\infty$, compare the two-component
-Mellin and Fourier lift in (6.3.2.10)–(6.3.2.13) with the one at $S'$.
-The local isotype is trivial, but the global projector has nontrivial
-character and the global polar correction in (6.3.2.11) is absent.
-Check the omitted Euler factors and the two local residue functionals
-at $s=0,1$ before substituting this smaller stage in the range proof.
-The isotypic isomorphism above alone does not do this.
+**Follow-up:** The [reflected gluing audit](isotypic-fourier-gluing-q-sqrt-minus-five.md)
+checks (6.3.2.10)–(6.3.2.13) at $S=S_\infty$. The ordinary forward
+insertion factor does not suffice for the reflected leg: The Fourier
+transforms of the omitted unit balls over $2$ and $5$ contribute
+$20^{1/2-s}$. The continued finite factors cancel the local poles at
+$s=0,1$ without local moment vanishing, but the printed uncorrected pair
+does not glue. The repaired small-stage inverse range lift is the next
+obligation.
