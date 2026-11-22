@@ -36,7 +36,7 @@ Neither a writer build nor a passing helper establishes the integrated
 endpoint.
 
 1. Read the exact integrated candidate diff against the base returned by `tool_campaign integrate`. Verify that the patch matches the intended work and that the workspace sources and pinned Lean/Lake inputs are those of the candidate. Inspect changed Lean source for proof placeholders, new axioms, or unsafe substitutes. Trace the intended declarations to their defining project modules and distinguish manuscript steps from repairs against the pinned source.
-2. Use the owning Yah's Bash in the **integration workspace**, not the writer or durable launch checkout. Start the command with a literal `cd /actual/path`, replacing `/actual/path` with the real absolute path returned by integration, not a shell variable. Build the changed and affected project modules as applicable with `lake build --wfail +Module`. Verify the actual Lake target spelling: For example, `Proofs/Lemmas/AddSubgroupCharIntegral.lean` is `+Lemmas.AddSubgroupCharIntegral`, not `+Proofs.Lemmas.AddSubgroupCharIntegral`. Include the modules defining the endpoints and affected importers when relevant; pass multiple targets to the build as needed.
+2. Use the owning Yah's Bash in the **integration workspace**, not the writer or durable launch checkout. Start the command with a literal `cd /actual/path`, replacing `/actual/path` with the real absolute path returned by integration, not a shell variable. Build the changed and affected project modules as applicable with `lake build --wfail +Module`. If the writer checked the assembled endpoint, start from its tested target list and reconcile it with the exact candidate. Verify targets against the defining source paths, not inferred names: For example, `Proofs/Lemmas/AddSubgroupCharIntegral.lean` is `+Lemmas.AddSubgroupCharIntegral`, not `+Proofs.Lemmas.AddSubgroupCharIntegral`. Include the modules defining the endpoints and affected importers when relevant; pass multiple targets to the build as needed.
 3. From that same workspace in the owning Yah's Bash, run a fresh scratch check with `lake env lean` on the scratch file. Import the selected modules **together** in that file. Run `#check` on each intended built declaration and inspect its binders and hypotheses (use `@` to expose implicit arguments when needed). Run `#print axioms` on each declaration. Only `propext`, `Classical.choice`, and `Quot.sound` are allowed transitively. Reject `sorryAx` or any unknown or unapproved axiom. For example, a check importing one selected module would contain:
 
    ```lean
@@ -49,8 +49,10 @@ endpoint.
    Lean can wrap an axiom list across lines. Read the complete report
    for every expected declaration. If checking mechanically, prefer
    `lake env lean --json`: Each diagnostic's `data` contains the entire
-   message, including any newlines. Match the expected declaration names,
-   require one report per name, and check every axiom in each list.
+   message, including any newlines. Leave `pp.universes` off for
+   `#print axioms` if matching names exactly: Enabling it can print
+   universe suffixes on allowed names. Match the expected declaration
+   names, require one report per name, and check every axiom in each list.
    A count of lines containing `depends on axioms:` is not a verdict.
 
 4. Obtain a fresh independent Yah review of the intended statements against the exact mathematical obligation, including any added endpoint or changed statement. Compare the built signatures, including assumptions and scope, with the independently reviewed statements. A familiar declaration name, clean axiom report, or successful build cannot establish that the built statement is the right one.
