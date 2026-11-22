@@ -209,6 +209,33 @@ go run ./cmd/godel audit-local "$CANDIDATE" Theorems.IdeleIdealClassStrict -- \
   Masullo.ideleIdealClassNormOne_strictExact
 ```
 
+## Hausdorff idele classes
+
+[`Theorems.IdeleClassSeparation`](../../Proofs/Theorems/IdeleClassSeparation.lean)
+proves the discreteness and closedness of the principal ideles in the
+induced idelic topology, and the Hausdorff assertion for their actual
+quotient, for every number field. These are the separation assertions
+of Lemma A.1.3.4(1)–(2), PDF p. 542. The project supplies the open
+identity neighborhood: Intersect the empty stage of Lemma A.1.3.3,
+p. 541, with the strict Archimedean product bound for the difference
+from one. For a principal idele of a field element other than one,
+its nonzero difference has finite factors at most one by the
+valuation inequality and Archimedean product less than one by the
+window. This contradicts the product formula for the norm of
+(A.1.3.3), p. 541. Hence the principal subgroup is discrete, then
+closed in the Hausdorff ideles. In particular the actual norm-one
+subtype of the quotient is Hausdorff, independently of compactness.
+The source readings are provisional (pinned Markdown and numbered PDF
+layout, not rendered pages). Independent Yah statement review:
+Session `01a202a6-4063-74b7-99da-31335e5b3f4f`, child
+`review-compactness` (`gRumDYP`).
+
+```sh
+go run ./cmd/godel audit-local "$CANDIDATE" Theorems.IdeleClassSeparation -- \
+  Masullo.discreteTopology_principalIdeles Masullo.isClosed_principalIdeles \
+  Masullo.t2Space_ideleClassGroup
+```
+
 **Next: The Archimedean compact cover.** For every number field, in the
 norm-one subgroup of `∀ v : InfinitePlace K, v.Completionˣ`, construct a
 compact set whose translates by `(𝓞 K)ˣ` cover that subgroup. This is the
