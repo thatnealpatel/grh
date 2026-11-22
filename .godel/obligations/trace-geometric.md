@@ -96,7 +96,14 @@ interface, and cutoff scope against the digest-matched extraction and
 accepted Lean dependencies. Audit scope: `Theorems.IndentationShellSupport`
 and the four endpoints above.
 
-**Remaining interface and runnable check.** The block statement is for
+**Remaining interface.** The independently reviewed [normalized section
+collar](trace-section-collar-q.md) gives a concrete version of the
+replacement route below. It has the same radial action and shell support
+as the base lift and fails to reproduce a nonzero periodic witness near
+$\log 2$. The short derivative control also separates the global and
+local limits at the same fixed annulus in level-first order. Neither
+result identifies the actual manuscript shell, nor compares the global
+trace to the joint local cutoff. The block statement is for
 a mask applied **after** the double-leg lift of a specified quotient
 kernel. It does not move that mask through an upstairs transition
 projection or identify the result with the lift in (11.3.2.2), which
