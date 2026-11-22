@@ -38,7 +38,8 @@ used to reuse the narrower test class of the uniqueness theorem. -/
       (∑' ρ : criticalStripZetaZeros,
         (m ρ : ℂ) * positiveLaplaceTest (shiftedZetaZero ρ) f)
 
-private theorem zetaZeroOrder_eq_of_test_sum_eq {m : criticalStripZetaZeros → ℕ}
+/-- Agreement on positive-log mass-zero tests recovers every noncentral order. -/
+public theorem zetaZeroOrder_eq_of_test_sum_eq {m : criticalStripZetaZeros → ℕ}
     (hm : ∀ ρ, m ρ ≤ zetaZeroOrder ρ)
     (heq : ∀ f : ℝ → ℂ, ContDiff ℝ ∞ f → HasCompactSupport f → tsupport f ⊆ Ioi (0 : ℝ) →
       (∫ x in Ioi (0 : ℝ), f x) = 0 →
