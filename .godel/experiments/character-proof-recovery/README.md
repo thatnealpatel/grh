@@ -27,6 +27,17 @@ recovered module removes only the scratch axiom-print diagnostic and
 has SHA-256 `3e4162057d8965488534081cb9bab0e2931e26b6c38a7adb8087921aa985c3d3`.
 The exact-candidate `audit-local` command is in the proof handoff.
 
+**Outcome:** Candidates `28fbbe896c73068eb7ff4aeb68e7370bdfc55527` and
+`0a4a31f8b0d8ad4a3753f703d7614cc3f30b38aa` passed the full local audit,
+but both adoptions were stale. The first advancing base added
+`Proofs/Theorems/IdealClassSplitPrimeSign.lean`, so the second candidate
+needed an ordinary audit. The next advancing base changed only
+`cmd/companion/nodes.go`. We compared the Lean and Lake inputs, seeded
+from the second candidate's trusted build cache, repeated the full
+audit on `eba0e8a9fe1ad6a88f22b4f6ef6deeee8fcf9783`, and adopted that
+exact revision after comparing the built endpoint with the review.
+This is a recovery result, not evidence for changing the live router.
+
 **Comparison:** The preceding run `01a200f6-cd75-715f-91d5-f96a05e4eefe`
 (work `01a200f6-ceba-7622-963f-8bc1fe2cf743`, improvement
 `01a20102-7cbf-7fef-869f-96df6c51ce37`) used the archive at

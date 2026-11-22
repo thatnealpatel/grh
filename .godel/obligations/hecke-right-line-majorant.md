@@ -414,8 +414,28 @@ proof in scratch but could not create a campaign workspace. Recovery
 from `616c5a9723c8342162bd3f3647cd07a4fa84ad06` preserved the reviewed
 proof and statement; the Lean sources and pins at that base were
 unchanged from the review. See the
-[recovery record](../experiments/character-proof-recovery/README.md)
-and the exact-candidate audit command below.
+[recovery record](../experiments/character-proof-recovery/README.md).
+The full local build, separate replay, and endpoint checks passed on
+accepted `eba0e8a9fe1ad6a88f22b4f6ef6deeee8fcf9783`. Its built signature
+matched the reviewed statement, and the only reported axioms were
+`propext`, `Classical.choice`, and `Quot.sound`.
+
+## Continuous Archimedean insertion and restriction
+
+In §3.1.2.2, p. 121, Masullo calls $j_v:F_v^\times\to C_F$ a
+continuous insertion homomorphism and uses $c_v=c\circ j_v$ in
+(3.1.2.4). This reading used Markdown and the numbered PDF layout
+extraction, not the rendered page. The two
+[Lean endpoints](../../Proofs/Theorems/ArchimedeanHeckeRestriction.lean),
+`Masullo.continuous_ideleClassGroup_ofCompletion` and
+`Masullo.continuous_archimedeanHeckeRestriction`, supply continuity
+for the existing Archimedean insertion and its composition with a
+Mathlib Hecke character. In the product of completions, each
+coordinate is the identity at $v$ or constant one; the finite adeles
+coordinate is constant one. `Units.continuous_map` and then the
+principal-subgroup quotient give continuity with the actual Mathlib
+topologies. Neither endpoint supplies injectivity, a local analytic
+isomorphism on character spaces, or any finite-place continuity claim.
 
 ## Next: Recognize the actual Archimedean restrictions
 
@@ -423,24 +443,32 @@ The scalar repair still takes $b$ and $\tau$ as parameters. To use it
 in (3.2.1.3)–(5), p. 123, obtain them from the restriction of a unitary
 Hecke character. Pinned `HeckeCharacter.restrict` is finite-only.
 
-**Runnable next step:** Prove `Continuous (IdeleClassGroup.ofCompletion R K v)`
-for an infinite place $v$ of a number field $K$ and a Dedekind domain
-$R$ with fraction field $K$. The existing hom uses insertion in the
-product of infinite completions with finite component one, followed
-by `Units.map` and the principal-subgroup quotient. Prove continuity
-of the insertion coordinatewise, then apply `Units.continuous_map`
-and `QuotientGroup.continuous_mk`. This is for the existing hom and
-its actual units and quotient topologies, not an alternative model.
+**Runnable next step (real place):** Given a unitary `χ` and a real
+infinite place $v$, put $x_v=\operatorname{extensionEmbeddingOfIsReal}(hv)(x)$
+for $x\in F_v^\times$. Prove that there exist $\epsilon\in\{0,1\}$
+and $\tau\in\mathbb R$ with
 
-After that, apply the one-parameter classification on the positive
-real ray via log and recover parity from the value at $-1$. For the
-complex angular circle, pull back along `Circle.exp` and derive
-integer weight by $2\pi$-periodicity. Use $\log \lVert z\rVert^2$
-for the complex radial exponent, per §A.1, p. 539; a frequency
-$\eta$ in $\log\lVert z\rVert$ gives $\tau=\eta/2$ on this scale.
-The real and complex completion isometries give the required local
-coordinates. These identifications are not consequences of the
-scalar Gamma calculation alone.
+$$
+\chi(j_v(x))=\operatorname{sgn}(x_v)^\epsilon
+                \exp(i\tau\log |x_v|)\qquad(x\in F_v^\times).
+$$
+
+Use the inverse of `NumberField.Completion.ringEquivRealOfIsReal`
+on units, with continuity from `isometryEquivRealOfIsReal` and
+`Units.continuous_map`. Apply the checked one-parameter theorem to
+the restriction on the units with value $\exp(t)$, then use the
+character of $-1$ (whose square is one) and the signed decomposition
+of each nonzero real. This proves the decomposition used in
+(3.1.2.3), p. 121, for this restriction, before inserting the norm
+power that gives the real factor in (3.2.1.4).
+
+For the later complex angular circle, pull back along `Circle.exp`
+and derive integer weight by $2\pi$-periodicity. Use
+$\log \lVert z\rVert^2$ for the complex radial exponent, per §A.1,
+p. 539; a frequency $\eta$ in $\log\lVert z\rVert$ gives
+$\tau=\eta/2$ on this scale. The complex completion ring equivalence
+and isometry give the local coordinates. These identifications are
+not consequences of the scalar Gamma calculation alone.
 
 **Still open:** Actual character identification and the assembled
 completed product, continuation, divisor data, and contour growth
@@ -517,11 +545,15 @@ go run ./cmd/godel audit-local "$CANDIDATE" \
   Masullo.completedDirichlet_reflect_left_integral
 ```
 
-For the one-parameter classification:
+For the one-parameter classification and Archimedean restriction:
 
 ```sh
 go run ./cmd/godel audit-local "$CANDIDATE" Lemmas.OneParameterCharacter -- \
   Masullo.existsUnique_unitary_oneParameterCharacter
+
+go run ./cmd/godel audit-local "$CANDIDATE" Theorems.ArchimedeanHeckeRestriction -- \
+  Masullo.continuous_ideleClassGroup_ofCompletion \
+  Masullo.continuous_archimedeanHeckeRestriction
 ```
 
 For the compact-log tested shifted pair:
