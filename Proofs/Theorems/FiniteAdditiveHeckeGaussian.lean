@@ -2,9 +2,12 @@ module
 
 public import Theorems.IdeleHeckeGaussian
 import Lemmas.FiniteCompletionAddHaar
+import Lemmas.FiniteCompletionTestDecomposition
+import Lemmas.FiniteHeckePrincipalUnits
 import Lemmas.FiniteHeckeRestriction
 import Lemmas.FiniteLocalNormShell
 public import Mathlib.MeasureTheory.Measure.Haar.Basic
+public import Mathlib.Topology.LocallyConstant.Basic
 import Mathlib.Topology.Algebra.Indicator
 import Mathlib.Topology.MetricSpace.Ultra.Basic
 
@@ -83,6 +86,64 @@ public theorem continuous_hasCompactSupport_finiteAdditiveHeckeGaussian :
         (he (e.symm y)))
     exact (hcont.mono fun y hy ↦ hne y hy).inv₀ fun y hy ↦
       (isUnit_iff_ne_zero.mpr (hne y hy)).map (χ.restrict v) |>.ne_zero
+
+/-- The Gaussian is locally constant, not just continuous. In the ramified case,
+near an integer unit `x` the quotient `y / x` lies in the character's small kernel.
+Off the clopen integer-unit set the test is zero. -/
+public theorem isLocallyConstant_finiteAdditiveHeckeGaussian :
+    IsLocallyConstant (finiteAdditiveHeckeGaussian χ v) := by
+  classical
+  by_cases h : χ.IsUnramifiedAt v
+  · unfold finiteAdditiveHeckeGaussian
+    simp only [ite_eq_left h, finiteCompletionIntegers_eq_closedBall v]
+    exact ((LocallyConstant.const F (1 : ℂ)).indicator
+      (IsUltrametricDist.isClopen_closedBall (0 : F) one_ne_zero)).isLocallyConstant
+  · obtain ⟨ε, hε, _, hχ⟩ := finiteHeckeRestriction_eq_one_near_one χ v
+    have hs : IsClopen U := IsUltrametricDist.isClopen_sphere (0 : F) one_ne_zero
+    unfold finiteAdditiveHeckeGaussian
+    simp only [ite_eq_right h, IsLocallyConstant.iff_exists_open]
+    intro x
+    by_cases hx : x ∈ U
+    · refine ⟨U ∩ Metric.ball x ε, hs.isOpen.inter Metric.isOpen_ball,
+        ⟨hx, Metric.mem_ball_self hε⟩, ?_⟩
+      intro y hy
+      rw [indicator_of_mem hy.1, indicator_of_mem hx]
+      have hxnorm : ‖x‖ = 1 := by simpa [Metric.mem_sphere, dist_zero_right] using hx
+      have hxne : x ≠ 0 := by
+        intro hz
+        simp [hz] at hxnorm
+      have hyx : ‖y * x⁻¹ - 1‖ < ε := by
+        rw [← mul_inv_cancel₀ hxne, ← sub_mul, norm_mul, norm_inv, hxnorm, inv_one, mul_one]
+        exact (dist_eq_norm y x).symm.trans_lt (Metric.mem_ball.mp hy.2)
+      have hm : χ.restrict v y = χ.restrict v x := by
+        calc
+          χ.restrict v y = χ.restrict v ((y * x⁻¹) * x) := by
+            rw [mul_assoc, inv_mul_cancel₀ hxne, mul_one]
+          _ = χ.restrict v x := by rw [map_mul, hχ _ hyx, one_mul]
+      rw [hm]
+    · refine ⟨Uᶜ, hs.compl.isOpen, hx, fun y hy ↦ ?_⟩
+      rw [indicator_of_notMem hy, indicator_of_notMem hx]
+
+/-- Masullo describes the local tests (3.4.3.7)–(8), PDF p. 152, as
+Schwartz–Bruhat. For use with the box span, we prove the pointwise form that
+this description does not spell out: a finite sum on translates of one
+principal ball, with complex weights given by the Gaussian at their centers.
+This is a local input to the tensor (3.4.3.9), not an assertion about that tensor. -/
+public theorem finiteAdditiveHeckeGaussian_eq_sum_principalBalls :
+    ∃ (r : Fˣ) (s : Finset (Set F)) (a : s → O), ∀ x : F,
+      finiteAdditiveHeckeGaussian χ v x =
+        ∑ i : s, ({y : F | (↑r⁻¹ : F) * (y - (a i : F)) ∈ O} : Set F).indicator
+          (fun _ ↦ finiteAdditiveHeckeGaussian χ v (a i : F)) x := by
+  apply finiteCompletionTest_eq_sum_principalBalls v
+    (isLocallyConstant_finiteAdditiveHeckeGaussian χ v)
+  intro x hx
+  have hU : U ⊆ (O : Set F) := by
+    rw [finiteCompletionIntegers_eq_closedBall v]
+    exact Metric.sphere_subset_closedBall
+  unfold finiteAdditiveHeckeGaussian
+  split_ifs
+  · exact indicator_of_notMem hx _
+  · exact indicator_of_notMem (fun h ↦ hx (hU h)) _
 
 /-- The original zero mode, before any norm-one averaging. -/
 public theorem finiteAdditiveHeckeGaussian_zero :

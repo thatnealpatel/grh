@@ -2078,15 +2078,92 @@ character, Fourier, and lattice Poisson interfaces. Each used only
 exact-candidate integration, checks and adoption belong to the owning
 Yah session named above.
 
-**Next local obligation for the ramified Gaussian.** For the test in
-(3.4.3.7)–(8), PDF p. 152, prove for each actual completion $K_v$ and
-continuous Hecke character that `finiteAdditiveHeckeGaussian χ v` is a
-finite complex linear combination of indicators of $a_i+r\mathcal O_v$,
-with one $r\in K_v^\times$ and centers $a_i\in\mathcal O_v$.
-Use a small kernel neighborhood in the unit group (continuity and no
-nontrivial subgroup in a small complex arc), then a finite quotient by a
-principal open ideal, or adapt `padicTest_eq_sum_closedBalls` to the
-actual completion. Before applying pointwise inversion to the global
-test in (3.4.3.9), assemble those decompositions on a common finite stage
-and discharge the separate Archimedean Schwartz factor. Those bridges,
-class continuity for the number-field box span, and GRH remain open.
+#### Finite local Gaussian as a principal-ball sum
+
+[`finiteAdditiveHeckeGaussian_eq_sum_principalBalls`](../../Proofs/Theorems/FiniteAdditiveHeckeGaussian.lean)
+proves, for every number field $K$, Mathlib Hecke character $\chi$, and finite
+place $v$, the following equality at **all** $x\in K_v$:
+\[
+\Phi_{\chi,v}(x)=\sum_{i\in s}\Phi_{\chi,v}(a_i)\,1_{a_i+r\mathcal O_v}(x).
+\]
+Here $r\in K_v^\times$ is a single completion unit (nonzero in the field),
+$s$ is a finite index set of balls, and every $a_i$ lies in $\mathcal O_v$.
+In Lean the ball test is $r^{-1}(x-a_i)\in\mathcal O_v$. Neither unitarity
+nor ramification is required, and both sides are zero off $\mathcal O_v$.
+
+- **Manuscript input.** Definition 3.4.3.2(3), PDF p. 152, gives the
+  integer-ring indicator (3.4.3.7), the inverse character times the
+  integer-unit indicator at ramified places (3.4.3.8), and their use in
+  the Schwartz–Bruhat tensor (3.4.3.9). A local integral unit has norm-one
+  image under single-place idelic insertion, so the finite factor agrees
+  with using the character on the norm-one classes. The description and
+  the finite ramification recalled in §B.6.1.2, p. 636, do not give the
+  common-scale expansion consumed by the box span.
+- **Local constancy repair.**
+  [`finiteHeckeRestriction_eq_one_near_one`](../../Proofs/Lemmas/FiniteHeckePrincipalUnits.lean)
+  pulls a complex neighborhood of $1$ back by the continuous local
+  units-valued restriction. The radius is capped at $1$, so the resulting
+  ultrametric ball about $1$ in the field is a subgroup of the units.
+  Its image is trivial by `complex_eq_one_of_norm_pow_sub_one_lt`:
+  all powers of each element of that image lie within $1/2$ of $1$.
+  `isLocallyConstant_finiteAdditiveHeckeGaussian` uses this at a
+  norm-one center $x$ by applying the kernel result to $y/x$, and
+  uses the clopen complement of the unit sphere for the ramified zero
+  region. The unramified factor is constant on each side of the clopen
+  integer ring, irrespective of the character value on uniformizers.
+- **One radius and finitely many terms.**
+  [`finiteCompletionTest_eq_sum_principalBalls`](../../Proofs/Lemmas/FiniteCompletionTestDecomposition.lean)
+  takes a Lebesgue number of the open fibers on the compact integer
+  ring. A nonzero uniformizer power has norm below both that bound and
+  $1$ and gives the required scale. The closed balls of that radius are
+  open, lie inside the ring for integral centers, and are the translates
+  defined by the inverse-scale test. A finite subcover deduplicated by
+  ball equality gives pairwise disjoint balls. At each integral point
+  exactly one term contributes, and outside the ring none contributes.
+  The Gaussian specialization supplies the vanishing premise directly
+  from the indicators in both branches, not by assuming a value at zero.
+
+**Evidence.** The writer base is `9f7d1847c8d41cf46f2a09283f6a947611dab03d`.
+Owning check session `01a2050d-6f88-7afe-bc8b-1581241c134e` contains
+writer `PbpHUJi` and independent reviewer `TNqqgXh`. The reviewer checked
+both the exact local expansion and the principal-unit kernel claim, using
+pinned Markdown, numbered PDF layout and raster-to-Braille glyph checks
+of the p. 152 displays; this is not direct full-page visual verification.
+The writer ran
+
+```sh
+lake build --wfail +Lemmas.FiniteCompletionTestDecomposition \
+  +Lemmas.FiniteHeckePrincipalUnits +Theorems.FiniteAdditiveHeckeGaussian
+```
+
+and a fresh joint import with `#check @...` and `#print axioms` on all
+four new declarations. Each uses only `propext`, `Classical.choice`,
+and `Quot.sound`. See the owning session for the separate integrated
+candidate checks and adoption decision.
+
+**Next: assemble the actual finite-stage tensor in `adeleBoxSpan`.**
+Take $S$ by `exists_finset_isUnramifiedAt χ`. For arbitrary
+$\phi:\mathcal S(E_\infty,\mathbb C)$ in the existing Euclidean mixed
+coordinates, prove that the following function on the actual adele ring
+belongs to `adeleBoxSpan K`:
+\[
+ z\longmapsto \phi(e_\infty^{-1}(z_\infty))
+ \left(\prod_{v\in S}\Phi_{\chi,v}(z_v)\right)
+ 1_{\{w\in\mathbf A_{K,f}:\,\forall v\notin S,\ w_v\in\mathcal O_v\}}(z_f),
+\]
+where $e_\infty$ is `archimedeanEuclideanToAdele K`. Expand the product
+via `Fintype.prod_sum`; each tuple of local indices supplies center
+$a_{i_v}$ and scale $r_v$ at $v\in S$, and center $0$ and scale $1$
+elsewhere (including the inverse scale). Show that its product of
+indicators with the omitted-place condition is `finiteAdeleBox`'s
+indicator, on and off the stage, and its product of complex weights
+is a scalar on the corresponding `adeleBoxTensor` generator.
+
+Separately identify the corrected Archimedean parity/weight Gaussian
+already used on ideles with such a Schwartz $\phi$, and check that the
+resulting additive tensor restricts to the existing `ideleHeckeGaussian`
+using `finiteAdditiveHeckeGaussian_coe_unit` at the finite places. Only
+then does `adeleBoxSpan_theta_inversion` give the pointwise formula for
+that tensor under the stage Haar, with both zero terms retained. The
+finite-stage assembly, Archimedean identification, class continuity
+for the number-field box span, and GRH are not proved here.
