@@ -1534,29 +1534,68 @@ to evaluate the product off $I^\vee$, rather than invoking `finprod`'s
 infinite-support default. On $I^\vee$, the checked trace-dual support, phase
 product, and centered-mass product give the formula.
 
-Replay at the landing for Yah session `01a20473-41ea-784a-b041-316d86880af7`
-(Lean `v4.36.0`, Mathlib `fc4f59e577feb1a4956671bc04ac18aaaf8cd842`):
-Build `+Lemmas.FiniteCompletionDiagonalSupport +Lemmas.FiniteCompletionBoxIntegral
-+Theorems.FiniteBoxFourier` with `lake build --wfail`. In a fresh joint import
-of these modules, `#check @` and `#print axioms` the three named declarations.
-The session records the exact integration candidate, checks, and independent
-review `box-integral-review` (`QMraDyh`).
+Landing: `88a3e65a3e75b353e855329a127d87d094f1eb20` on base
+`b8cabd6eb671c4db055ea68ff68acfed4fe16d1b`. Yah session
+`01a20473-41ea-784a-b041-316d86880af7`, sequence 128 (command) and 136
+(result), records `lake build --wfail` for the changed modules and
+`Lemmas.FiniteCompletionDiagonalTrace`, `Theorems.NumberFieldDiagonalPhase`,
+and `Theorems.FiniteBoxTraceDual`. The fresh joint import of the three
+changed modules checked the binders and axioms of all three declarations
+above and `finiteCompletionDiagonalPhase_hasFiniteMulSupport`. All four
+use only `propext`, `Classical.choice`, and `Quot.sound`. The owner matched
+these types to the independent mathematical review (`QMraDyh`, sequence
+150); the reviewer did not attest a build or reread of the integrated
+candidate. Adoption is at sequence 152.
 
-**Next: Match the Archimedean Fourier normalization, then combine the box
-products with shifted lattice Poisson.** For $E$ the Euclidean mixed space,
-$\phi\in\mathcal S(E)$, and $y\in E$, prove that integrating
-$\phi(x)e^{-2\pi i\langle x,T_K y\rangle}$ in `archimedeanTraceMeasure K`
-gives $2^{r_2}\mathcal F_{\mathrm{vol}}\phi(T_K y)$, with
-$T_K=$ `archimedeanTraceFrequency K`. The source interface is Definition
-A.3.1.2(1)–(2), p. 556, and Example A.3.1.5, p. 557 (provisional).
-Use `inner_archimedeanTraceFrequency`, `Real.fourier_eq`, and
-`MeasureTheory.integral_smul_measure` in pinned Mathlib. Show the same
-factor converts the volume covolume to the trace covolume. Then apply
-`archimedeanIdeal_poisson` at the embedding of $x_0$, reindex the spatial
-series using `exists_finiteBox_diagonalCoset`, and use the finite product
-above to extend the dual series from $I^\vee$ by zero to $K$. Require
-absolute summability of both full diagonal series, with zero retained.
-This would identify the diagonal sums for one box tensor with the indicated
-product of Fourier integrals. A restricted-product additive measure and
-identification of the product with the actual **global** Fourier integral
-remain separate obligations, as does inversion for the ramified Gaussian.
+#### Shifted Poisson in Archimedean trace measure
+
+[`ArchimedeanTracePoisson.lean`](../../Proofs/Theorems/ArchimedeanTracePoisson.lean)
+uses the same Euclidean mixed space $E$, trace frequency map $T_K$, and
+ideal lattice $L_I$ as `archimedeanIdeal_poisson`. Masullo gives the real
+and complex local measures and characters (Definition A.3.1.2(1)–(2),
+PDF p. 556; Example A.3.1.5, p. 557) and uses the conjugated kernel in
+(2.2.4.32), p. 92. These readings are provisional (pinned Markdown and
+numbered PDF layout). The shifted mixed-space normalization needed for
+the lattice proof of Theorem 2.2.3.2, p. 82, is supplied by Lean:
+
+- `archimedeanTraceFourier_eq` matches the integral with kernel
+  $e^{-2\pi i\langle x,T_K y\rangle}$ against `archimedeanTraceMeasure K`
+  at any $y\in E$ to $2^{r_2}\mathcal F_{\mathrm{vol}}\phi(T_K y)$.
+  This equality uses Mathlib's totalized integral for arbitrary $\phi$;
+  the Poisson theorem uses a Schwartz input.
+- `covolume_archimedeanIdealLattice_traceMeasure_eq_smul` multiplies
+  the ordinary covolume by the same $2^{r_2}$.
+- `archimedeanIdeal_tracePoisson` cancels the scalars. For any nonzero
+  fractional ideal, any Euclidean shift $b$, and any complex Schwartz
+  $\phi$, both full series are absolutely summable. Their identity uses
+  the trace-measure Fourier integral, the positive phase
+  $e^{2\pi i\langle b,T_K\iota(y)\rangle}$ for $y\in I^\vee$, and the
+  reciprocal trace covolume. Both zero indices are retained.
+
+Review and exact-candidate replay: Yah improvement session
+`01a2047b-f88e-7f1f-bbe0-8db92c92fc62`, independent draft statement review
+`XgQoRQE`. Build `lake build --wfail +Theorems.ArchimedeanTracePoisson`.
+In a fresh file, import `Theorems.ArchimedeanTracePoisson`,
+`Theorems.FiniteBoxFourier`, and `Theorems.FiniteBoxDiagonalCoset`
+together; `#check @` and `#print axioms` the new definition and the
+three listed theorems. This checks the local normalization, not a
+product-measure identification of `archimedeanTraceMeasure`.
+
+**Next: Assemble the two full diagonal sums for one translated box
+and a complex Schwartz input at infinity.** For $x,y\in K$, use the
+actual spatial box indicator at $x$, times $\phi(\iota(x))$, and the
+actual finite Fourier product $\prod_v J_v(y)$ at $y$, times
+`archimedeanTraceFourier K φ (archimedeanEuclideanEmbedding K y)`.
+Prove summability of both norm series over $K$ and equality of the
+full sums. Use `exists_finiteBox_diagonalCoset` to choose $x_0$, reindex
+the spatial series by $x=x_0+u$ with $u\in I$, and use
+`mem_archimedeanIdealLattice` to identify $u$ with its lattice image.
+Apply `archimedeanIdeal_tracePoisson` at $b=\iota(x_0)$. Match the
+positive phase on $I^\vee$ by
+`inner_archimedeanEuclideanEmbedding_traceFrequency`; extend by zero
+using `finiteBox_fourier_finprod` off $I^\vee$. Use subtype reindexing
+and preserve $x=0$ and $y=0$ in the ambient sums, even if a particular
+translated box removes $x=0$ from the support. A restricted-product
+additive measure and identification of the product with the actual
+**global** Fourier integral remain separate obligations, as does
+inversion for the ramified Gaussian.
