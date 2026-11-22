@@ -73,7 +73,7 @@ func run(ctx context.Context) error {
 		}
 	}()
 	g := godel.New("Formalize individual Masullo passages from Walk with checked, independently reviewed campaign landings.")
-	_, err = g.Run(ctx, &godel.Params{Node: startNode(ctx, repo, repo.tip, ledger, batchCap, &request), Loop: true, SelfImprove: nil})
+	_, err = g.Run(ctx, &godel.Params{Node: startNode(ctx, repo, repo.tip, ledger, batchCap, &request), Loop: false, SelfImprove: nil})
 	return err
 }
 
@@ -105,8 +105,6 @@ func startNode(ctx context.Context, repo repository, tip func(context.Context) (
 				if len(pending) > 0 {
 					b := batch{edition, repo.target, base, pending}
 					return coordinator(repo.root, b, request, func(godel.Result) (*godel.Node, error) {
-						// Loop continuation execs the next process
-						// without running defers.
 						if err := os.Remove(*request); err != nil {
 							return nil, err
 						}
