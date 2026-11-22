@@ -2141,29 +2141,76 @@ four new declarations. Each uses only `propext`, `Classical.choice`,
 and `Quot.sound`. See the owning session for the separate integrated
 candidate checks and adoption decision.
 
-**Next: assemble the actual finite-stage tensor in `adeleBoxSpan`.**
-Take $S$ by `exists_finset_isUnramifiedAt χ`. For arbitrary
-$\phi:\mathcal S(E_\infty,\mathbb C)$ in the existing Euclidean mixed
-coordinates, prove that the following function on the actual adele ring
-belongs to `adeleBoxSpan K`:
+The local expansion is used in the [finite-stage tensor proof](#checked-finite-stage-hecke-tensor-in-the-box-span).
+
+#### Checked finite-stage Hecke tensor in the box span
+
+[`adeleHeckeTest`](../../Proofs/Theorems/AdeleHeckeTest.lean) evaluates
+Masullo's finite factors with any complex Archimedean Schwartz map
+$\phi$ in the Euclidean mixed coordinates. For a finite set $S$ of
+finite places, it is the following function on the actual adele ring:
 \[
  z\longmapsto \phi(e_\infty^{-1}(z_\infty))
  \left(\prod_{v\in S}\Phi_{\chi,v}(z_v)\right)
  1_{\{w\in\mathbf A_{K,f}:\,\forall v\notin S,\ w_v\in\mathcal O_v\}}(z_f),
 \]
-where $e_\infty$ is `archimedeanEuclideanToAdele K`. Expand the product
-via `Fintype.prod_sum`; each tuple of local indices supplies center
-$a_{i_v}$ and scale $r_v$ at $v\in S$, and center $0$ and scale $1$
-elsewhere (including the inverse scale). Show that its product of
-indicators with the omitted-place condition is `finiteAdeleBox`'s
-indicator, on and off the stage, and its product of complex weights
-is a scalar on the corresponding `adeleBoxTensor` generator.
+where $e_\infty$ is `archimedeanEuclideanToAdele K`. The omitted-place
+condition is part of the function, including off the stage.
 
-Separately identify the corrected Archimedean parity/weight Gaussian
-already used on ideles with such a Schwartz $\phi$, and check that the
-resulting additive tensor restricts to the existing `ideleHeckeGaussian`
-using `finiteAdditiveHeckeGaussian_coe_unit` at the finite places. Only
-then does `adeleBoxSpan_theta_inversion` give the pointwise formula for
-that tensor under the stage Haar, with both zero terms retained. The
-finite-stage assembly, Archimedean identification, class continuity
-for the number-field box span, and GRH are not proved here.
+- **Manuscript input.** Definition 3.4.3.2(3), (3.4.3.7)–(9), PDF
+  p. 152, supplies $1_{\mathcal O_v}$ off the finite ramification set,
+  the inverse-character unit test there, and the restricted tensor.
+  It does not express that tensor as a finite sum of the specific
+  global boxes used by the pointwise repair of (2.2.3.2), p. 82.
+  The p. 152 reading is provisional (pinned Markdown and numbered PDF
+  layout). See the box-span handoff above for the independent rendered
+  verification of the p. 82 identity with its two zero corrections.
+- **Assembly repair.** `adeleHeckeTest_mem_adeleBoxSpan` uses the
+  finite local principal-ball expansion at each $v\in S$. By
+  `Fintype.prod_sum`, a summand selects one center per active place and
+  has scalar equal to the product of the values at those centers.
+  [`exists_adeleBoxTensor_eq_stageBalls`](../../Proofs/Lemmas/AdeleStageBalls.lean)
+  puts the chosen coordinates in an actual center and an actual unit
+  of the finite adeles: Off $S$ the center is zero and the scale and
+  its inverse are one. The resulting box indicator checks both the
+  selected balls on $S$ and integrality everywhere else. Thus the
+  membership is pointwise at every adele for any $S$, without
+  unitarity or a Haar hypothesis.
+- **Stage and idelic compatibility.** For $S\subseteq T$,
+  `adeleHeckeTest_eq_of_subset` gives equality if all newly included
+  places are unramified, even if a newly included coordinate is
+  nonintegral: The local factor then forces the same zero as the old
+  stage guard. Taking a common union gives independence of the stage
+  containing all ramification, such a stage being supplied by
+  `exists_finset_isUnramifiedAt`. `adeleHeckeTest_coe_idele` matches
+  `ideleZetaTest K S arch (finiteHeckeGaussian χ)` on every idele,
+  conditional only on equality of the two Archimedean evaluations.
+  The local restriction `finiteAdditiveHeckeGaussian_coe_unit` and the
+  integer-ring closed unit ball identify the finite product and guard.
+
+**Evidence.** Writer base `024282224262c66e8aeb20a18ade8bebc664ae50`.
+Owning check session `01a2051b-4cd7-7e71-b5a0-ab4e42a64c13` records
+independent Yah review `tensor-review`, the exact-candidate diff and
+build of `Lemmas.AdeleStageBalls`, `Theorems.AdeleHeckeTest`, and
+`Theorems.AdeleBoxThetaInversion`, the joint-import signatures and
+axiom check, and the adoption decision.
+
+**Next: construct the corrected Archimedean Schwartz factor.** For a
+unitary Hecke character $\chi$ and the existing `hχ`, produce
+$\phi_\chi:\mathcal S(E_\infty,\mathbb C)$ whose evaluation at
+$e_\infty^{-1}((a:\mathbf A_K)_\infty)$ equals
+`∏ v, archimedeanHeckeGaussian χ hχ v (ideleInfiniteCoordinates K a v)`
+for every actual idele $a$. Use the *same* chosen parity and opposite
+angular weight as `archimedeanHeckeGaussian`, not just the existence of
+some Gaussian with the right Mellin value. The coordinates are related
+by `archimedeanEuclideanToAdele_symm_mixed`. The scalar functions to
+assemble are polynomial times positive-width Gaussians, using the
+extension embedding at each completion as in `archimedeanHeckeGaussian`.
+Compare (3.4.3.3)–(6), p. 152, and the angular correction in
+`Theorems.ArchimedeanCompletionGaussian`. Once the Archimedean equality
+is proved, the checked restriction identifies the assembled additive
+tensor with `ideleHeckeGaussian` on ideles; apply
+`adeleBoxSpan_theta_inversion` with the same cofinal additive Haar and
+both zero terms. The Archimedean identification, continuity on the
+number-field idele classes, full Schwartz–Bruhat inversion, and GRH
+are not proved here.
