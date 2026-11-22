@@ -176,21 +176,51 @@ go run ./cmd/godel audit-local "$CANDIDATE" Theorems.IdeleIdealClass -- \
   Masullo.ideleClassIdealClass_normOne_eq_one_iff
 ```
 
-**Next: Strictness in (A.2.3.23)–(24), p. 552.** Identify
-`(ideleFiniteUnits : Set (IdeleGroup (𝓞 K) K))` with the range of
-`ideleFiniteStageEmbedding K ∅`. The accepted range formula uses both an
-idele and its inverse; show this is equivalent to local valuation one.
-`isOpenEmbedding_ideleFiniteStageEmbedding` then gives an open subgroup
-inside the kernel. Its translates make the kernel open, on ideles and on
-the norm-one subgroup. Prove the surjections are continuous open maps
-to the discrete ideal class group and the kernels have the closed
-subgroup topology. The Archimedean and finite local compactness inputs
-are in `Lemmas.IdeleFiniteStageMeasure`; distinguish them from the
-compactness of norm-one *classes*.
+The topological step is now in [Strict exactness of the ideal-class sequences](#strict-exactness-of-the-ideal-class-sequences).
 
-The separate presentation (A.2.3.22), the compact finite unit block in
-the class quotient, the Archimedean relatively compact fundamental
-domain of Lemma A.2.3.8, pp. 550–551, and the global compact cover in
-Proposition A.2.3.10 remain open here. The cover is needed for general
-norm-one compactness (Theorem A.1.4.3(1), p. 542). The exact quotient Haar
-volume (A.3.2.1), pp. 559–560, is a further obligation.
+## Strict exactness of the ideal-class sequences
+
+[`Theorems.IdeleIdealClassStrict`](../../Proofs/Theorems/IdeleIdealClassStrict.lean)
+proves (A.2.3.23) and (A.2.3.24) of Proposition A.2.3.9, PDF p. 552.
+Masullo states strict exactness and recalls the restricted-product quotient in
+§A.1.5.3, pp. 544–545. `Theorems.IdeleIdealClass` supplies the placewise
+construction, the kernel descriptions, and the two surjections. The project
+supplies the topology as follows: `range_ideleFiniteStageEmbedding_empty`
+identifies the finite-integral-unit subgroup with the empty open stage of
+Lemma A.1.3.3, p. 541. For a local coordinate and its inverse, the two
+valuations multiply to one, so both are at most one exactly when both equal
+one. The containing ideal-class kernel is then open, and the norm-one
+kernel is its preimage under the subgroup inclusion. An open kernel gives
+continuity to the discrete class group, and discreteness also makes both
+surjections open. The left arrows are the inclusions of the algebraically
+identified kernels with their induced topologies, and are closed embeddings.
+The ideles are locally compact by the compact calibration box with nonempty
+interior; the norm-one ideles are closed therein. These source readings are
+provisional: Pinned Markdown and numbered PDF layout, not rendered pages.
+Independent Yah statement review: Session
+`01a2029d-7302-7bdc-8eca-a95b34f7c42e`, child `review-strict-ideal`.
+
+```sh
+go run ./cmd/godel audit-local "$CANDIDATE" Theorems.IdeleIdealClassStrict -- \
+  Masullo.topologicalSpace_idealClassGroup Masullo.discreteTopology_idealClassGroup \
+  Masullo.locallyCompact_ideleGroup Masullo.locallyCompact_ideleNormOne \
+  Masullo.range_ideleFiniteStageEmbedding_empty Masullo.ideleIdealClassNormOne \
+  Masullo.ideleIdealClassNormOne_apply Masullo.ideleIdealClass_strictExact \
+  Masullo.ideleIdealClassNormOne_strictExact
+```
+
+**Next: The Archimedean compact cover.** For every number field, in the
+norm-one subgroup of `∀ v : InfinitePlace K, v.Completionˣ`, construct a
+compact set whose translates by `(𝓞 K)ˣ` cover that subgroup. This is the
+cover part of Lemma A.2.3.8(1)–(2), pp. 550–551, in the form needed for
+compactness. Match the weighted logarithms from (A.2.3.3) to Mathlib's
+`NumberField.Units.logEmbedding` with one place omitted. Its `unitLattice`
+is a full `IsZLattice`; `Module.Basis.ofZLatticeBasis`, `ZSpan.fract`, and the
+closed parallelepiped give a compact log window. Pull it back using bounded
+norm and inverse norm at every place, restoring the omitted coordinate by
+the norm-one relation. This does not yet choose a disjoint torsion section
+or compute any mass. Next combine this cover with the compact product of
+local integral units and the finitely many norm-one class lifts to get the
+compact cover in Proposition A.2.3.10, and hence Theorem A.1.4.3(1), p. 542.
+The standalone presentation (A.2.3.22), the disjoint fundamental domain,
+and the exact quotient Haar volume (A.3.2.1), pp. 559–560, remain open.
