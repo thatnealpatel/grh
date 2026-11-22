@@ -1838,19 +1838,84 @@ go run ./cmd/godel audit-local "$CANDIDATE" Lemmas.FiniteCompletionTraceIndex --
   Masullo.finite_finiteCompletionTraceDual_quotient
 ```
 
-**Next on the local index:** Show that the same $D$ is the inverse
-of the local different $\mathfrak d_{K_v/\mathbb Q_p}$. For a generator
-$a$ of this nonzero ideal of the completion DVR, multiplication by $a$
-then identifies $D/O$ with $O/\mathfrak d_{K_v/\mathbb Q_p}$. Write the
-local different as $\mathfrak m_v^{d_v}$ and count the quotient as
-$q_v^{d_v}$ using the canonical prime-power quotients and their residue
-cardinalities. This gives the placewise discriminant norm without an
-aggregate product argument. Separately, use the
-[checked codifferent comparison](#checked-the-codifferent-in-each-actual-finite-completion)
-to identify this local ideal with the extension of the global different.
-Then identify the local Haar scales using the exact stage restrictions
-of (A.3.2.5), p. 560, in the raw Gaussian theorem. Keep the actual finite
-unit masses. Quotient Haar is still separate.
+### Placewise discriminant and different norms
+
+[`FiniteCompletionDifferentScale.lean`](../../Proofs/Theorems/FiniteCompletionDifferentScale.lean)
+works at every finite place of a number field. Let $O_v$ be the ring of
+integers in the actual completion over $\mathbb Q_p$, and write
+$\mathfrak d_v=\mathrm{differentIdeal}(\mathbb Z_p,O_v)$,
+$q_v=\#(\mathcal O_K/v)$, and
+$\mathfrak d_v=\mathfrak m_v^{d_v}$. Lean defines $d_v$ by the
+coheight of $\mathfrak d_v$ and proves the power formula, including
+$d_v=0$.
+
+[`FiniteCompletionDifferentQuotient.lean`](../../Proofs/Lemmas/FiniteCompletionDifferentQuotient.lean)
+identifies the actual trace dual with $\mathfrak d_v^{-1}$ inside
+$K_v$. For a generator $a$ of $\mathfrak d_v$, multiplication by $a$
+is a $\mathbb Z_p$-linear equivalence from the trace dual to $O_v$;
+it sends the canonical integer sublattice onto $\mathfrak d_v$.
+The induced quotient equivalence has an inverse that sends the class
+of $x\in O_v$ to the trace-dual class of $x/a$. The existing canonical
+prime-power quotient equivalence and multiplicativity of `Ideal.absNorm`
+give
+
+$$
+\#(O_v^\vee/O_v)=\#(O_v/\mathfrak d_v)=q_v^{d_v}.
+$$
+
+The [trace Gram index](#local-discriminant-as-the-trace-dual-index)
+then gives $\|\operatorname{disc}_{\mathbb Z_p}(b)\|_p=(q_v^{d_v})^{-1}$
+for every finite integral basis $b$. The norm is on the base $\mathbb Z_p$,
+not the normalized norm on $K_v$.
+
+Definition A.3.1.2(3), (A.3.1.2), PDF p. 556, specifies the additive mass
+by the inverse square root of the local different norm and the square
+root of the discriminant norm. Lemma A.3.1.3 on that page uses the
+local different norms in an aggregate product; it does not give the
+placewise lattice calculation. Definition A.3.2.2(2), (A.3.2.2),
+PDF p. 560, prescribes the same discriminant scale on the local
+multiplicative units. Example A.3.1.10, (A.3.1.8), PDF p. 558, uses the
+inverse different as a Fourier support. The result here supplies the
+arithmetic equality, not the Fourier assertion or any Haar construction.
+The source reading is provisional: Pinned Appendix A Markdown and
+numbered PDF layout, not rendered pages.
+
+Independent statement review: Yah session
+`01a20254-2b9e-7515-a29a-c1ce3c00cc87`, child
+`review-local-different` (agent `cfEiqXO`, read-only output
+`d3ea7c0bb9d6918976c7fa202898554f8e062fa5`). The review distinguishes
+$O_v$-submodules for the inverse different, $\mathbb Z_p$-linear
+quotients for the index, the residue-field size from the residue
+characteristic, and the discriminant norm from its square root.
+
+Reproduce the warning-as-error build, kernel replay, and signature and
+axiom comparison in the exact integration workspace:
+
+```sh
+go run ./cmd/godel audit-local "$CANDIDATE" \
+  Lemmas.FiniteCompletionTraceIndex Lemmas.FiniteCompletionDifferentQuotient \
+  Theorems.FiniteCompletionDifferentScale -- \
+  Masullo.coe_finiteCompletionIntegersToTraceDual \
+  Masullo.finiteCompletion_traceDual_eq_inv_differentIdeal \
+  Masullo.finiteCompletionTraceDualQuotientEquiv \
+  Masullo.finiteCompletionTraceDualQuotientEquiv_symm_mk \
+  Masullo.finiteCompletionDifferentExponent \
+  Masullo.finiteCompletion_differentIdeal_eq_maximalIdeal_pow \
+  Masullo.finiteCompletion_differentIdeal_eq_maximalIdeal_pow_iff \
+  Masullo.finiteCompletion_card_quotient_differentIdeal \
+  Masullo.finiteCompletion_card_traceDual_quotient \
+  Masullo.finiteCompletion_norm_discr_eq_inv_residueNorm_pow
+```
+
+**Next:** Invert the [checked extension of the global
+codifferent](#checked-the-codifferent-in-each-actual-finite-completion)
+to identify $\mathfrak d_v$ with the extension of the global different.
+Use `map_finiteCompletion_ideal` and uniqueness of the local exponent
+(`IsDiscreteValuationRing.coheight_pow_maximalIdeal`) to match $d_v$
+with the exponent on the global arithmetic-product branch. Then use
+(A.3.2.5), p. 560, to connect the exact Haar stage restrictions to the
+raw Gaussian theorem; do not drop the finite-place scales. Quotient
+Haar is separate.
 
 **Still open:** Meromorphic continuation, divisor data, and contour
 growth in (B.4.2.1)–(4), the broader test class, general ramified Fourier terms,

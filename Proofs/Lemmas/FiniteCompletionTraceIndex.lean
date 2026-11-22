@@ -46,6 +46,12 @@ public noncomputable def finiteCompletionIntegersToTraceDual : O →ₗ[ℤ_[p]]
     Algebra.trace ℚ_[p] F (algebraMap O F x * algebraMap O F z)
   rw [← map_mul, Algebra.trace_localization ℤ_[p] (ℤ_[p])⁰]
 
+/-- The trace-dual inclusion is the canonical field embedding on representatives. -/
+public theorem coe_finiteCompletionIntegersToTraceDual (x : O) :
+    ((finiteCompletionIntegersToTraceDual v x : D) : F) = iO x := by
+  unfold finiteCompletionIntegersToTraceDual
+  rfl
+
 variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 
 attribute [local instance] finiteCompletion_moduleFinite
