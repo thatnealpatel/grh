@@ -413,6 +413,48 @@ Masullo, p. 122, §3.2.1, (3.2.1.1), and p. 124, Definition 3.2.1.4,
 product, not a printed residue-degree claim, a new visual reading,
 or a use of p. 309.
 
+### Checked Dirichlet sign comparison
+
+[`IdealClassDirichletSigns`](../../Proofs/Theorems/IdealClassDirichletSigns.lean)
+proves `dirichletNegFour_mul_dirichletFive_eq_legendreSym` for every
+odd rational prime $p$:
+$$
+\chi_{-4}(p)\chi_5(p)=\left(\frac{-5}{p}\right) \quad\text{in }\mathbb C.
+$$
+Mathlib's supplementary law at $-1$ identifies the first coefficient
+with $(-1/p)$. The second is $(p/5)$ by definition and equals $(5/p)$
+by reciprocity since $5\equiv 1\pmod 4$. Multiplicativity gives the
+product, including the case $p=5$, where both sides vanish.
+
+At an odd prime, $\chi_{-4}(p)^2=1$, so multiplication by
+$\chi_{-4}(p)$ recovers the sign comparison. The endpoint
+`dirichletFive_eq_dirichletNegFour_of_isSquare` gives equality when
+$-5$ is square modulo $p$ and $p\ne5$; the latter condition rules out
+the square zero. The endpoint
+`dirichletFive_eq_neg_dirichletNegFour_of_not_isSquare` gives opposite
+signs when $-5$ is nonsquare, with no separate exclusion of $5$.
+Fresh-import checks apply these conclusions with the split residue-degree
+and inertness criteria. At $3$ the ordered coefficients are $(-1,-1)$,
+and at $11$ they are $(-1,1)$; the product at $5$ is zero.
+
+This is arithmetic input for the two unramified rows of the grouped
+identity, not an arithmetic claim printed in Masullo. It uses the
+[accepted rendered reading](#manuscript-interface) of p. 122, §3.2.1,
+(3.2.1.1), and p. 124, Definition 3.2.1.4, (3.2.1.7), together with the
+[local-unit and uniformizer interface](#checked-idelic-realization-and-local-factors).
+The class pullback is trivial on finite local units, so the product
+retains both split factors and the inert factor. This step compares
+only the rational Dirichlet coefficients. It does not construct a
+class character or assemble the grouped local identity.
+
+Independent statement and applicability review: `IkXrQkh` (transcript
+Yah `01a202fe-a259-7498-9d2f-979809f43b3e`) checked the three
+signatures against the coefficient definitions, the controls, and the
+applicability of the inherited rendered reading and local-unit
+convention. Its corrected reciprocity finding checks the uniform
+instantiation at $5$, including coincident primes. This was not a new
+visual reading and did not use the p. 309 cross-reference.
+
 ### Remaining grouped identity
 
 The grouped local polynomial identity for the actual quadratic class
@@ -444,11 +486,11 @@ pp. 800–801, identified in its [holomorphy section](isotypic-inverse-range-q-s
 
 **Open Lean premise for the Hecke transfer:** Instantiate the all-prime
 grouped polynomial identity for a constructed idèle-class character.
-**Next arithmetic check:** For $p\nmid10$, relate
-`dirichletNegFour p.val * dirichletFive p.val` to the Legendre symbol of
-$-5$ modulo $p$ by quadratic reciprocity at $5$. This would give equality
-of the two Dirichlet signs in the split row and opposition in the inert
-row. Constructing and normalizing the nontrivial class character and
-assembling the all-prime identity remain separate.
+**Next arithmetic check:** Construct the normalized nontrivial class
+character as a monoid homomorphism to $\mathbb C$, using the two-class
+dichotomy and the nonidentity class of the prime above $2$. Proving
+its norm-one property and value $-1$ at that class supplies the input
+to the idelic pullback and the split and ramified-at-two sign results.
+Assembling the grouped local identities at all primes remains separate.
 The explicit product's circle growth and common-height estimate are
 already unconditional in Lean.
