@@ -1706,6 +1706,88 @@ go run ./cmd/godel audit-local "$CANDIDATE" \
   Masullo.finiteCompletionFractionBaseChange_traceDual_iff
 ```
 
+### Checked: The codifferent in each actual finite completion
+
+[`FiniteCompletionCodifferent.lean`](../../Proofs/Lemmas/FiniteCompletionCodifferent.lean),
+`Masullo.finiteCompletion_traceDual_iff_mem_span_globalCodifferent`, proves
+for every number field $K$, rational prime $p$, place $v$ over $p$, and
+$x\in K_v$, the equivalence
+
+$$
+  [\,\operatorname{Tr}_{K_v/\mathbb Q_p}(xy)\in\mathbb Z_p
+       \text{ for all } y\in\mathcal O_{K_v}\,]
+  \quad\Longleftrightarrow\quad
+  x\in\operatorname{span}_{\mathcal O_{K_v}} i_v(\mathcal O_K^\vee).
+$$
+
+Here $i_v:K\to K_v$ is the canonical completion map and
+$\mathcal O_K^\vee$ is `Submodule.traceDual ℤ ℚ (1 : Submodule (𝓞 K) K)`.
+The `1` is the image of $\mathcal O_K$ in $K$, not the whole field.
+The local trace uses `finiteCompletionOverPrimeFieldAlgebra` and the
+same prime witness as the fraction splitting. No basis, separability,
+or compatibility hypothesis is passed by the caller.
+
+The proof cancels the two intermediate base changes and localizes
+$\mathcal O_K$ to identify the fraction algebra with
+$\mathbb Q_p\otimes_{\mathbb Q} K$. The equality of the coordinate map
+with $i_v$ is checked on global integers using the pure-tensor formulas,
+then on all of $K$ by localization. Trace base change gives the coordinates
+on the extended global trace-dual basis; they are integral exactly when
+all integral-tensor tests have integral trace. Lift a local dual vector
+at just its own coordinate to use this criterion, and project the
+resulting $\mathbb Z_p$-linear combination of dual basis vectors to
+$K_v$. These combinations belong to the claimed $\mathcal O_{K_v}$-span.
+Conversely, each canonical image of a global dual vector passes the
+local trace tests, and the local trace dual is an $\mathcal O_{K_v}$-module.
+This proof does not apply the field-only `Submodule.traceDual` to the
+fraction product algebra.
+
+Masullo's Example A.3.1.10, (A.3.1.8), PDF p. 558, uses the local trace
+character and inverse different; Definition A.3.2.2(2), (A.3.2.2), PDF
+p. 560, prescribes the discriminant-normalized unit mass. Neither gives
+the global-to-local lattice comparison. The theorem above supplies
+that comparison, not the Fourier formula or the measure normalization.
+The source reading is provisional (Markdown and pinned numbered PDF
+layout, without rendered-page inspection).
+
+Independent statement review: Yah session
+`01a2022a-68af-7f49-a9dd-5dacd7bc1baa`, child
+`review-codifferent-statement` (agent `ZJOqyIO`, read-only output
+`2852eafe028a812766f48a8a139d718f4da5b292`), against baseline
+`de7f8b2c33d98af9280fd670307837cb158c15e6`. The reviewer confirmed the
+corrected global lattice (`1`, not `⊤`), local base field, canonical
+completion image, and the need for both local-integer span inclusions.
+The writer's `lake --wfail build +Lemmas.FiniteCompletionCodifferent`,
+`lake env leanchecker Lemmas.FiniteCompletionCodifferent`, and an import
+probe with `#check` and `#print axioms` passed. The built signature matches
+the corrected reviewed statement; axioms are `propext`, `Classical.choice`,
+and `Quot.sound`. The recovered source is byte-identical to writer output
+`ad1278d2f1ac7b12a758c168d3a0c3f475ebc88f`. Reproduce the full
+warning-as-error build, separate module replay, and built endpoint
+signature/axiom audit from the integration workspace:
+
+```sh
+go run ./cmd/godel audit-local "$CANDIDATE" Lemmas.FiniteCompletionCodifferent -- \
+  Masullo.finiteCompletion_traceDual_iff_mem_span_globalCodifferent
+```
+
+**Next on global-to-local comparison:** Prove that extending
+`differentIdeal ℤ (𝓞 K)` along $\mathcal O_K\to\mathcal O_{K_v}$ gives
+`differentIdeal ℤ_[p] O[v]` for the same fixed-prime scalar map.
+Invert the fractional-ideal form of the checked trace-dual equality.
+Use `FractionalIdeal.coeToSubmodule_dual_one`,
+`FractionalIdeal.coeIdeal_differentIdeal`,
+`FractionalIdeal.coeToSubmodule_extended_eq_span`, and
+`FractionalIdeal.extendedHom_coeIdeal_eq_map`. Identify the localization
+map in the span formula with the canonical $K\to K_v$ by checking it
+on $\mathcal O_K$. Do not use `coeToSubmodule_extendedHom_eq_span`,
+which requires the completion integers to be integral over the global
+integers. For `coeIdeal_differentIdeal`, discharge the local fraction-ring
+and $\mathbb Z_p$-integral-closure instances. Then
+`map_finiteCompletion_ideal` identifies the extended ideal with
+$\mathfrak m_v^{n_v}$. The local quotient cardinality below is a
+separate obligation and does not require this extension equality.
+
 ### Local discriminant as the trace-dual index
 
 [`FiniteCompletionTraceIndex.lean`](../../Proofs/Lemmas/FiniteCompletionTraceIndex.lean)
@@ -1756,26 +1838,19 @@ go run ./cmd/godel audit-local "$CANDIDATE" Lemmas.FiniteCompletionTraceIndex --
   Masullo.finite_finiteCompletionTraceDual_quotient
 ```
 
-**Next:** Identify each local trace dual with the
-$\mathcal O_{K_v}$-span of the image of the global codifferent in $K_v$.
-Use `Algebra.TensorProduct.cancelBaseChange` and localization of
-$\mathcal O_K$ to identify the source of $\Psi_p$ with
-$\mathbb Q_p\otimes_{\mathbb Q} K$ compatibly with integral tensors.
-Then extend an integral basis and its global trace-dual basis. The
-trace-duality relations survive by `LinearMap.trace_baseChange`, and
-the $\mathbb Z_p$-span of the extended dual basis gives the full trace
-dual by the basis-coordinate criterion (see
-`Module.Basis.traceDual_repr_apply` and
-`LinearMap.BilinForm.dualSubmodule_span_of_basis`). Project via the
-checked trace-dual equivalence. This comparison and the resulting local
-different are not yet proved. Separately, to compute the local index as
-$q_v^{d_v}$, view $D$ as a fractional ideal of the completion DVR, compare
-$D/O$ with the quotient by its different, and count the residue quotients
-of the resulting prime power. The local norm formula does not follow
-from equality of aggregate products. Then identify the local Haar scales
-using the exact stage
-restrictions of (A.3.2.5), p. 560, in the raw Gaussian theorem. Keep
-the actual finite unit masses. Quotient Haar is still separate.
+**Next on the local index:** Show that the same $D$ is the inverse
+of the local different $\mathfrak d_{K_v/\mathbb Q_p}$. For a generator
+$a$ of this nonzero ideal of the completion DVR, multiplication by $a$
+then identifies $D/O$ with $O/\mathfrak d_{K_v/\mathbb Q_p}$. Write the
+local different as $\mathfrak m_v^{d_v}$ and count the quotient as
+$q_v^{d_v}$ using the canonical prime-power quotients and their residue
+cardinalities. This gives the placewise discriminant norm without an
+aggregate product argument. Separately, use the
+[checked codifferent comparison](#checked-the-codifferent-in-each-actual-finite-completion)
+to identify this local ideal with the extension of the global different.
+Then identify the local Haar scales using the exact stage restrictions
+of (A.3.2.5), p. 560, in the raw Gaussian theorem. Keep the actual finite
+unit masses. Quotient Haar is still separate.
 
 **Still open:** Meromorphic continuation, divisor data, and contour
 growth in (B.4.2.1)–(4), the broader test class, general ramified Fourier terms,
