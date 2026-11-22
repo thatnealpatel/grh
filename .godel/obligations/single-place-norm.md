@@ -134,15 +134,63 @@ go run ./cmd/godel audit-local "$CANDIDATE" \
   Masullo.finiteIdeleIdeal_surjective
 ```
 
-**Next:** Compose the finite projection and `finiteIdeleIdeal` with
-`ClassGroup.mk K`. Prove that the kernel consists exactly of the principal
-ideles times the subgroup whose finite coordinates are all units, and
-factor through the actual idele class group. For (A.2.3.24), correct a
-representative's norm by `ideleLogSection`, which leaves the finite
-coordinates unchanged, and prove the exact norm-one kernel statement.
-These are the algebraic inputs to the representatives (A.2.3.12), p. 549,
-and to the relatively compact covering in Proposition A.2.3.10, p. 552.
-Continuity and openness to the discrete class group, the Archimedean
-fundamental domain, compactness of norm-one classes (Theorem A.1.4.3(1),
-p. 542), and the quotient Haar volume (A.3.2.1), pp. 559–560, are separate
-obligations.
+## The ideal class of an idele
+
+[`Theorems.IdeleIdealClass`](../../Proofs/Theorems/IdeleIdealClass.lean)
+proves algebraic exactness in (A.2.3.23) and (A.2.3.24), PDF p. 552,
+for every number field. Masullo states the strict sequences and recalls the
+classical restricted-product quotient in §A.1.5.3, pp. 544–545. The project
+constructs the arrow as the composite of the finite projection, the checked
+fractional-ideal map, and `ClassGroup.mk K`. A trivial ideal class means the
+finite ideal is principal, so cancelling its diagonal generator leaves an
+idele with integral units at every finite place. Conversely such a product
+has principal finite ideal. Surjectivity uses a finite-idele lift of each
+nonzero fractional ideal, with infinite part one.
+
+For the norm-one kernel, the product formula keeps the remaining factor
+of norm one after cancelling the diagonal. On the integral-unit subgroup
+the norm is the normalized Archimedean product, as shown by
+`ideleNorm_of_mem_ideleFiniteUnits`. For surjectivity, multiplying by the
+inverse of the checked single-place section at the log norm gives a
+norm-one representative with the same finite part. This uses (A.2.2.10),
+p. 547, and supplies the representatives in (A.2.3.12), p. 549. The map
+also descends to actual idele classes. Its restriction to norm-one classes
+is surjective and has kernel the **image** of the norm-one ideles with
+integral finite units, not that subgroup itself.
+
+Independent Yah statement and source review: Session
+`01a20292-6f1d-701f-ba87-a23ec8386e8d`, child `review-class-map`
+(`UkOYlNL`, read-only output `2ff77f980cd5055ce68c290c4310833ed5ba465c`).
+Both readers used pinned Markdown and numbered PDF layout, not rendered
+pages. The source readings remain provisional.
+
+```sh
+go run ./cmd/godel audit-local "$CANDIDATE" Theorems.IdeleIdealClass -- \
+  Masullo.ideleFinitePart Masullo.ideleFiniteUnits Masullo.mem_ideleFiniteUnits \
+  Masullo.ideleNorm_of_mem_ideleFiniteUnits Masullo.ideleIdealClass \
+  Masullo.ideleIdealClass_apply Masullo.ideleIdealClass_diagonal \
+  Masullo.ideleIdealClass_eq_one_iff Masullo.ideleIdealClass_surjective \
+  Masullo.ideleIdealClass_normOne_eq_one_iff Masullo.ideleIdealClass_normOne_surjective \
+  Masullo.ideleClassIdealClass Masullo.ideleClassIdealClass_mk \
+  Masullo.ideleClassIdealClass_surjective Masullo.ideleClassIdealClass_normOne_surjective \
+  Masullo.ideleClassIdealClass_normOne_eq_one_iff
+```
+
+**Next: Strictness in (A.2.3.23)–(24), p. 552.** Identify
+`(ideleFiniteUnits : Set (IdeleGroup (𝓞 K) K))` with the range of
+`ideleFiniteStageEmbedding K ∅`. The accepted range formula uses both an
+idele and its inverse; show this is equivalent to local valuation one.
+`isOpenEmbedding_ideleFiniteStageEmbedding` then gives an open subgroup
+inside the kernel. Its translates make the kernel open, on ideles and on
+the norm-one subgroup. Prove the surjections are continuous open maps
+to the discrete ideal class group and the kernels have the closed
+subgroup topology. The Archimedean and finite local compactness inputs
+are in `Lemmas.IdeleFiniteStageMeasure`; distinguish them from the
+compactness of norm-one *classes*.
+
+The separate presentation (A.2.3.22), the compact finite unit block in
+the class quotient, the Archimedean relatively compact fundamental
+domain of Lemma A.2.3.8, pp. 550–551, and the global compact cover in
+Proposition A.2.3.10 remain open here. The cover is needed for general
+norm-one compactness (Theorem A.1.4.3(1), p. 542). The exact quotient Haar
+volume (A.3.2.1), pp. 559–560, is a further obligation.
