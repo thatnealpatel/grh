@@ -15,11 +15,12 @@ import (
 	"strings"
 )
 
-// CheckLocal builds the pinned project in a campaign integration workspace and
-// audits the supplied modules and endpoints. It checks the disk build inputs
-// against the exact revision without snapshotting or changing the jj graph.
-// Use a trusted local toolchain and Lake cache. Independent statement review
-// and selecting all affected modules and endpoints remain the caller's job.
+// CheckLocal builds the pinned project in a campaign integration workspace,
+// replays the supplied modules, and reports the built endpoint signatures and
+// axioms. It compares the disk build inputs with the exact revision without
+// snapshotting or changing the jj graph. Use a trusted toolchain and Lake
+// cache. Independent statement review and selecting all affected modules and
+// endpoints remain the caller's job.
 func CheckLocal(ctx context.Context, root, revision string, modules, decls []string, out, diagnostics io.Writer) error {
 	if !commitID.MatchString(revision) || len(modules) == 0 || len(decls) == 0 {
 		return errors.New("expected full jj commit ID, project modules, and declarations")
@@ -70,13 +71,13 @@ func CheckLocal(ctx context.Context, root, revision string, modules, decls []str
 		}
 	}
 	c = cmd("lake", "env", "lean", "--json", "--stdin")
-	c.Stdin = strings.NewReader(auditSource(modules, decls))
+	c.Stdin = strings.NewReader(auditSource(modules, decls, true))
 	msgs, err := c.Output()
 	if err != nil {
-		return fmt.Errorf("run Lean axiom audit: %w (%s)", errors.Join(ctx.Err(), err), tail(msgs))
+		return fmt.Errorf("run Lean endpoint audit: %w (%s)", errors.Join(ctx.Err(), err), tail(msgs))
 	}
-	if err := audit(msgs, decls); err != nil {
-		return fmt.Errorf("Lean axiom audit: %w (%s)", err, tail(msgs))
+	if err := audit(msgs, decls, true); err != nil {
+		return fmt.Errorf("Lean endpoint audit: %w (%s)", err, tail(msgs))
 	}
 	if err := verify(); err != nil {
 		return fmt.Errorf("build inputs changed during audit of %s: %w", revision, err)
@@ -87,7 +88,7 @@ func CheckLocal(ctx context.Context, root, revision string, modules, decls []str
 	if _, err := out.Write(msgs); err != nil {
 		return err
 	}
-	_, err = fmt.Fprintf(out, "Local build and kernel/axiom audit passed for %s (%s).\n", revision, strings.Join(modules, ", "))
+	_, err = fmt.Fprintf(out, "Local build and kernel/endpoint audit passed for %s (%s).\n", revision, strings.Join(modules, ", "))
 	return err
 }
 

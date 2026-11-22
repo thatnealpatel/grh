@@ -18,6 +18,7 @@ func TestCheckLocal(t *testing.T) {
 		{"outside module", "not a candidate module"},
 		{"bad kernel check", "lake env leanchecker"},
 		{"missing receipt", "missing project declaration audit"},
+		{"missing signature", "no type signature for Example.ok"},
 		{"changed during audit", "build inputs changed during audit"},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
@@ -53,6 +54,11 @@ case "$*" in
     if [ "$SCENARIO" = 'multiple modules' ]; then test -f second; fi
     cat > audit.lean
     grep -q '^#print axioms Example.ok$' audit.lean
+    grep -Fq 'endpoint signature' audit.lean
+    grep -Fq '.signature d' audit.lean
+    if [ "$SCENARIO" != 'missing signature' ]; then
+      printf '%s\n' '{"severity":"information","data":"endpoint signature '"'"'Example.ok'"'"':\nExample.ok : True"}'
+    fi
     if [ "$SCENARIO" != 'missing receipt' ]; then
       echo '{"severity":"information","data":"checked project declarations"}'
     fi
@@ -66,7 +72,8 @@ esac
 			var out bytes.Buffer
 			err := CheckLocal(t.Context(), root, rev, modules, []string{"Example.ok"}, &out, io.Discard)
 			if tc.want == "" {
-				if err != nil || !strings.Contains(out.String(), "audit passed for "+rev) {
+				if err != nil || !strings.Contains(out.String(), "audit passed for "+rev) ||
+					!strings.Contains(out.String(), "Example.ok : True") {
 					t.Fatalf("expected scoped audit result, got %v and %q", err, out.String())
 				}
 				return

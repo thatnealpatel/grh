@@ -33,9 +33,9 @@ Use this machine. Have a second agent review the proposed statement against the 
 go run ./cmd/godel audit-local <full-candidate-id> Lemmas.Example -- Masullo.exampleLemma
 ```
 
-The command compares `Proofs/` and the pinned Lake inputs on disk with the candidate, runs `lake --wfail build Proofs`, replays each listed module in a separate `leanchecker` process, and checks their axioms and endpoint provenance in Lean. It repeats the input comparison before reporting success. It uses the workspace's trusted local Lake dependencies, and neither contacts a proof worker nor adopts the candidate. Run it with a time bound and keep its output. The check covers the modules named on the command line; it does not select them or certify that a declaration has the intended statement.
+The command compares `Proofs/` and the pinned Lake inputs on disk with the candidate, runs `lake --wfail build Proofs`, replays each listed module in a separate `leanchecker` process, and checks their axioms and endpoint provenance in Lean. It reports each requested declaration's built signature alongside its axiom report. It repeats the input comparison before reporting success. It uses the workspace's trusted local Lake dependencies, and neither contacts a proof worker nor adopts the candidate. Run it with a time bound and keep its output. The check covers the modules named on the command line; it does not select them or certify that a declaration has the intended statement.
 
-Inspect the reviewed statement in the built environment (`import Lemmas.Example` and `#check Masullo.exampleLemma` via `lake env lean --stdin`), and inspect changed Lean sources for new axioms, proof placeholders, or unsafe substitutes. The theorem must be proved in the project and depend only on `propext`, `Classical.choice`, and `Quot.sound`. Record the candidate ID, declarations, and results. Adopt that exact ID only on success. If a proof needs repair, edit in a writer workspace, integrate, and repeat the checks on the new candidate. The older `cmd/godel check` uses a designated remote worker and is not part of this workflow.
+Compare the built signatures in the audit output with the independently reviewed statements, and inspect changed Lean sources for new axioms, proof placeholders, or unsafe substitutes. The theorem must be proved in the project and depend only on `propext`, `Classical.choice`, and `Quot.sound`. Record the candidate ID, declarations, and results. Adopt that exact ID only on success. If a proof needs repair, edit in a writer workspace, integrate, and repeat the checks on the new candidate. The older `cmd/godel check` uses a designated remote worker and is not part of this workflow.
 
 ### Recovering a checked but unadopted proof
 
@@ -52,7 +52,7 @@ test ! -e "$NEW_WS/.lake/build" &&
 cp -a --reflink=auto "$OLD_WS/.lake/build" "$NEW_WS/.lake/build"
 ```
 
-Only seed from a finished local audit under the same trusted toolchain and Lake dependencies. If the comparison is nonempty or the trusted cache is unavailable, use the ordinary audit. In either case, run `audit-local` and inspect the endpoint types in the new integration workspace before adoption. Reusing build artifacts saves elaboration time; it does not transfer an audit verdict to a new candidate.
+Only seed from a finished local audit under the same trusted toolchain and Lake dependencies. If the comparison is nonempty or the trusted cache is unavailable, use the ordinary audit. In either case, run `audit-local` in the new integration workspace and inspect the endpoint signatures it reports before adoption. Reusing build artifacts saves elaboration time; it does not transfer an audit verdict to a new candidate.
 
 ## Bounded pilot
 

@@ -215,7 +215,7 @@ func TestAudit(t *testing.T) {
 	a := info("'A' does not depend on any axioms")
 	b := info("'T.b'' depends on axioms: [Quot.sound, propext, Classical.choice]")
 	decls := []string{"T.b'", "A"}
-	if err := audit([]byte(m+a+b), decls); err != nil {
+	if err := audit([]byte(m+a+b), decls, false); err != nil {
 		t.Fatal(err)
 	}
 	for name, msgs := range map[string]string{
@@ -229,8 +229,30 @@ func TestAudit(t *testing.T) {
 		"unrequested":           m + a + strings.Replace(b, "T.b'", "Other", 1),
 	} {
 		t.Run(name, func(t *testing.T) {
-			if err := audit([]byte(msgs), decls); err == nil {
+			if err := audit([]byte(msgs), decls, false); err == nil {
 				t.Fatal("accepted incomplete or forbidden audit")
+			}
+		})
+	}
+
+	ta := info("endpoint signature 'A':\nA : True")
+	tb := info("endpoint signature 'T.b'':\nT.b' :\n  True")
+	if err := audit([]byte(ta+tb+m+a+b), decls, true); err != nil {
+		t.Fatal(err)
+	}
+	if err := audit([]byte(ta+tb+m+a+b), decls, false); err == nil {
+		t.Fatal("remote audit accepted local-only diagnostics")
+	}
+	for name, msgs := range map[string]string{
+		"missing":     ta,
+		"duplicate":   ta + tb + tb,
+		"empty":       ta + info("endpoint signature 'T.b'':\n "),
+		"unrequested": ta + tb + info("endpoint signature 'Other':\nOther : True"),
+		"warning":     ta + strings.Replace(tb, "information", "warning", 1),
+	} {
+		t.Run("signature "+name, func(t *testing.T) {
+			if err := audit([]byte(msgs+m+a+b), decls, true); err == nil {
+				t.Fatal("accepted invalid signature evidence")
 			}
 		})
 	}
