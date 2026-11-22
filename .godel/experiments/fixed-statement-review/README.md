@@ -58,3 +58,13 @@ Clarify the landing guide to give reviewers fixed statement text or an
 exact revision and leave the build of a moving proof to its owner. A
 changed statement still needs independent review. This replay establishes
 which evidence transferred, not a live time saving or a proof advance.
+
+**Live follow-up, same improvement session.** For the corrected Hecke
+Gaussian, reviewer `GjxnVNh` first checked the manuscript correspondence,
+then the three fixed writer source hashes, without building. Those
+hashes and the signatures agreed at both the stale owner candidate
+`1ee2d1cfbaec17c4b427f5acc549860c2c80fdee` and the adopted restack
+`91a1e59ccd12a3b51dbc5e16f8366d31ca552b0d`. The owner reran the build,
+import, and axiom checks on the restack; no second statement review was
+needed. See the [proof handoff](../../obligations/single-place-norm.md#corrected-archimedean-schwartz-factor-and-pointwise-hecke-theta-inversion).
+This exercises the separation on a landing, not a benchmark of it.

@@ -2264,8 +2264,19 @@ The writer ran `lake build --wfail` on these three targets and
 A fresh joint import checked all eight new public declarations with
 `#check @...` and `#print axioms`; each uses exactly `propext`,
 `Classical.choice`, and `Quot.sound`. See the writer session for
-complete built signatures. This is a writer check, not an integrated
-candidate or adoption check.
+complete built signatures.
+
+**Integrated check.** Owning Yah session
+`01a20522-cddb-7b0c-a62a-3ee14581e0f1` checked candidate
+`1ee2d1cfbaec17c4b427f5acc549860c2c80fdee` against base
+`0ec16aa411ec0b6bda96791e666ded761640c801`; adoption was stale.
+The restack `91a1e59ccd12a3b51dbc5e16f8366d31ca552b0d` on
+`70508bbf859d439bbed02af4b888d7fc76813ad5` had the same exact patch
+and reviewed hashes. The owner reran the five-target `lake build
+--wfail` and the fresh joint import in the restacked workspace
+(`check-hecke-91a1e59`). All eight built signatures matched the
+prior candidate and the independent review; every axiom report
+listed only the three allowed axioms. The restack was adopted.
 
 **Next: bound the reflected theta term before averaging.** Masullo's
 Theorem 2.2.3.4(2), (2.2.3.7), PDF p. 83, applies the large-norm
