@@ -1418,6 +1418,48 @@ go run ./cmd/godel audit-local "$CANDIDATE" Lemmas.FiniteCompletionIntegralLatti
   Masullo.finiteCompletionIntegers_isLocalization
 ```
 
+### Checked: Prime-power quotients of the completion integers
+
+[`FiniteCompletionPrimePow.lean`](../../Proofs/Lemmas/FiniteCompletionPrimePow.lean)
+uses the canonical map $i_v:\mathcal O_K\to\mathcal O_{K_v}$. For every
+$n\geq 0$, the contraction of $\mathfrak m_v^n$ is $v^n$, and $i_v$
+induces the ring equivalence
+
+$$\mathcal O_K/v^n\;\simeq\;\mathcal O_{K_v}/\mathfrak m_v^n,$$
+
+with the explicit class-of-$x$ formula. The image of a global element
+of valuation one in the additive valuation generates $\mathfrak m_v$,
+not necessarily the global prime. This gives the kernel on every
+power. For surjectivity the proof lifts a residue class using
+`finiteCompletionResidueEquiv`, divides the error by that local
+uniformizer, and inducts. Extension of any nonzero global ideal $I$
+along $i_v$ gives $\mathfrak m_v^{\mathrm{multiplicity}(v,I)}$:
+Distinct prime factors become unit ideals, while $v$ extends to
+$\mathfrak m_v$.
+
+Masullo gives the local different and discriminant as inputs to the
+additive mass in (A.3.1.2), p. 556, and the local discriminant as input
+to the multiplicative unit mass in (A.3.2.2), p. 560. The prime-power
+and ideal comparisons are project results needed to realize these
+inputs in the actual completions; they do not identify the local
+trace-dual lattice. This reading used Markdown and numbered layout,
+not new rendered-page inspection.
+
+Independent Yah statement review: Session
+`01a201fd-28c9-715d-95a7-3d1d8c0de9dd`, child
+`review-prime-power-quotients` (agent `YqNjHen`, read-only output
+`5d54a96cb6569e602b8d1467f375834791c19d9c`). The review confirmed the
+uniformizer and quotient arguments, and suggested the residue-lifting
+induction used in the proof. Reproduce the endpoint audit:
+
+```sh
+go run ./cmd/godel audit-local "$CANDIDATE" Lemmas.FiniteCompletionPrimePow -- \
+  Masullo.comap_finiteCompletion_maximalIdeal_pow \
+  Masullo.map_finiteCompletion_prime Masullo.map_finiteCompletion_ideal \
+  Masullo.finiteCompletionPrimePowQuotientEquiv \
+  Masullo.finiteCompletionPrimePowQuotientEquiv_mk
+```
+
 ### Next: Identify the placewise discriminant scales
 
 For $v$ over $p$, in the **actual** completion $K_v$ prove
@@ -1438,14 +1480,16 @@ $\mathbb Z_p\otimes_{\mathbb Z}\mathcal O_K\to\prod_{v\mid p}\mathcal O_{K_v}$,
 with $a\otimes x\mapsto(a\,x)_v$. Start with its reduction modulo $p$:
 Prove that the canonical map gives
 $\mathcal O_K/p\mathcal O_K\simeq\prod_{v\mid p}\mathcal O_{K_v}/p\mathcal O_{K_v}$.
-For each $v\mid p$, identify $p\mathcal O_{K_v}$ with the $e_v$-th
-power of its maximal ideal and prove the canonical map on quotients
-by the $e_v$-th prime powers is an isomorphism. The residue-field
-case alone does not suffice at ramified places. Pinned Mathlib has
-`HeightOneSpectrum.intValuation_le_pow_iff_mem` for the kernel and
-`HeightOneSpectrum.exists_valuation_sub_lt_of_integer` for approximation,
-used in `FiniteCompletionCompact.lean` for the first power. Then use
-Chinese remaindering at $p\mathcal O_K$. Both sides of the base-change
+The checked ideal-extension theorem applied to $p\mathcal O_K$ gives
+$p\mathcal O_{K_v}=\mathfrak m_v^{e_v}$, with $e_v$ the multiplicity of
+$v$ in $p\mathcal O_K$. Assemble the canonical reduction by factoring
+$p\mathcal O_K$, applying `Ideal.quotientInfRingEquivPiQuotient` to the
+pairwise comaximal powers, and composing with the checked quotient
+equivalence at $n=e_v$ in each coordinate. Retain the computation on
+classes of global integers so the result identifies the reduction of
+the base-change map. Reducing only modulo $\mathfrak m_v$ would lose
+the nilpotent layers at a ramified place. The product comparison is
+still open. Both sides of the base-change
 map are finite free over $\mathbb Z_p$, so an invertible reduction
 suffices for invertibility. After this comparison, transport the trace
 dual through base change and the product projections; for passage from
