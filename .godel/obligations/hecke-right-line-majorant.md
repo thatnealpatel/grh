@@ -1256,24 +1256,69 @@ go run ./cmd/godel audit-local "$CANDIDATE" \
   Masullo.finiteCompletionUnitMass Masullo.ideleZetaIntegral_rightHalfPlane
 ```
 
-### Next: Identify the completed Gaussian pairing above one
+## Checked raw Gaussian calibration above one
 
-As a normalization control for (3.4.3.5)–(9), p. 152, build one test
-independent of $s$ with the checked real parity Gaussians and corrected
-complex angular Gaussians, the standard indicator at each unramified
-finite place, and the reciprocal character times the unit indicator
-at ramified ones. Use `realCompletionGaussianPair` and
-`complexCompletionGaussianPair` with their actual transported Haar
-measures, and the finite local pairings with the actual $\mu_v$.
-The product integrability theorem of Mathlib and the local norm-power
-split give the grouped Archimedean input to the global theorem. For
-$\Re s>1$, recombine the factors at $T$ with the complementary Euler
-tail, yielding `completedHeckeEulerProduct χ hχ s` times the finite
-product of unit masses on $T$. Include all mass exceptions in $T$ and
-leave that product explicit: Comparing it to the discriminant and
-identifying quotient Haar are separate obligations. This checks the
-actual Gaussian calibration, not the general Schwartz–Bruhat test class
-or the functional equation.
+[`ideleHeckeGaussian_zetaIntegral`](../../Proofs/Theorems/IdeleHeckeGaussian.lean)
+uses one test independent of $s$. It certifies absolute integrability
+and the raw scalar pairing, for any number field, unitary Mathlib Hecke
+character $\chi$, and $\Re s>1$:
+
+$$
+Z(E_\chi,\chi|\cdot|^s)=
+ \left(\prod_{v\in T}\mu_v(\mathcal O_v^\times)\right)
+ L_{\mathrm{Euler}}(s,\chi).
+$$
+
+Here $T$ contains character ramification and all exceptions to unit mass
+one. The finite local measures are supplied Haar measures, the infinite
+measures are the transported real and complex Haar measures, and the
+upstairs measure has the corresponding exact restrictions to stages
+containing $T$. `exists_ideleRestrictedProductHaar` gives such a measure.
+
+Definition 3.4.3.2 and the following paragraph, p. 152, specify the tensor and the pairing
+convention for the completion, while (3.2.1.1)–(5), pp. 122–123,
+specifies the Euler product. The bilinear integral in (3.3.1.7), p. 130,
+requires the [opposite-weight complex test](complex-gaussian-angular.md)
+in place of (3.4.3.5)–(6); at a finite place, (A.3.2.2), p. 560,
+requires the [actual unit mass](finite-gaussian-tamagawa.md), which is
+also present when the ramified Euler factor is one. The new theorem
+splits the grouped infinite density into the checked Gaussian pairings,
+uses the exact-stage exhaustion above, and rejoins the local finite
+Euler factors to the tail. It compares the two scalar conventions on
+this one test; it does not prove the eigendistribution identity
+(3.4.3.15), p. 153. This assembly reading used Markdown and numbered PDF
+layout, not rendered pages; the linked local controls have separate
+rendered evidence.
+
+Independent Yah statement review: Session
+`01a201d9-3a08-7336-b23f-ad0ce02c09fd`, child `review-gauss-statement`
+(agent `TmlTVcA`).
+
+Replay the two affected modules in the candidate workspace:
+
+```sh
+go run ./cmd/godel audit-local "$CANDIDATE" \
+  Theorems.CompletedHeckeEulerProduct Theorems.IdeleHeckeGaussian -- \
+  Masullo.completedHeckeEulerProduct Masullo.archimedeanCompletionHaar \
+  Masullo.archimedeanCompletionHaar_isHaarMeasure Masullo.archimedeanHeckeGaussian \
+  Masullo.finiteHeckeGaussian Masullo.ideleHeckeGaussian Masullo.ideleHeckeGaussian_zetaIntegral
+```
+
+### Next: Compute the arithmetic unit-mass product
+
+Start with the finite arithmetic comparison: Set $\mathfrak D$ to
+`differentIdeal ℤ (𝓞 K)` and $n_v$ to
+`multiplicity v.asIdeal 𝔇`. For $T$ containing the support of $n_v$,
+prove $\prod_{v\in T}q_v^{n_v}=|\operatorname{disc}K|$ using
+`Ideal.finprod_heightOneSpectrum_pow_multiplicity`, `Ideal.absNorm`,
+and `NumberField.absNorm_differentIdeal` from the pinned Mathlib.
+Deduce $\prod_{v\in T}(q_v^{n_v})^{-1/2}=|\operatorname{disc}K|^{-1/2}$.
+This is the global arithmetic part of identifying the scalar in the
+Gaussian calibration. To match (A.3.2.2), p. 560, still compare each
+$q_v^{n_v}$ with the inverse $p$-adic absolute value of the local
+integral discriminant, then construct or identify the prescribed Haar
+scales. Neither the arithmetic product nor the scalar pairing alone
+identifies quotient Haar.
 
 **Still open:** Meromorphic continuation, divisor data, and contour
 growth in (B.4.2.1)–(4), the broader test class, general ramified Fourier terms,

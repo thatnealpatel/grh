@@ -89,7 +89,7 @@ private theorem localHeckeGammaFactor_regular (v : InfinitePlace K) {s : ℂ} (h
 
 /-- The completed product of (3.2.1.2). Its asserted domain is `1 < s.re`;
 values of this formula outside that domain are not a continuation. -/
-public noncomputable def completedHeckeEulerProduct (s : ℂ) : ℂ :=
+@[expose] public noncomputable def completedHeckeEulerProduct (s : ℂ) : ℂ :=
   (∏ v : InfinitePlace K, localHeckeGammaFactor χ hχ v s) * finiteHeckeCharacterEulerProduct χ s
 
 /-- The split in (B.4.2.5)–(7) for a unitary character, before integration.
