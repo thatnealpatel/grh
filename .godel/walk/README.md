@@ -1,5 +1,9 @@
 # Masullo walk ledger (unadopted draft)
 
+This directory is Walk's repository home for schema, guidance, and accepted
+self-contained findings. The mutable chapter and appendix checkpoints live
+in the private ledger outside the checkout.
+
 `cmd/walk` owns one JSON file per reviewed chapter or appendix:
 `chapter-01.json` through `chapter-14.json`, then `appendix-a.json` through
 `appendix-e.json`. There are no placeholder files. Each file pins the
@@ -9,30 +13,33 @@ separate `complete` flag. Completion is coverage, not formal resolution.
 
 ## Running Walk
 
-Run with no flags from `cmd/walk` in the workspace that owns the ledger.
-`GRH_LAUNCH_ROOT` is the absolute path of the stable GRH project workspace
-attached to the owning Yah campaign. It can differ from the walker's root.
+After the Walk entrypoint is accepted and present in the **durable** GRH
+checkout, run from that checkout's root (not a campaign session workspace).
 Use an authenticated `yah` on `PATH` and a working user systemd manager.
+`accepted.Enter` builds and runs Walk from the accepted revision and sets
+its working directory to the durable `cmd/walk` for Gödel registration.
 
 ```sh
-# From the ledger owner's root, with GRH_LAUNCH_ROOT already exported:
-cd cmd/walk
-printf '%s\n' 'Review the pinned Masullo manuscript in order.' | go run .
+cd /home/exedev/p/grh
+printf '%s\n' 'Review the pinned Masullo manuscript in order.' |
+    YAH_CAMPAIGN_TARGET=main go run ./cmd/walk
 ```
 
-Gödel needs nonblank stdin on the first run (or whenever there is no saved
-nonblank response). To resume, rerun the same command from the same `cmd/walk`
-with the same `.godel/walk` ledger, after the earlier writer has stopped.
-Supplying nonblank stdin again is safe: It is not the cursor or the next
-request. Once Gödel has a saved nonblank response, `go run . </dev/null` also
-works from that directory. The ledger, not Gödel's stdin or history, determines
-what to review next.
+The private ledger is `$HOME/.grh-walk-<hash>`, outside the checkout, where
+`<hash>` is the lowercase hexadecimal SHA-256 of the canonical absolute
+`cmd/walk` directory path (resolved symlinks, no trailing newline). This
+keys the ledger to the same source directory Gödel uses for its program
+lock. Keep the same checkout path and home on restart. Stop the previous
+writer and rerun the launch command with the nonblank seed. Gödel needs a
+seed if no saved nonblank response is available. Neither that seed nor
+old Gödel runs or their history determine the cursor; only the ledger does.
 
 ## Reviewer interface
 
-Walk runs a built-in Yah reviewer node from `GRH_LAUNCH_ROOT`. Yah may read
-but must not edit the walker's ledger. It uses the pinned PDF and current
-accepted project evidence. Each appended prompt carries one JSON request
+Walk runs its built-in Yah reviewer from the durable checkout root. Yah may
+read but must not edit the private ledger. It reads this README, the schema
+in `cmd/walk/store.go`, and project evidence at the accepted revision, and
+uses the pinned PDF. Each appended prompt carries one JSON request
 with `edition`, `chapter`, and `cursor`; the reviewer returns one JSON object
 on stdout. Walk retries the same request once if stdout is not valid JSON
 syntax, with a short diagnostic in the new prompt. Neither syntax failure
@@ -80,12 +87,23 @@ leave an input for later review.
 
 ## Resuming
 
-A sole writer publishes each accepted review by renaming a temporary file
-within the ledger directory. Opening the walk reconstructs progress and
-finds back-edges by comparing each dependency's stored receipt to the current
-source evidence for that precise conclusion. Scheduling does not acknowledge
-a receipt. This covers process interruption, not concurrent writers or
-power-loss durability; abandoned temporary files are not read as state.
+To restore an existing ledger, stop all Walk writers and keep them stopped
+until the copy is complete. Create the destination ledger directory with
+mode `0700` if it does not exist. Copy only the existing `chapter-*.json`
+and `appendix-*.json` state files listed above into that directory, without
+clobbering any destination file. If a destination file already exists,
+resolve the conflict offline before restarting; do not merge or overwrite
+state while Walk is running. Do not copy the README, temporary files, or
+Gödel history. The restored chapter and appendix files are enough to resume
+with the normal launch command.
+
+Walk opens the ledger under Gödel's program lock. The sole writer publishes
+each accepted review by renaming a temporary file within the ledger directory.
+Opening the walk reconstructs progress and finds back-edges by comparing each
+dependency's stored receipt to the current source evidence for that precise
+conclusion. Scheduling does not acknowledge a receipt. This covers process
+interruption, not concurrent writers or power-loss durability; abandoned
+temporary files are not read as state.
 
 Changed inputs are revisited before forward work, at most once per passage
 between forward reviews. No evidence on either side is not a change. A cycle

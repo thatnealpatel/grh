@@ -111,7 +111,7 @@ func writeChapter(dir string, c chapterState) error {
 	if err != nil {
 		return err
 	}
-	if err := os.MkdirAll(dir, 0755); err != nil {
+	if err := os.MkdirAll(dir, 0700); err != nil {
 		return err
 	}
 	f, err := os.CreateTemp(dir, ".walk-*")

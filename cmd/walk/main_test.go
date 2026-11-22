@@ -2,6 +2,8 @@ package main
 
 import (
 	"bytes"
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
 	"os"
 	"path/filepath"
@@ -17,6 +19,63 @@ var forwardOrder = []string{
 	"chapter-01", "chapter-02", "chapter-03", "chapter-04", "chapter-05", "chapter-06", "chapter-07",
 	"chapter-08", "chapter-09", "chapter-10", "chapter-11", "chapter-12", "chapter-13", "chapter-14",
 	"appendix-a", "appendix-b", "appendix-c", "appendix-d", "appendix-e",
+}
+
+func TestStartNodeReadsLedgerAtTransition(t *testing.T) {
+	base, err := filepath.EvalSymlinks(t.TempDir())
+	if err != nil {
+		t.Fatal(err)
+	}
+	checkout := filepath.Join(base, "checkout")
+	source := filepath.Join(checkout, "cmd", "walk")
+	if err := os.MkdirAll(source, 0700); err != nil {
+		t.Fatal(err)
+	}
+	alias := filepath.Join(base, "checkout-link")
+	if err := os.Symlink(checkout, alias); err != nil {
+		t.Fatal(err)
+	}
+	home := filepath.Join(base, "home")
+	root, ledgerDir, err := walkPaths(filepath.Join(alias, "cmd", "walk"), home)
+	if err != nil {
+		t.Fatal(err)
+	}
+	digest := sha256.Sum256([]byte(source))
+	wantLedger := filepath.Join(home, ".grh-walk-"+hex.EncodeToString(digest[:]))
+	if root != checkout || ledgerDir != wantLedger {
+		t.Fatalf("paths = (%q, %q); want (%q, %q)", root, ledgerDir, checkout, wantLedger)
+	}
+
+	first := openRecord("prop", "1.1", 2)
+	c := chapterState{Edition: edition, Chapter: "chapter-01", Cursor: &first.Passage, Records: []record{first}}
+	if err := writeChapter(wantLedger, c); err != nil {
+		t.Fatal(err)
+	}
+	info, err := os.Stat(wantLedger)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if info.Mode().Perm()&0077 != 0 {
+		t.Fatalf("new ledger is not private: mode %04o", info.Mode().Perm())
+	}
+	start := startNode(root, ledgerDir)
+	// A prior writer completes the chapter
+	// before Gödel reaches Next.
+	c.Complete = true
+	if err := writeChapter(wantLedger, c); err != nil {
+		t.Fatal(err)
+	}
+	node, err := start.Next(godel.Result{Text: `{"chapter":"chapter-01","cursor":null}`})
+	if err != nil {
+		t.Fatal(err)
+	}
+	w := &walkTest{t: t, dir: wantLedger, launchRoot: checkout, node: node}
+	w.want("chapter-02", nil, nil)
+	prompt, _ := w.reviewPrompt()
+	if !strings.Contains(prompt, ".godel/walk/README.md") || !strings.Contains(prompt, "cmd/walk/store.go") ||
+		strings.Contains(prompt, "../../cmd/walk/store.go") {
+		t.Fatalf("reviewer did not get repository paths for schema: %q", prompt)
+	}
 }
 
 func TestForwardOrderAndCoverage(t *testing.T) {
@@ -296,7 +355,7 @@ type walkTest struct {
 
 func startWalk(t *testing.T) *walkTest {
 	root := t.TempDir()
-	w := &walkTest{t: t, dir: filepath.Join(root, "walker", ".godel", "walk"), launchRoot: filepath.Join(root, "launch")}
+	w := &walkTest{t: t, dir: filepath.Join(root, "home", ".grh-walk-fixture"), launchRoot: filepath.Join(root, "checkout")}
 	w.reopen()
 	return w
 }
@@ -305,11 +364,8 @@ func startWalk(t *testing.T) *walkTest {
 // canonical chapter files.
 func (w *walkTest) reopen() {
 	w.t.Helper()
-	t, err := openTraversal(w.dir)
-	if err != nil {
-		w.t.Fatal(err)
-	}
-	w.node, err = t.nextNode(w.launchRoot)
+	var err error
+	w.node, err = startNode(w.launchRoot, w.dir).Next(godel.Result{})
 	if err != nil {
 		w.t.Fatal(err)
 	}
