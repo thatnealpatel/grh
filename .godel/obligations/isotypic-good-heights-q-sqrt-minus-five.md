@@ -266,7 +266,9 @@ bounds at arbitrary heights, on either full vertical line, through
 zeros, or for general Hecke characters. The all-prime identification
 on $\Re s>1$ is a separate accepted result, not a premise here.
 
-**Next check:** For an entire numerator whose derivatives have
+**Operator priority for the next Companion selection:** First [audit the numerator hypothesis](../frontier.md#one-cycle-operator-handoff-main-trace-test-and-companion-numerator-audit). Check the strip on which the manuscript imposes seminorms against the actual segment needed, including its ends. Preserve the following conditional calculation for after that audit.
+
+**Conditional successor:** For an entire numerator whose derivatives have
 uniform rapid decay on the closed strip, use the iterated Leibniz
 rule and this endpoint to bound every derivative of the corrected
 forward quotient on the same selected horizontal segments. For

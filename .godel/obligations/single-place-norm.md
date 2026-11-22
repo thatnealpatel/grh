@@ -999,6 +999,8 @@ go run ./cmd/godel audit-local "$CANDIDATE" \
 
 ### Next: Pointwise theta inversion before small-norm averaging
 
+**Parked for one Main cycle:** Finish any work already in flight. At the next work selection, take the [rational trace operator handoff](../frontier.md#one-cycle-operator-handoff-main-trace-test-and-companion-numerator-audit) once. Preserve the Gaussian continuation below and any subsequent checked result for resumption.
+
 Neither the large-norm bound nor the above-one Mellin identity proves
 continuation, RH, or GRH. On the provisional text reading, the use of
 Theorem 2.2.3.4(3), p. 83, on pp. 126–127 requires both zero modes to
