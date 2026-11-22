@@ -1385,6 +1385,39 @@ go run ./cmd/godel audit-local "$CANDIDATE" Lemmas.FiniteCompletionPadic -- \
   Masullo.finiteCompletionPadicContinuousSMul Masullo.finiteCompletion_moduleFinite
 ```
 
+### Checked: The integral lattice in the actual finite completion
+
+[`FiniteCompletionIntegralLattice.lean`](../../Proofs/Lemmas/FiniteCompletionIntegralLattice.lean)
+proves that the actual completion integers $\mathcal O_{K_v}$ form a
+finite free $\mathbb Z_p$-module for the compatible maps above. It also
+proves that inverting the image of $\mathbb Z_p\setminus\{0\}$ in
+$\mathcal O_{K_v}$ gives the actual field $K_v$. Hence a basis of the
+integer ring localizes along its inclusion to a $\mathbb Q_p$-basis of
+$K_v$ by `Module.Basis.localizationLocalization`.
+
+In (A.3.2.2), p. 560, Masullo specifies the local integral discriminant
+as the input to the Haar scale. This repair supplies the finite free
+lattice and its relation to the local field, not the discriminant
+comparison. In a field basis, compactness bounds each coordinate on
+the integer ring. Rescaling by a power of $p$ in each coordinate gives
+an injection into a finite power of $\mathbb Z_p$. Finite torsion-free
+modules over this PID are free. For localization, $p^n\to0$ and openness
+of $\mathcal O_{K_v}$ put $p^n z$ in that ring for any $z\in K_v$ and
+sufficiently large $n$. This source comparison used Markdown and
+numbered PDF layout, not a new rendered-page check.
+
+Independent Yah statement review: Session
+`01a201f2-efad-7219-b4a7-f2e365782b3c`, child
+`review-local-integer-lattice` (agent `mSFmHgG`). Replay the checked
+endpoints from the exact integration workspace:
+
+```sh
+go run ./cmd/godel audit-local "$CANDIDATE" Lemmas.FiniteCompletionIntegralLattice -- \
+  Masullo.finiteCompletionIntegers_moduleFinite \
+  Masullo.finiteCompletionIntegers_moduleFree \
+  Masullo.finiteCompletionIntegers_isLocalization
+```
+
 ### Next: Identify the placewise discriminant scales
 
 For $v$ over $p$, in the **actual** completion $K_v$ prove
@@ -1399,22 +1432,30 @@ normalized on-place norm extending a power of it. At the place over $2$
 in $\mathbb Q(i)$ this must give $q_v^{-n_v}=1/4$ and unit mass $1/2$,
 not unit mass one.
 
-First prove that $\mathcal O_{K_v}$ is finite free and spans $K_v$ over
-$\mathbb Q_p$, using the compatible maps and finite-dimensionality just
-established. `FiniteCompletionCompact.lean` already supplies compactness
-and the canonical residue-field equivalence, so $q_v$ needs no new
-residue-field construction (`Ideal.absNorm_eq_natCard`). For a finite
-$\mathbb Q_p$-basis, its coordinate functions are continuous. On the
-compact integer ring their norms are bounded; multiplying all coordinates
-by a common sufficiently large power of $p$ embeds the integer ring
-$\mathbb Z_p$-linearly into a finite power of $\mathbb Z_p$. Apply
-`Module.Finite.of_injective` and freeness over the PID, and use openness
-of the integer ring to scale any vector into it. Then compare the trace
-dual after integral base change and projection to the $v$-factor.
-The local identity is not a consequence of equality of the aggregate
-products. Once it is checked, construct or identify the local Haar
-scales, then use the exact stage restrictions of (A.3.2.5), p. 560, in the
-raw Gaussian theorem. Quotient Haar is still separate.
+The first comparison still needed is the canonical integral base-change
+map at a fixed rational prime $p$,
+$\mathbb Z_p\otimes_{\mathbb Z}\mathcal O_K\to\prod_{v\mid p}\mathcal O_{K_v}$,
+with $a\otimes x\mapsto(a\,x)_v$. Start with its reduction modulo $p$:
+Prove that the canonical map gives
+$\mathcal O_K/p\mathcal O_K\simeq\prod_{v\mid p}\mathcal O_{K_v}/p\mathcal O_{K_v}$.
+For each $v\mid p$, identify $p\mathcal O_{K_v}$ with the $e_v$-th
+power of its maximal ideal and prove the canonical map on quotients
+by the $e_v$-th prime powers is an isomorphism. The residue-field
+case alone does not suffice at ramified places. Pinned Mathlib has
+`HeightOneSpectrum.intValuation_le_pow_iff_mem` for the kernel and
+`HeightOneSpectrum.exists_valuation_sub_lt_of_integer` for approximation,
+used in `FiniteCompletionCompact.lean` for the first power. Then use
+Chinese remaindering at $p\mathcal O_K$. Both sides of the base-change
+map are finite free over $\mathbb Z_p$, so an invertible reduction
+suffices for invertibility. After this comparison, transport the trace
+dual through base change and the product projections; for passage from
+the local integer rings to their fraction fields, pinned Mathlib has
+`Algebra.trace_localization` and `Algebra.discr_localizationLocalization`.
+This is a proposed route, not a checked comparison. The local identity
+is not a consequence of equality of the aggregate products. Once it is
+checked, construct or identify the local Haar scales, then use the exact
+stage restrictions of (A.3.2.5), p. 560, in the raw Gaussian theorem.
+Quotient Haar is still separate.
 
 **Still open:** Meromorphic continuation, divisor data, and contour
 growth in (B.4.2.1)–(4), the broader test class, general ramified Fourier terms,
