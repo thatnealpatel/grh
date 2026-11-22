@@ -285,7 +285,7 @@ go run ./cmd/godel audit-local "$CANDIDATE" \
   Masullo.compactHausdorff_ideleClassNormOne
 ```
 
-## Next normalization step: Complex log-polar Haar
+## Checked complex log-polar Haar
 
 The compact cover is not a disjoint fundamental domain and gives no Haar
 mass. Definition A.3.2.1, pp. 559–560, prescribes the quotient volume, and
@@ -298,8 +298,9 @@ coordinate, to the mass $2^{r_1}(2\pi)^{r_2}h_FR_F/(\sqrt{|d_F|}w_F)$
 on the actual norm-one quotient. The standalone presentation (A.2.3.22),
 the measurable disjoint domain, and the quotient comparison remain open.
 
-Start with the following local measure identity for the complex coordinate,
-using `Masullo.complexTamagawaDensity` from `Lemmas.ArchimedeanCompletionHaar`:
+`Theorems.ComplexMultiplicativeHaarLogPolar` proves the local measure
+identity `Masullo.complexTamagawaDensity_map_logPolar`, using the density
+from `Lemmas.ArchimedeanCompletionHaar`:
 
 ```lean
 MeasureTheory.Measure.map (fun z : ℂ ↦ (2 * Real.log ‖z‖, Complex.arg z))
@@ -308,20 +309,54 @@ MeasureTheory.Measure.map (fun z : ℂ ↦ (2 * Real.log ‖z‖, Complex.arg z)
     (MeasureTheory.volume.restrict (Set.Ioo (-Real.pi) Real.pi))
 ```
 
-This is the change of variables needed to use the angular interval
-(A.2.3.21), p. 550, with the density in Definitions A.3.1.2(2), p. 556,
-and A.3.2.2(1), p. 560. The factor two in additive Haar cancels the
-factor one-half in $dr/r=dx/2$ for $x=2\log r$; the cut ray is null, so
-open angle endpoints suffice for the measure identity. The pinned
-`Complex.lintegral_comp_polarCoord_symm` gives the radial Jacobian and
-`MeasureTheory.lintegral_image_eq_lintegral_abs_deriv_mul` applies to
-$r=\exp(x/2)$ on the full real line. Transfer the result to the actual
-complex completion units via `complexCompletionHaar_map`. Then prove
-the corresponding signed real coordinate formula and combine the local
-identities using the **sum** of weighted logs as the norm coordinate and
-Mathlib's dropped coordinates for the other logs. In those coordinates
-reconstruct the deleted log as the sum coordinate minus the retained
-sum, so the splitting has unit Jacobian. The half-open unit lattice
-window can then be measured by `NumberField.Units.regulator`; angular
-torsion costs a factor $1/w_F$, which still needs proof with the counting
-quotient. This route does not infer a scalar from Haar uniqueness alone.
+Definitions A.3.1.2(2), p. 556, and A.3.2.2(1), p. 560, give the
+Cartesian density. Lean supplies the change of variables needed to use
+the sector of (A.2.3.21), p. 551. The pinned
+`Complex.lintegral_comp_polarCoord_symm` supplies the radial Jacobian and
+removes the null cut ray. In the positive radial integral, the factor
+$2$ in additive Haar cancels the factor $1/2$ in $dr/r=dx/2$ via
+`MeasureTheory.lintegral_image_eq_lintegral_abs_deriv_mul` applied to
+$r=\exp(x/2)$. The open principal-argument interval is a measure chart,
+not the manuscript's half-open torsion sector $[0,2\pi/w_F)$. The theorem
+`Masullo.complexCompletionHaar_map_logPolar` transfers the identity to
+actual complex completion units by `complexCompletionHaar_map` and
+isometry of the chosen complex embedding.
+
+Independent Yah statement review: Session
+`01a202a6-4063-74b7-99da-31335e5b3f4f`, child `review-log-polar` (`NtmwSRX`,
+read-only output `1b0f978e4adc52ebec87b6c4ba002c781457028a`). The source
+reading is provisional, from pinned Markdown and numbered PDF layout.
+
+```sh
+go run ./cmd/godel audit-local "$CANDIDATE" \
+  Theorems.ComplexMultiplicativeHaarLogPolar -- \
+  Masullo.complexTamagawaDensity_map_logPolar \
+  Masullo.complexCompletionHaar_map_logPolar
+```
+
+## Next normalization step: Signed real log Haar
+
+To use the positive real half of (A.2.3.20), p. 550, and to retain both
+signs at the other real places, prove the following companion identity
+for the actual completion-unit measure. `extensionEmbeddingOfIsReal` is
+in `NumberField.InfinitePlace.Completion`.
+
+```lean
+MeasureTheory.Measure.map
+    (fun u : v.Completionˣ ↦
+      (Real.log ‖u.val‖, if 0 < extensionEmbeddingOfIsReal hv u.val then true else false))
+    (Masullo.realCompletionHaar hv) =
+  (MeasureTheory.volume : MeasureTheory.Measure ℝ).prod MeasureTheory.Measure.count
+```
+
+Here `hv : v.IsReal` and the domain has the Borel measurable structure.
+Use `realCompletionHaar_map`, split the real density into the positive
+and negative half-lines (zero is null), and substitute $y=\exp(x)$ and
+$y=-\exp(x)$, respectively. Then combine the local identities using
+the **sum** of weighted logs as the norm coordinate and Mathlib's
+dropped coordinates for the other logs. Reconstruct the deleted log as
+the sum coordinate minus the retained sum, so this coordinate splitting
+has unit Jacobian. The half-open unit lattice window can then be
+measured by `NumberField.Units.regulator`; angular torsion costs a factor
+$1/w_F$, which still needs proof with the counting quotient. This route
+does not infer a scalar from Haar uniqueness alone.
