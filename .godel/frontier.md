@@ -70,6 +70,10 @@ The [singleton local control](obligations/trace-divisor-singleton-diagonal.md#a-
 
 For the full Chapter 13 test class, the [identity-term audit](obligations/trace-divisor-singleton-diagonal.md#passing-from-norm-one-vanishing-to-zero-mass-requires-subtraction) shows that zero mass does not give norm-one vanishing. The rational singleton trace has an explicit divergent identity term on such tests. Subtract it before comparing finite parts, or track its cutoff against the local logarithmic term. This additional obligation does not affect the common positive-log tests used for conditional uniqueness.
 
+## A nontrivial ideal-class isotype (Chapter 6)
+
+The [archimedean insertion check over $\mathbb Q(\sqrt{-5})$](obligations/isotypic-exhaustiveness-q-sqrt-minus-five.md) shows that the Fifth Structure Theorem's single-isotype surjectivity can hold even when the relative units miss odd valuations. For the nontrivial ideal-class character, signed complex dilations give all projected ball generators, and weighted Mellin uniqueness identifies their classes. The archimedean stage already gives (6.3.2.9) on that isotype, but the unprojected range can still fail without the Picard hypothesis. This is ordinary mathematics with provisional source locators, not Lean. **Next:** Check the two-component Mellin and Fourier lift after this stage substitution, especially the local residues when the global character is nontrivial but its archimedean restriction is trivial.
+
 ## External gates
 
 - **Visual source review:** No new visual reading from the attempted routes. Reopen only with image-capable Yah and working credentials; first run one fresh p. 514 control. This gate does not prevent provisional extracted-text work or labeled project reasoning.
