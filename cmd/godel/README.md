@@ -67,15 +67,21 @@ After a conflict, stale adoption, or ambiguous error, inspect `tool_campaign sta
 
 For any new integration candidate, compare its patch with the reviewed work. Have any changed statement independently reviewed and audit that exact candidate before adoption.
 
-For a restack with identical Lean build inputs, reuse the trusted project build cache from the finished audit rather than starting cold. From the repository root, use the full old and new candidate IDs and the workspace paths returned by integration:
+For a restack with identical Lean build inputs, reuse the trusted project build cache from the finished audit rather than starting cold. From the repository root, use the full old and new candidate IDs and the workspace paths returned by integration. First compare the pinned inputs:
 
 ```sh
-changed=$(jj --ignore-working-copy diff --summary \
+jj --ignore-working-copy diff --summary \
   --from "commit_id(\"$OLD\")" --to "commit_id(\"$NEW\")" -- \
-  Proofs lakefile.toml lake-manifest.json lean-toolchain) &&
-test -z "$changed" &&
+  Proofs lakefile.toml lake-manifest.json lean-toolchain
+```
+
+If the comparison is empty, seed the new workspace if its build directory does not exist:
+
+```sh
 test ! -e "$NEW_WS/.lake/build" &&
 cp -a --reflink=auto "$OLD_WS/.lake/build" "$NEW_WS/.lake/build"
 ```
 
-Only seed from a finished local audit under the same trusted toolchain and Lake dependencies. If the comparison is nonempty or the trusted cache is unavailable, use the ordinary audit. In either case, run `audit-local` in the new integration workspace and inspect the endpoint signatures it reports before adoption. Reusing build artifacts saves elaboration time; it does not transfer an audit verdict to a new candidate.
+You can also use this copy on a strictly additive restack: The only reported differences may be additions of `.lean` modules under `Proofs/`. Before copying, check that the seed contains no cached build artifacts for those modules. If there are any modifications, deletions, renames, Lake input changes, or uncertainty about the cache, use an ordinary audit without the copy. See the [additive-restack replay](../../.godel/experiments/additive-audit-restack/).
+
+Only seed from a finished local audit under the same trusted toolchain and Lake dependencies. Run `audit-local` in the new integration workspace, confirm that Lake builds any newly added modules, and inspect the reported endpoint signatures before adoption. Reusing build artifacts saves elaboration time; it does not transfer an audit verdict to a new candidate.
