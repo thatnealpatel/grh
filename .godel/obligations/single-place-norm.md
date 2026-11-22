@@ -1004,6 +1004,11 @@ ended at a lift obstruction. The large-norm slices including $u=0$ landed
 at `0abc265a52c1`; the local integer-ring transform below landed at
 `9bfb408ef0c7`. Neither needs repeating.
 
+**Resumption update:** The general fixed-stage Gaussian now has [pointwise
+inversion](#corrected-archimedean-schwartz-factor-and-pointwise-hecke-theta-inversion)
+and the resulting [pointwise small-norm estimate](#zero-mode-corrected-theta-decay-at-small-norm).
+Use them for averaging rather than repeating the broader inversion obligation.
+
 Neither the large-norm bound nor the above-one Mellin identity proves
 continuation, RH, or GRH. On the provisional text reading, the use of
 Theorem 2.2.3.4(3), p. 83, on pp. 126–127 requires both zero modes to
@@ -2352,15 +2357,54 @@ annihilator and coordinate bounds, and the exact box-span endpoint
 Readings are provisional from pinned Markdown and numbered PDF layout,
 except for the reviewer's targeted rendering of (2.2.3.10).
 
-**Next: Reflect before averaging.** `adeleBoxSpan_theta_inversion`
-already gives the same Fourier integral and both zero modes. For
-$0<t=|a|_K\le 1$, apply the new estimate to $b=a^{-1}$ with exponent
-$N+1$ to absorb $t^{-1}$ in (2.2.3.7) and obtain (2.2.3.5) on this
-span. Then the compact norm-one Haar average of Theorem 2.2.5.4(2),
-(2.2.5.10), pp. 97–98, needs measurable principal series and class
-slices in addition to the pointwise bound. Retain both zero modes up
-to weighting; for the trivial restriction multiply them by the actual
-Haar mass. Inversion sends the weight to its inverse. Unfolding the
-weighted average needs the appropriate multiplicative counting-quotient
-measure, not the additive measure of the Fourier integral. This does
-not prove class continuity, continuation, RH, or GRH.
+The next inference is now the [zero-mode-corrected small-norm estimate
+and its averaging successor](#zero-mode-corrected-theta-decay-at-small-norm).
+
+### Zero-mode-corrected theta decay at small norm
+
+[`adeleBoxSpan_theta_smallNorm_decay`](../../Proofs/Theorems/AdeleBoxThetaDecay.lean)
+proves the fixed-test part of (2.2.3.5), PDF p. 83, on the actual
+number-field ideles. Let $\Theta_f(h)$ be the $K^\times$ sum, and let
+$t=|h|_K$. For every fixed $f\in\texttt{adeleBoxSpan}$ and every
+$N\in\mathbb N$, it gives $C>0$ such that
+$$
+|\Theta_f(h)-t^{-1}\widehat f(0)+f(0)|\le C t^N\qquad(0<t\le 1).
+$$
+The additive Haar is the same in both inputs and has the prescribed
+cofinal stage comaps. No zero-mode vanishing is assumed.
+
+The proof on p. 83 supplies the reflection (2.2.3.7) from (2.2.3.2),
+p. 82, and reduces the small-norm estimate to large-norm decay for the
+Fourier sum. The checked pointwise identity `adeleBoxSpan_theta_inversion`
+implements that first step. Instead of using full Schwartz–Bruhat
+Fourier stability or a large-norm estimate for a substitute function,
+`adeleBoxSpan_fourier_rapidDecay` directly controls the absolute mass
+of the nonzero samples of this very integral. Apply it at $h^{-1}$
+with exponent $N+1$ to pay for the prefactor $t^{-1}$. The bound does
+not assert continuity, a result on bounded families, or full
+Schwartz–Bruhat inversion.
+
+**Evidence:** Owning Yah session `01a2053f-0c78-78bd-b245-d71dc7783365`
+records independent fixed-statement review `small-norm-review`, the
+exact candidate and base, build, fresh joint import and axiom reports,
+and adoption decision. Source reading is provisional from pinned
+Markdown and numbered PDF layout unless a rendered check is identified
+in the review.
+
+**Next: Average the same corrected Gaussian.** Keep the Borel
+periodization `F` and the counting-normalized norm-one Haar `η₁ ν v r`
+from `exists_discriminantNormalizedIdeleHeckeGaussian_radialMellin`.
+For its fixed stage, use `adeleHeckeTest_mem_adeleBoxSpan` and
+`adeleHeckeTest_archimedeanHeckeSchwartz_coe_idele` to apply the new
+bound at each representative of the radial slice. The existing `F`
+is already measurable for that Gaussian; do not make a generic
+box-span measurability or continuity theorem a prerequisite for this
+bound. Subtract $t^{-1}\widehat f(0)-f(0)$ before integrating the error
+with the unitary weight. Prove that the *integrated* constant is
+$(t^{-1}\widehat f(0)-f(0))\,\eta_1(C_K^1)\,\delta_\omega$, using
+translation invariance for a nontrivial restriction and actual Haar
+mass for a trivial one. Bound the weighted error by $C t^N$ times this
+Haar mass, without the indicator. This is the missing Gaussian
+small-norm half of (2.2.5.10), PDF p. 97 and proof p. 98. A reflected
+weighted identity would also send the character to its inverse.
+Continuation, RH, and GRH remain open.
