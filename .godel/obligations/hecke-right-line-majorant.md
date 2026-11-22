@@ -1304,21 +1304,70 @@ go run ./cmd/godel audit-local "$CANDIDATE" \
   Masullo.finiteHeckeGaussian Masullo.ideleHeckeGaussian Masullo.ideleHeckeGaussian_zetaIntegral
 ```
 
-### Next: Compute the arithmetic unit-mass product
+### Checked: Arithmetic product of finite unit scales
 
-Start with the finite arithmetic comparison: Set $\mathfrak D$ to
-`differentIdeal ℤ (𝓞 K)` and $n_v$ to
-`multiplicity v.asIdeal 𝔇`. For $T$ containing the support of $n_v$,
-prove $\prod_{v\in T}q_v^{n_v}=|\operatorname{disc}K|$ using
-`Ideal.finprod_heightOneSpectrum_pow_multiplicity`, `Ideal.absNorm`,
-and `NumberField.absNorm_differentIdeal` from the pinned Mathlib.
-Deduce $\prod_{v\in T}(q_v^{n_v})^{-1/2}=|\operatorname{disc}K|^{-1/2}$.
-This is the global arithmetic part of identifying the scalar in the
-Gaussian calibration. To match (A.3.2.2), p. 560, still compare each
-$q_v^{n_v}$ with the inverse $p$-adic absolute value of the local
-integral discriminant, then construct or identify the prescribed Haar
-scales. Neither the arithmetic product nor the scalar pairing alone
-identifies quotient Haar.
+[`DifferentUnitScales.lean`](../../Proofs/Theorems/DifferentUnitScales.lean)
+uses the actual different $D=\mathrm{differentIdeal}\,\mathbb Z\,(\mathcal O_K)$.
+For $v$ in the height-one spectrum of $\mathcal O_K$, put
+$n_v=\mathrm{multiplicity}(v.\mathrm{asIdeal},D)$ and
+$q_v=\mathrm{absNorm}(v.\mathrm{asIdeal})$. Lean proves finite support of
+$n_v$ and, for **every** finite superset $T$ of that support,
+
+$$
+\prod_{v\in T}q_v^{n_v}=|\operatorname{disc}K|,\qquad
+\prod_{v\in T}\bigl(\sqrt{q_v^{n_v}}\bigr)^{-1}
+=\bigl(\sqrt{|\operatorname{disc}K|}\bigr)^{-1}.
+$$
+
+Masullo prescribes the local mass by the integral discriminant in
+(A.3.2.2), p. 560, and uses the norm of the **local** different in the
+unit calculation in the proof of Theorem 3.4.1.1, p. 144. Neither
+display computes the product using the exponents of the **global**
+different. The arithmetic bridge above takes absolute norms in its
+Dedekind factorization and uses `NumberField.absNorm_differentIdeal`.
+This comparison used Markdown and numbered PDF layout and is provisional;
+the [separate finite Gaussian control](finite-gaussian-tamagawa.md)
+has rendered-page evidence for the local normalization.
+
+Independent Yah statement review: Session
+`01a201e2-9be7-7e27-9cdf-b0edf12c9348`, child `review-different-product`
+(agent `CXjwajI`, read-only output `7340854b9c63a1817e848c324487928495e638ab`).
+The exact-candidate replay command is:
+
+```sh
+go run ./cmd/godel audit-local "$CANDIDATE" Theorems.DifferentUnitScales -- \
+  Masullo.finite_differentIdeal_multiplicity_support \
+  Masullo.prod_absNorm_pow_differentIdeal_multiplicity \
+  Masullo.prod_differentIdeal_unit_scales
+```
+
+### Next: Identify the placewise discriminant scales
+
+For $v$ over $p$, in the **actual** completion $K_v$ prove
+$|\operatorname{disc}(\mathcal O_{K_v}/\mathbb Z_p)|_p=q_v^{-n_v}$.
+One route is to prove that the image ideal of $D$ in $\mathcal O_{K_v}$
+is the local different, identify it as $\mathfrak m_v^{n_v}$, and compute
+the $p$-valuation of the local trace determinant as the length over
+$\mathbb Z_p$ of the trace-dual lattice modulo $\mathcal O_{K_v}$.
+The quotients by successive powers of $\mathfrak m_v$ have size $q_v$.
+The norm meant on the determinant is the base $p$-adic norm, not the
+normalized on-place norm extending a power of it. At the place over $2$
+in $\mathbb Q(i)$ this must give $q_v^{-n_v}=1/4$ and unit mass $1/2$,
+not unit mass one.
+
+Start with the compatible field and integer maps from the rational
+completion at the prime below $v$ into $K_v$. Pinned Mathlib has
+`HeightOneSpectrum.uniformContinuous_algebraMap_liesOver`,
+`UniformSpace.Completion.mapRingHom`, and the rational `padicEquiv` and
+`padicIntEquiv`. Use these to extend the dense rational embedding and
+restrict it to the valuation subrings. The finite completion extension
+instance in `NumberField/Completion/FinitePlace.lean` takes the completion
+algebra, continuous scalar multiplication, and tower as inputs. Next
+compare the trace dual after base change, projecting to the $v$-factor.
+The local identity is not a consequence of equality of the aggregate
+products. Once it is checked, construct or identify the local Haar
+scales, then use the exact stage restrictions of (A.3.2.5), p. 560, in the
+raw Gaussian theorem. Quotient Haar is still separate.
 
 **Still open:** Meromorphic continuation, divisor data, and contour
 growth in (B.4.2.1)–(4), the broader test class, general ramified Fourier terms,
