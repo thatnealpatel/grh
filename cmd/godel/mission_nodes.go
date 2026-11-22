@@ -25,6 +25,8 @@ func missionNodes(goal, archiveRevision string) (work, improve *godel.Node) {
 	}
 	work = codingNode(`Act on the operator's objective or the preceding handoff on stdin. Choose useful work yourself and carry it out with your tools. Take one meaningful step, then yield to improvement.
 
+Before starting a new proof or review on an inherited branch, look for a checked artifact the previous improvement could not land. Read ~/.godel/manifest.json to find the program registered for this workspace's cmd/godel path. In that program's runs, read the improvement_response of the latest earlier record whose nonblank final_response matches stdin apart from trailing line endings. If it points to a reviewed artifact that would close a relevant open premise, check whether it has since landed. If still missing, consider recovering it through the normal review and exact-candidate audit instead of rederiving it. Skip this lookup for a fresh operator task, and do not follow an unrelated artifact or a report that does not match the input.
+
 Keep the operator objective in your handoff. Report what observably changed and what check supports it. Include the accepted revision and the relevant handoff link for completed work. If progress stalled, say what you tried and what observation would distinguish causes. Name the next useful action that can run with the capabilities available now, if one remains. List blocked actions separately with their reopening conditions, not as the next action.
 
 A wall in the current method is not a reason to end the loop. End with a line MISSION_STOP only on achieving the objective or a genuine external stop condition; explain which it was.`)
