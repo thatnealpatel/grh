@@ -74,6 +74,8 @@ The [local terms of (B.4.2.2)](obligations/rational-explicit-formula.md#checked-
 
 The [single-place norm](obligations/single-place-norm.md) and [idele-class support lemma](obligations/finite-place-support.md) are in Lean. The latter descends the norm by the product formula and proves that the entire single-place restriction vanishes given the support-band, residue-norm, and norm-one vanishing hypotheses. This applies to omitted linear local terms in (12.5.1.2), not the two-sided orbital trace.
 
+The [local-product strip calculation](obligations/single-place-norm.md#compute-the-local-product-mass-of-the-strip) now gives the upstairs mass, including the class-number factor, for arbitrary number fields. The next normalization step is the [counting-normalized quotient Haar](obligations/single-place-norm.md#next-normalization-step-identify-the-counting-normalized-quotient-haar): Factor the upstairs Haar in split coordinates and identify the restricted pushforward from the norm-one fundamental domain. Do not infer it by restricting ambient Haar to the norm-one fibre.
+
 The [finite exceptional set argument](obligations/finite-place-support.md#choosing-the-finite-exceptional-set) is now in Lean. The descended norm is continuous and positive, and the topological support of a compactly supported test lies in a strict norm band. Bounded ideal norms give a finite exceptional set, so no separate band or residue-norm premise is needed for vanishing outside that set. This does not supply the orbital trace comparison or the additional conditions on $S$ in the proof on p. 520.
 
 ## From trace to zeros (Chapters 1, 13, and 14)

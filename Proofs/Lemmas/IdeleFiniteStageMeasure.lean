@@ -109,36 +109,45 @@ public scoped instance secondCountable_ideleGroup : SecondCountableTopology I :=
     (fun S ↦ (isOpenEmbedding_ideleFiniteStageEmbedding K S).isOpen_range)
     (iUnion_range_ideleFiniteStageEmbedding K)
 
+/-- An arbitrary Archimedean set times the integral units at all finite places,
+written in the coordinates of the stage `S`. -/
+@[expose] public noncomputable def stageUnitRectangle (B : Set A) (S : Finset V) :
+    Set (IdeleFiniteStage K S) :=
+  B ×ˢ (univ.pi (fun v : {v // v ∈ S} ↦ range (finiteCompletionUnitInclusion K v.val)) ×ˢ univ)
+
 /-- Archimedean box times all finite integer units, expressed in stage coordinates. -/
 public noncomputable def stageUnitBox (B : PositiveCompacts A) (S : Finset V) :
     PositiveCompacts (IdeleFiniteStage K S) where
-  carrier := (B : Set A) ×ˢ
-    (univ.pi (fun v : {v // v ∈ S} ↦ range (finiteCompletionUnitInclusion K v.val)) ×ˢ univ)
+  carrier := stageUnitRectangle K B S
   isCompact' := B.isCompact.prod ((isCompact_univ_pi fun v ↦
     isCompact_range (isOpenEmbedding_finiteCompletionIntegralUnits K v.val).continuous).prod
     isCompact_univ)
   interior_nonempty' := by
     have h := isOpen_set_pi finite_univ (fun (v : {v // v ∈ S}) _ ↦
       (isOpenEmbedding_finiteCompletionIntegralUnits K v.val).isOpen_range)
-    rw [interior_prod_eq, interior_prod_eq, h.interior_eq, interior_univ]
+    rw [stageUnitRectangle, interior_prod_eq, interior_prod_eq, h.interior_eq, interior_univ]
     refine B.interior_nonempty.prod (Set.Nonempty.prod ⟨1, ?_⟩ univ_nonempty)
     exact fun v _ ↦ ⟨1, map_one _⟩
 
-private noncomputable def infiniteUnitCoordinates (a : I) (v : InfinitePlace K) : v.Completionˣ where
+/-- The Archimedean coordinates of an idele, as units of the completions. -/
+@[expose] public noncomputable def ideleInfiniteUnitCoordinates (a : I)
+    (v : InfinitePlace K) : v.Completionˣ where
   val := (a : AdeleRing (𝓞 K) K).1 v
   inv := (↑(a⁻¹) : AdeleRing (𝓞 K) K).1 v
   val_inv := congrArg (fun b : AdeleRing (𝓞 K) K ↦ b.1 v) a.mul_inv
   inv_val := congrArg (fun b : AdeleRing (𝓞 K) K ↦ b.1 v) a.inv_mul
 
-private def calibrationSet (B : PositiveCompacts A) : Set I :=
-  {a | infiniteUnitCoordinates K a ∈ (B : Set A) ∧
+/-- The upstairs set with Archimedean coordinates in `B` and integral units
+at all finite places, independent of any choice of finite stage. -/
+@[expose] public def ideleUnitRectangle (B : Set A) : Set I :=
+  {a | ideleInfiniteUnitCoordinates K a ∈ B ∧
     ∀ v : V, (a : AdeleRing (𝓞 K) K).2 v ∈ (O v) ∧ (↑(a⁻¹) : AdeleRing (𝓞 K) K).2 v ∈ (O v)}
 
-private theorem preimage_calibrationSet (B : PositiveCompacts A) (S : Finset V) :
-    ideleFiniteStageEmbedding K S ⁻¹' calibrationSet K B = stageUnitBox K B S := by
+private theorem preimage_ideleUnitRectangle (B : Set A) (S : Finset V) :
+    ideleFiniteStageEmbedding K S ⁻¹' ideleUnitRectangle K B = stageUnitRectangle K B S := by
   ext x
   let j := ideleFiniteStageEmbedding K S
-  have ha : infiniteUnitCoordinates K (j x) = x.1 := funext fun v ↦
+  have ha : ideleInfiniteUnitCoordinates K (j x) = x.1 := funext fun v ↦
     Units.ext (ideleFiniteStageEmbedding_infinite K S x v)
   have hfin (v : V) (hv : v ∈ S) :
       (j x : AdeleRing (𝓞 K) K).2 v ∈ (O v) ∧ (↑((j x)⁻¹) : AdeleRing (𝓞 K) K).2 v ∈ (O v) ↔
@@ -154,18 +163,17 @@ private theorem preimage_calibrationSet (B : PositiveCompacts A) (S : Finset V) 
       change finiteCompletionUnitInclusion K v u = y at hu
       rw [← hu]
       exact ⟨u.val.property, u.inv.property⟩
-  change (infiniteUnitCoordinates K (j x) ∈ (B : Set A) ∧ _) ↔
-    x ∈ (B : Set A) ×ˢ (_ ×ˢ univ)
+  change (ideleInfiniteUnitCoordinates K (j x) ∈ B ∧ _) ↔ x ∈ B ×ˢ (_ ×ˢ univ)
   simp only [ha, mem_prod, mem_univ, and_true, mem_pi]
   refine and_congr_right fun _ ↦ ⟨fun h v _ ↦ (hfin v.val v.property).mp (h v.val), fun h v ↦ ?_⟩
   by_cases hv : v ∈ S
   · exact (hfin v hv).mpr (h ⟨v, hv⟩ trivial)
   · exact (range_ideleFiniteStageEmbedding K S ▸ mem_range_self x) v hv
 
-private theorem image_stageUnitBox (B : PositiveCompacts A) (S : Finset V) :
-    ideleFiniteStageEmbedding K S '' (stageUnitBox K B S : Set (IdeleFiniteStage K S)) =
-      calibrationSet K B := by
-  rw [← preimage_calibrationSet]
+/-- An integral-finite rectangle is the image of its coordinates in every stage. -/
+public theorem image_ideleStageUnitRectangle (B : Set A) (S : Finset V) :
+    ideleFiniteStageEmbedding K S '' stageUnitRectangle K B S = ideleUnitRectangle K B := by
+  rw [← preimage_ideleUnitRectangle]
   apply image_preimage_eq_of_subset
   intro a ha
   exact (range_ideleFiniteStageEmbedding K S).symm ▸ fun v _ ↦ ha.2 v
@@ -179,7 +187,7 @@ public noncomputable def ideleCalibrationBox (B : PositiveCompacts A) : Positive
 public theorem image_ideleStageUnitBox (B : PositiveCompacts A) (S : Finset V) :
     ideleFiniteStageEmbedding K S '' (stageUnitBox K B S : Set (IdeleFiniteStage K S)) =
       ideleCalibrationBox K B :=
-  (image_stageUnitBox K B S).trans (image_stageUnitBox K B ∅).symm
+  (image_ideleStageUnitRectangle K B S).trans (image_ideleStageUnitRectangle K B ∅).symm
 
 section Measures
 
@@ -293,17 +301,26 @@ public theorem ideleFiniteStageProduct_groupedTensor {L : Type*} [RCLike L]
       (integral_fintype_prod_eq_prod (μ := fun v : {v // v ∈ S} ↦ μf v.val) f)
 
 omit ha ba in
-/-- The calibration mass in stage coordinates retains all active unit masses. -/
-public theorem ideleFiniteStageProduct_unitBox (B : PositiveCompacts A) (S : Finset V)
+/-- The rectangle mass retains all active unit masses. Inactive unit factors
+are probabilities and contribute one. -/
+public theorem ideleFiniteStageProduct_unitRectangle (B : Set A) (S : Finset V)
     (hS : ∀ v ∉ S, finiteCompletionUnitMass K μf v = 1) :
-    ideleFiniteStageProduct K μa μf S (stageUnitBox K B S) =
+    ideleFiniteStageProduct K μa μf S (stageUnitRectangle K B S) =
       Measure.pi μa B * ∏ v ∈ S, finiteCompletionUnitMass K μf v := by
   let (v : {v // v ∉ S}) := inactiveHaar_probability K μf S hS v
   change (Measure.pi μa).prod ((Measure.pi (fun v : {v // v ∈ S} ↦ μf v.val)).prod
-    (Measure.infinitePi (inactiveHaar K μf S))) ((B : Set A) ×ˢ
+    (Measure.infinitePi (inactiveHaar K μf S))) (B ×ˢ
       (univ.pi (fun v : {v // v ∈ S} ↦ range (finiteCompletionUnitInclusion K v.val)) ×ˢ univ)) = _
   rw [Measure.prod_prod, Measure.prod_prod, Measure.pi_pi, measure_univ, mul_one]
   exact congrArg (fun m ↦ Measure.pi μa B * m) (Finset.prod_attach S (finiteCompletionUnitMass K μf))
+
+omit ha ba in
+/-- The calibration box is the positive compact case of the rectangle formula. -/
+public theorem ideleFiniteStageProduct_unitBox (B : PositiveCompacts A) (S : Finset V)
+    (hS : ∀ v ∉ S, finiteCompletionUnitMass K μf v = 1) :
+    ideleFiniteStageProduct K μa μf S (stageUnitBox K B S) =
+      Measure.pi μa B * ∏ v ∈ S, finiteCompletionUnitMass K μf v :=
+  ideleFiniteStageProduct_unitRectangle K μa μf B S hS
 
 end Measures
 

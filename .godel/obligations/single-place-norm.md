@@ -577,24 +577,70 @@ go run ./cmd/godel audit-local "$CANDIDATE" Theorems.IdeleClassCompact \
   Masullo.existsUnique_idelePrincipal_translate Masullo.isFundamentalDomain_ideleFundamentalDomain
 ```
 
-### Next normalization step: Compute the local-product mass of the unit-window strip
+### Compute the local-product mass of the strip
 
-For the Haar `μ` from `exists_discriminantNormalizedIdeleHaar`, compute
-`μ (σ '' (J ×ˢ ideleUnitWindow v))`, where `σ` is `ideleLogSplit` for the
-single-place section and `J` is the log interval corresponding to
-`[1,T]`, `1 ≤ T`. The target is the interval length times the checked
-Archimedean coordinate mass of `E₀` times
-`ENNReal.ofReal ((Real.sqrt ((discr K).natAbs : ℝ))⁻¹)`. This is the
-identity-class contribution to the strip in § A.3.3.1, p. 561. The finite
-coordinates of the section are one. Use the stage restriction at a
-finite set containing the different's support, not the existing
-positive-compact calibration-box formula on an arbitrary Borel set. In
-that stage the strip has the Archimedean strip as its infinite factor
-and the full integral-unit subgroup at each finite place. Combine the
-Archimedean split and coordinate mass with the finite unit-mass product.
+Section A.3.3.1, p. 561, states the strip mass using the quotient
+volume in (A.3.2.1), pp. 559–560. `Theorems.IdeleUnitWindowMass`
+computes the upstairs mass without using that quotient volume, from
+the local product in (A.3.2.5), p. 560. `image_ideleLogSplit_unitWindow`
+identifies the actual window with the Archimedean strip times all
+finite integral units; `ideleFiniteStageProduct_unitRectangle` gives
+the measure of this Borel rectangle using one stage containing the
+different support. The inactive factors are probabilities, and the
+active product gives the inverse square root of the absolute
+discriminant. `measure_archimedeanUnitWindowStrip` uses the retained
+weighted logs and angular coordinates, not hyperplane surface
+measure. The canonical radial section at `w₀` leaves those
+coordinates fixed; the independently chosen torsion-sector place
+need not be `w₀`.
 
-The disjoint translated pieces then give the class-number factor by
-Haar invariance. Separately show that the log-split Haar factor on the
-norm-one ideles pushes from the Borel domain to the quotient Haar
-with counting measure on principal ideles, to compare with (A.3.2.1),
-pp. 559–560. Do not restrict full Haar to the null norm-one fibre.
+`measure_ideleLogSplit_unitWindow` applies to arbitrary Borel log sets.
+`measure_ideleLogSplit_unitWindow_Icc` uses the closed log interval
+`[0, log T]`, of mass `ENNReal.ofReal (Real.log T)`. For `T ≥ 1` this
+is the positive-radius interval `[1,T]`, including zero mass at `T=1`.
+`Theorems.IdeleClassStrip` proves the class-number factor for any
+homomorphic continuous section by summing disjoint Borel left
+translates of the unit strip. The combined
+`measure_ideleLogSplit_fundamentalDomain` uses the canonical section
+and the single admissible stage equality, plus left invariance and
+any ideal-class section. The stage equalities from
+`exists_discriminantNormalizedIdeleHaar` supply that premise; a
+single stage equality alone is not a global Haar uniqueness result.
+
+Independent statement review: Yah session
+`01a20302-ad3d-7d7c-bccb-90cd7c861684`, child `review-strip`
+(`IZffZrz`). Manuscript readings are provisional: Pinned Markdown
+and numbered PDF text, not rendered pages.
+
+```sh
+go run ./cmd/godel audit-local "$CANDIDATE" Lemmas.IdeleFiniteStageMeasure \
+  Lemmas.IdeleUnitWindowCoordinates Theorems.IdeleClassStrip \
+  Theorems.IdeleUnitWindowMass -- \
+  Masullo.stageUnitRectangle Masullo.image_ideleStageUnitRectangle \
+  Masullo.ideleFiniteStageProduct_unitRectangle \
+  Masullo.image_ideleLogSplit_unitWindow Masullo.measure_archimedeanUnitWindowStrip \
+  Masullo.measure_ideleFundamentalDomain_strip_eq_classNumber_mul \
+  Masullo.measure_ideleLogSplit_unitWindow Masullo.measure_ideleLogSplit_unitWindow_Icc \
+  Masullo.measure_ideleLogSplit_fundamentalDomain
+```
+
+### Next normalization step: Identify the counting-normalized quotient Haar
+
+For normalized upstairs Haar `μ`, factor its transport by
+`ideleLogSplit` as `logVolume.prod μ₁` with `μ₁` Haar on the norm-one
+ideles. One construction is to choose a Haar there and use
+second-countable Haar uniqueness on the product to fix its positive
+scale. Do not restrict ambient Haar to the null norm-one fibre.
+Let `D := ideleFundamentalDomain v r`, and let `q₁` be the restriction
+of the principal quotient to `ideleClassNormOne`. Show that
+`Measure.map q₁ (μ₁.restrict D)` is Haar on that actual quotient and
+satisfies Weil's formula for counting measure on the principal
+subgroup, as in Theorem D.1.2.1, p. 747. The existing fundamental-domain
+API gives integration of sums over translates on the restricted
+pushforward; still identify its orbit quotient with the actual
+norm-one idele-class group and establish invariance and finite mass.
+The ambient log-split compatibility `ideleClassLogSplit_mk` gives a
+route to show `q₁` is an open quotient map. The strip formula with a
+unit-length log interval then fixes its total mass at (A.3.2.1).
+These bridges, and any subsequent quotient-level analytic use, are
+not proved by the upstairs strip formula alone.
