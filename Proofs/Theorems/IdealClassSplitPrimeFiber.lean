@@ -91,6 +91,53 @@ public theorem qSqrtNegFive_heckePrimeFiber_of_split_root (p : Nat.Primes)
     · exact Or.inl (Subtype.ext (HeightOneSpectrum.ext_iff.mpr (h.trans hv₁.symm)))
     · exact Or.inr (Subtype.ext (HeightOneSpectrum.ext_iff.mpr (h.trans hv₂.symm)))
 
+/-- Each place over a split prime has residue field `ZMod p.val` via the corresponding
+projection, compatibly with integer reduction. Its residue degree is one. -/
+public theorem qSqrtNegFive_heckePrimeFiber_residue_of_split_root (p : Nat.Primes) (hp₂ : p.val ≠ 2) (hp₅ : p.val ≠ 5)
+    (r : ZMod p.val) (hr : r ^ 2 = -5) (v : heckePrimeFiber QSqrtNegFive p) :
+    let f := (qSqrtNegFiveSplitQuotientEquiv p hp₂ hp₅ r hr).toRingHom.comp
+      (Ideal.Quotient.mk (Ideal.span {(p.val : O)}))
+    (∃ e : (O ⧸ v.1.asIdeal) ≃+* ZMod p.val,
+      ((∀ x : O, e (Ideal.Quotient.mk _ x) = (f x).1) ∨
+        (∀ x : O, e (Ideal.Quotient.mk _ x) = (f x).2)) ∧
+      (∀ n : ℤ, e (Ideal.Quotient.mk _ (n : O)) = (n : ZMod p.val))) ∧
+    v.1.asIdeal.inertiaDeg ℤ = 1 := by
+  intro f
+  obtain ⟨v₁, v₂, h₁, h₂, _, hexhaust⟩ :=
+    qSqrtNegFive_heckePrimeFiber_of_split_root p hp₂ hp₅ r hr
+  have hf : Function.Surjective f := (qSqrtNegFiveSplitQuotientEquiv p hp₂ hp₅ r hr).surjective.comp
+    Ideal.Quotient.mk_surjective
+  have descend (g : O →+* ZMod p.val) (hg : Function.Surjective g)
+      (h : v.1.asIdeal = RingHom.ker g) :
+      ∃ e : (O ⧸ v.1.asIdeal) ≃+* ZMod p.val, ∀ x : O, e (Ideal.Quotient.mk _ x) = g x := by
+    refine ⟨(Ideal.quotEquivOfEq h).trans (g.quotientKerEquivOfSurjective hg), ?_⟩
+    intro x
+    rw [RingEquiv.trans_apply, Ideal.quotEquivOfEq_mk, RingHom.quotientKerEquivOfSurjective_apply_mk]
+  obtain ⟨e, he⟩ : ∃ e : (O ⧸ v.1.asIdeal) ≃+* ZMod p.val,
+      (∀ x : O, e (Ideal.Quotient.mk _ x) = (f x).1) ∨
+        (∀ x : O, e (Ideal.Quotient.mk _ x) = (f x).2) := by
+    rcases hexhaust v with hv | hv
+    · have hs : Function.Surjective (RingHom.fst (ZMod p.val) (ZMod p.val)) :=
+        fun x ↦ ⟨(x, 0), rfl⟩
+      obtain ⟨e, he⟩ := descend _ (hs.comp hf) (hv ▸ h₁)
+      exact ⟨e, Or.inl he⟩
+    · have hs : Function.Surjective (RingHom.snd (ZMod p.val) (ZMod p.val)) :=
+        fun x ↦ ⟨(0, x), rfl⟩
+      obtain ⟨e, he⟩ := descend _ (hs.comp hf) (hv ▸ h₂)
+      exact ⟨e, Or.inr he⟩
+  refine ⟨⟨e, he, fun n ↦ ?_⟩, ?_⟩
+  · rw [map_intCast, map_intCast]
+  · let _ : v.1.asIdeal.IsPrime := v.1.isPrime
+    have hbase : (v.1.asIdeal.under ℤ).absNorm = p.val := by
+      rw [heckePrimeFiber_under_eq_span p v]
+      simp
+    have hnorm : v.1.asIdeal.absNorm = p.val := by
+      rw [Ideal.absNorm_eq_natCard, Nat.card_congr e.toEquiv, Nat.card_zmod]
+    have hdeg := Ideal.absNorm_pow_inertiaDeg (v.1.asIdeal.under ℤ) v.1.asIdeal
+    rw [hbase, hnorm] at hdeg
+    apply Nat.pow_right_injective p.2.two_le
+    simpa only [pow_one] using hdeg
+
 -- At 3 with root 1, `1 + √-5` vanishes only under the second projection.
 example :
     let f := (qSqrtNegFiveSplitQuotientEquiv ⟨3, by decide⟩ (by decide) (by decide) 1

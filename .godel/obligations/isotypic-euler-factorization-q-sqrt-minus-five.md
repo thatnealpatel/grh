@@ -380,6 +380,39 @@ not field ramification. The enumeration supplies indices for the finite
 Euler factor, not a printed result or a proof of their exponents or
 coefficients. No new visual reading or p. 309 cross-reference was needed.
 
+### Checked split residue fields and degrees
+
+In [`IdealClassSplitPrimeFiber`](../../Proofs/Theorems/IdealClassSplitPrimeFiber.lean),
+`qSqrtNegFive_heckePrimeFiber_residue_of_split_root` takes a rational
+prime $p\ne 2,5$, a specified $r\in\mathbb F_p$ with $r^2=-5$, and
+any $v$ in `heckePrimeFiber QSqrtNegFive p`. It gives a ring equivalence
+$\mathcal O_F/\mathfrak p_v\simeq\mathbb F_p$ whose composition with
+the residue map is the corresponding evaluation at $r$ or $-r$. The
+kernel determines which evaluation applies. On the class of any
+rational integer $n$, the equivalence gives $n$ reduced modulo $p$.
+The same endpoint proves `v.1.asIdeal.inertiaDeg ℤ = 1`.
+
+Each projection is surjective, so it descends to an equivalence by
+`RingHom.quotientKerEquivOfSurjective` after replacing its kernel by
+the place ideal. The quotient cardinality and the norm of the
+contracted ideal are both $p$. `Ideal.absNorm_pow_inertiaDeg` gives
+$p^{f_v}=p$, and $p>1$ gives $f_v=1$. No character hypothesis is
+needed. In `heckeRationalDenominator` this removes the degree-power
+substitution at both split places, for any Hecke character. For an
+ideal-class pullback both factors are retained; the coefficients are
+not evaluated by this endpoint.
+
+Independent statement and applicability review: `zVBghhE` (transcript
+Yah `01a202f5-2650-759b-a371-00f65956dd73`) checked the exact scope,
+projection correspondence, reduction on integers, and norm-power
+argument mathematically. It checked the applicability of the
+[accepted rendered reading](#manuscript-interface) and
+[idelic pullback](#checked-idelic-realization-and-local-factors) of
+Masullo, p. 122, §3.2.1, (3.2.1.1), and p. 124, Definition 3.2.1.4,
+(3.2.1.7). This is arithmetic input for the two exponents in the finite
+product, not a printed residue-degree claim, a new visual reading,
+or a use of p. 309.
+
 ### Remaining grouped identity
 
 The grouped local polynomial identity for the actual quadratic class
@@ -411,12 +444,11 @@ pp. 800–801, identified in its [holomorphy section](isotypic-inverse-range-q-s
 
 **Open Lean premise for the Hecke transfer:** Instantiate the all-prime
 grouped polynomial identity for a constructed idèle-class character.
-**Next arithmetic check:** For the two places in the
-[split fiber](#checked-split-prime-fiber), use the surjective projections
-of the split quotient to identify each residue field with $\mathbb F_p$
-and deduce residue degree one. This fixes the two exponents in the split
-grouped factor. Comparing the Dirichlet signs, normalizing the
-nontrivial class character, and assembling the all-prime identity remain
-separate.
+**Next arithmetic check:** For $p\nmid10$, relate
+`dirichletNegFour p.val * dirichletFive p.val` to the Legendre symbol of
+$-5$ modulo $p$ by quadratic reciprocity at $5$. This would give equality
+of the two Dirichlet signs in the split row and opposition in the inert
+row. Constructing and normalizing the nontrivial class character and
+assembling the all-prime identity remain separate.
 The explicit product's circle growth and common-height estimate are
 already unconditional in Lean.
