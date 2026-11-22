@@ -430,17 +430,100 @@ remains provisional for that purpose. The prior rendered review of
 (B.4.2.3), p. 614, confirmed the sign issue explained above; the local
 test does not justify that displayed differentiation.
 
-**Next bounded check:** At arbitrary rational $p$, replace the two
-cosets by the units modulo $p^n$ for a primitive character of exact
-conductor $p^n$ and $\chi(p)=1$. Check vanishing at lower-conductor
-frequencies by nontriviality on the kernel of reduction modulo $p^{n-1}$,
-and nonvanishing on the remaining shell by finite Fourier inversion.
-This would extend the verified orientation of the local power to
-$p^{n(s-1/2)}$ over rational completions. Separate open premises are
-the inverse-different support and self-dual measure over finite
-extensions, and assembly and identification of the globally completed
-Hecke product (including the Archimedean normalization, reflected
-right-line integrability, and contour exhaustion).
+### Primitive prime-power conductor shells over $\mathbb Q_p$
+
+The [modulus-three calculation](#ramified-local-conductor-power-the-modulus-three-test)
+was a two-coset control. The new [Lean proof](../../Proofs/Theorems/PadicConductorFourier.lean)
+works for every prime $p$, every $n>0$, and every primitive
+`DirichletCharacter ℂ (p ^ n)` (conductor equal to level). Write
+$d=p^n$, let $\chi$ on $\mathbb Z_p^\times$ be reduction modulo $p^n$
+followed by that character, and write $f=\chi^{-1}\mathbf1_{\mathbb Z_p^\times}$
+with zero elsewhere. This is a locally constant, compactly supported
+Schwartz–Bruhat test. `padicConductorTest_unit` and
+`padicConductorTest_eq_zero_of_norm_ne_one` identify this test pointwise.
+Use the complex conjugate of the standard additive character as kernel,
+and additive Haar mass one on $\mathbb Z_p$.
+
+- `padicConductorFourier_ne_zero_iff` proves $\widehat f(y)\ne0$ if and
+  only if $|p^n y|_p=1$, for every $y\in\mathbb Q_p$.
+- `padicConductorFourier_unit` proves
+  $\widehat f(u/p^n)=\chi(u)\widehat f(1/p^n)$ for all local integral
+  units $u$. This covariance endpoint does not require $n>0$.
+- `padicConductorFourier_of_integral` reduces the integral, when
+  $a=p^n y\in\mathbb Z_p$, to $p^{-n}$ times the counting-measure
+  negative-sign DFT of the inverse residue character at $a\bmod p^n$.
+  This reduction does not require primitivity or $n>0$. The translated
+  ball formula gives zero outside $p^{-n}\mathbb Z_p$. Inside it,
+  the primitive Gauss-sum identity kills nonunit residues and gives
+  unit covariance. If the DFT at $1$ vanished, the same identity would
+  make the entire DFT zero, contrary to finite inversion and $f(1)=1$.
+- The [modulus-three control](../../Proofs/Theorems/PadicRamifiedThreeFourier.lean)
+  identifies the pointwise test with the original signed cosets using
+  the primitive quadratic character; the original computation is
+  retained as an independent route.
+
+**Local zeta quotient, not formalized.** Extend the unit character to
+$\mathbb Q_p^\times$ by $\chi(p)=1$. It has conductor $p^n\mathbb Z_p$:
+Reduction on units is onto with kernel $1+p^n\mathbb Z_p$, and a smaller
+conductor would factor the residue character through a lower level
+(through the trivial unit character for $n=1$). This gives the conductor
+coset space $\mathbb Z_p^\times/(1+p^n\mathbb Z_p)$ appearing in the
+Gauss sum definition below (3.3.1.30), p. 136. Finite-order unit values
+and $\chi(p)=1$ give a unitary character.
+The different of $\mathbb Q_p/\mathbb Q_p$ is the unit ideal. Let
+$c_s=\chi|\cdot|_p^s$, $A=\widehat f(p^{-n})\ne0$, and let $m>0$ be
+multiplicative Haar mass of $\mathbb Z_p^\times$. By the local zeta
+integral (3.3.1.7), p. 130, and $\widehat c_s=|\cdot|_p c_s^{-1}$ in
+(3.1.1.4), p. 119, the forward integral is $m$. On the reflected shell,
+write $y=p^{-n}u$; its Haar mass is also $m$, $|y|_p=p^n$, and the
+character from the Fourier transform cancels the inverse twist. The
+reflected integral is therefore $mA p^{n(1-s)}$. Both integrals are
+absolutely convergent for every complex $s$ on these compact supports
+away from zero. In forward-over-reflected orientation,
+$$
+R_p(s)=A^{-1}p^{n(s-1)},\qquad R_p(3/4)/R_p(1/4)=p^{n/2}.
+$$
+Changing the sign of the Fourier phase replaces $A$ by $\chi(-1)A$,
+and a fixed nonzero additive Haar rescaling multiplies $A$ by that
+scalar, so neither can change this ratio. This calculation does not evaluate the
+constant phase or identify it with either printed $\rho_0$.
+
+**Printed route.** The factorization (3.3.1.2)–(3), p. 129, uses the
+same orientation. The local identity in the proof below (3.3.1.32),
+p. 136, is $\rho_v(c_v)=\epsilon_v(c_v)L_v(c_v)/L_v(\widehat c_v)$.
+Both Euler factors are $1$ in the ramified case, as the proof states
+on p. 137. The $s$-dependent notation for the Gauss sum in (3.3.1.30),
+p. 136, does not change its defining summands: It uses the fixed unit
+character and fixed additive phases at conductor denominators. With
+trivial different, this route prints a constant factor (ratio $1$ if
+nonzero), while (3.3.2.24), p. 141, prints the ramified power
+$p^{n(s-1/2)}$ and predicts $p^{n/2}$. The defining-integral calculation
+agrees with p. 141 **in the exponent**. It contradicts the constant
+finite factor on p. 136, not an unspecified product of global factors.
+The displayed (3.3.1.31) itself writes $L_S(\widehat f,\widehat c)$;
+(3.3.1.33), p. 137, writes $Z_S(\widehat f,\widehat c)$. The verdict
+uses the individual factor in the proof and does not assume those
+printed numerators are literally the same.
+
+**Independent review:** Yah session `01a201d1-b153-77f9-960b-0aa6dfd16c95`,
+agent `WNdLLkJ`, inspected the rendered pages of the
+[pinned edition](../sources/masullo/README.md), including the local dual,
+measure, and kernel cross-references (3.1.1.4), p. 119, (A.3.1.2), p. 556,
+Example A.3.1.6, p. 557, (A.3.2.2), p. 560, and (D.1.1.4), p. 746.
+The reviewer separately derived the defining quotient from the shell,
+read the two printed factor routes and the ramified Euler convention,
+and matched the fresh-import Lean signatures against independently
+elaborated statements. The quotient comparison does not use the
+shifted-frequency expression in (A.3.1.5) or the real factor and product
+norm needed for the broader, partly provisional $S$-local comparison
+in the preceding modulus-three note.
+
+**Next bounded check:** Apply finite Plancherel to the general residue
+DFT to prove $|A|=p^{-n/2}$ in Lean. This would give the unit modulus of
+the central normalized quotient without choosing its phase. It does not
+build the local multiplicative-character extension or Lean zeta
+integrals, the finite-extension inverse-different and Haar comparison,
+or a global functional equation.
 
 ### Separate global Fourier sign
 
@@ -1194,8 +1277,9 @@ or the functional equation.
 
 **Still open:** Meromorphic continuation, divisor data, and contour
 growth in (B.4.2.1)–(4), the broader test class, general ramified Fourier terms,
-and global trace. The [local conductor test](#ramified-local-conductor-power-the-modulus-three-test)
-checks the modulus-three power, not the exponential input to the reflection.
+and global trace. The [local conductor test](#primitive-prime-power-conductor-shells-over-mathbb-q_p)
+checks the power for primitive rational prime-power conductors, not the
+exponential input to the reflection.
 Before using the eigenspace claim, reconcile the
 [rendered pullback action](complex-gaussian-angular.md#the-weight-one-control-and-its-scope)
 $T(f\circ m_g)$ in (3.4.3.1), p. 151, with (3.3.1.7), p. 130:

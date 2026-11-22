@@ -21,7 +21,8 @@ variable (p : ℕ) [Fact p.Prime]
 local notation "B[" q "]" => Set.ofPred (fun x : ℚ_[q] ↦ ‖x‖ ≤ 1)
 local notation "D[" q "," n "]" => Set.ofPred (fun x : ℚ_[q] ↦ ‖((q : ℚ_[q]) ^ n)⁻¹ * x‖ ≤ 1)
 
-private theorem padic_residue_coset (n : ℕ) (j : ZMod (p ^ n)) (x : ℚ_[p]) :
+/-- A translated integral ball is the fiber of its residue representative. -/
+public theorem padic_residue_coset (n : ℕ) (j : ZMod (p ^ n)) (x : ℚ_[p]) :
     x - (j.val : ℚ_[p]) ∈ D[p,n] ↔
       ∃ a : ℤ_[p], (a : ℚ_[p]) = x ∧ PadicInt.toZModPow n a = j := by
   let d : ℤ_[p] := (p : ℤ_[p]) ^ n

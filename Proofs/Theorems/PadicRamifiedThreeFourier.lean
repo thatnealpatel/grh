@@ -1,10 +1,12 @@
 module
 
-public import Theorems.PadicIntegralBallFourier
+public import Theorems.PadicConductorFourier
 
 import Mathlib.Algebra.GroupWithZero.Indicator
 import Mathlib.MeasureTheory.Function.LocallyIntegrable
 import Mathlib.NumberTheory.Padics.ProperSpace
+import Mathlib.NumberTheory.LegendreSymbol.QuadraticChar.Basic
+import Lemmas.PadicBallPartition
 
 /-!
 # The signed unit-coset Fourier test over `ℚ_[3]`
@@ -96,5 +98,90 @@ nonzero at frequency `1/3`. -/
 public theorem padicRamifiedThree_fourier_at_inv_ne_zero :
     (∫ x, padicRamifiedThreeTest x * star (ψ (x * (3 : ℚ_[3])⁻¹)) ∂μ) ≠ 0 := by
   rw [padicRamifiedThree_fourier_ne_zero_iff, mul_inv_cancel₀ (by norm_num), norm_one]
+
+/-- The quadratic character modulo three, viewed as a complex character. -/
+public def padicRamifiedThreeCharacter : DirichletCharacter ℂ (3 ^ 1) :=
+  (quadraticChar (ZMod 3)).ringHomComp (Int.castRingHom ℂ)
+
+private theorem padicRamifiedThreeCharacter_two : padicRamifiedThreeCharacter 2 = -1 := by
+  have h : ¬ IsSquare (2 : ZMod 3) := by
+    rintro ⟨b, hb⟩
+    fin_cases b <;> revert hb <;> decide
+  change (↑(quadraticChar (ZMod 3) 2) : ℂ) = -1
+  rw [quadraticChar_neg_one_iff_not_isSquare.mpr h, Int.cast_neg, Int.cast_one]
+
+/-- The quadratic character modulo three has conductor three. -/
+public theorem padicRamifiedThreeCharacter_isPrimitive : padicRamifiedThreeCharacter.IsPrimitive := by
+  have h := padicRamifiedThreeCharacter.conductor_dvd_level
+  change padicRamifiedThreeCharacter.conductor ∣ 3 at h
+  rcases (Nat.dvd_prime (by decide : Nat.Prime 3)).mp h with h | h
+  · have he := DirichletCharacter.eq_one_iff_conductor_eq_one.mpr h
+    have hu : IsUnit (2 : ZMod (3 ^ 1)) := by
+      exact ⟨-1, by decide⟩
+    have he₂ := DFunLike.congr_fun he (2 : ZMod (3 ^ 1))
+    rw [padicRamifiedThreeCharacter_two, MulChar.one_apply hu] at he₂
+    norm_num at he₂
+  · exact h
+
+/-- The general residue-character test specializes to the signed coset test,
+pointwise and with the same normalization. -/
+public theorem padicRamifiedThreeTest_eq_conductorTest :
+    padicRamifiedThreeTest = padicConductorTest 3 padicRamifiedThreeCharacter := by
+  funext x
+  have hm (j : ZMod (3 ^ 1)) :
+      x ∈ C[(j.val : ℚ_[3])] ↔ ∃ a : ℤ_[3], (a : ℚ_[3]) = x ∧ PadicInt.toZModPow 1 a = j := by
+    change ‖(3 : ℚ_[3])⁻¹ * (x - (j.val : ℚ_[3]))‖ ≤ 1 ↔ _
+    have he := padic_residue_coset 3 1 j x
+    change ‖((3 : ℚ_[3]) ^ 1)⁻¹ * (x - (j.val : ℚ_[3]))‖ ≤ 1 ↔ _ at he
+    simpa only [pow_one] using he
+  have h₁ : (1 : ZMod (3 ^ 1)).val = 1 := rfl
+  have h₂ : (2 : ZMod (3 ^ 1)).val = 2 := rfl
+  have hc₁ := hm 1
+  have hc₂ := hm 2
+  rw [h₁, Nat.cast_one] at hc₁
+  rw [h₂, Nat.cast_ofNat] at hc₂
+  by_cases hx : ‖x‖ ≤ 1
+  · let a : ℤ_[3] := ⟨x, hx⟩
+    have hs (j : ZMod (3 ^ 1)) :
+        (∃ b : ℤ_[3], (b : ℚ_[3]) = x ∧ PadicInt.toZModPow 1 b = j) ↔
+          PadicInt.toZModPow 1 a = j := by
+      constructor
+      · rintro ⟨b, hb, hbj⟩
+        rwa [PadicInt.coe_inj.mp (show (b : ℚ_[3]) = (a : ℚ_[3]) from hb)] at hbj
+      · exact fun h ↦ ⟨a, rfl, h⟩
+    let j := PadicInt.toZModPow 1 a
+    rw [padicRamifiedThreeTest, padicConductorTest, dite_eq_left hx]
+    change (C[1]).indicator (fun _ ↦ (1 : ℂ)) x - (C[2]).indicator (fun _ ↦ 1) x =
+      padicRamifiedThreeCharacter⁻¹ j
+    have hcases : ∀ j : ZMod (3 ^ 1), j = 0 ∨ j = 1 ∨ j = 2 := by decide
+    have hmem₁ : x ∈ C[1] ↔ j = 1 := hc₁.trans (hs 1)
+    have hmem₂ : x ∈ C[2] ↔ j = 2 := hc₂.trans (hs 2)
+    rcases hcases j with h | h | h
+    · rw [indicator_of_notMem (mt hmem₁.mp (h.trans_ne (by decide : (0 : ZMod (3 ^ 1)) ≠ 1))),
+        indicator_of_notMem (mt hmem₂.mp (h.trans_ne (by decide : (0 : ZMod (3 ^ 1)) ≠ 2))), h]
+      have hzero : ¬IsUnit (0 : ZMod (3 ^ 1)) := by
+        change ¬IsUnit (0 : ZMod 3)
+        exact not_isUnit_zero
+      rw [MulChar.map_nonunit _ hzero, sub_zero]
+    · rw [indicator_of_mem (hmem₁.mpr h),
+        indicator_of_notMem (mt hmem₂.mp (h.trans_ne (by decide : (1 : ZMod (3 ^ 1)) ≠ 2))), h]
+      simp
+    · rw [indicator_of_notMem (mt hmem₁.mp (h.trans_ne (by decide : (2 : ZMod (3 ^ 1)) ≠ 1))),
+        indicator_of_mem (hmem₂.mpr h), h, MulChar.inv_apply_eq_inv', padicRamifiedThreeCharacter_two]
+      simp
+  · have hn (j : ZMod (3 ^ 1)) : ¬ ∃ a : ℤ_[3], (a : ℚ_[3]) = x ∧ PadicInt.toZModPow 1 a = j := by
+      rintro ⟨a, rfl, _⟩
+      exact hx a.2
+    rw [padicRamifiedThreeTest, padicConductorTest, dite_eq_right hx,
+      indicator_of_notMem (mt hc₁.mp (hn 1)), indicator_of_notMem (mt hc₂.mp (hn 2)), sub_self]
+
+-- Recover the original shell from the general conductor theorem.
+example (y : ℚ_[3]) :
+    (∫ x, padicRamifiedThreeTest x * star (ψ (x * y)) ∂μ) ≠ 0 ↔ ‖3 * y‖ = 1 := by
+  rw [padicRamifiedThreeTest_eq_conductorTest]
+  change padicConductorFourier 3 padicRamifiedThreeCharacter y ≠ 0 ↔ ‖3 * y‖ = 1
+  simpa only [pow_one, Nat.cast_ofNat] using
+    padicConductorFourier_ne_zero_iff 3 Nat.one_pos padicRamifiedThreeCharacter
+      padicRamifiedThreeCharacter_isPrimitive y
 
 end Masullo
