@@ -390,29 +390,57 @@ pp. 123 and 615–616. The review distinguished the arbitrary-weight
 majorant from evaluation on Mellin weights. These manuscript readings
 used chapter Markdown and PDF layout extraction, not rendered pages.
 
+## Continuous one-parameter character classification
+
+[The Lean foundation](../../Proofs/Lemmas/OneParameterCharacter.lean)
+proves `Masullo.existsUnique_unitary_oneParameterCharacter`: A continuous
+$h:\mathbb R\to\mathbb C$ with $h(0)=1$, $h(t+u)=h(t)h(u)$, and
+$|h|=1$ has the form $h(t)=e^{i\tau t}$ for a unique real $\tau$.
+Masullo gives the Archimedean factor formulas in (3.2.1.3)–(5),
+p. 123, but does not derive this common classification there. This
+project proof requires no choice of argument: A sufficiently short
+positive interval has $J=\int_0^r h(u)\,du\ne 0$. For
+$F(t)=\int_0^t h(u)\,du$, the identity
+$J h(t)=F(t+r)-F(t)$ and the fundamental theorem of calculus give
+$h'=kh$ for $k=(h(r)-1)/J$. An integrating factor gives $h(t)=e^{kt}$;
+unit modulus at $t=1$ gives $\Re k=0$, and the derivative at zero
+fixes $\tau$. The reading of the pinned text is provisional: The
+Markdown and PDF layout extraction were read, not the rendered page.
+
+The statement and proof strategy were independently reviewed by Yah
+`character-review` (`rlvOLyV`, work session
+`01a2010e-125b-7b4a-907b-8447e5b76a69`). The first work run checked the
+proof in scratch but could not create a campaign workspace. Recovery
+from `616c5a9723c8342162bd3f3647cd07a4fa84ad06` preserved the reviewed
+proof and statement; the Lean sources and pins at that base were
+unchanged from the review. See the
+[recovery record](../experiments/character-proof-recovery/README.md)
+and the exact-candidate audit command below.
+
 ## Next: Recognize the actual Archimedean restrictions
 
 The scalar repair still takes $b$ and $\tau$ as parameters. To use it
 in (3.2.1.3)–(5), p. 123, obtain them from the restriction of a unitary
-Hecke character. Pinned `HeckeCharacter.restrict` is finite-only, but
-`IdeleClassGroup.ofCompletion` gives the infinite-place hom on units
-and `InfinitePlace.Completion.ringEquivRealOfIsReal` identifies a real
-completion. Prove continuity of the restriction along that inclusion
-before using continuous character classification; the inclusion is
-currently a `MonoidHom`.
+Hecke character. Pinned `HeckeCharacter.restrict` is finite-only.
 
-**Runnable shared substep:** For continuous $h:\mathbb R\to\mathbb C$
-with $h(0)=1$, $h(t+u)=h(t)h(u)$, and $|h|=1$, prove that there is a
-unique real $\tau$ with $h(t)=e^{i\tau t}$. Use an interval $[0,r]$
-where $\Re h>1/2$, so $J=\int_0^r h(u)\,du\ne0$. Then
-$h(t)J=\int_t^{t+r}h(u)\,du$ and the fundamental theorem of calculus
-gives $h'=kh$ for $k=(h(r)-1)/J$. Differentiate $e^{-kt}h(t)$, and use
-unit modulus to get $\Re k=0$. Apply first on the positive real ray
-via log, and recover parity from the value at $-1$. The same lemma on
-the complex angular circle, pulled back along `Circle.exp`, yields
-integer weight by $2\pi$-periodicity; treat complex radial exponents
-in the squared-norm scale of §A.1, p. 539. This is a classification
-obligation, not a consequence of the scalar Gamma calculation.
+**Runnable next step:** Prove `Continuous (IdeleClassGroup.ofCompletion R K v)`
+for an infinite place $v$ of a number field $K$ and a Dedekind domain
+$R$ with fraction field $K$. The existing hom uses insertion in the
+product of infinite completions with finite component one, followed
+by `Units.map` and the principal-subgroup quotient. Prove continuity
+of the insertion coordinatewise, then apply `Units.continuous_map`
+and `QuotientGroup.continuous_mk`. This is for the existing hom and
+its actual units and quotient topologies, not an alternative model.
+
+After that, apply the one-parameter classification on the positive
+real ray via log and recover parity from the value at $-1$. For the
+complex angular circle, pull back along `Circle.exp` and derive
+integer weight by $2\pi$-periodicity. Use $\log \lVert z\rVert^2$
+for the complex radial exponent, per §A.1, p. 539; a frequency
+$\eta$ in $\log\lVert z\rVert$ gives $\tau=\eta/2$ on this scale.
+The real and complex completion isometries give the required local
+coordinates. These identifications are not consequences of the
+scalar Gamma calculation alone.
 
 **Still open:** Actual character identification and the assembled
 completed product, continuation, divisor data, and contour growth
@@ -487,6 +515,13 @@ go run ./cmd/godel audit-local "$CANDIDATE" \
   Masullo.completed_reflect_left_integral \
   Masullo.completedDirichlet_logDeriv_reflection \
   Masullo.completedDirichlet_reflect_left_integral
+```
+
+For the one-parameter classification:
+
+```sh
+go run ./cmd/godel audit-local "$CANDIDATE" Lemmas.OneParameterCharacter -- \
+  Masullo.existsUnique_unitary_oneParameterCharacter
 ```
 
 For the compact-log tested shifted pair:
