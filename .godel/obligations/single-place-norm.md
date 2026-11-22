@@ -371,22 +371,57 @@ go run ./cmd/godel audit-local "$CANDIDATE" \
   Masullo.realMultiplicativeDensity_map_logSign Masullo.realCompletionHaar_map_logSign
 ```
 
-## Next normalization step: Split the Archimedean log measure
+## Checked separation of the Archimedean log measure
 
-In the weighted log coordinates of (A.2.3.3)–(A.2.3.5), p. 548,
-prove that $x\mapsto (\sum_v x_v,(x_v)_{v\ne w_0})$ sends product
+[`Theorems.ArchimedeanLogMeasure`](../../Proofs/Theorems/ArchimedeanLogMeasure.lean)
+proves that $x\mapsto (\sum_v x_v,(x_v)_{v\ne w_0})$ sends product
 Lebesgue measure to Lebesgue measure in the norm coordinate times
-product Lebesgue measure on `logSpace K`. There is no scalar factor:
-First split off the `w₀` coordinate via Mathlib's
-`volume_preserving_piEquivPiSubtypeProd` and `volume_preserving_piUnique`.
-For a fixed retained tuple the remaining change adds its sum to the
-`w₀` coordinate. Use `MeasurePreserving.skew_product` with translation
-invariance of real volume. This separates the norm direction without
-introducing Euclidean hyperplane surface measure.
+product Lebesgue measure on `logSpace K`, without a scalar. This includes
+unit rank zero: The empty product of retained coordinates has mass one.
+Masullo gives the weighted logs and their sum-zero hyperplane in
+(A.2.3.3)–(5), PDF p. 548. Definition A.3.2.1, pp. 559–560, specifies
+$dt/t$ in the norm direction and prescribes the norm-one quotient mass.
+Lean supplies the missing product-measure calculation: Separate the
+omitted singleton, then translate it by the sum of the retained logs,
+using `MeasurePreserving.skew_product`. The retained measure is not
+Euclidean surface measure on the embedded hyperplane.
 
-Then combine this splitting with the real and complex local coordinate
-identities. The half-open lattice box must have measure
-`NumberField.Units.regulator`; the angular torsion slice must still be
-shown to give exactly $1/w_F$ of the angular mass, with one representative
-per orbit and counting measure on the units. These steps and the global
-quotient comparison remain open.
+Independent Yah statement review: Session
+`01a202c5-7d6d-78ac-987c-b7b39fef0e27`, child `review-arch-log-split`
+(`zONMBFj`, read-only output `151efcc182f2aceda0b505c3cff76917cc9457d8`).
+Source readings are provisional: Pinned Markdown and numbered PDF layout,
+not rendered pages.
+
+```sh
+go run ./cmd/godel audit-local "$CANDIDATE" Theorems.ArchimedeanLogMeasure -- \
+  Masullo.measurePreserving_archimedeanLogSplit
+```
+
+### Next normalization step: Assemble the Archimedean product formula
+
+On the product of the actual completion units, equip each place with
+its checked local measure. For an infinite place $v$, let $A_v$ be
+`Bool` at a real place and $\mathbb R$ at a complex place, with measure
+$\alpha_v$ respectively counting or Lebesgue restricted to $(-\pi,\pi)$.
+For the map taking a unit tuple to
+$(\sum_v x_v,(x_v)_{v\ne w_0},(a_v)_v)$, show that the pushforward of
+`Measure.pi` of the local Haar measures is
+`volume.prod (volume.prod (Measure.pi α))`. Here $(x_v,a_v)$ is exactly
+the coordinate from the signed real or complex log-polar theorem. Use
+`MeasureTheory.measurePreserving_pi` for the finite family, separate the
+product of pairs into log and angular tuples by the product formula on
+measurable rectangles, and apply `measurePreserving_archimedeanLogSplit`
+to the log tuple. Transport through the units-of-a-product equivalence
+when using the Archimedean adele units. This is still an upstairs
+formula, not a quotient Haar comparison.
+
+The logarithmic part of (A.2.3.9)–(11), p. 549, can proceed separately:
+For `b := basisUnitLattice K`, take `ZSpan.fundamentalDomain
+(b.ofZLatticeBasis ℝ)`. `ZSpan.exist_unique_vadd_mem_fundamentalDomain`
+and `Module.Basis.ofZLatticeBasis_span` give the **pointwise** unique
+lattice translate, not just an almost-everywhere cover.
+`ZLattice.covolume_eq_measure_fundamentalDomain` and the definition of
+`NumberField.Units.regulator` give its real product-Lebesgue mass.
+The angular torsion slice still must be shown to give exactly $1/w_F$
+of the angular mass, with one representative per orbit. The global
+Borel domain and the quotient comparison remain open.
