@@ -1028,27 +1028,60 @@ go run ./cmd/godel audit-local "$CANDIDATE" \
   Masullo.finiteHeckeLocalZeta_norm Masullo.finiteHeckeRealEulerTail_hasProd
 ```
 
-### Next: Factor the actual density on the open stages
+### Character factorization on the open stages
 
-First prove the pointwise character splitting on `IdeleFiniteStage K S`
-for a unitary `χ` with `χ.IsUnramifiedAt v` off `S`. The value of `χ` on
-the class of `ideleFiniteStageEmbedding K S x` must be the product of
-its Archimedean restrictions at `x.1` and the active finite restrictions
-at `x.2.1`. In particular, the whole inactive tuple `x.2.2` must map to
-one: The finitely supported unit tuples map to one by local
-unramifiedness, and they are dense in the inactive product topology.
-Taking a closure in the continuous character's kernel is essential;
-a product over active places does not algebraically remove an arbitrary
-inactive tuple. Use the coordinate lemmas for `ideleFiniteStageEmbedding`
-and the actual insertion maps used by the local restrictions.
+[`Masullo.ideleFiniteStage_character_factor`](../../Proofs/Theorems/IdeleFiniteStageCharacter.lean)
+states that for every number field, every stage $U_S$, and every
+continuous Hecke character unramified at all finite places outside
+$S$, the value at the class of a stage idele is the product of its
+Archimedean and active finite-place restrictions at the corresponding
+coordinates. It assumes neither unitarity nor a choice of measure.
 
-For the norm splitting, `AdeleRing.norm_apply_of_isUnit` and those same
-coordinate lemmas give the local norms, with exponent `v.mult` at
-infinity and finite unit norms equal to one off `S`. Split the complex
-power using `Complex.mul_cpow_ofReal_nonneg`. On stages containing all
-Haar, test, and ramification exceptions `E`, this should give the tensor
-identity consumed by `ideleFiniteStage_integral` for pure tests. For the
-joint Archimedean Schwartz test a grouped factor is still needed.
+**Source and repair (provisional):** Masullo states the character tensor
+formula in §3.1.2, p. 120, defines the actual single-place restrictions
+in (3.1.2.4), p. 121, and specifies unramifiedness outside $S$ and the
+$S$-idele insertion in (3.1.2.6)–(8), p. 121. The local unit condition
+alone does not algebraically remove the entire inactive tuple in the
+stage used for (3.4.1.6), pp. 143–144. Lean checks that each stage
+single-coordinate lift agrees with the actual Mathlib insertion,
+including the inclusion of integral units at inactive places. Finite
+truncations of the inactive tuple then all evaluate to one. Their net
+converges coordinatewise in the product topology, so the continuous
+character evaluates to one on the whole tuple. This proves the
+character identity, not the zeta integral factorization.
+
+Independent Yah statement review (Markdown and PDF layout, not rendered
+pages): Session `01a201b3-c224-7ad7-94cc-97b479289ad9`, agent `EySkQXZ`,
+output `a2f48d87bd3a9347c1e9077dada53eba3fba2128`. Replay from the
+integration workspace:
+
+```sh
+go run ./cmd/godel audit-local "$CANDIDATE" \
+  Lemmas.IdeleStageSinglePlace Theorems.IdeleFiniteStageCharacter -- \
+  Masullo.ideleFiniteStage_character_factor
+```
+
+### Next: Split the norm and form the stage density
+
+Use (A.1.3.2)–(3), p. 541, for the idelic norm and (3.1.2.3), p. 121,
+for the squared norm at a complex place. For each `x : IdeleFiniteStage K S`,
+prove that the actual adele norm of `ideleFiniteStageEmbedding K S x`
+is $(\prod_{v\mid\infty}\|x_v\|^{v.\mathrm{mult}})\cdot
+(\prod_{v\in S}\|x_v\|)$. Start with `AdeleRing.norm_apply_of_isUnit`
+and use the stage coordinate lemmas. The finite norm is a `finprod`:
+Show its multiplicative support is in `S` and apply
+`finprod_eq_prod_of_mulSupport_subset`. The norm-one calculation for the
+image of an integral unit is already in the reverse inclusion of
+`finiteLocalUnitSet_eq_range`. Convert the product to stage subtype
+coordinates, then split its complex power using
+`Complex.mul_cpow_ofReal_nonneg`. No character or Haar hypothesis is
+needed for the norm step.
+
+On stages containing all Haar, test, and ramification exceptions `E`,
+combine the norm and `ideleFiniteStage_character_factor` with the
+pointwise split of the pure adelic test. This should give the tensor
+identity consumed by `ideleFiniteStage_integral`. For the joint
+Archimedean Schwartz test a grouped factor is still needed.
 
 Then multiply the fixed local absolute masses on `E` by the bound above
 for the outside factors, whose Haar unit masses are one. Use
