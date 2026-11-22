@@ -279,7 +279,40 @@ Masullo's omission is **character** ramification (p. 122, §3.2.1,
 (p. 124, Definition 3.2.1.4, (3.2.1.7)). This is a reuse of the
 accepted rendered reading, not new visual verification. It does not
 use the p. 309 formulas. The decision that a given rational prime is
-inert and the Dirichlet side of the row are not proved by these endpoints.
+inert is checked below; the Dirichlet side is separate.
+
+### Checked reduction and inertness criterion
+
+[`IdealClassQuadraticReduction`](../../Proofs/Theorems/IdealClassQuadraticReduction.lean)
+reduces both coordinates of the **full** integer ring via
+`qSqrtNegFiveIntegersEquiv`. Every pair of residue coordinates lifts,
+and a pair reduces to zero exactly when both integral coordinates are
+multiples of $n$, so the reduction kernel is $(n)$.
+`qSqrtNegFiveQuotientSpanNatEquiv` identifies $\mathcal O_F/(n)$ with
+`QuadraticAlgebra (ZMod n) (-5) 0` for **every** natural $n$, with no
+primality or positivity hypothesis. `qSqrtNegFiveQuotientSpanNatEquiv_mk`
+exposes the map on the two coordinates for later use with root evaluations.
+
+`qSqrtNegFive_isPrime_span_iff_not_isSquare` proves that for a rational
+prime $p\ne2$, $(p)$ is prime exactly when $-5$ is nonsquare in
+$\mathbb F_p$. A finite domain is a field; the quadratic-algebra field
+criterion tests the discriminant $4(-5)$, whose squareness is equivalent
+to that of $-5$ since $2$ is invertible. The criterion needs no $p\ne5$
+hypothesis: At $5$ the residue is the square $0$ and $(5)$ is not prime.
+At $11$ the nonsquare $6$ gives a prime ideal, and at $3$ the square $1$
+gives a nonprime ideal. Both directions are exercised by Lean examples.
+Applying the previous inert denominator theorem gives $1-X^2$ for
+nonsquare $-5$ and every multiplicative ideal-class character. This does
+not assert a converse from the polynomial equality itself.
+
+Independent statement and source-applicability review: `wUJQHAz`,
+transcript Yah `01a202d1-c951-7013-904d-3497f0091f9b`. The reviewer
+checked the three signatures against the integral-coordinate and inert
+factor definitions, the $p=5$ scope, and use of the
+[accepted rendered reading](#manuscript-interface). The arithmetic
+criterion supplies a hypothesis for Masullo's finite product, p. 122,
+§3.2.1, (3.2.1.1), and p. 124, Definition 3.2.1.4, (3.2.1.7); it is
+not a criterion printed there, and it does not use the p. 309 formulas.
 
 ### Remaining grouped identity
 
@@ -312,13 +345,13 @@ pp. 800–801, identified in its [holomorphy section](isotypic-inverse-range-q-s
 
 **Open Lean premise for the Hecke transfer:** Instantiate the all-prime
 grouped polynomial identity for a constructed idèle-class character.
-**Next arithmetic check:** For $p\nmid 10$, identify the quotient of
-the full integer ring by $(p)$ with the quadratic algebra over
-$\mathbb F_p$ defined by $T^2+5$, and use its domain criterion to prove
-that $(p)$ is prime exactly when $-5$ is nonsquare modulo $p$. This
-would identify the rational primes to which the checked inert row
-applies. The split-fiber calculation, the Dirichlet-sign comparison,
-normalization of the nontrivial class character, and assembly of the
-all-prime identity remain separate.
+**Next arithmetic check:** For $p\nmid10$ and a square $-5=r^2$ in
+$\mathbb F_p$, construct the product quotient
+$\mathcal O_F/(p)\cong\mathbb F_p\times\mathbb F_p$ by evaluation at
+$r$ and $-r$. These roots are distinct; the product description would
+supply the two candidate degree-one ideals for the split fiber.
+Enumerating that fiber, comparing the Dirichlet signs, normalizing the
+nontrivial class character, and assembling the all-prime identity are
+separate.
 The explicit product's circle growth and common-height estimate are
 already unconditional in Lean.
