@@ -41,20 +41,35 @@ private theorem angularFourier_inversion {h W : ℝ → ℂ} (hh : Continuous h)
     show (∫ v, F v) = h y from hinv]
   exact mul_div_cancel_left₀ _ (Complex.ofReal_ne_zero.mpr ha.ne')
 
+/-- The compact log Mellin test has an integrable first absolute ordinate
+moment on any vertical line. -/
+public theorem integrable_compactLogMellin_vertical_first_moment {g : ℝ → ℂ}
+    (hg : ContDiff ℝ ∞ g) (hc : HasCompactSupport g) (a : ℝ) :
+    Integrable (fun t : ℝ ↦ ‖compactLogMellin g ((a : ℂ) + (t : ℂ) * I)‖ * (1 + |t|)) := by
+  obtain ⟨B, _, hB⟩ := compactLogMellin_vertical_decay hg hc |a| 3
+  have hΦ : Continuous (compactLogMellin g) := continuous_iff_continuousAt.mpr fun s ↦
+    (analyticAt_compactLogMellin hg.continuous hc s).continuousAt
+  have hi : Integrable (fun t : ℝ ↦ (1 + ‖t‖) ^ (-(2 : ℝ))) :=
+    integrable_one_add_norm (by simp)
+  refine (hi.const_mul B).mono' (Continuous.aestronglyMeasurable (by fun_prop))
+    (Filter.Eventually.of_forall fun t ↦ ?_)
+  rw [Real.norm_eq_abs (r := ‖_‖ * _), abs_of_nonneg (by positivity),
+    Real.norm_eq_abs (r := t), Real.rpow_neg (by positivity),
+    show (2 : ℝ) = ((2 : ℕ) : ℝ) by norm_num, Real.rpow_natCast]
+  calc
+    _ ≤ (B / (1 + |t|) ^ 3) * (1 + |t|) :=
+      mul_le_mul_of_nonneg_right (hB a t le_rfl) (by positivity)
+    _ = _ := by field_simp
+
 /-- Absolute integrability of the compact log Mellin test on any vertical line. -/
 public theorem integrable_compactLogMellin_vertical {g : ℝ → ℂ}
     (hg : ContDiff ℝ ∞ g) (hc : HasCompactSupport g) (a : ℝ) :
     Integrable (fun t : ℝ ↦ compactLogMellin g ((a : ℂ) + (t : ℂ) * I)) := by
-  obtain ⟨B, _, hB⟩ := compactLogMellin_vertical_decay hg hc |a| 4
   have hΦ : Continuous (compactLogMellin g) := continuous_iff_continuousAt.mpr fun s ↦
     (analyticAt_compactLogMellin hg.continuous hc s).continuousAt
-  have hi : Integrable (fun t : ℝ ↦ (1 + ‖t‖) ^ (-(4 : ℝ))) :=
-    integrable_one_add_norm (by simp)
-  refine (hi.const_mul B).mono' (hΦ.comp (by fun_prop)).aestronglyMeasurable
-    (Filter.Eventually.of_forall fun t ↦ ?_)
-  rw [Real.norm_eq_abs, Real.rpow_neg (by positivity : 0 ≤ 1 + |t|),
-    show (4 : ℝ) = ((4 : ℕ) : ℝ) by norm_num, Real.rpow_natCast]
-  simpa only [div_eq_mul_inv] using hB a t le_rfl
+  exact (integrable_compactLogMellin_vertical_first_moment hg hc a).mono'
+    (Continuous.aestronglyMeasurable (by fun_prop))
+    (Filter.Eventually.of_forall fun t ↦ le_mul_of_one_le_right (norm_nonneg _) (by simp))
 
 /-- Absolute integrability of the reflected compact log Mellin test. -/
 public theorem integrable_compactLogMellin_reflected_vertical {g : ℝ → ℂ}
@@ -105,7 +120,7 @@ public theorem compactLogMellin_right_line_evaluation {g : ℝ → ℂ}
 
 /-- Reflecting the Mellin parameter is the log reflection with the
 weight `exp(-x)`. It does not reverse the right-line orientation. -/
-private theorem compactLogMellin_reflect (g : ℝ → ℂ) (s : ℂ) :
+public theorem compactLogMellin_reflect (g : ℝ → ℂ) (s : ℂ) :
     compactLogMellin g (1 - s) = compactLogMellin (fun x : ℝ ↦ exp (-x) * g (-x)) s := by
   unfold compactLogMellin
   rw [← integral_neg_eq_self (fun x : ℝ ↦ g x * exp ((1 - s) * x)) volume]

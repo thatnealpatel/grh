@@ -343,36 +343,84 @@ $A_\chi=|N(\mathfrak d_{F/\mathbb Q})|N(\mathfrak f_\chi)$ in the
 manuscript's normalization. The Lean reflection needs only the germ of
 this equality where the contour meets ordinary nonzero points.
 
-## Next: Test the shifted Archimedean pair
+## Checked: Evaluate the shifted Archimedean pair
 
-For $a>1$, $s=a+it$, and a smooth compact log profile $g$, prove
-absolute convergence and evaluate the two normalized upward legs
-$\Phi(s)\operatorname{logDeriv}F_{\tau}(s)$ and
-$\Phi(1-s)\operatorname{logDeriv}F_{-\tau}(s)$ in (B.4.2.13)–(14),
-p. 616. Retain the same $b$ in both. The target for their sum is
+[`Props.ArchimedeanGammaRightLine`](../../Proofs/Props/ArchimedeanGammaRightLine.lean)
+proves the separate direct and reflected evaluations of (B.4.2.13)–(14),
+p. 616, and the following corrected sum on smooth compact log profiles.
+For $s=a+it$ with $a>0$, $\Phi(s)=\int g(x)e^{sx}\,dx$, and the
+parameterized factors $F_{\tau}$ and $F_{-\tau}$ with the same $b$, it
+integrates $\Phi(s)(F'_{\tau}/F_{\tau})(s)$ and
+$\Phi(1-s)(F'_{-\tau}/F_{-\tau})(s)$ with the same upward normalization
+$dt/(2\pi)$. Both line integrals and both subtracted position integrals
+are absolute. The sum equals
 $$
 -\frac{2(\log B+\gamma)}{d}g(0)+
 \int_0^\infty
 \frac{2g(0)e^{-dx}-e^{-(b+i\tau)x}g(x)-e^{-(1+b-i\tau)x}g(-x)}
      {1-e^{-dx}}\,dx.
 $$
-Use the accepted separate inversions at $x$ and at $0$; no local
-contour shift is needed. For Fubini, generalize the joint domination
-in `Lemmas.GammaRealRightLine`: With $m=\min(d,a+b)>0$, split the
-numerator into a real damping difference and a phase difference, to
-bound it by $x e^{-mx}(|d-a-b|+|t\pm\tau|)$ for $x>0$. Since
-$1-e^{-dx}\ge dx/(1+dx)$, this gives an integrable polynomial times
-$e^{-mx}$ in $x$ and requires only the first absolute ordinate moment
-of each Mellin weight. Keep the subtraction intact when exchanging
-the integrals. This is a repair for the compact log test scope, not
-an assertion about every test in (B.4.2.15) or (17).
+Here $a>1$ is only needed when joining to the finite Euler product.
+For the half-shifted convention, $g(x)=e^{-x/2}\phi(e^x)$ gives
+$e^{-(1/2+b+i\tau)x}\phi(e^x)$ and
+$e^{-(1/2+b-i\tau)x}\phi(e^{-x})$ as the displaced samples.
 
-**Still open:** The actual Archimedean character parameter classification and tested
-terms, the completed product, continuation, divisor data, and contour growth
-premises in (B.4.2.1)–(4) do not follow from these finite evaluations.
-Neither do the ramified Fourier terms or the global trace comparison.
-See the separate [local conductor obligation](#open-ramified-local-conductor-power-in-the-general-reflection)
-for the missing epsilon factor upstream of the checked contour reflection.
+Masullo supplies the pairing and Mellin inversion idea, moving
+through (B.4.2.16). The proof instead stays on the original line. The
+checked scalar identity supplies the prefactor derivative and the
+integrable Gauss difference, replacing the nondecaying subtraction
+in the literal (B.4.2.15). Before Fubini,
+`integrable_archimedeanGamma_rightLine_product` handles any measurable
+weight with integrable $\|W(t)\|(1+|t|)$. It separates damping and
+phase at $m=\min(d,a+b)>0$ and uses $1-e^{-dx}\ge dx/(1+dx)$, so the
+kernel is bounded by $(1/d+x)e^{-mx}(|d-a-b|+|t+\tau|)$.
+`integrable_compactLogMellin_vertical_first_moment` supplies that moment
+on every vertical line from order-three Mellin decay. The direct proof
+uses the accepted fixed-position inversion at $x$ and at $0$. The
+reflected proof uses `compactLogMellin_reflect` to apply the same proof
+to $e^{-x}g(-x)$ with the opposite radial parameter. There is no
+separation of the singular terms in the joint position integral.
+
+**Independent statement review:** `gamma-pair-review` (`GZKQWWb`, Yah
+parent session `01a200f6-ceba-7622-963f-8bc1fe2cf743`, exact base
+`41a17038c27c9ec7962e61a3cdf2b8048350dcf1`) checked the proposed
+statements, damping bound, contact, reflected sample, and upward
+normalization against the accepted Lean interfaces and digest-pinned
+pp. 123 and 615–616. The review distinguished the arbitrary-weight
+majorant from evaluation on Mellin weights. These manuscript readings
+used chapter Markdown and PDF layout extraction, not rendered pages.
+
+## Next: Recognize the actual Archimedean restrictions
+
+The scalar repair still takes $b$ and $\tau$ as parameters. To use it
+in (3.2.1.3)–(5), p. 123, obtain them from the restriction of a unitary
+Hecke character. Pinned `HeckeCharacter.restrict` is finite-only, but
+`IdeleClassGroup.ofCompletion` gives the infinite-place hom on units
+and `InfinitePlace.Completion.ringEquivRealOfIsReal` identifies a real
+completion. Prove continuity of the restriction along that inclusion
+before using continuous character classification; the inclusion is
+currently a `MonoidHom`.
+
+**Runnable shared substep:** For continuous $h:\mathbb R\to\mathbb C$
+with $h(0)=1$, $h(t+u)=h(t)h(u)$, and $|h|=1$, prove that there is a
+unique real $\tau$ with $h(t)=e^{i\tau t}$. Use an interval $[0,r]$
+where $\Re h>1/2$, so $J=\int_0^r h(u)\,du\ne0$. Then
+$h(t)J=\int_t^{t+r}h(u)\,du$ and the fundamental theorem of calculus
+gives $h'=kh$ for $k=(h(r)-1)/J$. Differentiate $e^{-kt}h(t)$, and use
+unit modulus to get $\Re k=0$. Apply first on the positive real ray
+via log, and recover parity from the value at $-1$. The same lemma on
+the complex angular circle, pulled back along `Circle.exp`, yields
+integer weight by $2\pi$-periodicity; treat complex radial exponents
+in the squared-norm scale of §A.1, p. 539. This is a classification
+obligation, not a consequence of the scalar Gamma calculation.
+
+**Still open:** Actual character identification and the assembled
+completed product, continuation, divisor data, and contour growth
+in (B.4.2.1)–(4). The local pair does not establish the full test class
+of (B.4.2.15) or (17), the ramified Fourier terms, or the global trace
+comparison. See the separate
+[local conductor obligation](#open-ramified-local-conductor-power-in-the-general-reflection)
+for the missing epsilon factor upstream of the checked reflection.
 
 ## Reproduce the endpoint audit
 
@@ -439,4 +487,17 @@ go run ./cmd/godel audit-local "$CANDIDATE" \
   Masullo.completed_reflect_left_integral \
   Masullo.completedDirichlet_logDeriv_reflection \
   Masullo.completedDirichlet_reflect_left_integral
+```
+
+For the compact-log tested shifted pair:
+
+```sh
+go run ./cmd/godel audit-local "$CANDIDATE" \
+  Lemmas.ArchimedeanGammaDomination Lemmas.CompactLogMellinInversion Props.ArchimedeanGammaRightLine -- \
+  Masullo.integrable_archimedeanGamma_rightLine_product \
+  Masullo.integrable_compactLogMellin_vertical_first_moment \
+  Masullo.compactLogMellin_reflect \
+  Masullo.compactLogMellin_archimedeanGamma_direct \
+  Masullo.compactLogMellin_archimedeanGamma_reflected \
+  Masullo.compactLogMellin_archimedeanGamma_pair
 ```
