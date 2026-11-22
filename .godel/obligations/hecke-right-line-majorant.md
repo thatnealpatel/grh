@@ -317,9 +317,9 @@ extraction, not independent inspection of rendered pages.
 
 **Scope of the source verdict:** The finite-place calculation is independent
 of the printed real factor. The [odd real residual](#checked-odd-real-residual-at-two-points)
-is now checked from rendered pages. Applying the combined comparison to
-the printed $S$-local identity still uses the provisional reading of the
-product norm after (3.1.2.1), p. 120.
+is checked from rendered pages. The [shared-norm audit](#checked-shared-norm-and-the-printed-s-local-mismatch)
+now verifies applicability of the combined comparison to the printed
+$S$-local identity on the modulus-three witness.
 
 **Inherited rendered source.** In the [pinned edition](../sources/masullo/README.md),
 (3.3.1.30), p. 136, prints only $N(\mathfrak d_v)^{s-1/2}$ outside the
@@ -344,9 +344,9 @@ The two signs cancel at $-1$, and both values at $3$ are one. The
 product norm is also trivial on this diagonal. Hence the norm twists
 are characters of the printed $J_{\mathbb Q,\{\infty,3\}}$ (quotient
 in §2.3, p. 99), and $s=1/4,3/4$ lie in the open strip. Reviewer
-`iIPBBIA` inspected the quotient on the rendered page. The explicit
-product norm immediately after (3.1.2.1), p. 120, remains a provisional
-Markdown and layout reading.
+`iIPBBIA` inspected the quotient on the rendered page. The explicit product norm
+immediately after (3.1.2.1), p. 120, is checked in the
+[shared-norm audit](#checked-shared-norm-and-the-printed-s-local-mismatch).
 
 **Two-coset computation.** The test is
 $f=\chi^{-1}\mathbf1_{\mathbb Z_3^\times}
@@ -450,7 +450,7 @@ membership and the defining Gaussian quotient by the square substitution
 and Fourier differentiation. The orientation, dual, and finite source
 readings are inherited, not new renders.
 
-**Conditional $S$-local comparison.** The inherited rendered (3.2.1.2),
+**Two-point comparison.** The inherited rendered (3.2.1.2),
 p. 123, omits ramified places, and the proof following (3.3.1.33),
 p. 137, explicitly sets the local Euler factors to one. The printed
 finite factor (3.3.1.30), p. 136, has ratio $1$ for the modulo-three
@@ -460,22 +460,99 @@ ratios are $1$ and $\sqrt{3}$, not the $1/\sqrt{3}$ that a reversed
 conductor exponent would give. The real factor cannot compensate for
 the missing conductor power. Inserting $N(\mathfrak f)^{s-1/2}$ in
 (3.3.1.30) repairs that power, in agreement with (3.3.2.24), p. 141,
-without adjudicating the phases. Applying this mismatch to the printed
-$S$-local statement still uses the provisional product-norm reading
-after (3.1.2.1), p. 120.
-This is not a refutation of a functional equation with corrected factors.
+without adjudicating the phases. The source premise for this comparison
+is verified below. This is not a refutation of a functional equation
+with corrected factors.
 
-**Next source check:** Read just that product-norm clause to identify
-the manuscript's abscissa and local twists for $S=\{\infty,3\}$ in the
-same $s$ coordinate. The [accepted stage norm split](#checked-norm-and-raw-zeta-density-on-the-open-stages),
-restricted to the stage with active finite place $3$ and other finite
-coordinates set to one, already gives $|x_\infty||x_3|_3$. For rational
-$S$-units $\pm3^n$ this product is one. The exact norm of the printed
-$S$-unit quotient is the remaining source check, not a new norm theorem.
-The rendered full-idele product and descent in (A.1.3.3), p. 541, and
-(A.1.3.6), p. 542, are inherited from the
-[finite normalization audit](finite-gaussian-tamagawa.md); they are not
-an inspection of the sentence after (3.1.2.1), p. 120.
+#### Checked shared norm and the printed $S$-local mismatch
+
+**Printed norm.** Immediately after (3.1.2.1), p. 120, the [pinned
+edition](../sources/masullo/README.md) defines $J_{F,S}^1$ as the kernel
+of the $S$-idelic norm and prints $|\cdot|_{F,S}:=\prod_{v\in S}|\cdot|_v$.
+This assigns the product to $J_{F,S}=\mathrm{GL}_1(\mathbf A_{F,S})/
+\mathcal O_{F,S}^\times$, not just to $C_{F,S}$. The inherited rendered
+[(A.1.5.1), p. 543](finite-polar-free-domain.md#the-finite-only-repair-is-not-projectively-continuous)
+gives the finite product, so the numerator over $\mathbb Q$ for
+$S=\{\infty,3\}$ is $\mathbb R^\times\times\mathbb Q_3^\times$.
+The $S$-integer definition in §A.1.5.1, p. 543, requires integrality
+**outside** $S$. A rational number and its inverse are both integral
+there exactly when it is $\pm3^n$, $n\in\mathbb Z$. Hence the norm
+pulls back to $N(x)=|x_\infty||x_3|_3$, and
+$N(\pm3^n,\pm3^n)=3^n3^{-n}=1$.
+The normalized rational absolute values are inherited from the
+[real-prime](trace-real-prime-q.md#source-and-domain) audit of (A.2.2.2),
+p. 546, and the [finite normalization](finite-gaussian-tamagawa.md#source-and-the-two-readings-of-l_v)
+audit of §3.1.2.1, p. 120. This is source applicability, not a new Lean
+norm theorem: `Masullo.ideleFiniteStage_norm` already gives the same
+product on the ambient stage with other coordinates units.
+
+**Common coordinate and domain.** Put
+$\eta(x)=\operatorname{sgn}(x_\infty)\chi(x_3)$ for the nontrivial
+character on $(\mathbb Z/3\mathbb Z)^\times$ extended by $\chi(3)=1$.
+The signs at $-1$ cancel, and both values at $3$ are one, so $\eta$
+descends along with $N$. Its restriction to $J_{F,S}^1$ is continuous
+and unitary, as in Lemma 3.3.1.7, p. 135, and $S$ contains the only
+Archimedean place. The pullback of $c_s=\eta N^s$ restricts along the
+two coordinate insertions to $\operatorname{sgn}|\cdot|^s$ and
+$\chi|\cdot|_3^s$. By the inherited rendered (3.1.1.1)–(2), p. 119,
+its abscissa is $\Re s$; both selected points are in the open strip.
+The inherited dual (3.1.1.4), p. 119, is $\eta^{-1}N^{1-s}$, so its
+local exponents are **both $1-s$**, with inverse unitary factors.
+There is no independent real twist or coordinate reversal here.
+
+**Printed route.** In the inherited forward-over-reflected orientation
+of (3.3.1.2), p. 129, the right side of (3.3.1.32), p. 136, is
+$\epsilon_S(c_s)L_S(c_s)/L_S(\widehat c_s)$. At $3$, the different is
+trivial, $\chi$ has conductor $(3)$, and both ramified Euler factors are
+one in the proof on p. 137. Equation (3.3.1.30), p. 136, gives a fixed
+Gauss sum, not a conductor power. The sum is a nonzero multiple of
+$\zeta-\zeta^2$ for a primitive cube root $\zeta$. The inherited odd
+real rule leaves $-i$ after taking out the odd Gamma ratio $G(s)/G(1-s)$, which is finite
+and nonzero at both points. The normalized product at $3/4$ divided
+by that at $1/4$ has ratio **$1$**.
+
+**Defining route.** Use the test $h\otimes f$, with
+$h(x)=xe^{-\pi x^2}$ and $f=\mathbf1_{1+3\mathbb Z_3}-\mathbf1_{2+3\mathbb Z_3}$.
+These are an odd real Schwartz function and a compact open finite
+Schwartz–Bruhat test. In the inherited (3.3.1.1)–(3), p. 129, and
+(3.3.1.7), p. 130, the upstairs integral and its reflected partner
+factor on this tensor, using the [inherited product Haar (A.3.4.2),
+p. 561](isotypic-fourier-gluing-q-sqrt-minus-five.md#evidence-and-limits).
+Both converge, and the reflected factors are nonzero at both points
+by the [odd-Gaussian calculation](#checked-odd-real-residual-at-two-points)
+and the [conductor-shell evaluations](#checked-ramified-local-zeta-integrals-and-quotient-over-mathbb_q_p).
+The former gives a constant nonzero real residual after removing
+$G(s)/G(1-s)$. The latter, `padicRamifiedThreeZeta_ratio_div`, applies
+to the same finite character and inverse-character test with any full
+Borel multiplicative Haar; its nonzero amplitude cancels, so the finite
+ratio is **$\sqrt3$**, unchanged by the sign choice for the primitive
+additive character. The normalized defining product thus has ratio
+$\sqrt3$. The assembly is reviewed mathematics using the accepted Lean
+finite quotient, not a new formalization of the $S$-local identity.
+
+**Verdict and scope.** The ratios $1$ and $\sqrt3$ cannot agree at both
+points. This tests (3.3.1.32), p. 136, as printed on this one admissible
+$S$-local family, rather than just its isolated finite factor. Adding
+$N(\mathfrak f)^{s-1/2}$ to (3.3.1.30), p. 136, repairs the tested
+variation, consistent with (3.3.2.24), p. 141. No equality of phases,
+corrected functional equation, or global identification is established.
+
+**Review evidence.** On the digest-matched PDF, the owner inspected
+pixels for (3.1.2.1) and the norm assignment, p. 120, the outside-$S$
+definition in §A.1.5.1, p. 543, and the character and place qualifiers
+of Lemma 3.3.1.7, p. 135. Independent reviewer `CItitau` (Yah transcript
+`01a20520-65ba-7923-b503-839e192fd1a6`, `review-norm120`) relied on
+layout for the exact quotient and independently read the decisive
+$\prod_{v\in S}|\cdot|_v$ from a narrowed 432 dpi crop of p. 120.
+The reviewer checked descent and applicability of the p. 135
+qualifiers as mathematics, not by independently rendering those or
+p. 543. For the printed route they checked the cancellation and
+constant residual using the inherited (3.3.1.2), (3.3.1.30), and
+(3.3.1.32) and the odd real audit above. For the defining route they
+checked the same exponents in the accepted `PadicConductorZeta`
+source, applicability of its modulus-three quotient, and reuse of the
+odd-Gaussian residual. Reviewed source base:
+`094466e5c23c4bf296d8348619ac32c02d8a63ed`.
 
 ### Primitive prime-power conductor shells over $\mathbb Q_p$
 
@@ -709,7 +786,8 @@ with trivial different and both Euler factors equal to one, the finite
 factor in (3.3.1.30), p. 136, has no $s$-dependence, while the conductor
 power in (3.3.2.24), p. 141, has exactly the variation proved here. This
 is a local counterexample to the constant factor, not a phase
-identification or a verdict on the printed $S$-local product.
+identification. The [shared-norm audit](#checked-shared-norm-and-the-printed-s-local-mismatch)
+combines it with the separate odd-real check on the printed $S$ product.
 
 **Statement review:** `xdBkxRI` (transcript Yah
 `01a2048d-3571-77be-a412-bd9b6efa6955`) independently checked the
