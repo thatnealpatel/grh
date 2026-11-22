@@ -1842,21 +1842,42 @@ Replay: `lake build --wfail +Lemmas.FiniteBoxStageFourier
 +Theorems.AdeleBoxFourier +Theorems.FiniteBoxPoisson`. Jointly import
 these modules and `Theorems.AdeleTraceCharacter`; check the binders and
 axioms of `adeleBoxTensor`, `adeleBoxFourierIntegrand`,
-`finiteAdeleBox_stage_fourier`, and the two global endpoints above. See
-Yah session `01a204cc-1b12-7aec-9ee7-3bcbcd0c5b7f` for the exact-candidate
-checks and independent statement review.
+`finiteAdeleBox_stage_fourier`, and the two global endpoints above.
+
+Exact-candidate check: `654e487c78d896e52647ed0c1375a9520efdc7ad` on
+`b98c4c5a0b089d40082ae3f0c762827e8cb30038`, adopted after the local
+`lake build --wfail` and fresh joint import of these modules plus
+`Theorems.AdeleRestrictedProductHaar`. The built statements had the
+actual adele and finite-stage domains, the canonical cofinal comaps,
+and unrestricted diagonal $y\in K$. All thirteen axiom reports,
+including `finiteBox_diagonal_poisson`, listed only
+`propext`, `Classical.choice`, and `Quot.sound`. Independent reader
+`KdHDnvk` confirmed the intended statements and exact scope, including
+why the product is genuinely finite and why no quotient normalization
+follows. The check transcript and review are in Yah session
+`01a204cc-1b12-7aec-9ee7-3bcbcd0c5b7f`. Lean `v4.36.0`, Mathlib
+`fc4f59e577feb1a4956671bc04ac18aaaf8cd842`.
 
 **Next: Identify this product Haar with the counting-quotient
 normalization.** Use the same $\mu$ and diagonal $K\subset\mathbf A_K$.
-Construct a Borel fundamental domain $D=P\times\prod_v\mathcal O_v$,
-where $P$ is the image of $[0,1)^{[K:\mathbb Q]}$ under a full integral
-basis in the Archimedean coordinates. Show each adele has a unique
-translate by diagonal $K$ in $D$, first using
-`exists_finiteBox_diagonalCoset` at unit scale to make its finite part
-integral, then reducing by $\mathcal O_K$ at infinity. Compute
-$\mu(D)=1$ using the rectangle identity in
-`exists_adeleRestrictedProductHaar`: The Archimedean trace covolume is
-$\sqrt{|D_K|}$, and the finite mass product is its reciprocal. For the
+Construct a Borel fundamental domain $D=P\times\prod_v\mathcal O_v$.
+Masullo gives the product form in (A.2.1.2), PDF p. 545, but (A.2.1.1)
+indexes the half-open cube by infinite places. In a field with complex
+places this is fewer than the number of integral basis vectors. Use
+real coordinates $[0,1)^{[K:\mathbb Q]}$ in a full integral basis
+instead (provisional reading, Markdown and numbered layout).
+`ZSpan.fundamentalDomain_measurableSet` and
+`ZSpan.exist_unique_vadd_mem_fundamentalDomain` give the relevant
+Archimedean interfaces. Use `exists_finiteBox_diagonalCoset` at unit
+scale to make the finite part integral and identify the residual
+translations by $\mathcal O_K$, then reduce by that lattice at infinity.
+Prove `IsAddFundamentalDomain` for the diagonal subgroup acting on the
+actual adeles. Compute $\mu(D)=1$ using the rectangle identity in
+`exists_adeleRestrictedProductHaar` and
+`finiteBox_centeredMass_finprod` at $g=1$: The latter already gives the
+reciprocal trace covolume for the real-valued finite mass product. It
+remains to identify the unit ideal lattice, and transfer the finite
+product to `ℝ≥0∞` without losing positivity or finiteness. For the
 counting-quotient integration identity, use the restriction-pushforward
 and periodization construction in `RationalAdeleFundamentalDomain` and
 `FundamentalDomainQuotientMeasure` as the model. This is the missing

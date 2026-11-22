@@ -55,14 +55,19 @@ parent and cannot prevent a later stale adoption.
 
 ### Integrating a direct edit
 
-If investigation separated the initial `tool_campaign status` from
-workspace allocation, refresh status just before `tool_campaign new`.
-If the accepted tip moved, review the intervening changes for overlap
-before opening on the new tip. If allocation fails with `unknown
-integration candidate`, stop repository edits and use a read-only
-status check to distinguish an observed target move from a rejection
-with no observed move. Do not keep retrying the same hash. This narrows
-the setup race; it does not remove it.
+For a routine edit on accepted source, call `tool_campaign new` without
+`on`. The campaign selects the current accepted base at allocation. If
+investigation separated the initial `status` from allocation, refresh
+status and check intervening changes for overlap. Before editing, compare
+the base returned by `new` with the revision you inspected. If it has
+moved again, check that delta too. Reserve explicit `on` for deliberate
+pending-candidate stacks and conflict repair.
+
+If allocation fails with `unknown integration candidate`, stop repository
+edits and use one read-only `status` check to distinguish an observed
+move from a rejection with no observed move. Do not retry the same hash.
+Leaving `on` unset avoids passing a superseded accepted hash; it does not
+prevent unrelated setup failures or a later stale adoption.
 
 Once the edit is ready, call `tool_campaign integrate` with `description`
 but without `on` or `outputs`. The campaign finalizes the direct work and
