@@ -97,33 +97,89 @@ reflected character needs conjugate coefficients at the same $s$,
 not conjugation of the whole function value at $s$. These source
 findings are provisional pending rendered-page inspection.
 
-## Next: Realize the coefficients of a unitary Hecke character
+## The finite product of an actual Hecke character
 
-In (3.2.1.1), p. 122, the coefficient is the local character on a
-uniformizer, and the normalized absolute value of that uniformizer
-is $q_v^{-1}$. Use the pinned Mathlib `NumberField.HeckeCharacter`
-on `IdeleClassGroup (𝓞 K) K`, with the hypothesis that its values
-have norm one. Define $z_v$ by `χ.localValue v` on
-`χ.IsUnramifiedAt v` and zero otherwise. Prove the modulus bound and
-identify the Euler denominator at *every* unramified uniformizer with
-$1-\chi_v(\pi_v)|\pi_v|_v^s$; show the omitted factors are $1$.
-Then specialize the checked global `HasSum` to this product. The pin
-already has `restrict`, `IsUnramifiedAt.localValue_eq`, and
-`localPolynomial` in `NumberTheory/NumberField/HeckeLFunction.lean`,
-and `FinitePlace.norm_def` in `Completion/FinitePlace.lean` links
-completion norm to the discrete valuation. These are source-checked
-interfaces, not an elaborated bridge. Mathlib's `χ.LSeries` there is
-an arithmetic-function Dirichlet series: An identification with this
-analytic product needs its own proof if that interface is used.
+[`Theorems.FiniteHeckeCharacterEulerProduct`](../../Proofs/Theorems/FiniteHeckeCharacterEulerProduct.lean)
+uses the pinned `NumberField.HeckeCharacter (𝓞 K) K`. Its
+`finiteHeckeCoefficient` takes `χ.localValue v` if the character is
+unramified at $v$, and is zero otherwise. The local restriction is
+evaluation of the global character on the single-place idele class,
+so unitarity implies the coefficient bound
+`norm_finiteHeckeCoefficient_le_one`.
 
-The Archimedean factors in (3.2.1.3)–(5), completed product,
-continuation, divisor and conductor data, and contour growth premises
-in (B.4.2.1)–(4) are not provided by the finite series. Neither are
-the Mellin evaluations (B.4.2.10)–(11), the ramified Fourier terms,
-or the global trace comparison. For the contour reflection, check
-the orientation of (3.2.1.6) against (B.4.2.3): Differentiating
-$L(1-s,\bar\chi)=\epsilon(s,\chi)L(s,\chi)$ gives a minus sign
-on the reflected logarithmic derivative before contour reversal.
+For (3.2.1.1), p. 122, Masullo uses the normalized absolute value of a
+uniformizer. `norm_uniformizer_eq_inv_finitePlaceNorm` proves this
+normalization in the pinned completion by computing the generator of
+the discrete valuation, and `uniformizer_norm_cpow` passes to the
+complex power with positive real base. Then
+`finiteHecke_localPolynomial_eval_uniformizer` identifies Mathlib's
+local polynomial evaluation with the manuscript's denominator
+$1-\chi_v(\pi_v)|\pi_v|_v^s$ for **every** unramified uniformizer. For
+(3.2.1.7), p. 124, `finiteHecke_localPolynomial_eval_inv` identifies
+its reciprocal with the project Euler factor, and
+`finiteHeckeEulerFactor_eq_one_of_ramified` supplies the unit factor
+at a place omitted by Masullo. The all-$s$ identities use Lean's
+totalized inversion; the analytic assertion is only on $\Re s>1$.
+
+`finiteHeckeCharacterEulerProduct_logDeriv` applies the earlier project
+repair for (B.4.2.5)–(7) to the actual character: On $\Re s>1$ the
+product of the inverse evaluated local polynomials is nonzero and
+complex differentiable, and the joint positive-power series sums to
+its negative logarithmic derivative. Mathlib's `χ.LSeries` is an
+arithmetic-function Dirichlet series; we do not identify it with this
+product. Nor do these results identify the completed or continued
+function in (3.2.1.2)–(6).
+
+**Independent statement review:** `hecke-character-review` (`ZJmYXhV`,
+read-only on `fb69586e959e4f31f38afdb73b7598a547a38219`, Yah parent
+session `01a200ca-54f9-7555-a17d-d9120ad7f6ef`) checked the three
+interfaces against the digest-verified pp. 122–124 and 615–616 and
+pinned Mathlib. Its required normalization, unit-modulus consequence,
+and explicit ramified-place convention are provided by the results
+above. This was extracted-text review, not visual verification.
+
+## Next: Evaluate the two finite right-line integrals
+
+In (B.4.2.10)–(11), p. 615, Masullo invokes Mellin inversion to turn
+both vertical integrals into point samples. Check the extracted
+constants and orientation against an upward contour with
+$ds=i\,dt$ and normalization $1/(2\pi i)$ in (B.4.2.4). A runnable
+project obligation for any number field is as follows. Take
+$a>1$, $s=a+it$, $\Phi(s)=\int_{\mathbb R}g(x)e^{sx}\,dx$ for smooth
+compactly supported $g$, and let $y=m\log q_v$ with $m=k+1$.
+Separate the two right-line profiles, $g(x)e^{ax}$ and
+$g(-x)e^{(a-1)x}$. For the two weights $\Phi(s)$ and $\Phi(1-s)$,
+respectively, show that integrating $e^{-sy}$ with $dt/(2\pi)$
+gives $g(y)$ and $e^{-y}g(-y)$. This gives a common normalization,
+with no relative minus sign at the scalar inversion step. The
+negative sign on each prime-power term comes from the logarithmic
+derivatives. Apply `finiteHecke_right_line_integrals` separately to
+the two coefficient families and use the character theorem to obtain
+the finite-part formula as an absolutely summable joint series. The
+two families can be independent unitary Hecke characters at this
+stage; identifying the reflected one with the conjugate via the
+functional equation is not needed for these right-line evaluations.
+
+Start from `Lemmas.CompactLogMellinInversion` and
+`compactLogMellin_prime_power_evaluation` in
+`Theorems.RationalExplicitFormulaFinitePlaces`. Those give the
+Fourier rescaling and inversion at $a=2$ for the **sum** of the two
+weights; do not apply the summed identity with a single coefficient
+when the characters differ. `compactLogMellin_vertical_decay` in
+`Props.CompactLogMellin` controls both profiles on any fixed pair of
+lines. The proposed step covers smooth compact log tests, not the
+full test class in Theorem B.4.2.2. The shifted test convention of
+(B.4.2.17) uses $g(x)=e^{-x/2}\varphi(e^x)$, so both samples then
+have the factor $q_v^{-m/2}$.
+
+**Still open:** The Archimedean factors in (3.2.1.3)–(5), completed
+product, continuation, divisor and conductor data, and contour
+growth premises in (B.4.2.1)–(4) are not provided by the finite series.
+Neither are the ramified Fourier terms or the global trace
+comparison. For the contour reflection, check the orientation of
+(3.2.1.6) against (B.4.2.3): Differentiating
+$L(1-s,\bar\chi)=\epsilon(s,\chi)L(s,\chi)$ gives a minus sign on the
+reflected logarithmic derivative before contour reversal.
 
 ## Reproduce the endpoint audit
 
@@ -137,4 +193,13 @@ go run ./cmd/godel audit-local "$CANDIDATE" \
   Masullo.finiteHeckeEulerFactor_hasProdLocallyUniformlyOn \
   Masullo.finiteHeckeEulerFactor_logDeriv \
   Masullo.finiteHeckeEulerProduct_logDeriv
+
+go run ./cmd/godel audit-local "$CANDIDATE" \
+  Lemmas.FiniteHeckeLocalNormalization Theorems.FiniteHeckeCharacterEulerProduct -- \
+  Masullo.norm_uniformizer_eq_inv_finitePlaceNorm \
+  Masullo.norm_finiteHeckeCoefficient_le_one \
+  Masullo.finiteHecke_localPolynomial_eval_uniformizer \
+  Masullo.finiteHecke_localPolynomial_eval_inv \
+  Masullo.finiteHeckeEulerFactor_eq_one_of_ramified \
+  Masullo.finiteHeckeCharacterEulerProduct_logDeriv
 ```
