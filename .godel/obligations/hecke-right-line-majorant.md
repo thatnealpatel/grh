@@ -437,6 +437,18 @@ principal-subgroup quotient give continuity with the actual Mathlib
 topologies. Neither endpoint supplies injectivity, a local analytic
 isomorphism on character spaces, or any finite-place continuity claim.
 
+Yah reviewer `arch-insertion-statement` (`xApQEDc`, session
+`01a20114-4aae-7459-b5c8-bb52f9adc5cf`) independently approved and
+elaborated the two statements. The local audit passed at
+`1f06a6261f64ef06eedb7ea7ac01ad98c9fda691`, but adoption was stale.
+The advancing base changed only `cmd/blitz` and its handoff. After
+verifying identical Lean build inputs and reusing the trusted cache,
+the full warning-as-error build (8,864 jobs), separate module
+replay, and endpoint checks passed at accepted
+`62a04cfe1c9a36ae86b6bfbf82a05f64508aee71`. The built statements matched
+the independent review and used only `propext`, `Classical.choice`,
+and `Quot.sound`.
+
 ## Next: Recognize the actual Archimedean restrictions
 
 The scalar repair still takes $b$ and $\tau$ as parameters. To use it
@@ -453,14 +465,17 @@ $$
                 \exp(i\tau\log |x_v|)\qquad(x\in F_v^\times).
 $$
 
-Use the inverse of `NumberField.Completion.ringEquivRealOfIsReal`
-on units, with continuity from `isometryEquivRealOfIsReal` and
-`Units.continuous_map`. Apply the checked one-parameter theorem to
-the restriction on the units with value $\exp(t)$, then use the
-character of $-1$ (whose square is one) and the signed decomposition
-of each nonzero real. This proves the decomposition used in
-(3.1.2.3), p. 121, for this restriction, before inserting the norm
-power that gives the real factor in (3.2.1.4).
+Use the inverse of `NumberField.InfinitePlace.Completion.ringEquivRealOfIsReal`
+on units, with continuity from `isometryEquivRealOfIsReal` in the same
+namespace and `Units.continuous_map`. Apply the checked one-parameter
+theorem to the restriction on `Units.mk0 (Real.exp t) (Real.exp_ne_zero t)`.
+A scratch control elaborated its continuity (`Units.continuous_iff`
+and `Real.exp_neg`), multiplicativity (`Real.exp_add`), and the value
+at `Real.log ↑x` (`Real.exp_log_eq_abs`). The classification still
+needs the character of $-1$ (whose square is one) and the signed
+decomposition of each nonzero real. This proves the unitary decomposition
+used in (3.1.2.3), p. 121, before inserting the norm power that gives
+the real factor in (3.2.1.4).
 
 For the later complex angular circle, pull back along `Circle.exp`
 and derive integer weight by $2\pi$-periodicity. Use
