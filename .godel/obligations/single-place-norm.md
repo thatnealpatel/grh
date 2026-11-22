@@ -1764,6 +1764,41 @@ $x$ cancels the positive Archimedean phase of $\mathrm{Tr}_{K/\mathbb Q}(x)$.
 The source reading remains provisional (pinned Markdown and numbered
 PDF layout). See the [exact-candidate check and independent review](finite-adele-trace-character-check.md).
 
+### Global trace character and the Archimedean Fourier factor
+
+[`numberFieldAdeleAddChar`](../../Proofs/Theorems/AdeleTraceCharacter.lean)
+combines the positive phase on the actual infinite completions with the
+conjugated product on the actual finite adeles. It is a continuous
+additive character of modulus one, trivial on the whole diagonal $K$.
+Masullo's Example A.3.1.5 (PDF p. 557) specifies the positive real
+and complex trace phases, and Example A.3.1.9, (A.3.1.7), p. 558,
+specifies the trace pullback. The finite sign repair enters explicitly
+in the product defining the character, using the already checked
+finite character. On the Archimedean side,
+[`archimedeanAdeleTrace_mul`](../../Proofs/Lemmas/ArchimedeanAdeleTrace.lean)
+identifies the phase of the product with the trace pairing in continuous
+mixed coordinates, including twice the real part at complex places.
+Its diagonal specialization uses the rational field trace. These source
+readings are provisional, based on the pinned Markdown and numbered
+PDF layout.
+
+`integrable_archimedeanAdeleFourierIntegrand` and
+`archimedeanAdeleFourierIntegrand_integral` prove that at every diagonal
+frequency the actual infinite-adele integral converges absolutely and
+agrees with `archimedeanTraceFourier`. They transport the trace measure
+through the same equivalence used in `adeleFiniteStageHaar`. The
+Archimedean Schwartz factor need not have compact support. The measure
+and the negative Fourier phase, rather than just the absolute value of
+the phase, are both matched. This is the Archimedean factor of the
+product, not an identification of the actual global integral.
+
+Replay: `lake build --wfail +Theorems.AdeleTraceCharacter
++Theorems.AdeleRestrictedProductHaar`. Jointly import these modules and
+`Theorems.FiniteBoxFourier`, and check the built signatures and axioms of
+`numberFieldAdeleAddChar`, its continuity, norm, and diagonal identities,
+and the Archimedean endpoints above. Exact-candidate checks and statement
+review are in Yah session `01a204c2-4f2b-73b9-ad63-5fdca6cd4879`.
+
 **Next: Identify the actual global Fourier integral for one translated
 finite box.** Use this $\mu$, a finite adele $a$, a finite idele $g$, a
 complex Schwartz Archimedean factor $\phi$, and any diagonal $y\in K$,
@@ -1776,9 +1811,8 @@ $$
 $$
 Here $\psi$ must be the continuous global character from the positive
 Archimedean phase and the product of conjugates of the positive finite
-trace phases. Pair the checked finite character above with the positive
-Archimedean trace phase on the actual infinite completions, using the
-Archimedean trace pairing and the additive stage coordinates.
+trace phases. Use the checked `numberFieldAdeleAddChar` and its
+Archimedean factor above.
 Masullo's (2.2.4.32), p. 92,
 supplies the conjugated Fourier kernel and tensor shape, but the finite
 integrand must use the integration variable. Use the corrected sign so

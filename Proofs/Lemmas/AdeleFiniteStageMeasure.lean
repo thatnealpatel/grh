@@ -100,6 +100,14 @@ public def archimedeanEuclideanToAdele : Eucl ≃ₜ+ A∞ :=
   (mixedEmbedding.euclidean.toMixed K).toContinuousAddEquiv.trans
     (infiniteAdeleMixedEquiv K).symm
 
+/-- The continuous coordinates agree with the ring coordinates after forgetting the metric. -/
+public theorem archimedeanEuclideanToAdele_symm_mixed (x : A∞) :
+    mixedEmbedding.euclidean.toMixed K ((archimedeanEuclideanToAdele K).symm x) =
+      InfiniteAdeleRing.ringEquiv_mixedSpace K x := by
+  change mixedEmbedding.euclidean.toMixed K
+    ((mixedEmbedding.euclidean.toMixed K).symm (InfiniteAdeleRing.ringEquiv_mixedSpace K x)) = _
+  exact (mixedEmbedding.euclidean.toMixed K).apply_symm_apply _
+
 namespace AdeleStage
 
 public scoped instance : SecondCountableTopology A∞ :=
