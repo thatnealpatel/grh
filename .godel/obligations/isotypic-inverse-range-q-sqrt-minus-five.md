@@ -35,8 +35,8 @@ $E(s)L_f(1-s,\chi)$ with $E(s)=20^{1/2-s}$. This is consistent with the
 numerator on p. 308: If $Z_S(f_0,s)=\Phi(s)$, then
 $Z_S(\widehat f_0,1-s)=\Phi(s)/\rho_S(s)$ on the overlap, and
 $\rho_S(s)L_f(s,\chi)=E(s)L_f(1-s,\chi)$. One need not construct $f_0$
-for this repair. This reading of pp. 308–309 does not upgrade the
-previous extraction-only readings of pp. 305–306.
+for this repair. See the separate [rendered gluing audit](isotypic-fourier-gluing-q-sqrt-minus-five.md#source-interface)
+for (6.3.2.11) and (6.3.2.13), pp. 305–306.
 
 ## Verified completed product and divisibility
 
@@ -334,13 +334,12 @@ centers of the closed segment. The completed-source application, the
 reflected insertion identity, and the archimedean image criterion
 are ordinary mathematics, not Lean realization.
 
-**Next bounded source check:** Independently render the reflected
-multiplier in (6.3.2.11) and its use in (6.3.2.13), pp. 305–306,
-following the cited Fourier equations as needed. This would decide
-whether the [omitted-ball discrepancy](isotypic-fourier-gluing-q-sqrt-minus-five.md#gaussian-discrepancy-and-boundary-cancellation)
-compares against the literal printed gluing interface at $S_\infty$.
-Those source readings remain provisional. This is separate from the
-general converse and from a Lean realization of the repaired case.
+**Separate source check completed:** The [in-scope gluing control](isotypic-fourier-gluing-q-sqrt-minus-five.md#in-scope-control-and-scope-of-the-repair)
+shows that the literal pair fails in the overlap at the principalizing
+stage $S_\infty\cup\{\mathfrak p_2\}$, because it omits the Fourier
+factor at $\mathfrak p_5$. The smaller stage is an extension outside
+the printed stage conditions. This audit neither verifies the general
+converse nor supplies a Lean realization of the repaired case.
 
 ### Checked forward closed-strip estimate
 

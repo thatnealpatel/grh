@@ -1,43 +1,83 @@
 # The reflected insertion on the quadratic class isotype
 
-**Result (ordinary mathematics, not Lean):** For $F=\mathbb Q(\sqrt{-5})$,
-its nontrivial ideal-class character $\chi$, and $S=S_\infty$, the
-[isotypic insertion isomorphism](isotypic-exhaustiveness-q-sqrt-minus-five.md)
-does not make the literal pair in (6.3.2.11) glue. With the forward
-multiplier normalized to $L_f(s,\chi)$, the reflected multiplier is
-$20^{1/2-s}L_f(1-s,\chi)$, not $L_f(1-s,\chi)$. The extra factor is a
-nowhere-zero entire function. It gives gluing for all tests in this
-isotype, with no local moment conditions. This is a mismatch in a proof
-step, not a refutation of the Global Converse Theorem.
+**Result (reviewed ordinary mathematics, not Lean):** For
+$F=\mathbb Q(\sqrt{-5})$ and its nontrivial ideal-class character $\chi$,
+the literal pair in (6.3.2.11) fails to glue in (6.3.2.13) already at
+$S'=S_\infty\cup\{\mathfrak p_2\}$. This stage meets the printed
+hypotheses. Its reflected multiplier omits $5^{1/2-s}$, the contribution
+from Fourier transforming the inserted unit ball at $\mathfrak p_5$.
+The smaller stage $S_\infty$ fails the printed Picard-group hypothesis,
+but has a separate [isotypic insertion isomorphism](isotypic-exhaustiveness-q-sqrt-minus-five.md);
+there the corresponding missing factor is $20^{1/2-s}$. The factors
+restore agreement for all tests at these stages, with no local moment
+conditions. This is a mismatch in the stated gluing step, not a
+refutation of the Global Converse Theorem.
 
 ## Source interface
 
-Locations and formula readings are provisional, from layout extraction
-of the digest-checked [pinned edition](../sources/masullo/README.md), not
-inspection of rendered pages. On pp. 305–306, (6.3.2.10) uses the two
-$S$-local transforms at $c_s=\chi|\cdot|^s$ and its dual
-$\widehat c_s=\chi^{-1}|\cdot|^{1-s}$. Here $\chi^{-1}=\chi$, and its
-restriction to $\mathbb C^\times$ is trivial. The input pair is
-holomorphic on the respective half-planes $\Re s>0$ and $\Re s<1$, not
-necessarily across their respective endpoints. The stated $T_{S,\chi}$
-in (6.3.2.11) uses $L_{\Sigma_F-S}(\chi,s)$ and
-$L_{\Sigma_F-S}(\chi,1-s)$ with no polar multiplier because
-$\chi|_{C_F^1}\ne 1$. At $S_\infty$, (6.3.1.6) and (3.2.1.7) give
-$L_{\Sigma_F-S}(\chi,s)=L_f(s,\chi)$. Equation (6.3.2.13) subtracts the
-two outputs on $0<\Re s<1$ and cites the local (3.3.1.2) and global
-(3.2.2.2) functional equations.
+**Literal route.** In the digest-matched [pinned edition](../sources/masullo/README.md),
+(6.3.2.10), p. 305, uses the local pair $Z_S(f,c_s)$ and
+$Z_S(\widehat f,\widehat c_s)$, with the $S$-local Fourier transform as
+in (5.4.1.2), pp. 265–266. Use the norm section $t\mapsto(\sqrt t,1,\ldots)$,
+on which $\chi=1$, so $c_s$ is the local restriction of $\chi|\cdot|_F^s$
+and $\widehat c_s$ that of $\chi^{-1}|\cdot|_F^{1-s}$. Here $\chi^{-1}=\chi$.
+The local domains are $\Re s>0$ and $\Re s<1$, respectively.
+Equation (6.3.2.11), p. 305, multiplies these legs by
+$L_{\Sigma_F-S}(\chi,s)$ and $L_{\Sigma_F-S}(\bar\chi,1-s)$, with no
+polar multiplier since $\chi|_{C_F^1}\ne1$. The quotient in (6.3.1.6),
+p. 303, is the completed product divided by the retained local factors,
+not a Fourier-corrected Euler product. The inherited rendered
+[completed-product](isotypic-inverse-range-q-sqrt-minus-five.md#verified-completed-product-and-divisibility)
+and [finite-product](isotypic-euler-factorization-q-sqrt-minus-five.md#manuscript-interface)
+readings give the omitted product on $\Re s>1$ and hence its continuation.
+Equation (6.3.2.13), p. 306, subtracts the two outputs on $0<\Re s<1$;
+the next sentence asserts $\operatorname{im}(T_{S,\chi}U_{S,\chi})\subseteq
+\ker R_{S,\chi}$.
 
-The global equation compares the insertion with its **global Fourier
-transform**, not with the insertion of the $S$-local Fourier transform.
-The relevant source dependency is Example A.3.1.10, (A.3.1.8), p. 558
-(also Remark A.3.4.2, p. 562). With the trace character of (A.3.1.7) and
-self-dual measure of (A.3.1.2), the local transform of $1_{O_v}$ is
-$\nu_v(O_v)1_{\mathfrak d_v^{-1}}$. The transform is not a unit-ball
-insertion when the place is ramified in the field extension, even if
-the multiplicative character is unramified there. The accepted rational
-[`RationalAdeleUnramifiedFourier`](../../Proofs/Theorems/RationalAdeleUnramifiedFourier.lean)
-computes the self-annihilating unit-ball case, not these omitted
-trace-dual balls.
+**Fourier route.** The insertion appends $1_{O_v}$ at the omitted
+places, by (2.1.4.3), p. 71, and the inductive limit (5.2.3.2). The
+local equation (3.3.1.2), p. 129, compares the forward zeta integral
+with $\rho_S(c_s)$ times the local reflected one, with $\rho_S$ formed
+only from places in $S$. The global equation (3.2.2.2), p. 124 (proof on
+pp. 126–127), compares insertion with its **global Fourier transform**,
+not with insertion of the $S$-local Fourier transform. Example A.3.1.10,
+(A.3.1.8), p. 558, uses the standard trace character and self-dual
+additive measure: $\widehat{1_{O_v}}=\nu_v(O_v)1_{\mathfrak d_v^{-1}}$.
+The correction is therefore not part of the printed $T_{S,\chi}$, nor
+can the $S$-local equation supply a factor at an omitted place.
+
+**Printed scope.** Page 305 distinguishes the embedding (6.3.2.9)
+from the stage chosen for the proof: $S$ contains infinity, has
+$\mathrm{Pic}(\mathcal O_{F,S})=1$, and $\chi$ is unramified outside
+$S$. Theorem 6.2.1.1(2), p. 295, and Terminology 6.3.1.1, p. 303, use
+these conditions. At $S_\infty$, the class group has order two, so it
+is not the chosen stage. Inverting $\mathfrak p_2$ kills its generating
+class, so $S'$ qualifies even though it omits $\mathfrak p_5$. The
+character is trivial on every finite unit group. The norm-one idèle
+$(\sqrt 2,\varpi_2,1,\ldots)$ lies at $S'$ after taking omitted entries
+to be $1$, has value $-1$, and witnesses nontriviality both globally and
+on the restricted norm-one isotype. The requirement to include the
+field-ramified places in Example A.3.1.11, pp. 558–559, is for the
+lattice duality and covolume-one normalization, not the product
+self-dual measure used for $Z_S$; §3.3.1, p. 128, explicitly distinguishes
+the latter from that additional characterization.
+
+**Evidence and review:** The worker and independent reviewer `FjvFwqA`
+(transcript Yah `01a20454-3ea6-790c-84ec-d5a38f3affd6`, reviewed base
+`4ce485fba3b33c37f7e3f33d30783a6fcded4599`) inspected the rendered
+p. 305 stage choice, local pair, and multiplier, the p. 306 subtraction
+and kernel claim, and the displays on pp. 71, 124, 129, 266, 303, and
+558 cited above. The reviewer confirmed from pixels
+on p. 128 the distinction between self-duality and lattice normalization.
+Theorem 6.2.1.1 corroborates the stage conditions. The scope of Theorem
+5.4.1.1 and the p. 561 measure definition were extraction corroboration,
+as was the proof on pp. 126–127, not new rendered verification.
+The reviewer separately checked the literal substitution and the
+true global Fourier calculation at $S'$, the membership of the Gaussian
+class, and the existence of a real nonzero comparison point by the
+identity theorem. The explicit $s=3/4$ point below is an additional
+mathematical check. Prior renderings of the completed and finite products
+are credited in their accepted notes, not reread here.
 
 ## Omitted balls and their Mellin multipliers
 
@@ -82,7 +122,7 @@ as follows:
 | $\mathfrak p_5$ | $5^{-1/2}1_{\varpi_5^{-1}O_v}$ | $5^{1/2-s}$ |
 | Other finite places | $1_{O_v}$ | $1$ |
 
-Set $E(s)=20^{1/2-s}$. With the literal product measures (A.3.2.2),
+At $S=S_\infty$ put $E(s)=20^{1/2-s}$. With the product measures (A.3.2.2),
 (A.3.2.5), and (A.3.4.2), $A:=\prod_{v\notin S}u_v=20^{-1/2}$.
 The exact multipliers of the local zeta integrals are therefore
 $A L_f(s,\chi)$ forward and $A E(s)L_f(1-s,\chi)$ reflected. Dropping the
@@ -116,14 +156,13 @@ $$
 
 Equivalently, this follows from the archimedean local equation and the
 finite functional equation; the trace-dual calculation fixes the root
-number $+1$ and the exponent for this particular character. The printed
-$R_{S,\chi}T_{S,\chi}U_{S,\chi}$ on this test is thus
+number $+1$ and the exponent for this particular character. The literal
+formula for $R_{S,\chi}T_{S,\chi}U_{S,\chi}$, extended to this smaller
+stage, is thus
 $(1-E(s)^{-1})H(s)$ on the overlap. It vanishes there at zeros of $H$
 and where $E(s)=1$, i.e. $s=1/2+2\pi i k/\log 20$ with $k\in\mathbb Z$.
-It is nonzero for real $s<1$ sufficiently close to $1$: $E(s)\ne 1$
-and $H(1)=L_f(1,\chi)\ne 0$ by the right-edge nonvanishing in
-Proposition 3.2.1.3(4), applicable to this nontrivial compact isotype.
 The central-point comparison alone cannot detect the missing factor.
+A nonzero point in the open overlap is checked below.
 
 The forward local pole at $s=0$ has residue $2\pi$ and the reflected
 local pole at $s=1$ has residue $-2\pi$ in the same coordinate $s$.
@@ -132,7 +171,8 @@ $-2\pi\widehat f(0)$: Its circular average at radius $\sqrt t$ is
 $f(0)+O(\sqrt t)$ as $t\downarrow0$, and likewise for $\widehat f$.
 The completed function of (3.2.1.2) is entire on this nontrivial
 isotype by Proposition 3.2.1.3(1), so $L_f(s,\chi)$ has a zero at $0$.
-It is simple because $H(0)=E(0)H(1)\ne0$. At $0$ the omitted
+It is simple because $H(0)=E(0)H(1)\ne0$, using positivity at $1$
+from the block argument below. At $0$ the omitted
 $L_{\mathfrak p_2}(s)=(1+2^{-s})^{-1}$ is regular, of value $1/2$;
 $L_{\mathfrak p_5}(s)=(1-5^{-s})^{-1}$ has a simple pole of residue
 $1/\log 5$. More precisely, the continued product after deleting both
@@ -149,31 +189,64 @@ strip. No archimedean zero mode had to vanish. The global residual
 functionals vanish **on the projected isotype**; they do not force
 these local modes to vanish on an archimedean representative.
 
-## Scope of the repair and next check
+## In-scope control and scope of the repair
 
-For any local test, the exact global transform of its insertion
-has the same omitted factors as for the Gaussian. Global Fourier
-reflection and continuation therefore give $R_{S,\chi}T^{\rm corr}_{S,\chi}
-U_{S,\chi}=0$ on the projected quotient: Keep the printed forward
-multiplier and multiply the printed reflected multiplier by $E(s)$.
-This change preserves the half-plane Schwartz spaces and the
-multiplier's image topology, since $E$, $E^{-1}$, and their derivatives
-are bounded on each bounded-width vertical strip. This check repairs the
-Mellin gluing step; it does not on its own identify the converse range.
+At $S'$, use $g=f\otimes 1_{O_{\mathfrak p_2}}$ for the same Gaussian
+$f$ as above, and take its class in the full nontrivial isotypic
+Schwartz quotient of (6.3.2.10). Its local integrals calculate $U_{S',\chi}$
+on this class. The forward integral is
+$u_2G(s)L_{\mathfrak p_2}(s)$, not identically zero. No moment condition
+from (6.3.2.12) applies. The insertion of $g$ is the **same global test**
+as at $S_\infty$. The omitted product at $S'$ is
+$D'(s)=L_f(s,\chi)/L_{\mathfrak p_2}(s)$; the ball at $2$ belongs to the
+local Fourier calculation and already contributes $2^{1-2s}$ there.
+Thus, with the common $u_2$ divided out, the two **literal** legs are
+$H(s)$ and $2^{1-2s}G(1-s)L_f(1-s,\chi)=5^{s-1/2}H(s)$, by the
+same global identity above. In the **trace-dual** route the omitted ball at
+$5$ adds $5^{1/2-s}$ to the latter leg, giving $H(s)$ instead. Equivalently,
+when unfolding the two global integrals the common omitted unit mass is
+$\prod_{v\notin S'}u_v$; it does not affect this ratio.
 
-The proof chooses $S$ with trivial localized Picard group and $\chi$
-unramified outside $S$. At $S'=S_\infty\cup\{\mathfrak p_2\}$ those
-conditions hold but the same omitted-ball calculation still gives a
-factor $5^{1/2-s}$ on the reflected leg. Taking $S$ to contain **both**
-finite different places eliminates this omission, and is possible under
-the proof's large-stage choice. The smaller stage, despite the forward
-isomorphism, requires the corrected multiplier. This does not disprove
-the theorem or rule out its proof at a sufficiently large stage.
+One can take $s=3/4$ in both tests. In fact, the
+[accepted factorization](isotypic-euler-factorization-q-sqrt-minus-five.md#the-norm-test-and-the-grouped-euler-polynomials)
+identifies $L_f(s,\chi)$ with $L(s,\chi_{-4})L(s,\chi_5)$ also by
+continuation. The Dirichlet series converge for $\Re s>0$ by bounded
+partial sums of the periodic coefficients and summation by parts.
+For real $s>0$, writing $b(n)=n^{-s}$, the blocks
+$b(4j+1)-b(4j+3)$ and
+$b(5j+1)-b(5j+2)-b(5j+3)+b(5j+4)$ are strictly positive by monotone
+decrease and strict convexity, respectively. So $H(3/4)>0$.
+The two literal differences after normalization are
+$(1-20^{1/4})H(3/4)$ at $S_\infty$ and $(1-5^{1/4})H(3/4)$ at $S'$;
+both corrected differences are zero. Even without the explicit point,
+entireness and nonvanishing on $\Re s>1$ imply nonvanishing somewhere
+on any open real subinterval of the overlap.
 
-**Follow-up:** The [corrected inverse-range proof](isotypic-inverse-range-q-sqrt-minus-five.md)
-uses these two multipliers to lift every target in the claimed range
-at $S_\infty$. It propagates rapid decay through zeros by maximum
-modulus at separated heights, and applies (5.4.1.3) to the resulting
-pair. It also checks the omitted-to-retained denominator switch in
-the rendered pp. 308–309, separately from the provisional source
-reading in this note.
+For any $S$-local test in this isotype, global Fourier reflection and
+continuation give $R_{S,\chi}T^{\rm corr}_{S,\chi}U_{S,\chi}=0$ after
+multiplying the reflected multiplier by the product of the relative
+factors at omitted places. More generally, the geometric shell calculation
+at a place with unramified unitary $\chi_v$ works without
+$\chi_v=\chi_v^{-1}$: Use $L_v(1-s,\chi_v^{-1})$ in the reflected leg,
+and the relative factor is still $\chi_v(\varpi_v)^{d_v}q_v^{d_v(1/2-s)}$.
+This is an identity for the unit-ball insertion and trace-dual Fourier
+transform, not a general converse result. The product is finite and
+nowhere zero, and it and its reciprocal have bounded derivatives on
+bounded-width vertical strips. For the quadratic case, including both
+finite different places in $S$ is an alternative repair allowed by the
+proof's choice of stage. The witness refutes the gluing inference under
+its stated stage conditions, not a proof using that stronger choice.
+
+**Next bounded source check:** At $S''=S'\cup\{\mathfrak p_5\}$ this
+gluing obstruction is absent. In the factorization just after (6.3.2.13),
+p. 306, and the unnumbered unfolding on p. 307, check whether the glued
+pair then agrees exactly with $L\circ\overline\pi_{S''}$ with the printed
+global and $S''$-local Haar conventions, or requires a common scalar.
+This checks the identification of the glued function with the global
+zeta image, not closedness or surjectivity of that image.
+
+**Separate results and premises:** The [corrected inverse-range proof](isotypic-inverse-range-q-sqrt-minus-five.md)
+uses the corrected multipliers to lift every target in the claimed range
+at $S_\infty$. Its checked denominator switch on pp. 308–309 is separate
+from this gluing counterexample. The general converse and global Lean
+realization are not addressed here.
