@@ -38,15 +38,69 @@ $\rho_S(s)L_f(s,\chi)=E(s)L_f(1-s,\chi)$. One need not construct $f_0$
 for this repair. This reading of pp. 308–309 does not upgrade the
 previous extraction-only readings of pp. 305–306.
 
+## Verified completed product and divisibility
+
+**Result (ordinary mathematics, not Lean):** Proposition 3.2.1.3(1),
+p. 123 of the [pinned edition](../sources/masullo/README.md), gives an
+entire continuation of the **completed** $L(s,\chi)$ for the nontrivial
+ideal-class character of $F=\mathbb Q(\sqrt{-5})$. The proposition's
+opening refers to (3.2.1.2) on $\Re s>1$, as does Definition 3.2.1.2.
+Part (1) says it is entire when $\chi|_{C_F^1}$ is nontrivial; the
+exception in part (2) tests triviality on $C_F^1$, not triviality at
+infinity. Here $C_F^1$ is the kernel of the descended idelic norm
+(Definition A.1.4.1, (A.1.4.2), p. 542).
+
+To test the hypothesis, take $a$ with a uniformizer at the unique
+prime $\mathfrak p$ above $2$, $\sqrt 2$ at infinity, and $1$ at every
+other place. The product norm ((A.1.3.3), p. 541) gives
+$|a|_F=2\cdot 2^{-1}=1$, using squared complex norm and $N\mathfrak p=2$.
+Its finite valuations give the class $[\mathfrak p]$, so
+$\chi([a])=-1$ even though $\chi$ is trivial at infinity and on every
+finite unit group. The [checked class character](isotypic-euler-factorization-q-sqrt-minus-five.md#checked-normalized-class-character)
+and [idelic pullback](isotypic-euler-factorization-q-sqrt-minus-five.md#checked-idelic-realization-and-local-factors)
+supply the continuous unitary character and uniformizer value. The
+norm-one test works for every nontrivial ideal-class pullback: Lift a
+class with nonidentity character value by finite valuations, then
+adjust the norm at any one infinite place without changing that class.
+The formula for $G$ below uses the signature with one complex place
+and no real places.
+
+The [inherited rendered product and complex factor](trace-theta-density-qi.md#source-interface)
+in (3.2.1.2) and (3.2.1.5), p. 123, apply with angular index $0$, the
+one complex place, and the same coordinate $c_s=\chi|\cdot|_F^s$ as
+Theorem 6.3.2.1(1) (§3.2.1, p. 122, and p. 304). Every finite factor
+is retained since the character, not the field, is unramified there.
+For the trace-self-dual Gaussian normalization, set
+$G(s)=2\pi(2\pi)^{-s}\Gamma(s)$, and write $D=L_f(\cdot,\chi)$. The
+product on $\Re s>1$ is $(G/2\pi)D$. This equality extends by uniqueness
+of meromorphic continuation: $D=(2\pi/G)L(\cdot,\chi)$ is entire since
+$1/G$ is entire, and agrees with the [Lean-identified Dirichlet product](isotypic-euler-factorization-q-sqrt-minus-five.md#checked-all-prime-grouped-identity)
+by the identity theorem. Lean's finite comparison is on $\Re s>1$;
+it is not an identification with the manuscript's completed continuation.
+
+The [inherited rendered divisibility premise](isotypic-good-heights-q-sqrt-minus-five.md#rendered-source-and-scope)
+of Theorem 6.3.2.1(1), (6.3.2.3), p. 304, then gives
+$\Phi=L(\cdot,\chi)V=UGD$ with $V$ entire and $U=V/(2\pi)$. This holds
+for every target in that printed range condition and uses neither the
+$AS$ estimates nor the printed gluing proof. This is an application
+of the stated proposition, not a new proof of it.
+
+**Review evidence:** The worker and independent reviewer `ebfjDVt`
+(transcript Yah `01a2044b-499f-704a-983d-2c19771e76bd`) read the
+p. 123 proposition's opening, (1), and the trivial-restriction test
+in (2) from readable rendered crops. The worker also inspected the
+Def. 3.2.1.2 cross-reference, p. 123, the norm product and kernel on
+pp. 541–542, and the $s$-coordinate displays on pp. 122 and 304.
+The reviewer used p. 542 extraction for the kernel definition,
+checked the witness and its generalization mathematically, and
+checked the applicability of the inherited rendered product, complex
+factor, and divisibility readings. Those inherited readings are
+credited in their linked notes, not reread as part of this audit.
+
 ## Holomorphy and overlap
 
-Write $D(s)=L_f(s,\chi)$, and let $G(s)=2\pi(2\pi)^{-s}\Gamma(s)$ be
-the Mellin transform of the self-dual Gaussian for the trace pairing.
-By the completed product ((3.2.1.2), (3.2.1.5), p. 123), there is an
-entire $U$ with $\Phi=U G D$, absorbing the constant between $G$ and
-the printed complex factor. The completed function is entire on this
-nontrivial norm-one isotype (Proposition 3.2.1.3(1), p. 123), and
-$D$ is entire by division by $G$, whose reciprocal is entire. Use
+With the [verified completed product](#verified-completed-product-and-divisibility),
+write $\Phi=UGD$ with $U$ and $D$ entire. Use
 the reflected insertion identity from the preceding audit:
 
 $$
@@ -70,8 +124,7 @@ coordinates of the two local characters are exactly $s$ and $1-s$.
 By the self-dual Gaussian and (3.3.1.2), p. 129, the local factor is
 $\rho_S(s)=G(s)/G(1-s)$. Thus $Q_+=\rho_S Q_-$ on $0<\Re s<1$,
 including at the finite $L$-zeros. The [local source audit below](#verified-local-image-criterion)
-checks the p. 129 equation and its normalization. The p. 123 readings
-remain provisional (text, not rendered-page review).
+checks the p. 129 equation and its normalization.
 
 ## Separated-height estimate on the whole strip
 
@@ -277,17 +330,17 @@ radius-six circle about $2+i(H+1/2)$ for every real $H\ge1$. This
 supplies the $m=0$ good-height estimate. The separate
 [all-orders Cauchy estimate](isotypic-good-heights-q-sqrt-minus-five.md#all-orders-cauchy-bound-at-the-same-height)
 now bounds reciprocal derivatives in Lean at the same height and all
-centers of the closed segment. The reflected identity and the
-archimedean image criterion still need a formal model. The local source
-verdict does not upgrade the exact completed-factor or entireness
-readings on p. 123, or the global gluing-interface readings on
-pp. 305–306.
+centers of the closed segment. The completed-source application, the
+reflected insertion identity, and the archimedean image criterion
+are ordinary mathematics, not Lean realization.
 
-**Next bounded source check:** Compare (3.2.1.2), (3.2.1.5), and
-Proposition 3.2.1.3(1), p. 123, with $G(s)D(s)$ on the nontrivial
-norm-one isotype. This would verify the exact completed factor and
-entireness used to pass from the printed divisibility premise to
-$\Phi=U G D$. The literal global gluing route is a separate check.
+**Next bounded source check:** Independently render the reflected
+multiplier in (6.3.2.11) and its use in (6.3.2.13), pp. 305–306,
+following the cited Fourier equations as needed. This would decide
+whether the [omitted-ball discrepancy](isotypic-fourier-gluing-q-sqrt-minus-five.md#gaussian-discrepancy-and-boundary-cancellation)
+compares against the literal printed gluing interface at $S_\infty$.
+Those source readings remain provisional. This is separate from the
+general converse and from a Lean realization of the repaired case.
 
 ### Checked forward closed-strip estimate
 
