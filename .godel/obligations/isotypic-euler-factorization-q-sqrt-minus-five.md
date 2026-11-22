@@ -348,6 +348,38 @@ No new visual reading or p. 309 formula is used. The public scope is
 exactly the split-root case $p\ne2,5$; neither the prime fiber nor the
 Dirichlet comparison is proved by these endpoints.
 
+### Checked split-prime fiber
+
+[`IdealClassSplitPrimeFiber`](../../Proofs/Theorems/IdealClassSplitPrimeFiber.lean)
+proves `qSqrtNegFive_heckePrimeFiber_of_split_root`. For each rational
+prime $p\ne2,5$ and specified $r\in\mathbb F_p$ with $r^2=-5$, let
+$f$ be the quotient map followed by `qSqrtNegFiveSplitQuotientEquiv`.
+The theorem gives two distinct elements of `heckePrimeFiber QSqrtNegFive p`,
+with ideals $\ker(\operatorname{fst}\circ f)$ and
+$\ker(\operatorname{snd}\circ f)$ in that order, and proves that every
+fiber element is one of them.
+
+The two kernels are prime and nonzero, and their contractions are $(p)$
+in $\mathbb Z$: Both maps send an integer to its residue in $\mathbb F_p$.
+Conversely, `heckePrimeFiber_under_eq_span` forces every fiber ideal to
+contain $(p)\mathcal O_F=\ker f$. The quotient correspondence and
+`Ideal.ideal_prod_prime` reduce the possibilities to the two product
+ideals with one zero coordinate. Surjectivity gives a lift of $(0,1)$
+in the first kernel but not the second. The Lean control at $p=3$, $r=1$
+checks the ordered evaluations: $1+\sqrt{-5}$ maps to $(2,0)$, so belongs
+only to the second kernel.
+
+Independent statement and applicability review: `nhqEita` (transcript
+Yah `01a202e6-d48b-795a-8b79-a656350d050d`). It checked the endpoint,
+contraction, ordered control, and quotient correspondence mathematically,
+and checked the use of the [accepted rendered reading](#manuscript-interface)
+of Masullo, p. 122, §3.2.1, (3.2.1.1), and p. 124, Definition 3.2.1.4,
+(3.2.1.7). By the [checked pullback](#checked-idelic-realization-and-local-factors),
+both places are retained: The omitted set is for character ramification,
+not field ramification. The enumeration supplies indices for the finite
+Euler factor, not a printed result or a proof of their exponents or
+coefficients. No new visual reading or p. 309 cross-reference was needed.
+
 ### Remaining grouped identity
 
 The grouped local polynomial identity for the actual quadratic class
@@ -379,12 +411,11 @@ pp. 800–801, identified in its [holomorphy section](isotypic-inverse-range-q-s
 
 **Open Lean premise for the Hecke transfer:** Instantiate the all-prime
 grouped polynomial identity for a constructed idèle-class character.
-**Next arithmetic check:** Use the [split quotient](#checked-split-quotient)
-and `Ideal.ideal_prod_prime` to enumerate `heckePrimeFiber` in the
-split-root case: The two places should be exactly the kernels obtained
-by composing reduction with the two coordinate projections. This would
-identify the places indexed by the split grouped factor. Certifying the
-residue degrees, comparing the Dirichlet signs, normalizing the
+**Next arithmetic check:** For the two places in the
+[split fiber](#checked-split-prime-fiber), use the surjective projections
+of the split quotient to identify each residue field with $\mathbb F_p$
+and deduce residue degree one. This fixes the two exponents in the split
+grouped factor. Comparing the Dirichlet signs, normalizing the
 nontrivial class character, and assembling the all-prime identity remain
 separate.
 The explicit product's circle growth and common-height estimate are
