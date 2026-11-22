@@ -455,10 +455,43 @@ convention. Its corrected reciprocity finding checks the uniform
 instantiation at $5$, including coincident primes. This was not a new
 visual reading and did not use the p. 309 cross-reference.
 
+### Checked normalized class character
+
+[`IdealClassSignCharacter`](../../Proofs/Theorems/IdealClassSignCharacter.lean)
+constructs `Masullo.qSqrtNegFiveClassCharacter`, a monoid homomorphism
+$\operatorname{Cl}(\mathcal O_K)\to\mathbb C$ for $K=\mathbb Q(\sqrt{-5})$.
+It sends $1$ to $1$ and the other class $g=[\mathfrak p_2]$ to $-1$.
+The dichotomy applied to $g^2$ leaves $1$ or $g$; the latter would
+force $g=1$ by cancellation, contrary to nonprincipality. This proves
+multiplicativity by checking the pairs of signs.
+`norm_qSqrtNegFiveClassCharacter` proves norm one at every class, and
+`qSqrtNegFiveClassCharacter_primeTwo` proves the normalization, with
+no assumed character or arithmetic premise.
+
+A fresh import with `IdealClassHeckeCharacter` verifies that the
+actual idelic pullback has norm one on the whole idele class group and
+is unramified at every finite place. At `qSqrtNegFivePrimeTwo` it has
+`localValue` equal to $-1$ and `localPolynomial` equal to $1+X$. The
+prime class used by the pullback is definitionally the positive
+`ClassGroup.mk0` in `qSqrtNegFivePlaceClass`. These are per-place
+checks, not a grouped product over a rational-prime fiber.
+
+Independent review `wSzwpaV` (transcript Yah
+`01a20309-9bc1-7d70-94e7-544e9b05665d`) checked the statements,
+cancellation argument, `mk0` convention, and applicability of the
+[accepted rendered reading](#manuscript-interface) and
+[local-unit criterion](#checked-idelic-realization-and-local-factors).
+Masullo's PDF p. 122, §3.2.1, (3.2.1.1), and p. 124, Definition
+3.2.1.4, (3.2.1.7), retain the factors because the pullback is trivial
+on the finite local unit groups. The construction is arithmetic input,
+not a manuscript claim. No new rendered reading or p. 309
+cross-reference was needed for it.
+
 ### Remaining grouped identity
 
-The grouped local polynomial identity for the actual quadratic class
-character is still open in Lean.
+The grouped local polynomial identity for the
+[constructed quadratic class character](#checked-normalized-class-character)
+is still open in Lean.
 [`HeckeDirichletFactorization`](../../Proofs/Theorems/HeckeDirichletFactorization.lean)
 proves `Masullo.finiteHeckeCharacterEulerProduct_eq_dirichlet_of_local`
 by regrouping the convergent product over the finite fibers of
@@ -485,12 +518,11 @@ provisional completed and complex local normalizations on pp. 123 and
 pp. 800–801, identified in its [holomorphy section](isotypic-inverse-range-q-sqrt-minus-five.md#holomorphy-and-overlap).
 
 **Open Lean premise for the Hecke transfer:** Instantiate the all-prime
-grouped polynomial identity for a constructed idèle-class character.
-**Next arithmetic check:** Construct the normalized nontrivial class
-character as a monoid homomorphism to $\mathbb C$, using the two-class
-dichotomy and the nonidentity class of the prime above $2$. Proving
-its norm-one property and value $-1$ at that class supplies the input
-to the idelic pullback and the split and ramified-at-two sign results.
-Assembling the grouped local identities at all primes remains separate.
+grouped polynomial identity for the constructed idèle-class character.
+**Next arithmetic check:** For $p\nmid 10$ with $-5$ square modulo $p$,
+rewrite the rational denominator as a product over the two distinct
+places of residue degree one. Use the normalized class sign at each
+place and the equality of the Dirichlet signs to prove the split row.
+The inert and both field-ramified grouped comparisons remain separate.
 The explicit product's circle growth and common-height estimate are
 already unconditional in Lean.
