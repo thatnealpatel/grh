@@ -10,3 +10,5 @@ Keep bounded experiments that serve the formalization project separate from the 
 - [Proof-breadth companion](companion/): Separate loop for neglected claims and missing cases. Its class-character run `01a200d1-8d5d-7ebf-8a66-cd9e3fd53be7` produced a scoped strip lemma and an inverse-range handoff; not scheduled by `cmd/godel`.
 - [Two-writer proof pair](two-writer-proof-pair/): Failed before execution; neither arm ran.
 - Historical handoff reading check (`cmd/handoff`, retired): The reviewer found no consequential error in the training reading. The pilot stopped with `no_transfer`; the held-out case was not run, and no instruction was installed.
+
+- [Strategic retarget replay](strategic-retarget/): A masked comparison favored the added Companion selection question, the existing Main response to a normalization obstruction, and neither response on a prerequisite control. Trial only the selector question prospectively; no live prompt changed.
