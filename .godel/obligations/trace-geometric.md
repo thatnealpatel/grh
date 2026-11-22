@@ -44,6 +44,79 @@ This is a split of an already identified diagonal, not an evaluation by the peri
 
 **Specific orbital interface to check.** The extracted (11.3.2.2), p. 495, appears to use the product of two indicators of the exact section $\tau(\mathbb R_{>0})$, averaged over $\xi\in F^\times$ and $g\in E_F^1$, with the latter fundamental domain as in (A.2.3.14), p. 549. If interpreted literally as integration with norm-one Haar on this domain, even the first indicator has integral zero for each $\xi,x$: $\xi g x$ must equal $\tau(|x|_F)$, so at most one $g$ contributes. Norm-one Haar is nonatomic, since the group contains infinite compact local unit subgroups. The countable sum is then also zero, not a normalized lift. This is a reading to verify on the rendered page, not a verdict on the intended orbital formula. For a text-based next step, use the periodic model of Theorem 7.4.2.1 at a single rational prime for $F=\mathbb Q$ and look for a genuine lift and cutoff trace that works for tests on both sides of norm one. A periodic scalar alone does not identify that trace with the stratum piece above.
 
+## Base normalization forces zero off-stage weight
+
+**Source interface (provisional text extraction).** Lemma 12.2.1.1,
+(12.2.1.2), p. 505, normalizes the nonnegative indentation on every orbit.
+Proposition 12.2.2.2, (12.2.2.1–2), p. 508, uses the weight
+$w_a(x,y)=\sum_{h\in H}a(h^{-1}x)a(h^{-1}y)$ to lift a kernel already on
+the quotient. Proposition 12.2.2.4, pp. 512–514, concerns an **increasing**
+open-subgroup exhaustion $G_k$ with rank-one quotients and a fundamental
+domain in $G_0$. It gives one full indentation whose restriction to each
+$G_k$ is also normalized for $H\cap G_k$. The proof explicitly extends an
+indentation on $G_0$ by zero, then uses dominated convergence for the
+complementary input tail (12.2.2.26–27). These are not the decreasing
+indicators of (11.3.1.4), p. 494, or the asserted orbital lift in
+(11.3.2.2–3), p. 495. Checked against the extraction of the pinned PDF
+with SHA-256 `e039d3f6cf0a4b14f03c7edb85097752dd65c0a2fe543c76fe992be234f97bf5`.
+No rendered-page reading is claimed.
+
+**Project result.** [IndentationShellSupport.lean](../../Proofs/Theorems/IndentationShellSupport.lean)
+shows that the base support is **forced**, not just a feature of the
+particular zero extension. Let $B=G_0$, and take a representative $x\in B$
+of each orbit. The full counting sum of $a(h^{-1}x)$ and its subsum over
+$h\in H\cap B$ are both one. Subtracting gives an off-base sum of zero;
+nonnegativity forces each term to vanish. Moving an arbitrary point to
+$B$ along its orbit proves `indentation_eq_zero_off_base`. For $x\in B$
+and $y\notin B$, if $h\in B$ then $a(h^{-1}y)=0$, and otherwise
+$a(h^{-1}x)=0$. Thus `indentation_pair_weight_hasSum_zero` shows that the
+series of double-leg weights converges to zero termwise. This argument
+needs neither the higher stages nor a rank condition. Both normalizations
+are stated as `HasSum` to one at points of $B$.
+
+`rationalIdele_indentation_pair_weight_hasSum_zero` uses the checked
+positive-real finite-unit window to meet every principal orbit, and
+`rationalIdeleFiniteStage_indentation_pair_weight_hasSum_zero` verifies the
+window inclusion for the image of the actual signed finite-stage
+embedding, including $S=\{\infty\}$ (empty finite set). Hence **every**
+base-normalized indentation has zero lifted kernel from off-stage inputs
+to output representatives inside that stage. Any (11.3.1.4) input
+multiplier supported off the stage, of either sign, gives zero there
+before any limits if applied to this lift. This strengthens the earlier
+point-mass example. It is compatible with the two-mass example, where
+base normalization fails. It also explains why the normalization in
+Proposition 12.2.2.4 cannot by itself identify the shell with a possibly
+nonzero periodic trace. The [test near $\log p$](trace-orbital-q.md#the-right-cutoff-erases-a-fixed-shell-in-the-literal-chain)
+compares those shell constructions, not the test on p. 520 whose
+support excludes that prime norm.
+
+Independent Yah `indentation-interface-review` checked the two orbit
+normalizations, noncommutative support argument, rational finite-stage
+interface, and cutoff scope against the digest-matched extraction and
+accepted Lean dependencies. Audit scope: `Theorems.IndentationShellSupport`
+and the four endpoints above.
+
+**Remaining interface and runnable check.** The block statement is for
+a mask applied **after** the double-leg lift of a specified quotient
+kernel. It does not move that mask through an upstairs transition
+projection or identify the result with the lift in (11.3.2.2), which
+still needs its own normalization and descent check. To try this as a
+replacement geometric route, first identify the fixed-cutoff global
+quotient kernel with a traceable regular Haar diagonal, keeping the
+right level projection in the level-first order. Lift that kernel with
+base normalization, so that all of its unfolded diagonal is in the
+base. Then compare this entire base contribution for $S=\{\infty\}$ with
+the actual local level on the
+[short positive-log control](trace-to-zeros.md#first-unmatched-geometric-evaluation-and-a-positive-log-control).
+The available local model yields $J_f-M_f(-1/2)$; the common diagonal
+must yield $J_f-M_f(-1/2)-M_f(1/2)$ in the prescribed global limit.
+Neither the choice of indentation nor the vanishing off-stage weight
+establishes the missing $-M_f(1/2)$, the operator comparison, or the
+limit. If retaining Masullo's original orbital route instead, the
+unmet obligation is to identify its particular lifted and projected
+kernel with the orbital subquotient, not to prove another generic
+tail bound.
+
 ## Narrowing the bridge: Project reasoning, not a source reading
 
 The finite-place extension and the kernel comparison are separate. Assume the normalized single-place map $i_v:F_v^\times\to C_F$ has $|i_v(a)|_F=|a|_v=q_v^{-\operatorname{ord}_v(a)}$, where $q_v=N(\mathfrak p_v)$. Take $T>1$, $q_v>T$ outside $S$, $|\operatorname{supp}\varphi|_F\subset (T^{-1},T)$, and $\varphi|_{C_F^1}=0$. For any $a\in F_v^\times$ at $v\notin S$:
