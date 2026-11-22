@@ -63,12 +63,12 @@ endpoint.
 A full-project audit, all-project joint import, and separate kernel replay are not routine landing gates. Continuous rigorous `cmd/audit` is deferred; do not assume any future auditor has covered a result. Do not claim RH or GRH closure without a separate rigorous audit. Keep old per-revision audit logs as historical evidence for their stated revisions, not as instructions or checks for new candidates.
 
 If a candidate was integrated directly on the accepted target and a
-concurrent landing may have moved it before a costly build, it can help
-to compare the candidate's base with one fresh `tool_campaign status`.
-If the base has already been superseded, use the recovery steps below
-before building. This is an optional preflight, not polling or a new
-landing check. It does not apply to an intentional stack on a pending
-parent and cannot prevent a later stale adoption.
+concurrent landing may have moved it, prepare the scoped checks first,
+then compare its base with one fresh `tool_campaign status` immediately
+before starting the build. If the base has already been superseded, use
+the recovery steps below instead. This is an optional preflight, not
+polling or a new landing check. It does not apply to an intentional
+stack on a pending parent and cannot prevent a later stale adoption.
 
 ### Integrating a direct edit
 
@@ -112,6 +112,13 @@ copying; an earlier check session is not a guarantee that its cache
 is available in a fresh invocation. If they are absent, proceed with
 the normal Lake build. First verify that the Lean source tree, Lean/Lake
 inputs, and build environment are unchanged between the two candidates.
+If checking the tracked input delta mechanically, use
+`jj --ignore-working-copy diff --from OLD --to NEW --name-only -- PATHS`
+from the launch root, with the two exact candidate commits and the Lean
+source and pinned input paths. Require command success and empty stdout.
+`--stat` prints a summary even when nothing changed, and empty stdout
+from a failed command is not an identity check. Still read the new
+candidate's diff against its own base and verify its workspace inputs.
 From the replacement workspace, copy the artifact directories **into**
 its existing build directory:
 
