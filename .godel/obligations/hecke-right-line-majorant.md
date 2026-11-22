@@ -565,14 +565,63 @@ extensions.
 sign and residue-ball mass in the integral reduction, and why no
 hypothesis $n>0$ is needed for the modulus alone.
 
-**Next bounded check:** Prove in Lean that the primitive residue
-character restricted by reduction to $\mathbb Z_p^\times$ has exact
-positive conductor level $n$. Identify the reduction kernel with
-$1+p^n\mathbb Z_p$ and rule out factoring at a lower level by
-primitivity. This supplies the conductor identification for comparison
-with the manuscript's ramified hypothesis. The extension to
-$\mathbb Q_p^\times$, zeta-integral identities, phase comparison, and
-finite-extension and global steps remain separate.
+### Exact conductor of the pulled-back unit character
+
+Fix a prime $p$, put $O=\mathbb Z_p$, and set
+$U_m=\{u\in O^\times : u-1\in p^m O\}$. The
+[Lean endpoints](../../Proofs/Theorems/PadicConductorFourier.lean) use
+exactly the pullback $u\mapsto\chi(u\bmod p^n)$ of
+`padicConductorFourier_unit`. They now certify its local conductor:
+
+- `Masullo.padicUnitReduction_eq_one_iff` identifies $U_m$ with the
+  kernel of reduction $O^\times\to (\mathbb Z/p^m\mathbb Z)^\times$
+  for every $m$. In particular, $U_0=O^\times$.
+- `Masullo.padicConductorUnit_trivial_iff_conductor_dvd` proves that
+  the pullback is trivial on $U_m$ exactly when the finite conductor
+  of $\chi$ divides $p^m$. This works for all $m,n\ge0$ and every
+  Dirichlet character modulo $p^n$ valued in a
+  `CommMonoidWithZero`, with no primitivity assumption.
+- `Masullo.padicConductorUnit_trivial_iff` specializes the right side
+  to $n\le m$ when $\chi$ is primitive. For $n>0$ the conductor
+  ideal is therefore $p^n O$, and the restriction to $U_0$ is
+  nontrivial. For $n=1$ this rules out the only smaller level. For
+  $n=0$ the theorem gives triviality already at level zero.
+
+The ring kernel comes from `PadicInt.ker_toZModPow`. At positive
+levels any finite unit has an integral lift by ring surjectivity, and
+being a unit is detected modulo $p$; at level zero the target unit
+group is trivial. For $m\le n$, compatibility of reductions and that
+lifting property turn triviality on $U_m$ into triviality on the
+finite kernel, equivalent to descent modulo $p^m$. For $n\le m$,
+compatibility gives triviality directly, and the finite conductor
+already divides $p^n$. A fresh import checks the $n=1$, $m=0$ witness,
+the $n=0$ case, and the existential form of nontriviality for $m<n$.
+
+**Manuscript scope.** The accepted [shell note](#primitive-prime-power-conductor-shells-over-mathbb-q_p)
+records the independent rendered readings by `WNdLLkJ` (Yah
+`01a201d1-b153-77f9-960b-0aa6dfd16c95`) of the Gauss sum below
+(3.3.1.30), PDF p. 136, and the ramified factor (3.3.2.24), p. 141.
+For the same residue character over $\mathbb Q_p$, the calculation
+identifies the conductor subgroup for the printed coset space and the
+conductor ideal in the ramified factor. The ramification criterion is
+nontriviality on $O^\times$, using the unit-restriction convention after
+(3.1.2.6), §3.1.2.3, p. 121. This is a result about the unit restriction;
+it does not construct the continuous unitary character on
+$\mathbb Q_p^\times$ with value one on $p$, prove the zeta quotient, or
+identify the phase.
+
+**Independent review:** `NkpINOg` (transcript Yah
+`01a202a5-f688-75bf-848e-9695477371bb`) checked the three statements,
+the use of the inherited readings, and the rendered unit-restriction
+criterion on p. 121. The additive Fourier normalization is unchanged.
+
+**Next bounded check:** Construct the multiplicative unit-part map
+$\mathbb Q_p^\times\to O^\times$, $x\mapsto p^{-v_p(x)}x$, and check
+that it fixes integral units and sends $p$ to one. This would supply
+the algebraic input to extend the unit character with the printed
+uniformizer normalization. Continuity and unitarity of the extension,
+the local zeta identities, phase comparison, and finite-extension and
+global steps are separate.
 
 ### Separate global Fourier sign
 

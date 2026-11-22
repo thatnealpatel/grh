@@ -59,6 +59,78 @@ private theorem isUnit_padicResidue (hn : 0 < n) (a : O) :
   have : Fact (1 < p ^ 1) := ⟨by simpa using (Fact.out : p.Prime).one_lt⟩
   exact not_isUnit_zero h
 
+/-- The principal units at level `m` are exactly the kernel of reduction on units.
+At level zero this kernel is the entire unit group. -/
+public theorem padicUnitReduction_eq_one_iff (m : ℕ) (u : Oˣ) :
+    Units.map (PadicInt.toZModPow (p := p) m).toMonoidHom u = 1 ↔
+      (u : O) - 1 ∈ Ideal.span ({(p : O) ^ m} : Set O) := by
+  let r := PadicInt.toZModPow (p := p) m
+  calc
+    Units.map r.toMonoidHom u = 1 ↔ r (u : O) = 1 := by
+      constructor
+      · exact congrArg Units.val
+      · intro h
+        exact Units.ext h
+    _ ↔ (u : O) - 1 ∈ Ideal.span ({(p : O) ^ m} : Set O) := by
+      rw [← PadicInt.ker_toZModPow, RingHom.mem_ker, map_sub, map_one, sub_eq_zero]
+
+private theorem padicUnitReduction_surjective (n : ℕ) :
+    Function.Surjective (Units.map (PadicInt.toZModPow (p := p) n).toMonoidHom) := by
+  intro v
+  by_cases hn : 0 < n
+  · obtain ⟨a, ha⟩ := ZMod.ringHom_surjective (PadicInt.toZModPow n) (v : ZMod (p ^ n))
+    have hu := (isUnit_padicResidue p hn a).mp (by rw [ha]; exact v.isUnit)
+    refine ⟨hu.unit, Units.ext ?_⟩
+    change PadicInt.toZModPow (p := p) n ↑hu.unit = ↑v
+    rw [hu.unit_spec, ha]
+  · obtain rfl : n = 0 := Nat.eq_zero_of_not_pos hn
+    have : Subsingleton (ZMod (p ^ 0)) := ZMod.subsingleton_iff.mpr (pow_zero p)
+    exact ⟨1, Subsingleton.elim _ _⟩
+
+/-- The pullback on `ℤ_[p]ˣ` is trivial on the level-`m` principal units exactly when
+the finite conductor divides `p ^ m`. No primitivity or positivity of levels is needed. -/
+public theorem padicConductorUnit_trivial_iff_conductor_dvd {R : Type*} [CommMonoidWithZero R]
+    (χ : DirichletCharacter R (p ^ n)) (m : ℕ) :
+    (∀ u : Oˣ, (u : O) - 1 ∈ Ideal.span ({(p : O) ^ m} : Set O) →
+      χ (ρ (u : O)) = 1) ↔ χ.conductor ∣ p ^ m := by
+  let r := Units.map (PadicInt.toZModPow (p := p) m).toMonoidHom
+  let s := Units.map (ρ).toMonoidHom
+  have hcompat {a b : ℕ} (hab : a ≤ b) (u : Oˣ) :
+      ZMod.unitsMap (pow_dvd_pow p hab) (Units.map (PadicInt.toZModPow (p := p) b).toMonoidHom u) =
+        Units.map (PadicInt.toZModPow (p := p) a).toMonoidHom u :=
+    Units.ext (PadicInt.cast_toZModPow a b hab (u : O))
+  simp_rw [← padicUnitReduction_eq_one_iff p]
+  change (∀ u, r u = 1 → (χ.toUnitHom (s u) : R) = 1) ↔ _
+  by_cases hmn : m ≤ n
+  · -- Lift finite units to identify the kernel condition for descent.
+    rw [← χ.mem_conductorSet_iff_conductor_dvd (pow_dvd_pow p hmn),
+      DirichletCharacter.mem_conductorSet_iff,
+      χ.factorsThrough_iff_ker_unitsMap (pow_dvd_pow p hmn)]
+    constructor
+    · intro h v hv
+      obtain ⟨u, rfl⟩ := padicUnitReduction_surjective p n v
+      apply Units.ext
+      apply h u
+      exact (hcompat hmn u).symm.trans hv
+    · intro h u hu
+      have he : χ.toUnitHom (s u) = 1 := h ((hcompat hmn u).trans hu)
+      exact congrArg Units.val he
+  · -- At higher levels both sides hold by reduction to level `n`.
+    have hnm := le_of_not_ge hmn
+    refine ⟨fun _ ↦ χ.conductor_dvd_level.trans (pow_dvd_pow p hnm), fun _ u hu ↦ ?_⟩
+    have he : s u = 1 := by rw [← hcompat hnm u, hu, map_one]
+    rw [he, map_one, Units.val_one]
+
+/-- A primitive character of modulus `p ^ n` has exact conductor level `n` on
+`ℤ_[p]ˣ`, including the comparison with the entire unit group at level zero. -/
+public theorem padicConductorUnit_trivial_iff {R : Type*} [CommMonoidWithZero R]
+    (χ : DirichletCharacter R (p ^ n)) (hχ : χ.IsPrimitive) (m : ℕ) :
+    (∀ u : Oˣ, (u : O) - 1 ∈ Ideal.span ({(p : O) ^ m} : Set O) →
+      χ (ρ (u : O)) = 1) ↔ n ≤ m := by
+  rw [padicConductorUnit_trivial_iff_conductor_dvd p χ m,
+    (DirichletCharacter.isPrimitive_def χ).mp hχ,
+    Nat.pow_dvd_pow_iff_le_right (Fact.out : p.Prime).one_lt]
+
 /-- At positive level, the test is zero at every point outside the local unit
 group, and on the unit group it is the inverse of the reduced character. -/
 public theorem padicConductorTest_unit (χ : DirichletCharacter ℂ (p ^ n)) (u : Oˣ) :
