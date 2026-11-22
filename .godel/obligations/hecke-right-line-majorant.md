@@ -874,26 +874,64 @@ go run ./cmd/godel audit-local "$CANDIDATE" \
   Masullo.ideleFiniteStageProduct_tensor Masullo.ideleFiniteStage_integral
 ```
 
-### Next: Exhaust the restricted-product zeta pairing
+### Checked cofinal exhaustion of the stage integrals
 
-Prove the cofinal passage for $g$ with a uniform finite bound on the
-stage absolute masses. Take an increasing sequence of finite stages
-containing all Haar mass exceptions, test exceptions, and ramified
-places. Countability and `range_ideleFiniteStageEmbedding` give an
-increasing measurable cover of the actual group. Glue the stage AE
-strong measurability, use `lintegral_iUnion` on the extended norm,
-and then use `tendsto_setIntegral_of_monotone` on the complex integrals.
-This should need no separate assumption of upstairs integrability.
+[`Masullo.ideleFiniteStage_exhaust`](../../Proofs/Theorems/IdeleFiniteStageExhaustion.lean)
+works on the actual ideles of any number field with any Borel measure
+$\mu$. Fix a finite set $E$, a complex density $g$, and a real bound $B$.
+If $g$ is integrable on every stage $U_S$ for $S\supseteq E$ and
+$\int_{U_S}\|g\|\,d\mu\le B$ there, then $g$ is globally integrable with
+$\int\|g\|\,d\mu\le B$. Both the complex and the absolute integrals over
+$U_{E\cup S}$ tend to their global values as the finite sets $S$ grow
+by inclusion. Neither global measurability nor global integrability is
+an additional hypothesis.
 
-For the actual right-half-plane density, prove the pointwise coordinate
-identity and the absolute bound: Outside the initial stage the standard
-local absolute masses are the unramified Euler factors at $\Re s$ for
-the trivial unitary character. Use the checked convergent finite Euler
-product there, keeping all exceptional Haar masses in the initial local
-values. Identify the complex stage limit with the corrected product.
-The comparison with the separately specified quotient normalization
-and the discriminant evaluation of the exceptional mass product are
-not consequences of this exhaustion.
+**Source and repair (provisional):** The proof of Theorem 3.2.2.1(1)
+invokes the global absolute product (3.2.2.6), p. 126, and the proof of
+Theorem 3.4.1.1 asserts (3.4.1.6), p. 143, on the right half-plane, with
+footnote 3 on p. 144 asking for a justification. From (A.3.2.5), p. 560, we use
+open stages of the checked restricted product. Lean glues AE strong
+measurability on their countable cover, bounds the global extended norm
+integral by the supremum of the bounded stage integrals, and only then
+passes the complex and absolute integrals to the limit. This is the
+limit step, not a proof of the pointwise tensor identity, the Euler
+bound, or the manuscript's quotient-normalized formula. The pinned
+Markdown and PDF layout were read, not the rendered pages. Independent
+Yah review: Session `01a201a4-3922-7a7b-93d2-0b24063b0682`, agent `meRjKLN`
+(output `42f7e496a37b0a2cb85e45c69dc9256790a891e5`). The review also notes
+that the cited Proposition 2.4.3.1, p. 113, controls a small-norm theta sum,
+not the raw Archimedean absolute integral. The proof of Theorem 3.3.1.1(1),
+p. 130, gives the local small-variable and Schwartz-tail argument instead.
+
+Replay in the candidate workspace:
+
+```sh
+go run ./cmd/godel audit-local "$CANDIDATE" \
+  Theorems.IdeleFiniteStageExhaustion -- Masullo.ideleFiniteStage_exhaust
+```
+
+### Next: Supply the right-half-plane Euler inputs
+
+For pure tensors (including at infinity), use `ideleFiniteStage_integral`
+to compute the complex and real absolute stage integrals from the local
+factors. A concrete next step is to prove the norm integral of the
+integral-ring local test in `finiteHeckeLocalZeta_unramified`: At $s$ it
+is the integral of the nonnegative trivial-character test at $\Re s$,
+and hence the real Euler factor there times the local unit mass.
+`Complex.norm_cpow_eq_rpow_re_of_pos` applies on completion units.
+Use `finiteHeckeEulerFactor_hasProdLocallyUniformlyOn` with coefficients
+one off the initial stage and zero on it to bound the absolute stage
+products. Keep the unit mass factors in the initial stage and verify the
+two stage limits in the inclusion order of `ideleFiniteStage_exhaust`.
+For the manuscript's general joint Archimedean test, a grouped
+Archimedean factor should replace the product across infinite places.
+
+The remaining pointwise input is the actual global density's tensor
+identity on stages containing all Haar, test, and ramification
+exceptions. This includes splitting the global character over local
+insertions and splitting the norm power. Neither quotient normalization
+nor evaluation of the exceptional mass product by the discriminant follows
+from exhaustion.
 
 **Still open:** Meromorphic continuation, divisor data, and contour
 growth in (B.4.2.1)–(4), the broader test class, ramified Fourier terms,
