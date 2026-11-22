@@ -16,8 +16,9 @@ moments.
 The denominator switch was checked in the rendered pp. 308–309 of the
 [digest-matched edition](../sources/masullo/README.md), inspecting pixel
 crops for the subscripts and using the layout text to locate the
-formulas. On p. 308 the definition of $\lambda_S$ and the displayed
-definition of $\psi_S$ divide by the **omitted** product
+formulas. An independent reviewer confirmed the raster reading. On
+p. 308 the definitions of $\lambda_S$ and $\psi_S$ divide by the
+**omitted** product
 $L_{\Sigma_F-S}(\chi,s)$ (with the common polar polynomial, which is
 $1$ here). The unnumbered ratio on p. 309 still has that subscript.
 In (6.3.2.16) and (6.3.2.17), p. 309, both denominators instead have
@@ -97,8 +98,10 @@ writing $s=\sigma+it$.
   give $D(\overline s)=\overline{D(s)}$ by continuation, so each good
   absolute height gives a pair of good opposite edges. We use the
   polynomial bound in the actual ordinate, not the sequence index.
-  No bound on derivatives of $1/D$ is needed. This is use of the
-  manuscript's estimate, not a new proof of that estimate.
+  No bound on derivatives of $1/D$ is needed: The $m=0$ estimate
+  also follows directly from Theorem B.6.1.7, (B.6.1.35), pp. 641–642.
+  These are provisional text readings used as manuscript inputs, not
+  a new proof of the estimates.
 
 For each $N\ge0$, the rapid decay of $\Phi$ on the closed strip gives
 one constant $C_N$ bounding $|s^N B(s)|$ on the two vertical edges
@@ -139,8 +142,10 @@ Theorem 5.4.1.1(1), pp. 265–266, takes a pair in
 $AS(\mathbb C_{>0})\times AS(\mathbb C_{<1})$ and gives the exact
 image criterion (5.4.1.3), the local overlap identity just checked.
 It applies on the trivial local isotype, without assuming the global
-class group trivial. It supplies a representative $f\in\mathcal
-S(\mathbb C)$ with local transforms $(Q_+,Q_-)$. In particular, on
+class group trivial. This is a provisional text reading of the exact
+image criterion, used here as a manuscript input. It supplies a
+representative $f\in\mathcal S(\mathbb C)$ with local transforms
+$(Q_+,Q_-)$. In particular, on
 $\Re s>1$ the normalized inserted test has global transform
 $D(s)Q_+(s)=\Phi(s)$ and hence realizes $\Phi$ by continuation.
 For the literal measures the inserted multiplier is $A D(s)$ with
@@ -149,6 +154,20 @@ by the same constant. The possible poles at the local endpoints
 encode, rather than suppress, the two local zero modes.
 
 ## Formal boundary and next check
+
+Lean proves the maximum-modulus step as
+[`Masullo.norm_pow_mul_le_on_strip_of_separated_heights`](../../Proofs/Lemmas/SeparatedHeightStripBound.lean).
+With $f=B$, the endpoint adds the weight $s^N$ and transfers a common
+bound on the two vertical edges and arbitrarily distant horizontal
+edges to the whole closed strip. Independent statement review verified
+that the hypothesis is differentiability on the open strip and
+continuity on its closure, not entireness. The exact accepted candidate
+`da4e9339f373d04b782a4e346dfbafe993c07e34` passed `audit-local` for
+`Lemmas.SeparatedHeightStripBound`: Full warnings-as-errors build,
+separate kernel replay, declaration provenance, and axiom check. A
+separate `#check` confirmed the endpoint type. The only axioms are
+`propext`, `Classical.choice`, and `Quot.sound`; the changed Lean source
+has no placeholders or unsafe substitutes.
 
 The analytic specialization above is not a Lean theorem. The pinned
 [`FiniteHeckeCharacterEulerProduct`](../../Proofs/Theorems/FiniteHeckeCharacterEulerProduct.lean)
