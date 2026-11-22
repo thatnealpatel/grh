@@ -872,6 +872,39 @@ go run ./cmd/godel audit-local "$CANDIDATE" \
   Masullo.exists_discriminantNormalizedIdeleHeckeGaussian_radialMellin
 ```
 
+### Checked scalar norm section for the large-norm repair
+
+[`ideleScalarLogSection`](../../Proofs/Theorems/IdeleScalarLogSection.lean)
+constructs Lemma A.2.2.4, p. 547, directly on the ideles. In the log
+parameter `x`, `ideleScalarLogSection_infinite` gives one ordinary
+radius `exp(x/[K:ℚ])` at every infinite place, and `_finite` gives
+`1` at all finite places. `ideleNorm_ideleScalarLogSection` multiplies
+the weighted local norms using `∑ w, w.mult = [K:ℚ]`, and
+`ideleLogNorm_scalarSection` makes it a right inverse of `ideleLogNorm`.
+
+Use this section for estimates, not to change the section or measures
+in the existing Mellin identity. Masullo supplies the scalar section
+in Lemma A.2.2.4, but the proof of Theorem 2.2.3.4(1) uses the different
+section (A.2.2.11) and asserts dilation by `t` in (2.2.3.10), p. 84.
+The new section has ordinary dilation `t^(1/[K:ℚ])`. A majorant still
+needs a uniform lower bound for multiplication by the compact
+representative's infinite part and a decay exponent at least `[K:ℚ] * N`
+and strictly larger than the lattice rank. This step alone proves
+neither those bounds nor any uniform periodization estimate.
+
+Independent Yah statement review: Session
+`01a20350-96e4-7bfd-a9ef-8a2f45d5a914`, child `review-scalar-section`
+(`nJGikRf`, read-only output `4af503ff5c002de15974354bd355ffae92ad20ce`).
+The reading compared Markdown and numbered PDF layout, not rendered
+pages, and remains provisional. Exact-candidate replay:
+
+```sh
+go run ./cmd/godel audit-local "$CANDIDATE" Theorems.IdeleScalarLogSection -- \
+  Masullo.ideleScalarLogSection Masullo.ideleScalarLogSection_infinite \
+  Masullo.ideleScalarLogSection_finite Masullo.ideleNorm_ideleScalarLogSection \
+  Masullo.ideleLogNorm_scalarSection
+```
+
 ### Next: Uniform large-norm bound for the Gaussian periodization
 
 Theorem 2.2.3.4(1), (2.2.3.4), p. 83, calls for a bound uniform
@@ -897,16 +930,11 @@ for arbitrary Schwartz–Bruhat tests. Pinned Mathlib supplies
 `mixedEmbedding.integerLattice` and `ZLattice.summable_norm_rpow` for
 the subsequent archimedean majorant after clearing denominators.
 
-For the archimedean bound do not use the literal scaling in (2.2.3.10),
-p. 84: In the ordinary sup norm specified on pp. 83–84, the coordinates
-of (A.2.2.11), p. 547, expand by `t^(1/(w.mult * (r₁+r₂)))`, not by `t`.
-A local repair is to use the uniform lower expansion
-`t^(1/(2*(r₁+r₂)))` for `t ≥ 1`, and take the decay exponent large enough
-to absorb that loss as well as the lattice rank. Alternatively the
-uniform scalar section of Lemma A.2.2.4, p. 547, gives exact dilation
-`t^(1/[K:ℚ])`. The estimate is class-invariant, so it need not use the
-single-place section of the integration theorem. These comparisons
-are provisional readings from Markdown and numbered PDF layout.
+The scalar section above supplies the exact ordinary dilation for
+the repaired bound. Use a Schwartz exponent large enough to absorb
+the loss from `t` to `t^(1/[K:ℚ])` and to sum over the lattice. The
+estimate is class-invariant, so it need not use the single-place
+section of the integration theorem.
 
 **Small-norm obligation:** On the provisional text reading, the use of
 Theorem 2.2.3.4(3), p. 83, on pp. 126–127 requires both zero modes to
