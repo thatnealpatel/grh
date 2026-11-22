@@ -22,8 +22,10 @@ private theorem completed_norm_reflection {N : ℕ} [NeZero N] {χ : DirichletCh
 private noncomputable abbrev completedProduct (s : ℂ) :=
   completedLFunction dirichletNegFour s * completedLFunction dirichletFive s
 
-private theorem product_eq_completed_div (s : ℂ) :
-    qSqrtNegFiveDirichletProduct s = completedProduct s / Gammaℂ s := by
+/-- Completing the odd and even factors inserts exactly one `Gammaℂ` factor. -/
+public theorem qSqrtNegFiveDirichletProduct_eq_completed_div (s : ℂ) :
+    qSqrtNegFiveDirichletProduct s =
+      (completedLFunction dirichletNegFour s * completedLFunction dirichletFive s) / Gammaℂ s := by
   rw [qSqrtNegFiveDirichletProduct,
     dirichletNegFour.LFunction_eq_completed_div_gammaFactor s (.inr (by decide)),
     dirichletFive.LFunction_eq_completed_div_gammaFactor s (.inr (by decide)),
@@ -41,7 +43,8 @@ public theorem qSqrtNegFiveDirichletProduct_gamma_reflection {s : ℂ} (hr : s.r
       completed_norm_reflection dirichletFive_primitive dirichletFive_inv hr]
     push_cast
     ring
-  rw [product_eq_completed_div, product_eq_completed_div, norm_div, norm_div, hc]
+  rw [qSqrtNegFiveDirichletProduct_eq_completed_div,
+    qSqrtNegFiveDirichletProduct_eq_completed_div, norm_div, norm_div, hc]
   field_simp [norm_ne_zero_iff.mpr h₁, norm_ne_zero_iff.mpr h₂]
 
 end Masullo

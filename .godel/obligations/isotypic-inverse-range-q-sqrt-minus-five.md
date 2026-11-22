@@ -184,3 +184,24 @@ now bounds reciprocal derivatives in Lean at the same height and all
 centers of the closed segment. The reflected identity and the
 archimedean image criterion still need a formal model. The latter and the exact
 completed/local normalizations above still use provisional source readings.
+
+### Checked forward closed-strip estimate
+
+[`Masullo.qSqrtNegFiveForwardB_closed_strip`](../../Proofs/Theorems/NegFiveForwardStrip.lean)
+uses the explicit Dirichlet product $D$ and the product $H_D$ of the two
+`completedLFunction`s. In mathlib's normalization the forward regularization
+is $B(s)=2\pi U(s)\Gamma_{\mathbb C}(s+1)$. The [regularization lemmas](../../Proofs/Lemmas/NegFiveForwardRegularization.lean)
+prove that $B$ is holomorphic on $\Re s>-1$ for entire $U$, and equals
+$s\Phi(s)/D(s)$ wherever $D(s)\ne0$, with $\Phi=U H_D$. The proof uses
+$D=H_D/\Gamma_{\mathbb C}$ before cancelling any factor.
+
+The sole decay hypothesis is that $(1+\|s\|)^m\,\|\Phi(s)\|$ is bounded
+on the closed strip for each natural $m$. Exact norm reflection and the
+right anchors give nonvanishing on the vertical edges. Real coefficients
+of $D$, not any symmetry of $U$, give the lower good-height edge. For a
+fixed $N$, the seminorm at $m=N+1+\lceil A\rceil$ absorbs the reciprocal
+loss on all four edges. Maximum modulus applies to $s^N B(s)$ itself,
+so the bound includes both endpoints and every interior zero of $D$.
+This proves the forward estimate under the stated numerator hypothesis,
+not its derivation from a manuscript test space, realization, or reflected
+gluing.
