@@ -1567,6 +1567,51 @@ normalized on-place norm extending a power of it. At the place over $2$
 in $\mathbb Q(i)$ this must give $q_v^{-n_v}=1/4$ and unit mass $1/2$,
 not unit mass one.
 
+### Checked p-adic determinant and lattice index
+
+[`PadicLatticeIndex.lean`](../../Proofs/Lemmas/PadicLatticeIndex.lean)
+proves that an injective endomorphism $f$ of a finite free
+$\mathbb Z_p$-module $M$ satisfies
+
+$$|\det f|_p = \bigl(\#(M/fM)\bigr)^{-1}.$$
+
+Use a Smith basis for the inclusion of $fM$. The determinant in those
+coordinates differs from $\det f$ by a unit. Each nonzero diagonal entry
+$a$ is associated to $p^{v_p(a)}$, and its quotient has exactly
+$p^{v_p(a)}$ elements by reduction to $\mathbb Z/p^{v_p(a)}\mathbb Z$.
+Multiplying the rank-one formulas proves the equality. This covers
+unit entries, including rank zero, without a positive-length premise.
+
+This is project support, not a manuscript proof step. Definition
+A.3.1.2(3), (A.3.1.2), and Lemma A.3.1.3, PDF p. 556, use the local
+determinant scale and its comparison with the different norm;
+Definition A.3.2.2, (A.3.2.2), p. 560, uses the same scale for
+multiplicative Haar. Example A.3.1.10, (A.3.1.8), p. 558, uses it for
+the Fourier transform of the integer ball. The source reading is
+provisional: Pinned Markdown and numbered PDF text, not rendered-page
+inspection.
+
+**Next use of this lemma:** For $O=\mathcal O_{K_v}$ and an integral
+basis $b$, use the integral trace Gram matrix as the endomorphism in
+basis coordinates. Its determinant is the integral discriminant;
+localization of the trace and nondegeneracy give injectivity. Identify
+its cokernel with $O^\vee/O$ by the field trace pairing, where
+$O^\vee=\{x\in K_v:\operatorname{Tr}(xO)\subseteq\mathbb Z_p\}$. Then
+identify the quotient cardinal with $\#(O/\mathfrak d_v)$ by the
+fractional ideal quotient equivalence. The local different and
+codifferent comparison is separate: Once $\mathfrak d_v$ is the
+extension of the global different, the checked prime-power quotient
+equivalence above identifies $\#(O/\mathfrak d_v)$ with $q_v^{n_v}$
+using `Ideal.absNorm`. The trace Gram comparison and Haar construction
+are not supplied by the index lemma.
+
+Reproduce the endpoint audit in the integration workspace:
+
+```sh
+go run ./cmd/godel audit-local "$CANDIDATE" Lemmas.PadicLatticeIndex -- \
+  Masullo.padicInt_norm_det_eq_inv_card_quotient_range
+```
+
 ### Checked: Integral traces in the fixed-prime splitting
 
 [`FiniteCompletionIntegralTrace.lean`](../../Proofs/Lemmas/FiniteCompletionIntegralTrace.lean)
