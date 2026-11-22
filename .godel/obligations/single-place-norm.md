@@ -2807,19 +2807,79 @@ the first report's uniform-bound and real-prefactor claims. Owning check
 session `01a20593-ad37-7739-b876-c8b63a19730e` records the exact candidate
 and base, scoped build, joint signatures, axiom checks, and adoption.
 
-**Next Lean obligation:** For the trivial character, prove the reflection
-germ for the same $L$ used at $a=2$ and on the horizontal edges. The
-unscaled completed Euler product needs
-$L(1-s)=\exp(\log |\operatorname{disc}K|\,(s-1/2))L(s)$
-as germs at $s=-1+it$. In (3.2.1.6), p. 123, Masullo states an entire
-nonvanishing epsilon factor and refers out for the local factors. The
-consuming step (B.4.2.3), p. 614 and footnote 13, invokes a conductor
-power, and its printed derivative misses the reflection sign. Use
-`ideleHeckeGaussian_one_radial_theta_inversion` and normalize
-the norm-one average, keeping the different translation, its log-norm
-shift, and both zero terms. If working with a separately constructed
-reflection witness, transfer to the horizontal witness by equality of
-continuations, not equality at a point. The right-line nonvanishing and
-`completed_logDeriv_reflection` then give the corresponding left-line
-input. Signed residues, contour exhaustion, the all-height zero sum in
-(B.4.2.2), and the global trace comparison remain open.
+The [norm-one reflection below](#checked-reflection-of-the-norm-one-gaussian-average)
+is the pointwise input for transferring this estimate to the left side.
+
+### Checked reflection of the norm-one Gaussian average
+
+[`ideleNorm_gaussianDifferentIdele`](../../Proofs/Lemmas/GaussianDifferentIdele.lean)
+computes the norm of the actual different idele: It has archimedean
+component one and finite ideal the different, so its idelic norm is
+$D^{-1}$ for $D=|\operatorname{disc}K|$. The inverse is essential under
+this norm convention.
+
+[`ideleHeckeGaussian_one_radialPairing_reflection`](../../Proofs/Theorems/IdeleClassGaussianReflection.lean)
+then averages the checked pointwise inversion on the same norm-one
+classes as the continued trivial Hecke product. Write $x=\log t$,
+$\delta=\log D$, $P(x)$ for the trivial-character integral of the
+principal Gaussian periodization over the norm-one fiber, and
+$a=(2\pi)^{-r_2}m(C_K^1)$ for its additive zero value times the **full**
+Haar mass. For every real $x$,
+
+$$
+P(x)+a=e^{-\delta/2-x}\bigl(P(-\delta-x)+a\bigr).
+$$
+
+The translated inverse has log norm $-\delta-x$. Its difference from
+the section of that log norm is $k/h$ in the norm-one variable $h$,
+where $k$ is the different class divided by the section of log norm
+$-\delta$. Compact abelian Haar invariance under this change of variable
+keeps the same integral and introduces no scalar. The two constant
+integrals are evaluated separately. The theorem assumes actual pointwise
+periodization and integrability on every slice, not just existence of the
+totalized integral. The latter premise is available on the same Gaussian
+and Haar witnesses from `ideleHeckeGaussian_correctedRadialMellin_entire`
+at $\chi=1$; the character weight there simplifies to one.
+
+**Source and review:** Masullo supplies the Poisson identity (2.2.3.2),
+PDF p. 82, recast as (2.2.3.7), p. 83, the norm-one pairing
+(2.2.5.2), p. 95, and the radial Mellin integral (3.2.2.4)–(5), p. 125.
+The same-Gaussian identity with the shift by the log norm of the different
+is the additional calculation. It is not the functional equation stated
+in Proposition 3.2.1.3(3) / (3.2.1.6), p. 123: That statement gives an
+entire nonvanishing epsilon factor and cites the local computations;
+(B.4.2.3), p. 614 and footnote 13, needs the specific conductor power.
+The printed logarithmic derivative there has the wrong sign on both the
+reflected quotient and the conductor term for the trivial-character
+equation in that direction.
+Independent statement and manuscript review: `SKKvXQB`, report
+`9e6d94246e5ebce22395f9f5d18cfe63eb7314ef`, in owning Yah session
+`01a2059a-ea95-7d1e-853d-93a0f05d9de2`, which records the exact
+candidate, base, builds, joint signatures, and axiom checks. The source
+reading uses the pinned Markdown and numbered PDF layout, with
+independent raster spot checks of the displays (not full rendered pages);
+the footnote prose remains provisional.
+
+**Next obligation:** Center the log coordinate by $y=x+\delta/2$ and
+split at $y=0$. If
+$I(s)=\int_0^\infty P(y-\delta/2)e^{sy}\,dy$,
+prove that $I$ is entire and that, for $\Re s>1$, the checked Euler
+integral is
+
+$$
+L(s)=e^{(1-s)\delta/2}
+\left(I(s)+I(1-s)+\frac{a}{s-1}-\frac{a}{s}\right).
+$$
+
+The negative half-line substitution uses the proved reflection, rather
+than the decay estimate alone. For the positive half-line, beyond the
+fixed shift use the checked large-norm decay; on the remaining bounded
+interval use the corrected profile integrability and add back the two
+bounded zero terms. The pole-cleared identity theorem then transfers the
+symmetric expression to the **same** continuation used on the horizontal
+edges. This must give the germ $L(1-s)=e^{\delta(s-1/2)}L(s)$ at each
+$s=-1+it$, not just equality of two values there. The right-line
+nonvanishing, `completed_logDeriv_reflection`, and the triangle inequality
+then give left-line nonvanishing and growth. Signed residues, contour
+exhaustion, the all-height zero sum in (B.4.2.2), and the global trace
+comparison remain open.

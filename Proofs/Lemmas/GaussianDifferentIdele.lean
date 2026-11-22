@@ -3,6 +3,7 @@ module
 public import Lemmas.IdeleGaussianIdeal
 public import Lemmas.IdeleMixedScale
 public import Theorems.ArchimedeanIdealDual
+import Lemmas.FiniteIdeleIdealNorm
 import Mathlib.NumberTheory.NumberField.Discriminant.Different
 
 /-! # The idele translating inversion by the different
@@ -49,6 +50,15 @@ public theorem finiteIdeal_gaussianDifferentIdele :
   dsimp only [f]
   rw [finiteDifferentLift_spec]
   rfl
+
+/-- The different translation has norm the reciprocal absolute discriminant. -/
+public theorem ideleNorm_gaussianDifferentIdele :
+    ideleNorm (gaussianDifferentIdele K) = ((discr K).natAbs : ℝ)⁻¹ := by
+  rw [ideleNorm_eq_archimedean_mul_absNorm_inv_finiteIdeleIdeal,
+    finiteIdeal_gaussianDifferentIdele, map_inv₀,
+    (FractionalIdeal.coeIdeal_absNorm (K := K)), absNorm_differentIdeal K, Rat.cast_inv, Rat.cast_natCast]
+  have h (w : InfinitePlace K) : ((gaussianDifferentIdele K).val.1 w) = 1 := rfl
+  simp [h]
 
 /-- Over the rationals there is no translation in the reflected theta sum. -/
 @[simp] public theorem gaussianDifferentIdele_rat : gaussianDifferentIdele ℚ = 1 := by
