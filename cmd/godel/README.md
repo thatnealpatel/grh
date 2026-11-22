@@ -45,6 +45,14 @@ Use these checks for routine proof landings. Elaborate drafts in the writer work
 
 A full-project audit, all-project joint import, and separate kernel replay are not routine landing gates. Continuous rigorous `cmd/audit` is deferred; do not assume any future auditor has covered a result. Do not claim RH or GRH closure without a separate rigorous audit. Keep old per-revision audit logs as historical evidence for their stated revisions, not as instructions or checks for new candidates.
 
+If a candidate was integrated directly on the accepted target and a
+concurrent landing may have moved it before a costly build, it can help
+to compare the candidate's base with one fresh `tool_campaign status`.
+If the base has already been superseded, use the recovery steps below
+before building. This is an optional preflight, not polling or a new
+landing check. It does not apply to an intentional stack on a pending
+parent and cannot prevent a later stale adoption.
+
 ### Integrating a direct edit
 
 If investigation separated the initial `tool_campaign status` from
