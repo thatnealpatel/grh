@@ -148,6 +148,28 @@ evaluations still need the idelic realization in Lean. No manuscript
 premise enters the ideal arithmetic, and this does not justify the
 printed switch on p. 309, (6.3.2.16)–(18).
 
+### Checked bound on class representatives
+
+[`IdealClassSmallRepresentative`](../../Proofs/Theorems/IdealClassSmallRepresentative.lean)
+proves `Masullo.qSqrtNegFive_discr`: The signed field discriminant is
+$-20$, computed by transporting the quadratic basis through the checked
+full-ring equivalence. A real embedding would send $\sqrt{-5}$ to a real
+number squaring to $-5$, so there are no real places. Degree two then
+gives one complex place. The Minkowski bound specializes to
+$2\sqrt{20}/\pi<3$: Lean uses $\sqrt{20}<9/2$ and $3<\pi$.
+
+`Masullo.qSqrtNegFive_exists_ideal_in_class_norm_one_or_two` takes any
+$c:\operatorname{Cl}(\mathcal O_F)$ and gives a nonzero integral ideal
+$I$ with `ClassGroup.mk0 I = c` and absolute norm $1$ or $2$. This is
+unconditional for this field, with no split-prime or character premise.
+The independent statement review (Yah session
+`01a2020d-83b6-702f-9726-9f84922ab3d8`, agent `rygRztD`) checked the
+signed full-ring discriminant, and separately checked that Mathlib's
+class-representative bound uses the same class orientation and nonzero
+integral ideal subtype, with the stated signature and numerical cutoff.
+It did not recheck the manuscript pages; the source findings above are
+inherited.
+
 The grouped local polynomial identity for the actual quadratic class
 character, including its construction on idèle classes, is still open
 in Lean. [`HeckeDirichletFactorization`](../../Proofs/Theorems/HeckeDirichletFactorization.lean)
@@ -177,12 +199,12 @@ pp. 800–801, identified in its [holomorphy section](isotypic-inverse-range-q-s
 
 **Open Lean premise for the Hecke transfer:** Instantiate the all-prime
 grouped polynomial identity for a constructed idèle-class character.
-**Next arithmetic check:** Compute the field discriminant using the
-checked integral basis and specialize Mathlib's class-representative
-bound to $\mathbb Q(\sqrt{-5})$. A bound strictly below $3$ would give
-an integral ideal of norm $1$ or $2$ in each class, reducing the
-class-group dichotomy to these two norms and uniqueness above $2$.
-The idelic realization (local-unit triviality and uniformizer
-evaluation), the split/inert relation to the Dirichlet signs, and the
-inert case remain separate. The explicit product's circle growth and
-common-height estimate are already unconditional in Lean.
+**Next arithmetic check:** Assemble the two-class dichotomy from the
+checked norm bound and the place above $2$. A norm-one ideal must be
+the unit ideal; a norm-two ideal has quotient of order two and is
+therefore prime and contains $2$, so uniqueness identifies its class.
+This would discharge the class-dichotomy input to the checked split
+sign theorem. The idelic realization (local-unit triviality and
+uniformizer evaluation), the split/inert relation to the Dirichlet
+signs, and the inert case remain separate. The explicit product's circle
+growth and common-height estimate are already unconditional in Lean.
