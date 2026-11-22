@@ -343,6 +343,25 @@ $A_\chi=|N(\mathfrak d_{F/\mathbb Q})|N(\mathfrak f_\chi)$ in the
 manuscript's normalization. The Lean reflection needs only the germ of
 this equality where the contour meets ordinary nonzero points.
 
+**Unadopted modulus-three recovery (prior handoff):** The reviewed
+`Proofs/Theorems/PadicRamifiedThreeFourier.lean` is preserved with the
+note draft in `1080bf8534b18b6574115607db70f09046e97d73`, based on
+`a575167bc66f178a8bc4d014d69e692f50fc6a80`; the independently
+elaborated writer output is `674ae752f7fbcc647c9e93bd55b7dd6f582a838a`.
+It checks the signed unit-coset transform at every frequency and
+nonvanishing exactly on $3^{-1}\mathbb Z_3^\times$. The writer module
+was kernel-replayed with only the three allowed axioms. The exact Gauss
+phase and the ratio $\sqrt{3}$ of the two forward-over-reflected values
+(with the real Gamma ratio removed) are ordinary calculations. Prior
+review verified rendered pp. 136 and 141, (3.3.1.30), (3.3.1.32), and
+(3.3.2.24); the product norm on p. 120 and constant real epsilon rule
+at (3.3.1.28), p. 135, remain provisional. Integration of the saved
+patch at `0ae987b585b5254b0e4920098e74eec919aba5b0` conflicted in this
+note and was not audited or adopted. Recover the needed paths on a
+fresh accepted base, preserving the intervening Gaussian work and note
+updates, then run the exact-candidate audit and fresh-import checks.
+This is not the next sign check or a general conductor assembly.
+
 ### Separate global Fourier sign
 
 The [rendered rational theta check](theta-inversion-q.md#rendered-sign-check-a-translated-box-breaks-the-printed-theta-identity)
@@ -357,6 +376,18 @@ power above: A constant sign in a functional equation would cancel
 from its logarithmic derivative, and the test does not supply the
 exponential or the completed-product identification in (B.4.2.4),
 p. 615.
+
+### Separate relative 1-line integrability failure
+
+The [calibrated rational Gaussian test](idele-relative-one-line-q.md)
+admits the printed zeta integral (3.4.2.1), p. 145, as a complex
+Lebesgue integral only for $\Re s>1$. The rendered domain includes
+$1+2i$, where the integral of the modulus diverges. The cited
+norm-ordered Euler product, (B.7.2.24), p. 653, does not supply this
+integrability. This is independent of the sign and ramified power
+issues and does not challenge the above-one product comparison or
+analytic continuation. The boundary claim cannot be used as an
+upstairs Lebesgue unfolding in the global identification.
 
 ## Checked: Evaluate the shifted Archimedean pair
 

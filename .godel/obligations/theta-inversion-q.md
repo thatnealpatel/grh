@@ -551,6 +551,11 @@ review confirmed the signed real factor and the off-$S$ compact factors,
 not a comparison with the smaller $S$-idele group alone. Rendered-page
 verification remains open.
 
+A separate [relative 1-line check](idele-relative-one-line-q.md) uses
+this calibrated Haar on disjoint single-prime shells. It checks the
+rendered (A.3.2.2) and (A.3.2.5), p. 560, for the normalization used
+there, not the full source passage concerning stages on p. 556.
+
 For verification, build `Proofs` with warnings as errors, run
 `leanchecker` on `Theorems.RationalIdeleFiniteStage` and
 `Theorems.RationalIdeleFiniteStageHaar`, and audit the types and axioms
