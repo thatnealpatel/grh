@@ -1,6 +1,7 @@
 module
 
 public import Theorems.FiniteHeckeCharacterEulerProduct
+public import Lemmas.HeckeCharacterConjugate
 public import Props.CompactLogMellin
 import Lemmas.CompactLogMellinInversion
 
@@ -14,12 +15,12 @@ The reflected weight changes the sample to `exp(-y) * g(-y)`, not its
 sign. Fourier inversion with ordinary angular frequency supplies the
 normalization and corrects the relative sign in the extracted formulas.
 The negative signs in the two series below are those of (B.4.2.7).
-These are finite-product statements, independent of contour reflection
-and of the identification of the reflected character.
+These are finite-product statements, independent of deriving the
+contour reflection from the completed functional equation.
 -/
 
 open Complex IsDedekindDomain MeasureTheory NumberField
-open scoped ContDiff
+open scoped ComplexConjugate ContDiff
 
 namespace Masullo
 
@@ -116,5 +117,50 @@ public theorem finiteHecke_reflected_right_line {a : ℝ} (ha : 1 < a)
       (2 * (Real.pi : ℂ)) = -(∑' p, A p) :=
   finiteHecke_right_line_evaluation ha ψ hψ (integrable_compactLogMellin_reflected_vertical hg hc a)
     (fun y ↦ exp (-y) * g (-y)) (compactLogMellin_reflected_right_line_evaluation hg hc a)
+
+/-- The reflected coefficients in (B.4.2.7), including the zero extension
+at the common set of ramified places. -/
+public theorem finiteHeckeCoefficient_conjugate (χ : HeckeCharacter (𝓞 K) K) (v : Places) :
+    finiteHeckeCoefficient (heckeConjugate χ) v = conj (finiteHeckeCoefficient χ v) := by
+  classical
+  have hu := heckeConjugate_isUnramifiedAt_iff χ v
+  by_cases h : χ.IsUnramifiedAt v
+  · obtain ⟨π, hπ⟩ := (Valued.v : Valuation (v.adicCompletion K)
+      (WithZero (Multiplicative ℤ))).exists_isUniformizer_of_isCyclic_of_nontrivial
+    rw [finiteHeckeCoefficient, ite_eq_left (hu.mpr h), (hu.mpr h).localValue_eq π hπ,
+      finiteHeckeCoefficient, ite_eq_left h, h.localValue_eq π hπ]
+    exact heckeConjugate_restrict_unit χ v (Units.mk0 π hπ.ne_zero)
+  · simp [finiteHeckeCoefficient, hu, h]
+
+/-- The sum of the direct and reflected **finite** integrals in (B.4.2.4),
+with the conjugate character in the reflected leg. This is the finite-place
+part of (B.4.2.17) in the unshifted compact-log convention. -/
+public theorem finiteHecke_paired_right_line {a : ℝ} (ha : 1 < a)
+    (χ : HeckeCharacter (𝓞 K) K) (hχ : ∀ x : IdeleClassGroup (𝓞 K) K, ‖χ x‖ = 1)
+    {g : ℝ → ℂ} (hg : ContDiff ℝ ∞ g) (hc : HasCompactSupport g) :
+    let s := fun t : ℝ ↦ (a : ℂ) + (t : ℂ) * I
+    let D := fun t ↦ compactLogMellin g (s t) * logDeriv (finiteHeckeCharacterEulerProduct χ) (s t)
+    let R := fun t ↦ compactLogMellin g (1 - s t) *
+      logDeriv (finiteHeckeCharacterEulerProduct (heckeConjugate χ)) (s t)
+    let A := fun p : Places × ℕ ↦
+      let l := Real.log (finitePlaceNorm p.1)
+      let m := p.2 + 1
+      let y : ℝ := (m : ℕ) * l
+      let z := finiteHeckeCoefficient χ p.1
+      (l : ℂ) * (z ^ m * g y + (conj z) ^ m * (exp (-y) * g (-y)))
+    Integrable D ∧ Integrable R ∧ Summable (fun p ↦ ‖A p‖) ∧
+      (∫ t, D t + R t) / (2 * (Real.pi : ℂ)) = -(∑' p, A p) := by
+  have hd := finiteHecke_direct_right_line ha χ hχ hg hc
+  have hr := finiteHecke_reflected_right_line ha (heckeConjugate χ)
+    (heckeConjugate_unitary χ hχ) hg hc
+  dsimp only at hd hr ⊢
+  simp only [finiteHeckeCoefficient_conjugate] at hr
+  obtain ⟨hiD, hsd, hd⟩ := hd
+  obtain ⟨hiR, hsr, hr⟩ := hr
+  simp only [mul_add, mul_assoc] at hsd hsr hd hr ⊢
+  refine ⟨hiD, hiR, ?_, ?_⟩
+  · exact (hsd.add hsr).of_nonneg_of_le (fun _ ↦ norm_nonneg _) (fun _ ↦ norm_add_le _ _)
+  · rw [integral_add hiD hiR, add_div, hd, hr, ← neg_add,
+      ← hsd.of_norm.tsum_add hsr.of_norm]
 
 end Masullo

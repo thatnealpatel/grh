@@ -189,24 +189,77 @@ normalized sign and reciprocal norm factor and distinguished the
 standalone right-line results from the missing global contour link.
 This was extracted-text review, not visual verification.
 
-## Next: Identify the reflected coefficients of the conjugate character
+## Checked: Pair the finite legs with the conjugate character
 
 The reflected term in (B.4.2.7), (B.4.2.11), p. 615, and (B.4.2.17),
-p. 616, uses $\bar\chi$, not a free character. Construct it by
-postcomposing the continuous multiplicative map `HeckeCharacter`
-with complex conjugation. Prove it is unitary when $\chi$ is, has
-the same `IsUnramifiedAt` predicates, and satisfies
-`finiteHeckeCoefficient (conjugate χ) v = conj (finiteHeckeCoefficient χ v)`
-for every place. Use `HeckeCharacter.isUnramifiedAt_iff` on local
-units and `IsUnramifiedAt.localValue_eq` at a common uniformizer;
-`MulChar.ofUnitHom_coe` controls restriction on local units, and the
-omitted places have two zero coefficients. Instantiate the reflected
-endpoint and combine the two finite integrals for this single pair.
-This is runnable without analytic continuation or a functional equation.
+p. 616, uses $\bar\chi$ from (3.2.1.6), p. 123, not a free character.
+`heckeConjugate` realizes this as pointwise complex conjugation on
+idele classes. `heckeConjugate_isUnramifiedAt_iff` proves that both
+characters are trivial on the same finite local unit groups. At an
+unramified place `finiteHeckeCoefficient_conjugate` compares the values
+at the same uniformizer in (3.2.1.1), p. 122; at a ramified place both
+coefficients are zero. No unitarity is needed for these identities.
 
-**Still open:** The Archimedean factors in (3.2.1.3)–(5), the completed
-product, continuation, divisor and conductor data, and contour growth
-premises in (B.4.2.1)–(4) do not follow from these finite evaluations.
+`finiteHecke_paired_right_line` applies the two checked evaluations to
+$\chi$ and $\bar\chi$ (unitarity is preserved) and adds the integrals
+and the absolutely convergent joint sums. At $y=m\log q_v$ the result
+is the negative sum of
+$$
+(\log q_v)\bigl(z_\chi(v)^m g(y)+
+    \overline{z_\chi(v)}^{\,m}e^{-y}g(-y)\bigr).
+$$
+Here both integrands are on the upward line with $a>1$. This is not
+an assertion that the left line of the completed contour equals the
+reflected leg; that requires the functional equation and its epsilon
+factor.
+
+**Independent statement review:** `hecke-conjugate-review` (`AXLjKfH`,
+Yah parent session `01a200df-d170-72c4-b615-4f74015dc623`, exact base
+`6898a153192f7ca5adbbc77aa7a42700f49500d2`) checked the place
+restriction, the omitted-factor convention, the signs and
+normalization, and the scope of the paired endpoint against pinned
+Mathlib and the digest-verified manuscript. It also independently
+identified the Archimedean tail obstruction below. This was
+extracted-text review, not visual verification.
+
+## Next: Shift the Archimedean digamma calculation
+
+Read (3.2.1.3)–(5), p. 123, before (B.4.2.12)–(16), pp. 615–616.
+Those factors retain a real sign parity or complex angular weight.
+A purely imaginary radial parameter alone, as in the provisional
+extraction of (B.4.2.12) and (16), cannot account for those shifts.
+On a compact log profile with $g(0)\ne0$, both samples in (B.4.2.15)
+vanish for large $x$, while the extracted $N_v\phi(1)/x$ does not
+integrate at infinity. This is a test of the literal extracted formula,
+not a verified visual reading. The checked rational Gamma evaluation
+already replaces that bare subtraction by a decaying subtraction and
+a contact term.
+
+A runnable first repair is the scalar logarithmic derivative on
+$\Re s>0$ for the parameterized factor
+$B^{-(s+b+i\tau)/d}\Gamma((s+b+i\tau)/d)$, with $B>0$, $d>0$, real
+$b\ge0$, and $\tau\in\mathbb R$. Prove that it is nonzero and
+holomorphic there and that its log derivative is
+$$
+-\frac{\log B+\gamma}{d}+
+\int_0^\infty \frac{e^{-dx}-e^{-(s+b+i\tau)x}}{1-e^{-dx}}\,dx,
+$$
+with absolute integrability. Use `digamma_one_sub_eq_integral` and
+the $t=e^{-dx}$ substitution in `logDeriv_GammaReal_eq_integral`.
+At $d=2$, $B=\pi$ this allows real parity $b\in\{0,1\}$; at $d=1$,
+$B=2\pi$ this allows $b=|n|/2$ (Mathlib's `Complex.Gammaℂ` includes a
+constant factor $2$ that the manuscript omits). Here $\tau$ is the
+radial exponent in the **normalized** local norm, not in the raw
+complex radius. This scalar theorem does not classify actual local
+characters or identify the completed function. For the subsequent
+pair use $-\tau$ in the reflected factor and retain the same $b$;
+apply the accepted separate inversions rather than shifting the
+contour for this local calculation.
+
+**Still open:** The actual Archimedean character parameters and tested
+terms, the completed product, continuation, divisor and conductor data,
+and contour growth premises in (B.4.2.1)–(4) do not follow from these
+finite evaluations.
 Neither do the ramified Fourier terms or the global trace comparison.
 For the contour, the cited (3.2.1.6), p. 123, gives an everywhere
 nonvanishing entire epsilon factor, not its constant logarithmic
@@ -253,4 +306,13 @@ go run ./cmd/godel audit-local "$CANDIDATE" \
   Masullo.compactLogMellin_reflected_inversion \
   Masullo.finiteHecke_direct_right_line \
   Masullo.finiteHecke_reflected_right_line
+
+go run ./cmd/godel audit-local "$CANDIDATE" \
+  Lemmas.HeckeCharacterConjugate Theorems.FiniteHeckeRightLineInversion -- \
+  Masullo.heckeConjugate \
+  Masullo.heckeConjugate_unitary \
+  Masullo.heckeConjugate_restrict_unit \
+  Masullo.heckeConjugate_isUnramifiedAt_iff \
+  Masullo.finiteHeckeCoefficient_conjugate \
+  Masullo.finiteHecke_paired_right_line
 ```
