@@ -227,27 +227,124 @@ already handles the compact-away representative for its stage and
 Hecke-character hypotheses; it is not a formalization of this
 original additive test or all characters of the printed quotient.
 
-**Next bounded check:** On the same local domain and in the same
-$s$ coordinate, replace the real difference by arbitrary
-$a\in C_c^\infty(\mathbb R_{>0})$ with the finite factor still
-$\mathbf1_B$. On the nontrivial components the finite unit average
-still kills the transform; on the trivial component the verified
-local inputs (3.3.1.1), p. 129, (3.3.1.7), p. 130, (A.3.2.2), p. 560,
-and (A.3.4.2), p. 561, reduce the problem to the numerator over
-$1-3^{-s}$. Check that its residues at $s=2\pi i n/\log 3$ are the
-Fourier coefficients, with the $\log 3$ constants accounted for, of
-the periodization of $a(e^x)$ with period $\log 3$. The real Haar in
-(A.3.2.2)(1), p. 560, is $dt/t$ on this support by the
-[inherited signed Haar reading](trace-real-prime-q.md#source-and-domain).
-The [one-prime orbital calculation](trace-orbital-q.md#which-quotient-is-closed)
-already identifies zero periodization of a compact log profile with
-being a compact log translation difference in that coordinate
-(informal mathematics; the global manuscript mapping there is
-provisional and is not a premise here). After identifying the local
-residues with those coefficients, the existing difference criterion
-and the substitution above give a compact-away representative rather
-than forcing the original finite value to vanish. No global Euler
-factor or completed-space statement enters this check.
+## Residues characterize a compact-away lift
+
+**Result (ordinary mathematics, not Lean).** Let $F=\mathbb Q$,
+$S=\{\infty,3\}$, $B=\mathbb Z_3$, and
+$f(t,y)=a(t)\mathbf1_B(y)$ with arbitrary complex-valued
+$a\in C_c^\infty(\mathbb R_{>0})$, extended by zero. With $L=\log 3$,
+$g(x)=a(e^x)$, and $P(x)=\sum_{k\in\mathbb Z}g(x+kL)$, one has
+$$
+ \operatorname{Res}_{s=2\pi i n/L} Z_S(f,N^s)=\widehat P(-n),
+ \qquad
+ \widehat P(m)=\frac1L\int_0^L P(x)e^{-2\pi i mx/L}\,dx.
+$$
+Entireness on all quotient character components is equivalent to $P=0$,
+and to the existence of a compactly supported smooth Bruhat test on
+$\mathbb R^\times\times\mathbb Q_3^\times$ with the **same** $Z_S$
+transform on all components. A lift can be taken as a pure tensor with
+finite factor $\mathbf1_{B^\times}$. This is a project criterion, not the
+reverse inference about the *given* test in Lemma 5.3.4.2(2), p. 260.
+
+**Inherited source inputs and applicability.** The additive test
+conventions on pp. 63–64 and (2.1.4.1), p. 71, used in the
+[diagonal-unit check](#diagonal-unit-cancellation-on-every-quotient-character-component),
+admit $f$: The real extension is smooth and zero near zero, and $B$
+is compact open. We are not assuming the finite polar-free antecedent
+of the forward statement. Use the same quotient and norm from
+(3.1.2.1), p. 120, and (A.1.5.1) and §A.1.5.1, p. 543, and the
+component convention (3.1.1.1)–(2), p. 119, as in that check. In the
+coordinates $(3^{-k}|t|,\operatorname{sgn}(t)u)$ for $y=3^ku$,
+$c=\xi N^s$, with $\xi$ a unitary character of $B^\times$ and
+$N=|t||y|_3$.
+
+- (3.3.1.1), p. 129, uses the [integral upstairs, without division by
+  the diagonal units](isotypic-inverse-range-q-sqrt-minus-five.md#character-domain-and-constants).
+  (A.3.4.2), p. 561, uses the [product of the local Haar
+  measures over $S$](isotypic-fourier-gluing-q-sqrt-minus-five.md#evidence-and-limits).
+- (3.3.1.7), p. 130, [pairs the local test with the local character,
+  not its inverse](complex-gaussian-angular.md#rendered-readings).
+  (A.3.2.2), p. 560, gives [mass one on the finite
+  units](finite-local-zeta-residue.md#defining-integral-and-reflected-control)
+  and [raw real Haar $dt/|t|$](trace-real-prime-q.md#source-and-domain).
+  Here only $t>0$ contributes, so the real log measure is $dx$, without
+  an additional sign or normalizing factor.
+
+**Defining calculation.** On $\Re s>0$, the real support is compact
+away from zero, and the absolute finite shell sum is geometric.
+Fubini and $y=3^ku$, $k\ge0$, give
+$$
+ Z_S(f,\xi N^s)= M_a(s)\frac{\int_{B^\times}\xi(u)\,d^\times u}{1-e^{-Ls}},
+ \qquad M_a(s)=\int_{\mathbb R}g(x)e^{sx}\,dx .
+$$
+The unit integral is zero for $\xi\ne1$ by Haar invariance and one
+otherwise. Thus the nontrivial components continue by zero, and only
+the trivial component requires pole removal. The numerator $M_a$
+is entire by compact log support. The denominator has simple zeros
+at $s_n=2\pi i n/L$, with derivative $Le^{-Ls_n}=L$. Consequently
+its quotient with numerator $M_a$ has residue $M_a(s_n)/L$ (zero at
+a removable singularity). Locally the sum for $P$ is finite, and on
+$[0,L]$ only finitely many translates can contribute. Unfolding gives
+$$
+ \int_0^L P(x)e^{s_n x}\,dx
+ =\sum_k\int_{kL}^{(k+1)L} g(u)e^{s_n u}\,du=M_a(s_n),
+$$
+since $e^{-s_n k L}=1$. The positive exponent gives the index $-n$;
+the derivative $L$ is exactly the normalization of the circle
+coefficient. As all possible poles are simple, entireness is equivalent
+to the vanishing of every coefficient, hence to $P=0$ by Fourier
+uniqueness on the circle.
+
+**Lift and converse.** Restrict the [compact-log difference
+calculation](trace-orbital-q.md#which-quotient-is-closed) to
+$C_c^\infty(\mathbb R)$ at period $L$; neither its Hilbert range nor
+its provisional global source interface is used here. If $P=0$, then
+$q(x)=\sum_{k\ge0}g(x+kL)=-\sum_{k<0}g(x+kL)$ is smooth and compactly
+supported, using the first sum at the right end and the second at the
+left. It satisfies $g(x)=q(x)-q(x+L)$. Taking $b(t)=q(\log t)$ on the
+positive ray, we have $a(t)=b(t)-b(3t)$. The [accepted diagonal-unit
+substitution](#diagonal-unit-cancellation-on-every-quotient-character-component)
+in the $b(3t)\mathbf1_B(y)$ term replaces it by
+$b(t)\mathbf1_{3B}(y)$ under each pulled-back character on $\Re s>0$.
+It preserves Haar and the character, with no scalar. Hence
+$b(t)\mathbf1_{B^\times}(y)$ is the required representative. Conversely,
+any compact-away Bruhat representative with the same transform on the
+common convergence half-plane gives entire continuation, since $\log N$
+is bounded on its compact multiplicative support. Equality here is of
+transforms, not of tests. In particular, the finite factor of $f$ is
+still one at zero and still has its simple poles on the trivial norm
+line. The criterion and proof also work for any single rational prime
+$p$ with $S=\{\infty,p\}$, $B=\mathbb Z_p$, and $L=\log p$; its finite
+unit mass is likewise one. No completed-space, noncompact real-test,
+or many-place assertion is made.
+
+**Evidence.** Independent reviewer `BZZyWIK` (`compact-away-review`,
+transcript Yah `01a20538-8b62-74f7-af92-08af3ae701a6`) checked
+`440cba4511f9a646194d7d1eb732e8983a4a2c0e`. The reviewer confirmed
+admissibility for the additive route on p. 260, the applicability
+of the inherited quotient, character, integral, and Haar readings
+listed above, and separately checked absolute convergence, the unit
+average, the signed and scaled residue formula, the removal criterion,
+and both directions of the compact-away lift claim. These are
+mathematical and source-applicability checks, not new renderings or
+Lean elaboration.
+
+**Next bounded check (formalization only).** Check the residue input
+$\widehat P(-n)=\operatorname{compactLogMellin}(g)(2\pi i n/L)/L$ in
+Lean for the same compact log profiles, before formalizing any
+meromorphic or quotient-character statement. The accepted
+[`Masullo.compactLogMellin`](../../Proofs/Lemmas/CompactLogMellin.lean)
+uses the same positive exponential, and pinned Mathlib's
+`Real.fourierCoeff_tsum_comp_add` already unfolds the unit-period
+coefficient. For $h(u)=g(Lu)$, the unit periodization at $u$ is $P(Lu)$,
+and at index $-n$ its Euclidean Fourier sample is the displayed
+Mellin sample divided by $L$. The remaining Lean check is the compact
+support implication for local summability of the translated profiles,
+and the rescaling and sign in that specialization. On each compact
+interval only finitely many integer translates of the support meet
+it, so the summability proof can use finite support. It needs no new
+manuscript dependency or Fourier derivation. The analytic pole removal
+and diagonal-unit lift are separate from this proposed endpoint.
 
 ## The finite-only repair is not projectively continuous
 
