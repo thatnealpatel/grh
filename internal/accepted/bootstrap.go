@@ -1,4 +1,5 @@
-package main
+// Package accepted enters commands built from the accepted GRH revision.
+package accepted
 
 import (
 	"context"
@@ -18,7 +19,25 @@ import (
 // run . starts a different PID.
 const builtEntry = "GRH_GODEL_BUILT_ENTRY"
 
-func launchAccepted(ctx context.Context) (err error) {
+// Enter replaces the process with the accepted build of
+// ./cmd/<command>. On reentry in the same PID, it consumes
+// the marker, changes to the stable command directory, and
+// returns. Command must be a basename.
+func Enter(ctx context.Context, command string) (err error) {
+	if source, built := strings.CutPrefix(os.Getenv(builtEntry), strconv.Itoa(os.Getpid())+":"); built {
+		if err := os.Unsetenv(builtEntry); err != nil {
+			return err
+		}
+		// Gödel registers this directory and
+		// relaunches go run . here.
+		return os.Chdir(source)
+	}
+	if command == "" || command == "." || command == ".." || filepath.Base(command) != command {
+		return fmt.Errorf("invalid command basename %q", command)
+	}
+	if strings.Contains(command, "...") {
+		return fmt.Errorf("command %q would be a Go package pattern", command)
+	}
 	cwd, err := os.Getwd()
 	if err != nil {
 		return err
@@ -31,9 +50,9 @@ func launchAccepted(ctx context.Context) (err error) {
 	if err != nil {
 		return err
 	}
-	source := filepath.Join(root, "cmd/godel")
+	source := filepath.Join(root, "cmd", command)
 	if cwd != root && cwd != source {
-		return errors.New("launch from the durable GRH workspace root or its cmd/godel directory")
+		return fmt.Errorf("launch from the durable GRH workspace root or its cmd/%s directory", command)
 	}
 	target := os.Getenv("YAH_CAMPAIGN_TARGET")
 	if target == "" {
@@ -76,8 +95,8 @@ func launchAccepted(ctx context.Context) (err error) {
 	if err := stageCommand(ctx, tree, "tar", "-xf", archive).Run(); err != nil {
 		return fmt.Errorf("extract accepted %s: %w", rev, err)
 	}
-	binary := filepath.Join(dir, "godel")
-	build := stageCommand(ctx, tree, "go", "build", "-o", binary, "./cmd/godel")
+	binary := filepath.Join(dir, "entry")
+	build := stageCommand(ctx, tree, "go", "build", "-o", binary, "./cmd/"+command)
 	build.Env = append(build.Environ(), "GOWORK=off", "GOTMPDIR="+dir)
 	if err := build.Run(); err != nil {
 		return fmt.Errorf("build accepted %s: %w", rev, err)

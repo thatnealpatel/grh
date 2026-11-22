@@ -12,12 +12,12 @@ import (
 	"os/signal"
 	"path/filepath"
 	"slices"
-	"strconv"
 	"strings"
 	"syscall"
 	"time"
 
 	"patel.codes/godel"
+	"patel.codes/grh/internal/accepted"
 	"patel.codes/grh/internal/worker"
 )
 
@@ -39,18 +39,7 @@ func run(ctx context.Context) error {
 	selection = strings.TrimSpace(selection)
 	mission = strings.TrimSpace(mission)
 	if len(os.Args) == 1 {
-		source, built := strings.CutPrefix(os.Getenv(builtEntry), strconv.Itoa(os.Getpid())+":")
-		if !built {
-			return launchAccepted(ctx)
-		}
-		if err := os.Unsetenv(builtEntry); err != nil {
-			return err
-		}
-		// Gödel registers cwd and relaunches
-		// go run . there. The root is the
-		// operator's entry directory, not the
-		// command's package.
-		if err := os.Chdir(source); err != nil {
+		if err := accepted.Enter(ctx, "godel"); err != nil {
 			return err
 		}
 		work, improve := missionNodes(mission)
