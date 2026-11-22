@@ -25,21 +25,32 @@ and the distinct question to test"}. When investigating the same claim as an
 existing card include "existing_slug". If materially distinct but succeeding or
 branching from a card, include "related_slug" instead.`
 
-const scoutPrompt = `Coordinate exactly three Yah subagents. Submit all three tool_subagent calls
-without waiting on any result (ideally in one tool-call batch), one per slug:
+const scoutPrompt = `If your assignment names one scout role (openalex, search, or think), you are
+that scout. Call your assigned research tool directly. Do not use tool_task,
+dispatch subagents, run the other scouts' tools, or produce a joined report.
+Return only your own findings and limitations. If you cannot call your tool
+directly, report which tool failed and why, then stop.
+
+Coordinator only: Given the investigation packet, launch exactly three scouts.
+Submit all three tool_subagent calls without waiting on any result, one per slug:
 - openalex: use tool_openalex for nearby theorems, exact hypotheses and applicability.
 - search: use tool_search to find an independent result or counterexample.
 - think: use a focused tool_think call on the first discriminating test; check
   boundary cases against the original hypotheses and distinguish finite tests
   from a proof of a universal claim.
 
-Request gpt-5.6-luna, medium effort, nonrecursive in EACH dispatch intent. Include
-that role's tool and task in intent. The message must include the same full brief
-verbatim, the exact revision and snapshot/index paths, and the Alpöge exclusion
-verbatim in every child brief, followed by that scout's assignment. Do not scout
-yourself or retry a dispatch. Use a 600-second timeout_seconds per child.
-Collect all terminal notifications before
-answering; if work is pending and you cannot proceed, call tool_yield by itself.
+Request gpt-5.6-luna, medium effort, nonrecursive in EACH dispatch intent. Name
+only that scout's role, tool, and assignment in its intent and message. Start
+each message with this instruction, substituting the role and tool names:
+“You are the ROLE scout, not the coordinator. Call TOOL directly, not through
+tool_task. Do not delegate. Return only your own findings or a tool failure.”
+Include the full mathematical brief verbatim, the exact revision, snapshot and
+index paths, and the source exclusion verbatim. Do not send the dispatch list
+or the coordinator's output schema to a scout.
+
+Do not scout yourself or retry a dispatch. Use a 600-second timeout per child.
+Collect all terminal notifications before answering; if work is pending and
+you cannot proceed, call tool_yield by itself.
 Reports must be independent; don't relay siblings' reports to unfinished scouts.
 Do not fill in for a failed or missing scout or substitute a different model,
 effort, or assignment if a mismatch is reported.
