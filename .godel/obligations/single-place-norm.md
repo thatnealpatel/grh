@@ -334,29 +334,59 @@ go run ./cmd/godel audit-local "$CANDIDATE" \
   Masullo.complexCompletionHaar_map_logPolar
 ```
 
-## Next normalization step: Signed real log Haar
+## Checked signed real log Haar
 
-To use the positive real half of (A.2.3.20), p. 550, and to retain both
-signs at the other real places, prove the following companion identity
-for the actual completion-unit measure. `extensionEmbeddingOfIsReal` is
-in `NumberField.InfinitePlace.Completion`.
+[`Theorems.RealMultiplicativeHaarLogSign`](../../Proofs/Theorems/RealMultiplicativeHaarLogSign.lean)
+proves that `(log |y|, sign y)` sends the real density `dy / |y|` to
+Lebesgue measure times counting measure on the two signs. Definitions
+A.3.1.2(1), PDF p. 556, and A.3.2.2(1), p. 560, supply the density.
+Lean supplies the local coordinate calculation: Remove the null origin,
+substitute $y=\exp(x)$ and $y=-\exp(x)$ separately, and cancel the
+absolute derivative with the density on each half-line. The isometric
+real completion embedding transports the result to the actual units:
 
 ```lean
 MeasureTheory.Measure.map
     (fun u : v.Completionˣ ↦
       (Real.log ‖u.val‖, if 0 < extensionEmbeddingOfIsReal hv u.val then true else false))
     (Masullo.realCompletionHaar hv) =
-  (MeasureTheory.volume : MeasureTheory.Measure ℝ).prod MeasureTheory.Measure.count
+  (MeasureTheory.volume : MeasureTheory.Measure ℝ).prod
+    (MeasureTheory.Measure.count : MeasureTheory.Measure Bool)
 ```
 
-Here `hv : v.IsReal` and the domain has the Borel measurable structure.
-Use `realCompletionHaar_map`, split the real density into the positive
-and negative half-lines (zero is null), and substitute $y=\exp(x)$ and
-$y=-\exp(x)$, respectively. Then combine the local identities using
-the **sum** of weighted logs as the norm coordinate and Mathlib's
-dropped coordinates for the other logs. Reconstruct the deleted log as
-the sum coordinate minus the retained sum, so this coordinate splitting
-has unit Jacobian. The half-open unit lattice window can then be
-measured by `NumberField.Units.regulator`; angular torsion costs a factor
-$1/w_F$, which still needs proof with the counting quotient. This route
-does not infer a scalar from Haar uniqueness alone.
+The distinguished real branch of (A.2.3.20), p. 550, restricts the sign
+to `true`; other real places keep both signs. Each sign has counting
+mass one. This local formula does not build the lattice window or
+calculate the global quotient volume.
+
+Independent Yah statement review: Session
+`01a202bc-2ba8-70d7-b4f9-c09af87cba45`, child `review-real-log`
+(`kUgMXOk`, read-only output `2e09f91865d96d1f7b6f50605b48e26268545245`).
+The source reading is provisional, from pinned Markdown and numbered
+PDF layout, not rendered pages.
+
+```sh
+go run ./cmd/godel audit-local "$CANDIDATE" \
+  Theorems.RealMultiplicativeHaarLogSign -- \
+  Masullo.realMultiplicativeDensity_map_logSign Masullo.realCompletionHaar_map_logSign
+```
+
+## Next normalization step: Split the Archimedean log measure
+
+In the weighted log coordinates of (A.2.3.3)–(A.2.3.5), p. 548,
+prove that $x\mapsto (\sum_v x_v,(x_v)_{v\ne w_0})$ sends product
+Lebesgue measure to Lebesgue measure in the norm coordinate times
+product Lebesgue measure on `logSpace K`. There is no scalar factor:
+First split off the `w₀` coordinate via Mathlib's
+`volume_preserving_piEquivPiSubtypeProd` and `volume_preserving_piUnique`.
+For a fixed retained tuple the remaining change adds its sum to the
+`w₀` coordinate. Use `MeasurePreserving.skew_product` with translation
+invariance of real volume. This separates the norm direction without
+introducing Euclidean hyperplane surface measure.
+
+Then combine this splitting with the real and complex local coordinate
+identities. The half-open lattice box must have measure
+`NumberField.Units.regulator`; the angular torsion slice must still be
+shown to give exactly $1/w_F$ of the angular mass, with one representative
+per orbit and counting measure on the units. These steps and the global
+quotient comparison remain open.
