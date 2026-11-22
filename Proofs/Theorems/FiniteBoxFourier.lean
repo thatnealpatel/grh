@@ -38,13 +38,15 @@ local notation "ν[" v "]" => @finiteCompletionNormalizedHaar K _ _ v (borel K[v
   (@BorelSpace.mk K[v] _ (borel K[v]) rfl)
 local notation "mass[" g "," v "]" => @Measure.real K[v] (borel K[v]) (ν[v])
   (Units.val g v • (O[v] : Set K[v]))
-local notation "boxIntegral[" a "," g "," y "," v "]" =>
+/-- The local positive-kernel Fourier integral of the translated box, sampled
+at the diagonal frequency `y`, with the normalized additive Haar measure. -/
+@[expose] public noncomputable def finiteBoxLocalFourier (a : F) (g : Fˣ) (y : K) (v : V) : ℂ :=
   @integral K[v] ℂ _ _ (borel K[v])
     (@Measure.restrict K[v] (borel K[v]) (ν[v]) ((a v + ·) '' (Units.val g v • (O[v] : Set K[v]))))
     (fun t ↦ χ[v] (k[v] y * t))
 
 private theorem boxIntegral_eq (a : F) (g : Fˣ) (y : K) (v : V) :
-    boxIntegral[a,g,y,v] =
+    finiteBoxLocalFourier a g y v =
       if ∀ t : O[v], χ[v] (k[v] y * (g.val v * (t : K[v]))) = 1 then
         χ[v] (k[v] y * a v) * (mass[g,v] : ℂ) else 0 := by
   borelize K[v]
@@ -57,8 +59,8 @@ dual. On the trace dual their product is the positive shift phase times the
 reciprocal trace covolume; off it the product is zero. -/
 public theorem finiteBox_fourier_finprod (a : F) (g : Fˣ) (x₀ y : K)
     (hx₀ : ∀ v : V, w[v] (k[v] x₀ - a v) ≤ w[v] (g.val v)) :
-    (fun v : V ↦ boxIntegral[a,g,y,v]).HasFiniteMulSupport ∧
-      (∏ᶠ v : V, boxIntegral[a,g,y,v]) =
+    (finiteBoxLocalFourier a g y).HasFiniteMulSupport ∧
+      (∏ᶠ v : V, finiteBoxLocalFourier a g y v) =
         if y ∈ FractionalIdeal.dual ℤ ℚ (finiteIdeleIdeal K g : J) then
           Complex.exp (2 * Real.pi * Complex.I * (Algebra.trace ℚ K (x₀ * y) : ℂ)) *
             ((ZLattice.covolume (archimedeanIdealLattice K (finiteIdeleIdeal K g))
@@ -67,7 +69,7 @@ public theorem finiteBox_fourier_finprod (a : F) (g : Fˣ) (x₀ y : K)
   obtain ⟨hmass, hmassProd⟩ := finiteBox_centeredMass_finprod g
   -- The frequency, center, and radius are all integral almost everywhere.
   -- The local kernel is then trivial and only the centered mass remains.
-  have hfinite : (fun v : V ↦ boxIntegral[a,g,y,v]).HasFiniteMulSupport := by
+  have hfinite : (finiteBoxLocalFourier a g y).HasFiniteMulSupport := by
     apply eventually_cofinite.mp
     filter_upwards [(algebraMap K F y).cofinite_mem_adicCompletionIntegers,
       a.cofinite_mem_adicCompletionIntegers, g.val.cofinite_mem_adicCompletionIntegers,

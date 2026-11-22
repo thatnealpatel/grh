@@ -1581,21 +1581,71 @@ together; `#check @` and `#print axioms` the new definition and the
 three listed theorems. This checks the local normalization, not a
 product-measure identification of `archimedeanTraceMeasure`.
 
-**Next: Assemble the two full diagonal sums for one translated box
-and a complex Schwartz input at infinity.** For $x,y\in K$, use the
-actual spatial box indicator at $x$, times $\phi(\iota(x))$, and the
-actual finite Fourier product $\prod_v J_v(y)$ at $y$, times
-`archimedeanTraceFourier K φ (archimedeanEuclideanEmbedding K y)`.
-Prove summability of both norm series over $K$ and equality of the
-full sums. Use `exists_finiteBox_diagonalCoset` to choose $x_0$, reindex
-the spatial series by $x=x_0+u$ with $u\in I$, and use
-`mem_archimedeanIdealLattice` to identify $u$ with its lattice image.
-Apply `archimedeanIdeal_tracePoisson` at $b=\iota(x_0)$. Match the
-positive phase on $I^\vee$ by
-`inner_archimedeanEuclideanEmbedding_traceFrequency`; extend by zero
-using `finiteBox_fourier_finprod` off $I^\vee$. Use subtype reindexing
-and preserve $x=0$ and $y=0$ in the ambient sums, even if a particular
-translated box removes $x=0$ from the support. A restricted-product
-additive measure and identification of the product with the actual
-**global** Fourier integral remain separate obligations, as does
-inversion for the ramified Gaussian.
+#### Full diagonal Poisson sums for one translated finite box
+
+[`finiteBox_diagonal_poisson`](../../Proofs/Theorems/FiniteBoxPoisson.lean)
+is unconditional for any number field $K$, any finite adele center $a$,
+any finite idele radius $g$, and any complex Schwartz function $\phi$
+on the Euclidean mixed space. Let $S$ denote the diagonal pullback of
+$a+g\prod_{v<\infty}\mathcal O_v$ and $\iota$ the Euclidean mixed embedding.
+The theorem proves absolute summability of both series and
+
+$$
+\sum_{x\in K} 1_S(x)\phi(\iota x)
+=\sum_{y\in K}\widehat\phi_{\mathrm{tr}}(\iota y)
+  \prod_{v<\infty} J_v(y).
+$$
+
+The newly named `finiteBoxLocalFourier` is the same Borel Haar integral
+$J_v$ previously written out in `finiteBox_fourier_finprod`; the latter
+still proves finite multiplicative support at every $y$ and the product
+formula. The Poisson proof chooses $x_0$ in the box by the checked coset
+lemma and reindexes $S$ by $x\mapsto\iota(x-x_0)$. On the frequency side
+it extends the trace-dual series by zero, using the evaluated finite
+product and `inner_archimedeanEuclideanEmbedding_traceFrequency` to match
+the positive phase and reciprocal trace covolume in shifted Poisson.
+The sums range over all of $K$. At $y=0$ the product supplies the reciprocal
+trace covolume, with phase one. At $x=0$ the summand is $\phi(0)$ if zero
+is in the box and zero otherwise. The zero lattice index instead represents
+$x_0$, which need not be zero.
+
+Masullo's Theorem 2.2.3.2 (PDF p. 82) invokes adelic Riemann–Roch and
+states the punctured theta identity on idele classes, with the two
+zero-mode corrections. Remark 2.2.3.3 specifies quotient mass one.
+Here the shifted ideal-lattice calculation replaces that invocation
+for the full diagonal sums of a single box, before identifying the
+global Fourier integral or applying idelic dilation. The product in
+(2.2.4.32), p. 92, concerns a differentiated tensor with compactly
+supported infinite factor. The local integrals here integrate the box
+in the integration variable and use the [corrected pairing](finite-diagonal-phase.md),
+not a literal reading of the finite factor in that display. The centered
+transform in Example A.3.1.10, (A.3.1.8), p. 558, does not calculate the
+translated phase. These readings are provisional: Pinned Markdown and
+numbered PDF layout, without rendered-page inspection.
+
+Replay: Build `lake build --wfail +Theorems.FiniteBoxPoisson
++Theorems.FiniteBoxFourier` and import both modules together. Check `@` types
+and axioms for `finiteBoxLocalFourier`, `finiteBox_fourier_finprod`, and
+`finiteBox_diagonal_poisson`. See the exact-candidate landing and independent
+mathematical statement review in Yah session `01a20482-db51-7fa6-bd56-fdff5ef6ac22`
+(reviewer `chDkZnH`).
+
+**Next: Construct the general additive stage measure needed to compare
+this factor product with the global integral.** Masullo gives the
+restricted-product characterization and the product of the local
+normalizations in Lemma A.3.1.3, (A.3.1.3), PDF p. 556, with quotient
+normalization in Definition A.3.1.1, p. 555 (provisional text reading).
+For the first Lean input, use stages `AdeleFiniteStage K S` containing
+all places of nonunit integer-ball mass (`finiteBox_centeredMass_finprod`
+at unit radius). Equip them with the product of the trace measure
+(transported to the infinite adele coordinates), normalized local Haar
+on the full fields in $S$, and probability restrictions on the integer
+subrings off $S$. This cofinal family suffices to prove compatibility
+under restriction and glue over the open cover; quotient normalization
+is a separate check.
+`Lemmas.AdeleFiniteStage` supplies the general embedding and range;
+`Theorems.RationalAdeleFiniteStageHaar` gives a checked rational comparison,
+not the general additive result. Then choose a stage containing the
+box and all exceptional character and mass places at a given diagonal
+frequency and prove the Fubini factorization there. The global Fourier
+identification and inversion for the ramified Gaussian are still open.
