@@ -715,26 +715,64 @@ context and aligned the products in the new theorem, not in the old
 stage theorem. The owning candidate build, signature, axiom check, and
 adoption are recorded in the same Yah session.
 
-**Next bounded check:** Supply the exact generic-coordinate comaps for
-the named `rationalIdeleHaar`, not a second proof of the stage integral.
-First compare `ideleCalibrationBox ℚ B` with
-`rationalIdeleWindowUnitStrip` as upstairs sets,
-where $B$ is the preimage of $[1,e]$ under the sole signed real
-coordinate $x\mapsto\iota_w((x_w)_{\rm val})$. The generic rectangle
-has all finite coordinates integral units, and
-`ideleNorm_eq_abs_rationalIdeleReal` identifies the norm on that set.
-The real-coordinate preimage has mass one by
-`rationalArchimedeanEval_measurePreserving`, `realCompletionHaar_map`,
-`map_realMultiplicativeHaar_val`, and `realMultiplicativeHaar_unitStrip`.
-The remaining inference is the equality of the two sets. This would
-allow the mass formula of `exists_ideleRestrictedProductHaar` at the
-empty base and Haar uniqueness on the common compact strip to give
-the desired comaps. The accepted
-[`comap_rationalIdeleHaar_finiteStage`](theta-inversion-q.md#checked-finite-stage-product-of-local-haar-measures)
-alone has a different domain and embedding (an explicit $\mathbb R^\times$
-factor), so it is not a direct rewrite of the generic comap. For the
-source comparison, (A.3.2.2) and (A.3.2.5), p. 560, have the inherited
-rendered calibration cited above; the p. 556 stage prescription and
-the §A.3.3.1, p. 561, strip mapping in the
-[rational Haar note](theta-inversion-q.md#checked-haar-comparison-for-a-normalized-upstairs-window)
-are layout readings, not premises of this Lean interface check.
+**Measure premise discharged:** The [generic-coordinate comparison below](#checked-generic-stage-comap-for-the-named-rational-haar) supplies the required comaps for `rationalIdeleHaar`.
+
+## Checked generic stage comap for the named rational Haar
+
+[`Masullo.comap_rationalIdeleHaar_ideleFiniteStage`](../../Proofs/Theorems/RationalIdeleRestrictedProductHaar.lean)
+proves, for **every** finite set $U$ of rational finite places, including
+$\varnothing$,
+
+```
+rationalIdeleHaar.comap (ideleFiniteStageEmbedding ℚ U) =
+  ideleFiniteStageProduct ℚ μa μf U
+```
+
+The families are `archimedeanCompletionHaar` and
+`rationalLocalMultiplicativeHaar` in the same local and upstairs Borel
+structures as the preceding zeta theorem. There is no sign, scale, or
+cofinality hypothesis on $U$. This is the **generic** stage embedding,
+not the rational-specific embedding with an explicit $\mathbb R^\times$
+factor. Joint import checks the direct application to the hypothesis of
+`rationalIdeleZetaIntegral_schwartzMellin` with the named upstairs measure,
+for arbitrary $S$ and at $S=\varnothing$.
+
+**Discriminating check:** Let $B$ be the preimage of $[1,e]$ under the
+sole signed real coordinate on the grouped Archimedean units. The
+coordinate is an open embedding with image containing $[1,e]$, so $B$
+is compact with nonempty interior. The upstairs carrier of
+`ideleCalibrationBox ℚ B` is `ideleUnitRectangle ℚ B`: It requires
+integrality at every finite place for the idele and its inverse, just
+as `rationalIdeleWindowUnitStrip` does. In the box direction the
+interval gives positivity; in the reverse direction the window already
+requires positivity. On these finite units,
+`ideleNorm_eq_abs_rationalIdeleReal` therefore identifies the norm with
+the signed real value, proving equality of the two carriers.
+
+The Archimedean box mass is one by measure-preserving evaluation at
+the singleton place and the real completion pushforward of $dt/|t|$,
+compared to `realMultiplicativeHaar_unitStrip`. The
+restricted-product construction with empty exceptional set uses the
+unit mass at every finite place and gives the same box upstairs mass
+one. `rationalIdeleHaar_unitStrip` and Haar uniqueness on the common
+positive compact strip identify the two upstairs measures. The
+positive strip fixes the scalar only; the comap retains both signs.
+
+**Source and scope:** Inherit the rendered readings of (A.3.2.2) and
+(A.3.2.5), p. 560, via the
+[singleton real handoff](#checked-singleton-archimedean-factor-of-the-rational-stage-integral).
+The p. 556 stage prescription and the §A.3.3.1, p. 561, strip mapping
+remain [layout readings](theta-inversion-q.md#checked-finite-stage-product-of-local-haar-measures),
+not Lean premises. No pages were reread. This closes the measure premise
+for the compact-away repair of Lemma 5.3.4.2(2), pp. 259–261, above one;
+it does not check the printed identity, upstairs continuation, test
+quotient descent, or completed tensor space.
+
+**Evidence:** Independent exact-source statement and reduction review
+against `0914c44c01168b68a96cf877d2a09fdfb0c4ebec`: Yah
+`01a204fc-7fb8-7209-b88b-9ecd5eadc4c5`, agent `RyLXPwH`. The reviewer
+checked applicability of the inherited readings, both carrier
+inclusions, the normalizations, and compatibility with the zeta
+hypothesis; elaboration was checked by the owner. The integrated
+warnings-as-errors build, fresh joint import, signature, axiom report,
+and adoption are recorded in the same owning Yah session.
