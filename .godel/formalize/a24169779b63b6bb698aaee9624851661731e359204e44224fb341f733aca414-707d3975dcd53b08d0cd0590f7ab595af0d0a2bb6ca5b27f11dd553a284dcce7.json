@@ -1,0 +1,29 @@
+{
+  "key": "a24169779b63b6bb698aaee9624851661731e359204e44224fb341f733aca414",
+  "revision": "707d3975dcd53b08d0cd0590f7ab595af0d0a2bb6ca5b27f11dd553a284dcce7",
+  "outcome": "landed",
+  "source": "Alessandro Maria Masullo, The Music of the Primes, pinned edition SHA-256 e039d3f6cf0a4b14f03c7edb85097752dd65c0a2fe543c76fe992be234f97bf5 (.godel/sources/masullo/README.md), chapter-01 §1.1.2, second bullet, printed p. 11 / PDF ordinal 11, display (1.1.2.1) and the sentence immediately following it. The following printed pages likewise match the one-based PDF ordinals: p. 593, first paragraph and seminorm display before Definition B.2.1.1 (exponential coordinate); p. 793, Definition D.2.1.1 (D.2.1.3) and Remark D.2.1.2 (module and splitting); pp. 801–802, Definition D.3.2.1 (D.3.2.1) and Lemma D.3.2.3(1), especially the start of p. 802 (radial weighted compatibility, completeness, then endpoint control); p. 804, start of §D.3.3 and Definition D.3.3.1 (surjectivity, choice of section, admissibility and weighted membership); p. 805, Definition D.3.3.3 (D.3.3.1)–(D.3.3.2) and Examples D.3.3.4–D.3.3.5 (stage topology, radial specialization and countable reduction); p. 806, Theorem D.3.3.7(1) (D.3.3.3)–(D.3.3.5); p. 807, Proposition D.3.3.10 (stage arrow (D.3.3.7)); p. 810, proof of Theorem D.3.3.7(1) and footnote 21.",
+  "finding": "Partial landing. For a second-countable R_{>0}-modulated G, a nonempty real interval I and a compact subgroup k with compactly generated annihilator in the dual of G, the printed bullet uses the map φ ↦ (|·|_G^a φ)_{a∈I} into the product of the Schwartz–Bruhat stages on G/k to define the stage topology. It calls the stage nuclear Fréchet and asserts the completed projective tensor identification with S_I(R_{>0}) and S(G^1/k) without naming a section in the bullet. There is no proof in the bullet. Appendix D uses a chosen continuous homomorphic section of the surjective module and reduces the Fréchet claim to closed embeddings and control by compact-interval endpoints. Theorem D.3.3.7(1) invokes the stage identification and the comparison of tensor topologies (Corollary C.2.3.12); footnote 21 explicitly flags lack of contact with the stages, apparent circularity and that (D.3.3.7) has not been proved. This is a proof gap, not a counterexample.\n\nThe Lean endpoints model the single radial stage G = R_{>0} with identity module and k = 1, as in Example D.3.3.4. The source identifies the unweighted factor with the ordinary Schwartz space by t = exp x (p. 593: t∂_t becomes ∂_x and the polynomial weights are in log t); logStageWeight_log verifies the multiplier t^a in those coordinates. For any nonempty set I of real weights, hence every nonempty interval including singletons and intervals omitting zero, the complex-linear weighted map sends one smooth log profile to all its exponential-weighted Schwartz copies, and is injective. The stage is its range in the product of the genuine Schwartz topologies. The range condition is exp(b x)F_a(x) = exp(a x)F_b(x) for every a,b,x: fixing one a recovers the common smooth profile as exp(−a x)F_a(x) and cancellation gives every coordinate. These equations are closed equalizers of continuous evaluations on the Schwartz factors. Completeness follows from a separate Cauchy-filter proof of ordinary real-line Schwartz completeness (limits of bounded weighted derivatives, identified using uniform differentiation), completeness of products and closedness. No countability, nuclearity or tensor assertion is inferred from that product argument. At base 981a571f442d131bc0bc3eada08bd54b55d1af4d, Masullo.LogWeightedSchwartz in Proofs/Theorems/MonogenicPeriodizationSection.lean gives the unbundled all-real-weights membership predicate, not this topological stage. Masullo.continuousMulEquivOfSection in Proofs/Lemmas/ContinuousNormSplit.lean constructs the splitting given a central continuous homomorphic section and its right-inverse law, not the section's existence or the Schwartz-stage isomorphism. The countable-weight control and nuclear Fréchet conclusion (even radially), the general admissible quotient stages and their tensor isomorphism remain unformalized here; the later strict LF and full-space claims are outside this result.",
+  "retry": "For the remaining Fréchet step, supply fixed-stage Schwartz seminorm bounds controlling every interior weight by the two endpoint weights, then a countable cofinal choice of endpoints inside each nonempty interval (handle a singleton separately) and a nuclearity argument for the factors and closed subspaces. For general admissible k, formalize D.2.1.2 from the open K×R^N subgroup and proper surjective module, descend the splitting to G/k, and identify G^1/k with a torus times a finite abelian group using the finitely generated annihilator. For the tensor step, supply a construction and mutual continuity estimates for the multiplication map and its inverse at a fixed stage (e.g. rapid Fourier synthesis on the compact factor with estimates in every weighted seminorm and the completed projective tensor topology), independent of (D.3.3.3) or the LF limit.",
+  "evidence": [
+    {
+      "path": "Proofs/Lemmas/SchwartzLineComplete.lean",
+      "declarations": ["Masullo.completeSpace_schwartzLine"]
+    },
+    {
+      "path": "Proofs/Theorems/RadialWeightedSchwartzStage.lean",
+      "declarations": [
+        "Masullo.logStageWeight",
+        "Masullo.logStageWeight_log",
+        "Masullo.logWeightedProfiles",
+        "Masullo.logWeightedProfileMap",
+        "Masullo.logWeightedProfileMap_apply",
+        "Masullo.logWeightedStage",
+        "Masullo.logWeightedProfileMap_injective",
+        "Masullo.mem_logWeightedStage_iff",
+        "Masullo.isClosed_logWeightedStage",
+        "Masullo.completeSpace_logWeightedStage"
+      ]
+    }
+  ]
+}
