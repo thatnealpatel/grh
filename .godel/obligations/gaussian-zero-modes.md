@@ -40,14 +40,8 @@ raster crops of PDF pp. 97, 124, and 125 for the signs, Fourier hat,
 and radial factor. The wider reading, including p. 98 and the
 normalization dependencies, is provisional from Markdown and layout.
 
-**Next: Assemble the continuation.** Use
-`existsUnique_unitary_oneParameterCharacter` on the actual continuous
-norm section composed with $\chi$; use that frequency to instantiate the
-scalar theorem. For the same fixed-stage witnesses, add the two rational
-terms to the entire corrected Mellin integral and use integral addition
-on $\Re s>1$ to recover the already checked uncorrected radial value
-there. Keep the inverse square root of the absolute discriminant until
-rescaling to the completed Euler product. Prove meromorphy of the sum
-and holomorphy off the two possible poles (everywhere if $\omega$ is
-nontrivial). The scalar evaluation alone is not the continuation, the
-functional equation, or an assertion about the zeros.
+**Successor:** The [fixed-Gaussian continuation](single-place-norm.md#meromorphic-continuation-of-the-fixed-gaussian-euler-product)
+now identifies the actual section frequency, restores both rational
+terms on the same witnesses, and rescales to the completed Euler product.
+The scalar evaluation alone is not a continuation, a functional
+equation, or an assertion about the zeros.

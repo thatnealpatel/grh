@@ -2560,30 +2560,59 @@ reviewed declarations has SHA256
 and contains only the allowed axioms. See `owner-entire-final-restack`
 in the owning session.
 
-**Next: Assemble the continuation on the same witnesses.** The scalar
-half-line evaluation is already accepted as
-[`integral_logMellin_zeroModes`](gaussian-zero-modes.md). The missing
-bridge is to apply `existsUnique_unitary_oneParameterCharacter` to the
-actual section composed with $\chi$, so $\chi(\tau(e^x))=e^{i\lambda x}$
-for a unique real $\lambda$. On $\Re s>1$, use integrability from the
-corrected theorem on the same witnesses and from the scalar theorem
-with $a=b\widehat f(0)$ and second coefficient $bf(0)$. The raw weighted
-profile is pointwise the corrected weighted profile plus these modes;
-`integral_add` recovers the raw radial value as
-$$
-\int_{\mathbb R}p(x)e^{sx}\,dx +
-b\left(\frac{\widehat f(0)}{s+i\lambda-1}
-       -\frac{f(0)}{s+i\lambda}\right).
-$$
-Retain the inverse square root of the absolute discriminant until
-rescaling to the completed Euler product. Prove meromorphy with at
-most simple poles at $-i\lambda$ and $1-i\lambda$, and entireness when
-the restriction to $C_K^1$ is nontrivial. The trivial restriction by
-itself does not force $\lambda=0$. Section-frequency classification,
-pointwise restoration with `integral_add`, and meromorphy of the
-scalar form with an entire remainder separately elaborated as scratch
-examples; no assembled or independently reviewed Lean endpoint was
-checked. This is the remaining fixed-Gaussian continuation step toward
-Theorem 3.2.2.1(1a),(3). No all-class absolute integrability outside the
-original right half-plane, functional equation, RH, or GRH is
-established here.
+### Meromorphic continuation of the fixed-Gaussian Euler product
+
+[`exists_completedHeckeEulerProduct_gaussianContinuation`](../../Proofs/Theorems/IdeleClassGaussianContinuation.lean)
+repairs the continuation in Theorem 3.2.2.1(1a),(3), PDF pp. 124–127,
+for the fixed Gaussian over any number field and a unitary Hecke
+character. It uses the same Gaussian, Borel periodization, separately
+normalized additive Fourier Haar, and counting-normalized
+multiplicative norm-one Haar as the corrected integral and Euler identity.
+
+- Masullo supplies the twist coordinate $c=\chi|\cdot|^s$ in
+  (3.1.1.1), p. 119, and the section factor $c(\tau(t))$ in
+  (3.2.2.4)–(5), p. 125. Lean composes $\chi$ with the actual continuous
+  log section and applies `existsUnique_unitary_oneParameterCharacter`.
+  Thus $\chi(\tau(e^x))=e^{i\lambda x}$ for a real $\lambda$. Triviality
+  on $C_K^1$ alone does not force $\lambda=0$.
+- Equation (2.2.5.10), p. 97, gives the signs and powers of the two
+  small-norm terms after pairing. For $b=m(C_K^1)\delta_{\chi|_{C_K^1}}$,
+  let $a_1=\widehat f(0)b$, $a_0=f(0)b$, $z_0=-i\lambda$, and
+  $z_1=1-i\lambda$. On $\Re s>1$, the corrected integrand plus the
+  removed modes equals the uncorrected weighted pairing pointwise.
+  `ideleHeckeGaussian_correctedRadialMellin_entire` and
+  [`integral_logMellin_zeroModes`](gaussian-zero-modes.md) justify
+  `integral_add`. The checked same-witness Euler identity, corresponding
+  to (3.2.2.11), p. 127, then identifies
+  $G(s)+a_1/(s-z_1)-a_0/(s-z_0)$ with the completed product times
+  $|\mathrm{disc}(K)|^{-1/2}$, where $G$ is the entire corrected integral.
+- Masullo states the zeta integral's residues in Theorem 3.2.2.1(1a),
+  p. 124, invoking the general global zeta theorem on p. 126. Rather
+  than assume that continuation, Lean adds the explicit rational terms
+  to $G$ and multiplies **all** terms by $D=\sqrt{|\mathrm{disc}(K)|}$.
+  For the resulting continuation $L$, Lean proves meromorphy everywhere,
+  holomorphy off $z_0,z_1$, and entireness when the norm-one restriction
+  is nontrivial. It constructs an entire $H$ agreeing with
+  $(s-z_1)(s-z_0)L(s)$ off the two points, with $H(z_1)=Da_1$ and
+  $H(z_0)=Da_0$. Since $z_1-z_0=1$, the residues of $L$ are $Da_1$
+  at $z_1$ and $-Da_0$ at $z_0$. A zero coefficient makes the
+  corresponding singularity removable; no point value at the pole is
+  used for this interpretation.
+
+**Evidence:** Owning Yah session `01a20567-4317-7598-a876-3bfb612ca5c2`
+records the exact integrated candidate, warning-failing build, and
+fresh joint signature and axiom check. The independent fixed-statement
+and manuscript review is by agent `bSxnAsU` in the same session. Source
+correspondence is provisional from pinned Markdown and numbered PDF
+layout, with the already reviewed scalar signs as in the linked handoff.
+
+**Next toward the contour:** Bound $H$ by $C(1+|\Im s|)^2$ on any
+fixed closed real-part strip. Use the sum of the two endpoint absolute
+Mellin integrands as an integrable majorant for $G$ on the strip, then
+use the displayed pole-clearing formula. For the trivial character,
+$\lambda=0$, and `completedHeckeEulerProduct_one_rightLine_lower_bound`
+already supplies the anchor at $2+it$ for applying the rational
+moving-disk/Jensen method to this $H$. This step does not supply the
+reflection used for the left contour. General reflection, absolute
+convergence of the unaveraged class integral outside the starting
+half-plane, and any conclusion about RH or GRH are separate.
