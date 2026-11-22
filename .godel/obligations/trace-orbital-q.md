@@ -265,3 +265,65 @@ whenever the integral is absolutely convergent. For a sharp radial threshold, it
 **What this does not identify.** The same kernel and full diagonal give different shell integrals for a point mass ($c=0$) and two equal masses ($c=1/2$), if the cutoff diagonal integral is nonzero. More directly, the point-mass indentation always gives zero in this shell, whereas the section-based half-twisted circle trace is nonzero for a radial nonnegative test supported close to log norm $\log p$ with positive value there. Thus admissibility and preservation of the full diagonal alone cannot imply the orbital trace comparison. An independent identification of the selected shell operator with the orbital quotient is still needed. Neither the unrestricted joint limit nor the precise source level identification was changed here.
 
 **Review status:** Independent Yah review checked the cutoff calculation, the rational lift and its Haar unfolding, and the source interfaces against the digest-matched extraction. No visual or Lean check was performed.
+
+## Half-twisted reflection of the rational theta projector
+
+**Source interface (text extraction).** Theorem 2.2.3.2, p. 82,
+gives $\Theta_b(t)=t^{-1}\Theta_{\widehat b}(t^{-1})+
+ t^{-1}\widehat b(0)-b(0)$ in the rational unramified model. The two
+corrections vanish on the source of the weighted theta profiles in
+(11.2.1.7), p. 488. The weighted level projectors and level-first
+cutoff composition are (11.2.1.8)–(10), p. 489. Theorems 11.2.1.2
+and 11.2.1.4 require tests supported at norms at least one. Theorem
+11.3.2.1, p. 495, requires support strictly above one. Its invocation
+on p. 520 is for the tests of Theorem 12.5.1.1, p. 519, which may
+live on both sides and need only vanish on the norm-one fibre.
+Finite-place sample vanishing does not extend the orbital theorem.
+
+**Project repair in Lean.** In the rational even two-mode lattice
+model, `rationalThetaLogReflection` is the complex-linear isometric
+involution $Ru(x)=u(-x)$ on the unweighted log-line $L^2$ chart.
+[`rationalThetaLogReflection_weightedLog`](../../Proofs/Theorems/RationalThetaReflection.lean)
+uses the checked inversion, the even weight root $W$, and the half
+twist to show
+$W(-x)e^{-x/2}\Theta_b(e^{-x})=W(x)e^{x/2}\Theta_{\widehat b}(e^x)$.
+Fourier exchanges the zero modes and squares to the identity on the
+even input. `rationalThetaLogReflection_freq_image` consequently
+maps the closed theta image with Fourier support in a set to the
+closed theta image with **spatial** support in that set. This is not
+covariance of the same finite Fourier-band projector. With the
+constraint removed, `rationalThetaLogReflection_starProjection`
+proves $RG=GR$ for the full geometric orthogonal projection $G$.
+
+**Use at fixed position cutoff (reviewed mathematics, not Lean).**
+In this chart $R$ conjugates a log convolution $A_F$ to $A_{\check F}$,
+where $\check F(x)=F(-x)$, and commutes with the symmetric log-position
+cutoff multiplier $M_\rho$ of Definition 9.3.3.1, p. 427. At compact
+position support, $M_\rho A_F$ is trace class for smooth compact $F$:
+Both variables lie in compact intervals, the smooth convolution
+kernel extends to a smooth periodic kernel on a larger rectangle,
+and the chart factors and cutoff are bounded multipliers there.
+The strong cofinal level limit $Q_Y\to G$ gives the trace-norm limit
+$M_\rho G A_F Q_Y\to M_\rho G A_F G$. Here convolution preserves
+the full theta space, so $G A_F Q_Y=A_F Q_Y$. The terminal $G$ is
+essential to the limit, as in the [operator-order audit](trace-hardy-diagonal-q.md#the-fixed-cutoff-limit-retains-a-right-projection).
+Unitary conjugation of this corrected limit gives equality of the
+whole fixed-position traces for $F$ and $\check F$. This reduces a
+strictly below-one test to an above-one test for the total rational
+level-first trace. It does not transport shell traces, change the
+cutoff order, or extend by itself to tests touching norm one.
+
+Independent Yah `reflection-review` checked the statement, signs,
+operator order, and scope against the digest-matched extraction and
+accepted Lean dependencies. The rendered-page check remains open.
+Audit scope: `Lemmas.RationalThetaLogReflection` and
+`Theorems.RationalThetaReflection`, including the pullback,
+involutivity, input Fourier map, reflected generators, support swap,
+and full projection equation.
+
+**Next:** Use the [above-one control](trace-to-zeros.md#first-unmatched-geometric-evaluation-and-a-positive-log-control)
+with the actual global diagonal. Independently identify an admissible
+shell operator or compute its value on that control, and compare the
+$S$-piece with the normalized local value minus both Mellin terms.
+Neither reflection of the total trace nor the scalar explicit formula
+can supply a split of that trace into the claimed pieces.
