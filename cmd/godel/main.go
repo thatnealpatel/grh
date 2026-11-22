@@ -5,16 +5,13 @@ import (
 	"context"
 	_ "embed"
 	"errors"
-	"flag"
 	"fmt"
 	"io"
 	"os"
 	"os/signal"
-	"path/filepath"
 	"slices"
 	"strings"
 	"syscall"
-	"time"
 
 	"patel.codes/godel"
 	"patel.codes/grh/internal/accepted"
@@ -23,9 +20,6 @@ import (
 
 //go:embed mission.md
 var mission string
-
-//go:embed selection.txt
-var selection string
 
 //go:embed source-revision.txt
 var archiveRevision string
@@ -39,121 +33,23 @@ func main() {
 	}
 }
 func run(ctx context.Context) error {
-	selection = strings.TrimSpace(selection)
-	mission = strings.TrimSpace(mission)
-	if len(os.Args) == 1 {
-		if err := accepted.Enter(ctx, "godel"); err != nil {
-			return err
+	if len(os.Args) > 1 {
+		switch os.Args[1] {
+		case "check":
+			return checkProof(ctx, os.Stdout, os.Args[2:])
+		case "audit-local":
+			return auditLocal(ctx, os.Stdout, os.Stderr, os.Args[2:])
+		default:
+			return fmt.Errorf("unknown argument %q: usage: godel [check|audit-local]", os.Args[1])
 		}
-		work, improve := missionNodes(mission, archiveRevision)
-		result, err := runTree(ctx, work, improve)
-		if err != nil {
-			return err
-		}
-		fmt.Print(result.Text)
-		return nil
 	}
-	if len(os.Args) > 1 && os.Args[1] == "check" {
-		return checkProof(ctx, os.Stdout, os.Args[2:])
-	}
-	if len(os.Args) > 1 && os.Args[1] == "audit-local" {
-		return auditLocal(ctx, os.Stdout, os.Stderr, os.Args[2:])
-	}
-	if len(os.Args) > 1 && os.Args[1] == "_assess" {
-		return assess(os.Stdin, os.Stdout, os.Args[2:])
-	}
-	child := len(os.Args) > 1 && os.Args[1] == "_step"
-	args := os.Args[1:]
-	if child {
-		args = args[1:]
-	}
-	fs := flag.NewFlagSet("godel", flag.ContinueOnError)
-	planPath := fs.String("plan", ".godel/pilot.json", "goal and passage obligations (relative to repository)")
-	budget := fs.String("budget", "pilot-1", "persistent allowance identifier")
-	n := fs.Int("attempts", 12, "maximum stage attempts across launches")
-	duration := fs.Duration("time", 25*time.Minute, "wall time from first launch with this allowance")
-	if err := fs.Parse(args); err != nil {
+	if err := accepted.Enter(ctx, "godel"); err != nil {
 		return err
 	}
-	if fs.NArg() != 0 || !identifier.MatchString(*budget) || *n < 1 || *duration <= 0 {
-		return errors.New("invalid arguments or allowance")
-	}
-	cwd, err := os.Getwd()
+	goal := strings.TrimSpace(mission)
+	work, improve := missionNodes(goal, archiveRevision)
+	result, err := godel.New(goal).Run(ctx, &godel.Params{Node: work, Loop: true, SelfImprove: improve})
 	if err != nil {
-		return err
-	}
-	root := filepath.Clean(filepath.Join(cwd, "../.."))
-	if filepath.Clean(filepath.Join(root, "cmd/godel")) != cwd {
-		return errors.New("launch from cmd/godel (Gödel loops run go run . in this directory)")
-	}
-	pp := *planPath
-	if !filepath.IsAbs(pp) {
-		pp = filepath.Join(root, pp)
-	}
-	bp := filepath.Join(root, ".godel", "budgets", *budget+".json")
-	w, err := load(root, pp, bp)
-	if err != nil {
-		return err
-	}
-	if child {
-		if err = w.initBudget(*n, *duration); err != nil {
-			return err
-		}
-		if err = w.step(ctx, live); err != nil {
-			return err
-		}
-		reason := w.terminal()
-		if reason == "" {
-			reason = "continue"
-		}
-		fmt.Println(w.report(reason))
-		return nil
-	}
-	exe, err := os.Executable()
-	if err != nil {
-		return err
-	}
-	task := w.plan.Goal + "\n"
-	for _, p := range w.plan.Passages {
-		task += p.ID + ": " + p.Question + "\n"
-	}
-	if w.budget.Limit > 0 {
-		task += w.report("resume")
-	}
-	// Reconstruct input from durable work, not
-	// history fallback, untrusted prior stdout, or
-	// terminal state. godel v0.0.5 reads os.Stdin
-	// and has no Input parameter.
-	input, err := os.CreateTemp("", "grh-context-*")
-	if err != nil {
-		return err
-	}
-	defer input.Close()
-	if err = os.Remove(input.Name()); err != nil {
-		return err
-	}
-	if _, err = io.WriteString(input, task); err != nil {
-		return err
-	}
-	if _, err = input.Seek(0, 0); err != nil {
-		return err
-	}
-	os.Stdin = input
-	node := &godel.Node{Exec: exe, Args: append([]string{"_step"}, args...), Next: func(godel.Result) (*godel.Node, error) {
-		w, err := load(root, pp, bp)
-		if err != nil {
-			return nil, err
-		}
-		if w.terminal() != "" {
-			return godel.Stop(), nil
-		}
-		return nil, nil
-	}}
-	result, err := runTree(ctx, node, &godel.Node{Exec: exe, Args: []string{"_assess", root, pp, bp}})
-	if err != nil {
-		if ctx.Err() != nil {
-			return fmt.Errorf("canceled; no relaunch: %w", ctx.Err())
-		}
 		return err
 	}
 	fmt.Print(result.Text)
@@ -185,8 +81,4 @@ func auditLocal(ctx context.Context, out, diagnostics io.Writer, args []string) 
 		return err
 	}
 	return worker.CheckLocal(ctx, root, args[0], args[1:sep], args[sep+1:], out, diagnostics)
-}
-
-func runTree(ctx context.Context, n, improve *godel.Node) (*godel.Result, error) {
-	return godel.New(strings.TrimSpace(mission)).Run(ctx, &godel.Params{Node: n, Loop: true, SelfImprove: improve})
 }
