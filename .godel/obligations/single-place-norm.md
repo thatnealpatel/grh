@@ -999,7 +999,10 @@ go run ./cmd/godel audit-local "$CANDIDATE" \
 
 ### Next: Pointwise theta inversion before small-norm averaging
 
-**Parked for one Main cycle:** Finish any work already in flight. At the next work selection, take the [rational trace operator handoff](../frontier.md#one-cycle-operator-handoff-main-trace-test-and-companion-numerator-audit) once. Preserve the Gaussian continuation below and any subsequent checked result for resumption.
+**Resumption handoff:** The [one-cycle rational trace audit](trace-orbital-q.md#main-cutoff-test-no-haar-lift-of-the-literal-shell-kernel)
+ended at a lift obstruction. The large-norm slices including $u=0$ landed
+at `0abc265a52c1`; the local integer-ring transform below landed at
+`9bfb408ef0c7`. Neither needs repeating.
 
 Neither the large-norm bound nor the above-one Mellin identity proves
 continuation, RH, or GRH. On the provisional text reading, the use of
@@ -1014,14 +1017,14 @@ by (2.2.5.10), (2.2.5.12), pp. 97–98. For a trivial restriction, retain
 the two terms and compute their Mellin contributions instead. Analytic
 agreement must start on the common domain `Re s > 1`.
 
-A runnable Fourier prerequisite is the local integral-ball annihilator
-in Example A.3.1.10, (A.3.1.8), p. 558 (provisional Markdown and layout).
-For each actual finite completion `Kᵥ`, define the continuous additive
-character by composing the checked `ℚₚ` phase, with the finite sign
-from the [rational diagonal test](theta-inversion-q.md#rendered-sign-check-a-translated-box-breaks-the-printed-theta-identity),
-with the local trace. Show `ψᵥ(x * y) = 1` for every `y ∈ Oᵥ` iff `x`
-is in the local trace dual, using the exact `ℤₚ` kernel and
-`finiteCompletion_traceDual_eq_span_globalCodifferent`. This supplies
-the support and orthogonality input for the integral-ball transform;
-it does not compute the transform, normalize additive Haar, or supply
-global Poisson summation.
+**Checked finite-place input:**
+[`finiteCompletionIntegers_fourier`](../../Proofs/Theorems/FiniteCompletionIntegersFourier.lean)
+computes the actual local trace-character integral on the integer ring:
+Its negative-sign Fourier transform is the indicator of the inverse local
+different multiplied by $\mu(\mathcal O_v)$ for the given additive Haar
+$\mu$. The local annihilator and character orthogonality are supplied;
+there is no self-dual normalization assumption. This is the local input for
+Example A.3.1.10, (A.3.1.8), p. 558, not full adelic inversion. Use it to
+match the finite factors and Haar constants with the global Gaussian
+and the compatible Archimedean Fourier normalization in (2.2.3.2), p. 82.
+Do not remove either zero mode before nontrivial character averaging.

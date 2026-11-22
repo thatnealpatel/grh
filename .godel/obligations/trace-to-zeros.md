@@ -106,6 +106,14 @@ full zero orders, normalized local pairings, and actual quotient Haar.
 It does not identify a trace operator. The remaining global comparison
 is not an assumption about zero location.
 
+**Main one-cycle outcome:** The [fixed-cutoff audit](trace-orbital-q.md#main-cutoff-test-no-haar-lift-of-the-literal-shell-kernel)
+stopped at the quotient-to-idele lift. On the provisional literal
+reading of (11.3.2.2), its Haar row mass is zero, and the same-chain
+right cutoff in (11.3.2.3) independently erases the fixed shell.
+The two steps below remain gated by a lift that recovers the common
+quotient kernel and identifies the shells; neither an all-zero lifted
+integral nor the fixed-annulus local trace runs the test.
+
 **1. Identify the operators at fixed cutoffs.** Work over $\mathbb Q$ with
 $S=\{\infty\}$ in the trivial compact isotype. Write the global $S$-piece
 of (11.3.1.4), p. 494, and the local level operator of (11.2.1.6),

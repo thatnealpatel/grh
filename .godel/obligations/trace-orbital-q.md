@@ -266,6 +266,118 @@ whenever the integral is absolutely convergent. For a sharp radial threshold, it
 
 **Review status:** Independent Yah review checked the cutoff calculation, the rational lift and its Haar unfolding, and the source interfaces against the digest-matched extraction. No visual or Lean check was performed.
 
+## Main cutoff test: No Haar lift of the literal shell kernel
+
+**Scope and outcome:** Over $\mathbb Q$, for the trivial compact isotype,
+$S=\{\infty\}$, $a=1/2$, one common admissible $0<\alpha<1/2$, and even
+$s\ge4$, the first failure is the lift **from the quotient geometric
+kernel on $C_{\mathbb Q}^2$ to a Haar-compatible idele kernel on
+$(\mathbb A_{\mathbb Q}^{\times})^2$**. This happens with cutoffs fixed,
+before either of the two limits in the positive-log control. The source
+reading is provisional: Pinned Markdown and digest-matched numbered
+layout extraction agree on the two simultaneous indicators and the same
+right-cutoff index family, but the page render was not inspected.
+
+**Unsplit source operator and measures.** Write $G=\mathbb A_{\mathbb Q}^\times$,
+$H=\mathbb Q^\times$, $C=G/H$, and $K=\widehat{\mathbb Z}^{\times}$.
+Use the positive real section $\tau$ with all finite components $1$ and
+$D=\tau(\mathbb R_{>0})K$, the rational fundamental subgroup from
+(A.2.3.14), p. 549. On $C$ use $d\bar\mu=dk\,dx$ with $x=\log|g|$ and
+$dk(K)=1$ by (A.3.2.1), pp. 559–560. The corresponding Haar on $G$ uses
+counting measure on $H$ and the same measure on each translate of $D$.
+The Hilbert measure on the radial isotype is $w(x)\,dx$ with
+$w(x)=e^{2\alpha|x|}(1+x^2)^{s/2}$ by (9.2.2.34), p. 417. The raw kernel
+(10.4.3.50), pp. 473–474, uses input Haar $d\bar\mu$, not the weighted
+Hilbert measure. In the order of (10.4.1.12), p. 458, the unsplit compact
+position truncation is $M_\rho A(\varphi)P$, with $P$ the half-twisted global
+geometric orthogonal projection. The carving in (11.3.1.4), p. 494, is
+not yet an operator on this quotient: The unit indicators distinguish
+representatives of the same class (for instance $1$ and the diagonal
+prime added at this step).
+
+At the stated domain of (11.2.1.8–9), pp. 488–489, the global level
+composition is $M_\rho P A(\varphi)Q_B$, where $Q_B$ is the global invariant
+level projection on the right. The printed statement uses the polynomial
+$W^{s,2}$ norm; a positive-width $Q_B$ must be constructed in the same
+weighted chart as $P$, not identified by transporting that projection.
+In the [common weighted model](trace-hardy-diagonal-q.md#the-fixed-cutoff-limit-retains-a-right-projection),
+$Q_B\to P$ strongly gives the level-first compact-position limit
+$M_\rho P A(\varphi)P=M_\rho A(\varphi)P$, not $M_\rho P A(\varphi)$.
+The equality uses invariance of the geometric range, not commutation.
+The local projected convolution in
+[`fixedAnnulus_trace`](../../Proofs/Theorems/RationalFixedAnnulusTrace.lean)
+is instead on the weighted real log line with the **local** two-moment
+band projector on the right and log Lebesgue measure in the kernel.
+The additive Fourier-multiplier operator of (12.4.1.8–12), p. 517,
+uses the additive measure in its kernel; it is not either projection.
+
+**The first missing map.** For a Haar-relative quotient kernel $k$ of
+the unsplit operator, a lift $Lk$ that recovers its integral action on
+quotient inputs must satisfy the row identity, before shelling,
+
+$$
+\sum_{h\in H}(Lk)(x_0,hy_0)=k([x_0],[y_0]),\qquad x_0,y_0\in D,
+$$
+
+in the relevant almost-everywhere kernel sense (after angular averaging
+if working only with radial inputs). This follows by disintegrating the
+input Haar integral on $G$ over its countable translates of $D$.
+Proposition 12.2.2.2, (12.2.2.1–7), pp. 507–508, supplies such an orbit
+normalization for the two-leg weight of an actual $H$-indentation and
+unfolds the regular Haar diagonal. Indeed the sum of its two-leg weight
+in the input row is $1$: Sum over the input translates first, using the
+indentation normalization, then over the translates in the remaining
+output leg. Bare pullback is constant on the input rational orbit and
+has no such normalization. The proposition's diagonal uses $(x_0,hx_0)$
+with $x_0=g\tau(t)$; the display in (11.3.2.3) uses $(\tau(t),hg\tau(t))$.
+Radiality removes $g$ from the first argument of the quotient kernel,
+not from an arbitrary lifted weight. The proposition neither identifies
+an orbital lift nor licenses the claimed nuclear extension from
+$\mathcal S(\mathbb A_{\mathbb Q})$ to an endomorphism of $W_I^s(C)$.
+
+In (11.3.2.2), p. 495, the extraction leaves the inner differential
+implicit. Use the $d\mu_1(g)$ Haar of the surrounding displays. For each
+$\xi\in H$ and each first input $x_0\in G$, the condition
+$\xi g x_0\in\tau(\mathbb R_{>0})$ allows at most one $g\in K$:
+Two such choices would differ by an element in
+$K\cap\tau(\mathbb R_{>0})=\{1\}$. The Haar measure of that singleton is
+zero because $K$ is infinite. Every summand in (11.3.2.2) is therefore
+zero. As a multiplicative Haar weight it has row mass zero, not one,
+and would take every quotient kernel to zero. Even before integration,
+both indicators at $(\tau(t),\xi g\tau(t))$ can be nonzero only if
+$\xi g=1$: The ratio of the arguments is in the norm section and has norm
+one. Thus merely assigning mass to the exact section without changing the
+simultaneous support condition could not give any nonempty prime shell.
+
+**The next cutoff on the same reading.** In (11.3.2.3), p. 495, the right
+factor $\alpha_{k_1}(y)$ independently annihilates
+$(\alpha_{k+1}-\alpha_k)(y)$ pointwise for $k_1\ge k+1$. For the prime $p$
+added in shell $k$, $y=p\tau(t)$ (diagonal $p$) has shell factor $-1$ and
+$\beta_{S'}(y)=1$ with $S'=\{\infty,p\}$, but $\alpha_{k_1}(y)=0$ for all
+those $k_1$. Restricting to the shell therefore does not produce the
+claimed limiting cutoff in (11.3.2.4), pp. 495–496. Neither this factor
+nor the $S'$-rebased replacement is a right Hilbert projection. The
+[normalized collar](trace-section-collar-q.md#the-fixed-cutoff-base-operator-and-its-shell-masks)
+and other admissible lifts do not identify the source operator; valid
+lifts can put different mass in the shell of the same quotient kernel.
+
+**Disposition:** The literal zero integral is not the orbital term of
+an identified global trace decomposition. The short bump was not used
+to claim a match, discrepancy, or orbital vanishing for a valid lift.
+Do not rerun the [positive-log control](trace-to-zeros.md#first-unmatched-geometric-evaluation-and-a-positive-log-control)
+until there is a specified Haar-compatible lift of this quotient kernel,
+a right cutoff that preserves the intended shell, and a comparison of
+the resulting shell operators with the orbital quotients on compatible
+levels. Take the global level limit before position exhaustion if that
+comparison becomes available. No zero-location conclusion follows.
+
+**Independent review:** Yah session `01a20423-6e7a-7d64-a52b-fd38fb5c5973`,
+child `source-review` (`eorRcBP`), checked the Haar unfolding, null
+section, same-chain cutoff, and alternative readings against the pinned
+text. The mathematical deductions are conditional only on the stated
+literal readings. Neither reader verified the renders; no Lean proof
+was added or re-audited for this source check.
+
 ## Half-twisted reflection of the rational theta projector
 
 **Source interface (text extraction).** Theorem 2.2.3.2, p. 82,
