@@ -343,6 +343,21 @@ $A_\chi=|N(\mathfrak d_{F/\mathbb Q})|N(\mathfrak f_\chi)$ in the
 manuscript's normalization. The Lean reflection needs only the germ of
 this equality where the contour meets ordinary nonzero points.
 
+### Separate global Fourier sign
+
+The [rendered rational theta check](theta-inversion-q.md#rendered-sign-check-a-translated-box-breaks-the-printed-theta-identity)
+tests Theorem 2.2.3.2, p. 82 using (2.2.4.32), p. 92, and Examples
+A.3.1.5–8, pp. 557–558. The printed kernel evaluates the reflected
+finite coset, so the unmodified global Poisson step does not give the
+claimed theta identity on all rational boxes. The repaired kernel
+conjugates only the finite character factors. The next sign check is
+on the reflected Mellin pairing (3.2.2.2), p. 124, for the global odd
+conductor-three character. This is distinct from the local conductor
+power above: A constant sign in a functional equation would cancel
+from its logarithmic derivative, and the test does not supply the
+exponential or the completed-product identification in (B.4.2.4),
+p. 615.
+
 ## Checked: Evaluate the shifted Archimedean pair
 
 [`Props.ArchimedeanGammaRightLine`](../../Proofs/Props/ArchimedeanGammaRightLine.lean)

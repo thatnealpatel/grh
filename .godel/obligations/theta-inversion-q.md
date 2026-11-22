@@ -27,8 +27,9 @@ now identifies the [normalized quotient measure](#checked-product-of-local-haar-
 and the [upstairs restricted product](#checked-global-restricted-product-characterization).
 Independent Yah statement reviews used text extracted from the
 digest-matched [pinned edition](../sources/masullo/README.md). The readings
-are provisional, not visual. See the later sections for the checked
-additive Fourier theory on the box span and its scope.
+are provisional, not visual, except where a rendered check is linked.
+See the later sections for the checked additive Fourier theory on the
+box span and the [rendered theta-sign test](#rendered-sign-check-a-translated-box-breaks-the-printed-theta-identity).
 
 ## Manuscript statement and rational reduction
 
@@ -583,14 +584,14 @@ of Plancherel or adelic Poisson summation.
 
 Independent Yah review verified the SHA-256-matched extraction of
 pp. 557–558 and checked the scaled formula, denominator independence,
-and exact kernel against the quotient description. Rendered-page
-verification remains open. The extracted noncentered formula (A.3.1.5)
+and exact kernel against the quotient description. The [later rendered
+check](#rendered-sign-check-a-translated-box-breaks-the-printed-theta-identity) confirms the character sign. The noncentered formula (A.3.1.5)
 prints the positive character phase, whereas the negative-exponent
 Fourier convention would give the phase $\psi_p(-ay)$ at frequency $y$
 for a translate by $a$. The checked character keeps the positive sign
 from the definition and does not use that translated formula. Also
 reconcile finite and real signs before the global product in Example
-A.3.1.8: Taking both positive as extracted yields $e^{4\pi i/p}$ on
+A.3.1.8: Taking both printed positive phases yields $e^{4\pi i/p}$ on
 diagonal $1/p$ for odd $p$, not a character trivial on $\mathbb Q$.
 Neither sign issue changes the centered indicator transform.
 
@@ -627,7 +628,8 @@ p. 557; the centered unit-ball identity is the same for either sign.
 This does not establish the topological dual parametrization or the
 Plancherel identification inferred in Example A.3.1.7. Example A.3.1.10,
 p. 558, concerns the inverse different and a different volume in general.
-Rendered-page verification remains open.
+The [later rendered check](#rendered-sign-check-a-translated-box-breaks-the-printed-theta-identity) covers
+Examples A.3.1.5–8 for the rational sign test, not the different.
 
 Exact-candidate checks: `lake --wfail build Proofs`,
 `lake env leanchecker Theorems.PadicIntegralBallFourier`, and an external
@@ -667,8 +669,9 @@ The extracted phase is positive and its intermediate expression shifts
 the frequency. At $p=3$, $N=1$, $a=1$, and $y=1/3$, the checked
 formula gives $e^{-2\pi i/3}/3$, distinguishing the signs. At $N=0$,
 $a=1/p$, and $y=0$, the checked value is one, unlike the extracted
-shifted-frequency expression. These source observations are provisional
-until rendered-page review. This result is pointwise for natural $N$;
+shifted-frequency expression. The [later rendered sign test](#rendered-sign-check-a-translated-box-breaks-the-printed-theta-identity)
+confirms the unbarred phase in (A.3.1.5), which it does not use.
+This result is pointwise for natural $N$;
 it does not prove dual parametrization, Plancherel, or adelic Poisson
 summation.
 
@@ -715,7 +718,9 @@ claim against ambient self-duality or a rendered-page reading. The
 centered ball cannot detect the sign. With a conjugated global character
 in the Fourier integral, the finite local factor has the *positive*
 exponent; the checked translated-ball theorem for the negative exponent
-then has to be conjugated for real-valued indicators.
+then has to be conjugated for real-valued indicators. The [later
+rendered sign test](#rendered-sign-check-a-translated-box-breaks-the-printed-theta-identity) checks Examples A.3.1.5–8 and the kernel
+in (2.2.4.32), not the separate $S$-local pairing of A.3.1.11.
 
 The checked public endpoints are `Masullo.prod_rationalPadicPhase` and
 `Masullo.rationalDiagonal_phase_eq_one`. The local endpoint is
@@ -760,9 +765,9 @@ conjugate the checked negative-sign ball formula for real indicators.
 For the pairing $(a,b)\mapsto\psi(ab)$ the diagonal identity supplies
 only inclusion of the rational diagonal in its annihilator. The
 annihilator tests against **all** diagonal rationals and is not the
-kernel of the single character. The review did not inspect rendered
-pages. Additive Haar, Plancherel, and adelic Poisson summation are still
-open.
+kernel of the single character. That review did not inspect rendered
+pages; see the [later rendered sign test](#rendered-sign-check-a-translated-box-breaks-the-printed-theta-identity).
+The additive Haar, Plancherel, and Poisson results below use the repair.
 
 ## Checked clearing of finite adelic denominators
 
@@ -1562,6 +1567,102 @@ An independent Yah statement review against base
 `a0610272274b6dd1600cc0afd0e1d67f48bcaa30` confirmed the negative-sign
 integral convention, the inverse scale, the quotient mass factor of one,
 the signs of the zero modes, and pointwise absolute convergence.
+
+### Rendered sign check: A translated box breaks the printed theta identity
+
+**Source check.** The digest-pinned pages were checked by inspecting
+Poppler-rendered grayscale glyph crops.
+Definition 2.2.3.1, (2.2.3.1), p. 81 sums over $F^\times$. Theorem
+2.2.3.2, (2.2.3.2), p. 82 adds the Fourier zero and subtracts the
+spatial zero at the identity idele. Equivalently, it equates the two
+full lattice sums there. In (2.2.4.32), p. 92, the **global integral**
+uses $\overline{\psi(xy)}$; the real and finite character factors also
+have overbars. Use the global integral, not the factored line's
+$f_v(x_v)$ where integration is in $y_v$. The undifferentiated kernel
+also occurs in (2.2.4.37), p. 93. Example A.3.1.5, p. 557 prints
+$e^{2\pi ixy}$ for the real character and the negative real Fourier
+exponent. Example A.3.1.6, p. 557 defines the finite character via
+$\mathbb Q_p/\mathbb Z_p\cong(\mathbb Q/\mathbb Z)[p^\infty]$ followed
+by $e^{2\pi i t}$. It separately prints an *unbarred* phase in
+(A.3.1.5); that translated-ball formula is not used here. Examples
+A.3.1.7–8, pp. 557–558 give mass one on the finite unit balls and the
+direct product of the above local characters, with no conjugation of
+its finite factors. Thus the printed global kernel conjugates both
+*positive* characters. The product character on diagonal $1/3$ is
+$e^{4\pi i/3}\ne1$; the centered integral-ball Gaussian cannot detect
+this sign.
+
+**Exact full-sum calculation (ordinary mathematics).** Let $a\in\mathbb Q$,
+$b\in\mathcal S(\mathbb R)$, and use the tensor
+$f(x)=b(x_\infty)\prod_p\mathbf{1}_{a+\mathbb Z_p}(x_p)$, with the
+compact-open coset factors allowed by Example 2.1.3.1, p. 68 (checked
+on the rendered page). At $a=1/3$ only the $3$-adic unit ball is
+translated. On the diagonal the conditions $q-a\in\mathbb Z_p$ for
+all $p$ mean $q\in a+\mathbb Z$.
+With the printed kernel, translating each finite Haar integral yields
+$\overline{\psi_p(aq)}\,\mathbf{1}_{\mathbb Z_p}(q)$: On the unshifted
+ball the integral is one when the character is trivial, and otherwise
+it equals a nontrivial multiple of itself by Haar translation. Thus
+only $q=n\in\mathbb Z$ survives on the Fourier side. The positive
+finite phases multiply to $e^{2\pi ian}$ on $an\in\mathbb Q$, so at
+$n$ the printed Fourier value is $\widehat b(n)e^{-2\pi ian}$, where
+$\widehat b$ uses $e^{-2\pi ixy}$. At $a=1/3$ the product comes just
+from $\psi_3(n/3)=e^{2\pi in/3}$.
+
+For $P(t)=\sum_{m\in\mathbb Z}b(m+t)$, integration over a unit period
+shows its $n$th Fourier coefficient is $\widehat b(n)$. Schwartz
+bounds give absolute convergence of both series, and the Fourier
+series represents the continuous periodization. Therefore the spatial
+sum is $P(a)$, and the printed Fourier sum is $P(-a)$. Conjugating
+**only** the finite factors of the character (thus reversing their
+sign in the conjugated kernel) instead gives
+$\widehat b(n)e^{2\pi ian}$ and $P(a)$, with the same Haar measures.
+Choose a nonnegative smooth $b$ with compact support inside
+$(1/4,5/12)$ and $b(1/3)=1$. Then the full sums are $1$ spatially,
+$0$ with the printed kernel, and $1$ in the finite-conjugation
+control. Here $f(0)=0$, but the Fourier zero term is $\int b>0$ in
+both conventions and is included in both Fourier sums. This rules out
+(2.2.3.2) with the combined printed definitions, not ambient
+self-duality or theta inversion with the repaired character.
+
+There is a useful general relation. Let $\sigma=(1,-1,-1,\ldots)$ be
+the norm-one idele negating only the finite coordinates. The printed
+transform at $y$ is the repaired transform at $\sigma y$. In ordinary
+mathematics this also identifies the annihilator of the diagonal for the
+printed pairing as
+$\sigma\mathbb Q$, rather than $\mathbb Q$, by the [checked repaired
+annihilator](#checked-rational-diagonal-annihilator). For the rational
+box span, using the repaired inversion at $\sigma k$ gives
+
+$$
+\Phi(f)(\sigma k)=|k|^{-1}\Phi(\widehat f_{\rm print})(k^{-1})
++|k|^{-1}\widehat f_{\rm print}(0)-f(0).
+$$
+
+[RationalAdeleSameSignTheta.lean](../../Proofs/Theorems/RationalAdeleSameSignTheta.lean)
+checks the positive local product, the frequency change for arbitrary
+adelic inputs to the integral, the unchanged zero mode, and the norm-one
+involution. `Masullo.rationalAdeleBoxSum_sameSign_theta_inversion` checks
+the displayed identity for every idele and every finite complex linear
+combination of translated and scaled rational adelic boxes with real
+Schwartz profiles; `Masullo.summable_norm_rationalAdeleBoxSum_sameSign_theta`
+checks absolute convergence of both nonzero sums without additional
+convergence premises. The explicit bump sums $1,0,1$ above are ordinary
+mathematics, not Lean endpoint evaluations. The existing
+`Masullo.rationalAdeleBoxSum_theta_inversion` remains the finite-conjugation
+control, with $k$ rather than $\sigma k$ on the left.
+
+**Next check:** Test whether this finite sign persists in the reflected
+Mellin pairing for the global odd character of conductor $3$. Inspect
+p. 124, (3.2.2.1)–(3.2.2.2), and the proof on p. 126 of Theorem
+3.2.2.1 for the exact dual quasi-character and any compensating
+translation. Then compare the reflected character's value at $\sigma$
+with the nonzero right-half-plane zeta pairing of a compatible test.
+This would decide whether the printed normalization also changes the
+phase in that specific global functional equation. The Chapter 3
+reflection locators are provisional, not rendered-page readings in
+this check. That question is separate from the local conductor power,
+general completed-product identification, and contour exhaustion.
 
 ## Checked joint orbit convergence and theta inversion on idele classes
 
@@ -3374,4 +3475,4 @@ The [complex Borel $L^1$ version](#checked-complex-weil-formula-and-absolute-sum
 is checked, as are the [quotient Fourier coefficient comparison and point
 separation](#checked-unfolding-of-the-quotient-fourier-coefficients) and
 [uniform density and Haar orthogonality](#checked-density-and-orthogonality-of-the-rational-quotient-characters).
-The [pointwise reconstruction and rational counting-series formula](#checked-pointwise-poisson-summation-with-explicit-convergence-hypotheses) are checked under explicit convergence hypotheses. The [unramified tensor periodization](#checked-periodization-of-the-rational-unramified-tensor) is now absolutely convergent at every lift and continuous on the quotient, with the input integrable upstairs. The [unramified transform and pointwise Poisson formula](#checked-fourier-transform-and-pointwise-poisson-for-the-unramified-tensor) now discharge Fourier-side summability. The [adelic theta inversion theorem](#checked-adelic-theta-inversion-for-the-unramified-tensor) now applies to the actual tensor sums at every idele. The [integral-stage additive product formula](#checked-local-product-on-the-integral-finite-additive-stage) now identifies the compact factor as a product of local Haar probabilities. The [all-stage product theorem and global characterization](#checked-restricted-product-formula-for-rational-additive-haar) now give the rational global formula (A.3.1.3). The [global additive dilation law](#checked-rational-additive-haar-scaling-under-idele-dilation) is checked over $\mathbb Q$. The [translated finite-box transform](#checked-fourier-transform-of-translated-finite-boxes) and [pointwise Poisson summation for these boxes](#checked-pointwise-poisson-summation-for-finite-boxes) are now checked. The resulting [generator-span Poisson theorem](#checked-poisson-summation-on-the-translated-generator-span) is checked. The [pointwise theta identity](#checked-pointwise-theta-inversion-on-the-generator-span) is checked on that span; [joint convergence, continuity, and class theta inversion](#checked-joint-orbit-convergence-and-theta-inversion-on-idele-classes) are also checked.
+The [pointwise reconstruction and rational counting-series formula](#checked-pointwise-poisson-summation-with-explicit-convergence-hypotheses) are checked under explicit convergence hypotheses. The [unramified tensor periodization](#checked-periodization-of-the-rational-unramified-tensor) is now absolutely convergent at every lift and continuous on the quotient, with the input integrable upstairs. The [unramified transform and pointwise Poisson formula](#checked-fourier-transform-and-pointwise-poisson-for-the-unramified-tensor) now discharge Fourier-side summability. The [adelic theta inversion theorem](#checked-adelic-theta-inversion-for-the-unramified-tensor) now applies to the actual tensor sums at every idele. The [integral-stage additive product formula](#checked-local-product-on-the-integral-finite-additive-stage) now identifies the compact factor as a product of local Haar probabilities. The [all-stage product theorem and global characterization](#checked-restricted-product-formula-for-rational-additive-haar) now give the rational global formula (A.3.1.3). The [global additive dilation law](#checked-rational-additive-haar-scaling-under-idele-dilation) is checked over $\mathbb Q$. The [translated finite-box transform](#checked-fourier-transform-of-translated-finite-boxes) and [pointwise Poisson summation for these boxes](#checked-pointwise-poisson-summation-for-finite-boxes) are now checked. The resulting [generator-span Poisson theorem](#checked-poisson-summation-on-the-translated-generator-span) is checked. The [pointwise theta identity](#checked-pointwise-theta-inversion-on-the-generator-span) is checked on that span with the repaired character; the [rendered sign test](#rendered-sign-check-a-translated-box-breaks-the-printed-theta-identity) distinguishes the printed convention; [joint convergence, continuity, and class theta inversion](#checked-joint-orbit-convergence-and-theta-inversion-on-idele-classes) are also checked.
