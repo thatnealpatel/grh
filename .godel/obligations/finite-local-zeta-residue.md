@@ -149,13 +149,11 @@ declarations above was checked against the source at
 `5563a07927b65c8eca3ca6f2dab255ed0491bde3` in the parent run, not by a
 new proof audit.
 
-**Next bounded check:** Test the finite factor in (5.3.4.1), p. 259,
-against the unit-invariant rapidly decreasing sequence allowed by
-Remark 2.1.2.1, p. 63, with values $3^{-k}$ for $k\ge0$ and zero for
-$k<0$. Check its membership on the printed multiplicative side and
-whether its zero extension belongs to additive $\mathcal S(\mathbb Q_3)$.
-This would decide whether the finite input for the forward entireness
-argument needs a smaller domain; it does not address the Archimedean
-factors, tensor closure, or descent. Finite Plancherel for the
+**Follow-up:** The [finite-domain audit](finite-polar-free-domain.md)
+shows that the unit-invariant rapid sequence $3^{-k}$ for $k\ge0$,
+zero otherwise, admits no locally constant additive extension at
+zero. One real flat bump then disproves the pointwise tensor inclusion
+in (5.3.4.1), p. 259. See that note for the proposed next topology
+check. Finite Plancherel for the
 [primitive conductor shell](hecke-right-line-majorant.md#primitive-prime-power-conductor-shells-over-mathbb-q_p)
 remains a separate open amplitude check.
