@@ -69,8 +69,9 @@ The section $t\mapsto[\sqrt t]$ has squared complex norm $t$, so the
 coordinates of the two local characters are exactly $s$ and $1-s$.
 By the self-dual Gaussian and (3.3.1.2), p. 129, the local factor is
 $\rho_S(s)=G(s)/G(1-s)$. Thus $Q_+=\rho_S Q_-$ on $0<\Re s<1$,
-including at the finite $L$-zeros. The p. 123 and p. 129 formula
-readings are provisional (text, not rendered-page review).
+including at the finite $L$-zeros. The [local source audit below](#verified-local-image-criterion)
+checks the p. 129 equation and its normalization. The p. 123 readings
+remain provisional (text, not rendered-page review).
 
 ## Separated-height estimate on the whole strip
 
@@ -137,20 +138,115 @@ of Definition D.3.1.3, pp. 800–801, and Lemma D.3.1.2, p. 799, not a
 bound uniform up to the half-plane boundary or a claim about the
 sampled topology.
 
-Theorem 5.4.1.1(1), pp. 265–266, takes a pair in
-$AS(\mathbb C_{>0})\times AS(\mathbb C_{<1})$ and gives the exact
-image criterion (5.4.1.3), the local overlap identity just checked.
-It applies on the trivial local isotype, without assuming the global
-class group trivial. This is a provisional text reading of the exact
-image criterion, used here as a manuscript input. It supplies a
-representative $f\in\mathcal S(\mathbb C)$ with local transforms
-$(Q_+,Q_-)$. In particular, on
+The [verified local image criterion](#verified-local-image-criterion)
+now supplies a representative $f\in\mathcal S(\mathbb C)$ with
+local transforms $(Q_+,Q_-)$, as an application of Theorem 5.4.1.1(1),
+pp. 265–266. In particular, on
 $\Re s>1$ the normalized inserted test has global transform
 $D(s)Q_+(s)=\Phi(s)$ and hence realizes $\Phi$ by continuation.
 For the literal measures the inserted multiplier is $A D(s)$ with
 $A=20^{-1/2}$, so insert $A^{-1}f$ instead. The reflected leg scales
 by the same constant. The possible poles at the local endpoints
 encode, rather than suppress, the two local zero modes.
+
+## Verified local image criterion
+
+**Result (ordinary mathematics, not Lean):** Theorem 5.4.1.1(1),
+pp. 265–266, supplies a single Schwartz representative for the corrected
+pair. This local implication takes the pair as input and does not depend
+on the completed global factor's exact normalization on p. 123.
+
+### Printed range and its source
+
+In the [pinned edition](../sources/masullo/README.md), (5.4.1.2), p. 265,
+has source $\mathrm H_{0,\mathrm{cont}}(\omega,\mathcal S(\mathbf A_{F,S}))$
+for any $\omega\in\widehat{J^1_{F,S}}$. The hypotheses are a number
+field, a finite $S$ containing all archimedean places, and a continuous
+homomorphic norm section $\tau$. There is no principal-class or
+nontrivial-local-character condition. On p. 266 the map sends the
+class of $f$ to $(Z_S(f,c),Z_S(\widehat f,\widehat c))$; its range **is**
+(5.4.1.3), not just contained in it:
+
+$$
+W_{F,S,\omega}
+=\{(P_+,P_-)\in AS(\mathbb C_{>0})\times AS(\mathbb C_{<1}):
+P_+(s)=\rho_{S,\tau}(s)P_-(s)\text{ on }0<\Re s<1\}.
+$$
+
+By (5.2.2.4), p. 232, the source is
+$\mathcal S(\mathbf A_{F,S})/\ker\Phi_{F,S,\omega}$, a quotient of
+actual tests. Thus a preimage class gives one representative with
+both legs, not independent choices for the two transforms. In contrast,
+Proposition 5.4.1.4, (5.4.1.7)–(8), p. 267, uses $\mathcal S_{00}$ and
+requires the continuation of the forward function to be entire.
+That extra requirement is not in (5.4.1.3).
+
+### Character, domain, and constants
+
+The [class-character and unit calculation](isotypic-exhaustiveness-q-sqrt-minus-five.md#the-missing-valuations-and-the-target-character)
+gives $\mathbf A_{F,S}=\mathbb C$, $\mathcal O_{F,S}^\times=\{\pm1\}$,
+and induced character $\omega=1$ on $J_{F,S}^1$. Apply (3.1.2.1), p. 120, and (3.1.2.5)
+and §3.1.2.1, p. 121: $J_{F,S}=\mathbb C^\times/\{\pm1\}$, its norm
+is $|z|^2$, and $\tau(t)=[\sqrt t]$ is a section. The trivial-isotype
+coordinate is $c_s([z])=|z|^{2s}$. By (3.1.1.4), p. 119, the dual
+is $\widehat c_s([z])=|z|^{2(1-s)}$ with no conjugation of $s$. Thus
+the two positive-abscissa conditions for the defining integrals of
+(3.3.1.1), p. 129, are $\Re s>0$ and $\Re s<1$, respectively.
+
+Equation (3.3.1.1) integrates over $\mathrm{GL}_1(\mathbf A_{F,S})$,
+not directly over its unit quotient. Definition A.3.4.1(1)–(2), p. 561,
+reduces both measures to their complex local factors here.
+Definition A.3.1.2(2), p. 556, and Example A.3.1.5, p. 557, give the
+self-dual $2\,dx\,dy$ for the character $z\mapsto e^{4\pi i\Re z}$.
+Section 3.3.1, p. 128, uses the standard $S$-local character and the
+additive Tamagawa measure for Fourier transform.
+Definition A.3.2.2(1), p. 560, gives $d\mu_v=2\,dx\,dy/|z|^2$.
+In particular no factor $1/2$ is inserted for the two units. Equivalently,
+unfolding over the quotient uses periodization by both units, not
+the test itself with quotient Haar.
+
+With these measures the [accepted Gaussian computation](isotypic-fourier-gluing-q-sqrt-minus-five.md#gaussian-discrepancy-and-boundary-cancellation)
+gives $g(z)=e^{-2\pi |z|^2}=\widehat g(z)$ with pair $(G(s),G(1-s))$.
+The rendered (3.3.1.2)–(3), p. 129, compares the forward integral
+with $\rho_S(c_s)$ times the dual one on $0<\Re s<1$. Evaluating there
+on $g$ gives $\rho_{S,\tau}(s)=G(s)/G(1-s)$, since $G(1-s)$ is finite
+and nonzero there. This fixes the direction and normalization of the
+agreement without importing the finite omitted factors into $\rho_S$.
+
+### Application and endpoint control
+
+The [inherited rendered membership reading](isotypic-good-heights-q-sqrt-minus-five.md#rendered-source-and-scope)
+of Definition D.3.1.3, pp. 800–801, and Lemma D.3.1.2, p. 799, applies
+to each open half-plane: The rapid bounds are on bounded-width strips
+strictly inside it. The transfer estimates above give this membership
+for both $Q_+$ and $Q_-$, and the same $U(s)$ in both legs gives the
+printed overlap. Thus their preimage is a class of one $f\in\mathcal S(\mathbb C)$.
+For its stated purpose, the criterion applies to every pair in $W$ on
+this trivial local isotype, not just Gamma pairs from a global target.
+It does not say every entire $U$ meets the half-plane growth requirements.
+
+For a general representative the circular average of $f$ at squared
+radius $t$ is $f(0)+O(\sqrt t)$ near zero. With the above measure its
+constant term on $0<t<1$ contributes $2\pi f(0)/s$ to $Z_S(f,c_s)$;
+the remainder is holomorphic near $0$. The same argument in $1-s$
+gives residue $-2\pi\widehat f(0)$ at $s=1$ for $Z_S(\widehat f,\widehat c_s)$.
+In particular, for the unscaled corrected pair every representative has
+$f(0)=U(0)$ and $\widehat f(0)=U(1)$. The two boundary poles may be
+removable, but need not be. For $g$ the residues are $2\pi$ and $-2\pi$;
+this checks that $W$ is not secretly the polar-free range. The Gaussian
+is a normalization and boundary control, not a proof of sufficiency
+for arbitrary targets.
+
+**Evidence:** Direct pixel crops of the digest-matched PDF were used for
+(5.4.1.2)–(3), the quotient (5.2.2.4), the polar-free contrast, and the
+local character, integral, and measure equations cited above. The
+independent review (Yah `01a2043e-7daa-7fe4-b2c0-157c6a6e4f2c`, agent
+`uTKGWsA`) confirms the rendered full source, pair, range, and quotient,
+checks the norm and measure specialization, and confirms the two
+residue comparisons. The half-plane membership and overlap estimates
+are inherited, not reproved by the reviewer. This checks the local
+range interface and its use, not the proof of the general Second
+Structure Theorem, its topological assertions, or a Lean realization.
 
 ## Formal boundary and next check
 
@@ -182,8 +278,16 @@ supplies the $m=0$ good-height estimate. The separate
 [all-orders Cauchy estimate](isotypic-good-heights-q-sqrt-minus-five.md#all-orders-cauchy-bound-at-the-same-height)
 now bounds reciprocal derivatives in Lean at the same height and all
 centers of the closed segment. The reflected identity and the
-archimedean image criterion still need a formal model. The latter and the exact
-completed/local normalizations above still use provisional source readings.
+archimedean image criterion still need a formal model. The local source
+verdict does not upgrade the exact completed-factor or entireness
+readings on p. 123, or the global gluing-interface readings on
+pp. 305–306.
+
+**Next bounded source check:** Compare (3.2.1.2), (3.2.1.5), and
+Proposition 3.2.1.3(1), p. 123, with $G(s)D(s)$ on the nontrivial
+norm-one isotype. This would verify the exact completed factor and
+entireness used to pass from the printed divisibility premise to
+$\Phi=U G D$. The literal global gluing route is a separate check.
 
 ### Checked forward closed-strip estimate
 
