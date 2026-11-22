@@ -270,6 +270,79 @@ PDF and pinned definitions. It confirmed that the literal extracted
 subtraction in (B.4.2.15) fails the compact-log tail test. This is
 extracted-text review, not rendered-page verification.
 
+## Checked: Contour reflection and the primitive Dirichlet conductor
+
+Proposition 3.2.1.3(3), (3.2.1.6), p. 123 supplies the orientation
+$G(1-s)=\epsilon(s)F(s)$ and a nowhere-zero entire factor. That
+analytic property does not imply a constant logarithmic derivative.
+The provisional text of (B.4.2.3), p. 614 has a plus before the
+reflected logarithmic derivative and invokes a conductor power with
+an open reference in footnote 13. The chain rule for $1-s$ requires a
+minus. Taking $\epsilon(s)=C e^{\kappa(s-1/2)}$, $C\ne0$, gives
+$(F'/F)(s)=-(G'/G)(1-s)-\kappa$ at ordinary nonzero points.
+
+[`Props.HeckeContourReflection`](../../Proofs/Props/HeckeContourReflection.lean)
+proves the local germ version (`completed_logDeriv_reflection`).
+`completed_reflect_left_integral` takes absolute integrability of the
+**reflected right-line** leg as input. It derives absolute integrability
+of the left upward leg and the normalized equality
+$I_{\rm left}=-I_{\rm reflected}-\kappa g(0)$ using $t\mapsto-t$ and
+compact log Mellin inversion at zero. Subtraction of the left leg in
+(B.4.2.2), p. 614 then gives the two plus signs for the reflected leg
+and conductor contact in (B.4.2.4), p. 615. No residue theorem is used.
+
+[`Theorems.DirichletContourReflection`](../../Proofs/Theorems/DirichletContourReflection.lean)
+instantiates this with Mathlib's primitive Dirichlet completion (Gamma
+factor included, conductor power not included) at modulus $N>1$. Its
+functional equation for $\chi^{-1}$ gives $\kappa=\log N$ with the
+orientation above. The integral theorem proves left-line nonvanishing
+for $a>1$ from the primitive functional equation and Mathlib right
+half-plane nonvanishing. The remaining input is absolute integrability
+of $\Phi(1-s)(L'/L)(s,\chi^{-1})$ on $s=a+it$. This is not a proof
+of contour exhaustion, or an identification of the Dirichlet and idelic
+completions. The nonzero contact is detectable only on tests with
+$g(0)\ne0$.
+
+**Independent review:** `conductor-review` (`aDCFClN`, Yah session
+`01a200ef-a91c-742a-abfd-1e1cdf9ae57b`) checked the source orientation,
+conductor dependence, and endpoint scope. All manuscript comparisons
+here are based on pinned chapter Markdown and numbered PDF layout
+extraction, not independent inspection of rendered pages.
+
+### Open: Ramified local conductor power in the general reflection
+
+The next general conductor obligation is not another reflection lemma.
+At a ramified finite place, both local Euler factors are one, so
+(3.3.1.32), p. 136, specialized to the place, requires
+$\rho_v(c)=\epsilon_v(c)$. On the norm-twist line
+$c=\chi_v|\cdot|_v^s$, the extracted (3.3.1.30), p. 136, puts only
+$N(\mathfrak d_v)^{s-1/2}$ outside a Gauss sum with no displayed
+$s$-dependence, whereas the ramified $\rho_v$ formula at p. 133 and
+(3.3.2.24), p. 141, puts $N(\mathfrak d_v\mathfrak f_v)^{s-1/2}$
+outside the root number. The factor $N(\mathfrak f_v)^{s-1/2}$
+cannot be absorbed into a constant when $\mathfrak f_v$ is nontrivial.
+This is a provisional mismatch of the two local formulas, not a
+reading of the rendered typography or a disproof of the functional
+equation. On the unramified and Archimedean components, (3.3.1.28)–(29),
+p. 135, supplies the different powers and constant phases, respectively.
+
+**Runnable control:** Start at $\mathbb Q_3$ with the nontrivial
+character of $(\mathbb Z/3\mathbb Z)^\times$ extended by $\chi_v(3)=1$.
+In (3.3.1.7), p. 130, take the unit-supported test
+$f(u)=\chi_v(u)^{-1}$. Compute its additive Fourier transform on the
+shell $3^{-1}\mathbb Z_3^\times$ and show it vanishes off that shell.
+Using the same Haar measure on both multiplicative integrals, compare
+$Z_v(f,\chi_v|\cdot|_v^s)$ and
+$Z_v(\widehat f,\chi_v^{-1}|\cdot|_v^{1-s})$ and check their ratio
+against $3^{s-1/2}\rho_0$ with constant $\rho_0\ne 0$. This separates
+the two printed formulas since the different is trivial but the
+conductor norm is $3$. Generalizing the shell computation and assembling
+it for the actual completed Hecke function in (3.2.1.6) must still
+prove $\epsilon(s)=C\exp(\log(A_\chi)(s-1/2))$ with
+$A_\chi=|N(\mathfrak d_{F/\mathbb Q})|N(\mathfrak f_\chi)$ in the
+manuscript's normalization. The Lean reflection needs only the germ of
+this equality where the contour meets ordinary nonzero points.
+
 ## Next: Test the shifted Archimedean pair
 
 For $a>1$, $s=a+it$, and a smooth compact log profile $g$, prove
@@ -295,20 +368,11 @@ the integrals. This is a repair for the compact log test scope, not
 an assertion about every test in (B.4.2.15) or (17).
 
 **Still open:** The actual Archimedean character parameter classification and tested
-terms, the completed product, continuation, divisor and conductor data,
-and contour growth premises in (B.4.2.1)–(4) do not follow from these
-finite evaluations.
+terms, the completed product, continuation, divisor data, and contour growth
+premises in (B.4.2.1)–(4) do not follow from these finite evaluations.
 Neither do the ramified Fourier terms or the global trace comparison.
-For the contour, the cited (3.2.1.6), p. 123, gives an everywhere
-nonvanishing entire epsilon factor, not its constant logarithmic
-derivative on its own. Away from zeros and poles, differentiation
-of $L(1-s,\bar\chi)=\epsilon(s,\chi)L(s,\chi)$ gives
-$(L'/L)(s,\chi)=-(L'/L)(1-s,\bar\chi)-\epsilon'/\epsilon$.
-The provisional extraction of (B.4.2.3), p. 614, has a plus sign
-on the reflected derivative. The consuming contour subtracts the
-left upward integral before substituting $t\mapsto -t$, yielding
-a plus on the new upward reflected leg in (B.4.2.4). The conductor
-term still needs a checked epsilon formula with the correct sign.
+See the separate [local conductor obligation](#open-ramified-local-conductor-power-in-the-general-reflection)
+for the missing epsilon factor upstream of the checked contour reflection.
 
 ## Reproduce the endpoint audit
 
@@ -366,4 +430,13 @@ go run ./cmd/godel audit-local "$CANDIDATE" \
   Masullo.analyticOnNhd_archimedeanGammaFactor \
   Masullo.logDeriv_archimedeanGammaFactor_eq_integral \
   Masullo.logDeriv_GammaReal_eq_integral
+```
+
+```sh
+go run ./cmd/godel audit-local "$CANDIDATE" \
+  Props.HeckeContourReflection Theorems.DirichletContourReflection -- \
+  Masullo.completed_logDeriv_reflection \
+  Masullo.completed_reflect_left_integral \
+  Masullo.completedDirichlet_logDeriv_reflection \
+  Masullo.completedDirichlet_reflect_left_integral
 ```
