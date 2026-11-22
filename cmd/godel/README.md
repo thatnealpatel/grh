@@ -85,3 +85,22 @@ cp -a --reflink=auto "$OLD_WS/.lake/build" "$NEW_WS/.lake/build"
 You can also use this copy on a strictly additive restack: The only reported differences may be additions of `.lean` modules under `Proofs/`. Before copying, check that the seed contains no cached build artifacts for those modules. If there are any modifications, deletions, renames, Lake input changes, or uncertainty about the cache, use an ordinary audit without the copy. See the [additive-restack replay](../../.godel/experiments/additive-audit-restack/).
 
 Only seed from a finished local audit under the same trusted toolchain and Lake dependencies. Run `audit-local` in the new integration workspace, confirm that Lake builds any newly added modules, and inspect the reported endpoint signatures before adoption. Reusing build artifacts saves elaboration time; it does not transfer an audit verdict to a new candidate.
+
+If the workspace filesystem cannot hold another cache and does not
+support reflinks, the same validated seed can be copied into a private
+`/dev/shm` directory, provided it and the host have enough free space
+and memory. In the new integration workspace, point `.lake/build` at
+that private copy, never at the original cache:
+
+```sh
+test ! -e "$NEW_WS/.lake/build" && test ! -L "$NEW_WS/.lake/build" &&
+RAM=$(mktemp -d /dev/shm/grh-audit.XXXXXXXX) &&
+cp -a "$OLD_WS/.lake/build" "$RAM/build" &&
+ln -s "$RAM/build" "$NEW_WS/.lake/build"
+```
+
+Run the same exact-candidate audit from `$NEW_WS`. Keep the audit log
+outside the temporary directory. When no check is using the copy,
+remove the new symlink and the private directory you created. Do not
+use this route if the seed comparison or the space check fails. See
+the [low-disk cache replay](../../.godel/experiments/tmpfs-audit-cache/).
