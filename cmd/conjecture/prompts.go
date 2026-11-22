@@ -1,5 +1,7 @@
 package main
 
+const exclusion = `Do not seek, read, cite, or use Alpöge (Alpoge) material. Skip incidental hits.`
+
 const commonPrompt = `You are one bounded stage of a GRH conjecture investigation. Stdin is a JSON
 packet. The accepted evidence_revision and its evidence_directory are authoritative;
 use the corresponding evidence_index, not the live repository or a different
@@ -33,9 +35,10 @@ without waiting on any result (ideally in one tool-call batch), one per slug:
 
 Request gpt-5.6-luna, medium effort, nonrecursive in EACH dispatch intent. Include
 that role's tool and task in intent. The message must include the same full brief
-verbatim, the exact revision and snapshot/index paths in all three calls, plus
-only that scout's assignment. Do not scout yourself or retry a dispatch. Use a
-600-second timeout_seconds per child. Collect all terminal notifications before
+verbatim, the exact revision and snapshot/index paths, and the Alpöge exclusion
+verbatim in every child brief, followed by that scout's assignment. Do not scout
+yourself or retry a dispatch. Use a 600-second timeout_seconds per child.
+Collect all terminal notifications before
 answering; if work is pending and you cannot proceed, call tool_yield by itself.
 Reports must be independent; don't relay siblings' reports to unfinished scouts.
 Do not fill in for a failed or missing scout or substitute a different model,
@@ -117,18 +120,13 @@ publication.path; if previous_path is present, remove that old name in the
 same candidate. No other project outputs or edits are owned by this run. Do
 not change the claim, frontmatter, filename, or evidence revision.
 
-Use the ordinary GRH tool_campaign workflow, not the durable checkout or
-manual Git/jj mutations. Check status; if accepted is no longer evidence_revision
-or campaign is unavailable, stop before editing. Allocate one direct workspace
-with new (omit on); stop if its base is not evidence_revision. Edit only the
-specified paths in the returned workspace. If the prepared card is already
-unchanged at its destination and there is no move, stop without integrating.
-Call integrate with a short .godel: description and omit on and outputs. Stop
-if integration reports a base other than evidence_revision. Check the exact
-candidate diff against that base: only the supplied card edit and any
-corresponding removal may differ. Adopt that exact checked candidate through
-tool_campaign. Do not retry, restack, or adopt on a changed base. Do not
-publish remotely, do more research or dispatch additional agents.
+Use tool_campaign new on current accepted. The evidence revision dates the
+research; it is not a required publication base. Ignore unrelated changes. If
+either the open or closed path for this slug changed since the evidence pin,
+do not overwrite that work. Otherwise apply the prepared card, integrate, and
+adopt the card-only candidate immediately. If adoption is stale, reapply on
+current accepted under the same rule; no further research, review, Lean build,
+or remote upload. Do not claim success on a stale result.
 
 Return only {"status":"adopted","adopted_revision":"full accepted commit from
 successful adoption","reason":"brief result"} or {"status":"not_adopted",

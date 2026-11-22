@@ -41,6 +41,9 @@ func handoff(t *testing.T, n *godel.Node, stage role) packet {
 	if n == nil || n.Next == nil || n.Exec != "sh" || len(n.Args) < 7 || !strings.HasPrefix(filepath.Base(n.Args[2]), stage.name+"-") {
 		t.Fatalf("expected %s research node, got %+v", stage.name, n)
 	}
+	if n.Args[5] != "-append" || !strings.Contains(n.Args[6], exclusion) {
+		t.Fatalf("%s missing appended source exclusion", stage.name)
+	}
 	if (stage != publisher && n.Directory != filepath.Dir(n.Args[2])) || !slices.Contains(n.Env, "YAH_DEFAULT_TOOLS="+stage.tools) {
 		t.Fatalf("%s not confined to the expected scratch directory/tool list: %+v", stage.name, n)
 	}
@@ -204,7 +207,7 @@ func TestPrimaryGateAndPublication(t *testing.T) {
 		if n.Directory != r.root || !slices.Contains(n.Env, "YAH_CAMPAIGN_TARGET="+r.target) || p.Choice != nil || p.Card == nil || p.Card.Path != ".godel/conjectures/open/uniform-bound.md" || !strings.HasPrefix(p.Card.Markdown, "---\nevidence_revision: "+revision+"\n---\n\n") {
 			t.Fatalf("wrong publication handoff: %+v", p)
 		}
-		terminal(t, step(t, n, publisher, map[string]string{"status": "not_adopted", "reason": "accepted base moved"}), "not_adopted")
+		terminal(t, step(t, n, publisher, map[string]string{"status": "not_adopted", "reason": "another writer updated this slug"}), "not_adopted")
 		const adopted = "9876543210abcdef0123456789abcdef01234567"
 		done := step(t, n, publisher, map[string]string{"status": "adopted", "adopted_revision": adopted, "reason": "campaign accepted candidate"})
 		terminal(t, done, "open")

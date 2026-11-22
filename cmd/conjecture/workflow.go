@@ -120,12 +120,11 @@ func (r investigation) node(stage role, p packet, next func(godel.Result) (*gode
 	// this stage's fresh packet on stdin.
 	dir, prompt := r.scratch, commonPrompt+"\n\n"+stage.prompt
 	env := []string{"YAH_DEFAULT_MODEL=" + luna, "YAH_DEFAULT_TOOLS=" + stage.tools, "YAH_INBOX=off"}
-	promptFlag := "-replace"
 	if stage == publisher {
-		dir, prompt, promptFlag = r.root, stage.prompt, "-append"
+		dir, prompt = r.root, stage.prompt
 		env = append(env, "YAH_CAMPAIGN_TARGET="+r.target)
 	}
-	args := []string{"-c", `exec timeout --kill-after=5s 12m yah "$@" < "$0"`, f.Name(), "-effort", "medium", promptFlag, prompt}
+	args := []string{"-c", `exec timeout --kill-after=5s 12m yah "$@" < "$0"`, f.Name(), "-effort", "medium", "-append", exclusion + "\n\n" + prompt}
 	if stage.privileged {
 		// Yah classifies network retrieval as
 		// rwx. The explicit tool filter still

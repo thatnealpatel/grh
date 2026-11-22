@@ -26,16 +26,20 @@ Only a validated card disposition starts the separate Yah publication stage.
 It gets a prepared path and complete card with the exact `evidence_revision`.
 It uses the ordinary campaign workflow to create a direct workspace, integrate
 only the card (and remove its old name for a move), inspect the candidate, and
-adopt it. It is instructed to stop if the accepted base has moved. No-change
-paths do not start the publisher. There is no remote upload.
+adopt it. Unrelated tip movement does not block publication or trigger a
+second review. The publisher retries stale adoption on current accepted, but
+must not overwrite an intervening edit to either path for the same slug.
+No-change paths do not start the publisher. There is no remote upload.
 
 ## Enforcement and limits
 
 The Go transitions bound the run, check the report envelope, pin the evidence,
 and derive card paths from the disposition and slug. Research stages have a
 filtered Yah tool set without workspace writes or shell tools. They receive
-request-local packets rather than prior conversational history. This setup is
-not a filesystem sandbox; the read tool is not confined to the exported files.
+request-local packets rather than prior conversational history. All stage
+prompts append the Alpöge exclusion, and the coordinator must pass it to each
+scout. This setup is not a filesystem sandbox; the read tool is not confined
+to the exported files.
 
 The coordinator requests Luna/medium for all three children and is instructed
 to dispatch all before waiting. Yah's dispatcher can change child model, effort,
@@ -46,7 +50,7 @@ or an explicit scout failure. It does not certify what a report says.
 
 Mathematical identity, quality, and Markdown substance are reviewed by the
 challenger, not mechanically proved by the program. Publication uses a trusted
-campaign agent; the path/byte scope and candidate inspection are instructions,
+campaign agent; the path/byte scope and same-slug conflict rule are instructions,
 not an independent filesystem or diff-enforcement layer. Tests exercise pinned
 blob export and scripted Gödel transitions. They do not run the retrieval
 services or adopt a live campaign candidate.
