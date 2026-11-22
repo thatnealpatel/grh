@@ -12,6 +12,8 @@ Put $x=\log|g|_{\mathbb Q}$, $L=\log p$, and $H_s=L^2(\mathbb R,(1+x^2)^{s/2}\,d
 
 **A consequence for the cutoff carvings.** Theorem 11.1.2.1(2), p. 480, uses closures in (11.1.2.6) taken *after* multiplying by $\rho_{\Lambda,+}$ or $\rho_\Lambda$ from (9.3.3.4)–(9.3.3.5), p. 428. Take $S$ to contain only the infinite place and take $S_i=\varnothing$, $S_{i'}=\{p\}$. Let $E$ denote the radial theta image. In both cases the indicator vanishes below $x=-\log\Lambda$. Shift the compactly supported section $J:u\mapsto wu$ by a sufficiently negative integer multiple of $L$, so $PJ=\operatorname{Id}$ and $M_\rho J=0$. For any $f\in H_s$, $f-JPf\in\ker P$ and $M_\rho(f-JPf)=M_\rho f$. Since $DE$ is dense in $\ker P$, it follows that $\overline{M_\rho DE}=M_\rho H_s=\overline{M_\rho E}$. Here $M_\rho H_s$ is closed because the indicator defines a projection. In this case the cutoff inclusion is never strict, although the uncut closure inclusion is strict by surjectivity of $P$. This tests the strictness claim for the specified indicator cutoffs, not an independent construction on a Paley–Wiener level.
 
+For a direct proof on genuine inputs, including both telescopes and the effect of the global projections, see [the one-prime cut range](trace-cut-range-q.md). It does not require the ambient density or the section used above.
+
 ## Genuine global theta lifts
 
 On the positive real section with all finite components $1$, the global theta sum (2.2.3.1), pp. 81–82, of $b_\infty\otimes\mathbf1_{\widehat{\mathbb Z}}$ is
