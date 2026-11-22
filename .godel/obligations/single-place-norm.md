@@ -1411,24 +1411,99 @@ on a fresh file importing `Theorems.FiniteBoxTraceDual` and checking
 `@Masullo.mem_traceDual_finiteIdeleIdeal_iff` and
 `@Masullo.finiteBox_tracePhase_eq_diagonal` with `#check` and `#print axioms`.
 
-**Next: Match the centered masses.** For the actual local additive
-measures $\nu_v$ of `finiteCompletionNormalizedHaar`, prove that the
-real masses $\nu_v(g_v\mathcal O_v)$ equal one off a finite set and
+#### Centered finite-box mass and trace covolume
+
+For any number field $K$ and any finite idele $g$, set $I=I(g)$ and let
+$m_v(g)=\nu_v(g_v\mathcal O_v)$ be the real mass for the actual local
+normalized **additive** Haar measure. In
+[`Theorems.FiniteBoxCenteredMass`](../../Proofs/Theorems/FiniteBoxCenteredMass.lean),
+`finiteBox_centeredMass_finprod` proves that all but finitely many $m_v(g)$
+equal one, and identifies their product with the reciprocal of the
+associated ideal lattice covolume in `archimedeanTraceMeasure K`.
+`finiteBox_centeredMass_finprod_eq_absNorm` gives the arithmetic form:
 
 $$
-\prod_{v<\infty}\nu_v(g_v\mathcal O_v)
+\prod_{v<\infty}m_v(g)
 = \frac{1}{\operatorname{covol}_{\nu_\infty}(L_I)}
 = \frac{1}{N(I)\sqrt{|D_K|}}.
 $$
 
-Definition A.3.1.2 and Lemmas A.3.1.3–4, PDF p. 556, specify the
-normalization and dilation. Use the local integer mass, the arithmetic
-product for the different, local additive Haar scaling by the finite
-idele norm, and `covolume_archimedeanIdealLattice_traceMeasure`.
-`Lemmas.FiniteIdeleIdealNorm` already proves the finite norm comparison
-internally as `absNorm_inv_finiteIdeleIdeal`.
-`prod_finiteCompletionMultiplicativeHaar_unitMass` is an arithmetic
-product with the same integer-ball factors by their formulas. Compare
-the scalars, not the two measures. The scalar product is not yet a
-restricted-product measure or Fourier integral; those assembly steps
-and the ramified test decomposition remain open.
+The endpoints use canonical Borel measures, with no auxiliary
+measurable-space, principality, integrality, or unramified hypotheses.
+
+Definition A.3.1.2(1)–(3), (A.3.1.2), PDF p. 556, stipulates trace
+measure at infinity and the inverse square root of the local different
+norm at each finite place. The proof of Lemma A.3.1.3 on that page
+multiplies the calibrated masses at the **unit** box. Lemma A.3.1.4,
+(A.3.1.4), cites the dilation formula for **global** Haar and Borel
+sets. It does not give the local additive box computation used here.
+To replace this appeal for the lattice proof of Theorem 2.2.3.2 and
+Remark 2.2.3.3 (p. 82), Lean proves the needed local equality directly:
+`finiteCompletionNormalizedHaar_real_smul_integers` gives
+$\nu_v(b\mathcal O_v)=|b|_v\nu_v(\mathcal O_v)$ for every $b\ne 0$.
+For integral $b$ the box is a maximal-ideal power. The prime-power
+quotient equivalence gives index $q_v^{\operatorname{ord}_v(b)}$, and
+additive cosets give the mass ratio. For nonintegral $b$ apply that case
+to $b^{-1}$ and the Haar pushforward by multiplication by $b^{-1}$.
+
+The product calculation compares the **scalars** at the unit box with
+`prod_finiteCompletionMultiplicativeHaar_unitMass`; no identification
+of the measures is made. The exceptional set includes the support of
+the different as well as the places where $|g_v|_v\ne 1$. The product
+of the dilation factors is $N(I^{-1})$, by `absNorm_inv_finiteIdeleIdeal`;
+`covolume_archimedeanIdealLattice_traceMeasure` supplies the trace
+covolume. These source readings are provisional (pinned Markdown and
+numbered PDF layout, without rendered-page inspection).
+
+Writer check in Yah session `01a20466-63f1-711c-8351-a29ff9765c84`,
+assigned base `a7b18ef844a89902e35499a5e8350b10f4943fd6`, Lean `v4.36.0`,
+Mathlib `fc4f59e577feb1a4956671bc04ac18aaaf8cd842`: the following actual
+build passed (8391 jobs):
+
+```sh
+lake build --wfail +Lemmas.AddSubgroupHaarIndex \
+  +Lemmas.FiniteCompletionNormalizedHaar +Lemmas.FiniteCompletionCodifferentMass \
+  +Lemmas.FiniteIdeleIdealNorm +Theorems.FiniteBoxCenteredMass \
+  +Theorems.FiniteCompletionFourierSquare +Theorems.FiniteCompletionFourierMellin \
+  +Theorems.IdeleGaussianThetaInversion
+```
+
+A fresh `lake env lean` file importing the selected modules together
+checked `@` signatures and printed axioms for both box endpoints, the
+local dilation theorem, `absNorm_inv_finiteIdeleIdeal`, the extracted
+`measure_eq_relIndex_mul`, and the existing `finiteCompletion_codifferent_measure`.
+Each depended exactly on `propext`, `Classical.choice`, and `Quot.sound`.
+This is writer evidence; exact-candidate checks and independent statement
+review are the owning agent's landing checkpoints.
+
+**Next: Compute the finite Fourier factors of a translated box.** For
+$a\in\mathbf A_{K,f}$, $g\in\mathbf A_{K,f}^{\times}$ and $y\in K$,
+identify the actual local integral
+
+$$
+\int_{a_v+g_v\mathcal O_v}\chi_v(y_vt)\,d\nu_v(t)
+= \chi_v(y_va_v)\,m_v(g)\,
+  1_{\{z:\,\chi_v(zg_v\mathcal O_v)=1\}}(y_v),
+$$
+
+where the set on the right is the local annihilator and the sign is
+positive by the corrected pairing used in the finite factors. Use
+translation invariance and the character integral over the measurable
+additive subgroup $g_v\mathcal O_v$. Example A.3.1.10, (A.3.1.8),
+p. 558 gives the centered integer-ring support, not this arbitrary
+translated and dilated integral. For diagonal $y$ the actual local
+integrals must equal one off finitely many places, **also** off the
+trace-dual support, to take a `finprod` without silently using its
+infinite-support default. Cofinite integrality of the diagonal $y$ and
+of the center, the finite-idele norm support, and the different support
+provide a candidate exceptional set. Then use
+`mem_traceDual_finiteIdeleIdeal_iff`, `finiteBox_tracePhase_eq_diagonal`,
+and the mass identity to evaluate the product as zero off $I^\vee$,
+or as the positive shift phase times the reciprocal trace-measure
+covolume on $I^\vee$.
+
+The scalar product proved here is not a restricted-product measure or
+a global Fourier integral. Identifying that integral with the product,
+matching ordinary-volume Poisson to the trace-measure Archimedean
+Fourier integral, and applying the resulting inversion to the ramified
+Gaussian remain open.

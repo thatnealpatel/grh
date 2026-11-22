@@ -40,7 +40,7 @@ private theorem absNorm_eq_finprod_count (j : Jˣ) :
 
 /-- The finite part of the product norm is the absolute norm of the inverse fractional ideal.
 The inverse accounts for the local convention that a uniformizer has norm `1 / q_v`. -/
-private theorem absNorm_inv_finiteIdeleIdeal (f : Fˣ) :
+public theorem absNorm_inv_finiteIdeleIdeal (f : Fˣ) :
     (FractionalIdeal.absNorm ((finiteIdeleIdeal K f)⁻¹ : J) : ℝ) = ‖(f : F)‖ := by
   rw [← Units.val_inv_eq_inv_val, absNorm_eq_finprod_count,
     NumberField.FiniteAdeleRing.norm_eq_finprod_of_unit]
