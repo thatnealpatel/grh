@@ -3,6 +3,7 @@ package main
 
 import (
 	"context"
+	_ "embed"
 	"errors"
 	"fmt"
 	"os"
@@ -12,6 +13,9 @@ import (
 	"patel.codes/godel"
 	"patel.codes/grh/internal/accepted"
 )
+
+//go:embed source-revision.txt
+var archiveRevision string
 
 func main() {
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
@@ -29,11 +33,10 @@ func run(ctx context.Context) error {
 	if err := accepted.Enter(ctx, "companion"); err != nil {
 		return err
 	}
-	// Enter leaves us in the durable
-	// cmd/companion directory, which Gödel
-	// uses for both its history identity
-	// and the next go run . launch.
-	selector, improve := companionNodes()
+	// Enter leaves us in the durable cmd/companion
+	// directory, which Gödel uses for both its history
+	// identity and the next go run . launch.
+	selector, improve := companionNodes(archiveRevision)
 	result, err := godel.New(goal).Run(ctx, &godel.Params{Node: selector, Loop: true, SelfImprove: improve})
 	if err != nil {
 		return err

@@ -9,7 +9,7 @@ import (
 )
 
 func TestSelectorNext(t *testing.T) {
-	selector, improve := companionNodes()
+	selector, improve := companionNodes("")
 	yahPrompt(t, selector)
 	if !strings.Contains(yahPrompt(t, improve), "this companion's run history") || improve.Next != nil {
 		t.Fatal("expected a separate companion improver leaf")
@@ -46,12 +46,46 @@ func TestSelectorNext(t *testing.T) {
 }
 
 func TestSelectorNextRejectsInvalidOutput(t *testing.T) {
-	selector, _ := companionNodes()
+	selector, _ := companionNodes("")
 	for _, text := range []string{"", "AUDIT", "PRODUCE\n \t\n", "AUDIT or PRODUCE\nCheck this", "REPORT\nCheck this", "\nAUDIT\nCheck this"} {
 		worker, err := selector.Next(godel.Result{Text: text})
 		if err == nil || worker != nil {
 			t.Errorf("Next(%q) = (%v, %v), want an error and no worker", text, worker, err)
 		}
+	}
+}
+
+func TestLaunchRevisionInAllPrompts(t *testing.T) {
+	const label = "Gödel launch source commit: "
+	const placeholder = "$Format:%H$"
+	for _, tt := range []struct {
+		name, input, want string
+	}{
+		{name: "archive", input: strings.Repeat("a1", 20) + "\n", want: strings.Repeat("a1", 20)},
+		{name: "checkout", input: placeholder + "\n"},
+		{name: "malformed", input: strings.Repeat("z", 40)},
+	} {
+		t.Run(tt.name, func(t *testing.T) {
+			selector, improve := companionNodes(tt.input)
+			nodes := []*godel.Node{selector, improve}
+			for _, branch := range []string{"AUDIT", "PRODUCE"} {
+				worker, err := selector.Next(godel.Result{Text: branch + "\nCheck this."})
+				if err != nil {
+					t.Fatal(err)
+				}
+				nodes = append(nodes, worker)
+			}
+			for i, node := range nodes {
+				prompt := yahPrompt(t, node)
+				if tt.want != "" {
+					if !strings.HasPrefix(prompt, label+tt.want+".") {
+						t.Errorf("node %d did not report the archive revision", i)
+					}
+				} else if strings.Contains(prompt, label) || strings.Contains(prompt, placeholder) {
+					t.Errorf("node %d reported an unverified archive revision", i)
+				}
+			}
+		})
 	}
 }
 
