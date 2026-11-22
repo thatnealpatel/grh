@@ -9,7 +9,6 @@ import (
 	"io"
 	"os"
 	"os/signal"
-	"slices"
 	"strings"
 	"syscall"
 
@@ -34,14 +33,10 @@ func main() {
 }
 func run(ctx context.Context) error {
 	if len(os.Args) > 1 {
-		switch os.Args[1] {
-		case "check":
+		if os.Args[1] == "check" {
 			return checkProof(ctx, os.Stdout, os.Args[2:])
-		case "audit-local":
-			return auditLocal(ctx, os.Stdout, os.Stderr, os.Args[2:])
-		default:
-			return fmt.Errorf("unknown argument %q: usage: godel [check|audit-local]", os.Args[1])
 		}
+		return fmt.Errorf("unknown argument %q: usage: godel [check]", os.Args[1])
 	}
 	if err := accepted.Enter(ctx, "godel"); err != nil {
 		return err
@@ -69,16 +64,4 @@ func checkProof(ctx context.Context, out io.Writer, args []string) error {
 	}
 	_, err = fmt.Fprintf(out, "Designated worker built and audited %s for: %s\n", args[0], strings.Join(args[1:], ", "))
 	return err
-}
-
-func auditLocal(ctx context.Context, out, diagnostics io.Writer, args []string) error {
-	sep := slices.Index(args, "--")
-	if sep < 2 || sep == len(args)-1 {
-		return errors.New("from the integration workspace root: go run ./cmd/godel audit-local <full-commit-id> <module> [...] -- <declaration> [...]")
-	}
-	root, err := os.Getwd()
-	if err != nil {
-		return err
-	}
-	return worker.CheckLocal(ctx, root, args[0], args[1:sep], args[sep+1:], out, diagnostics)
 }

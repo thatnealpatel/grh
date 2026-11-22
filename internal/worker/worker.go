@@ -77,7 +77,7 @@ func Check(ctx context.Context, root, revision string, decls []string) error {
 		return err
 	}
 	stamp := fmt.Sprintf("%s %x", revision, digest.Sum(nil))
-	args := []string{"sh", "-c", remote + auditSource(modules, decls, false) + "EOF_GRH_AUDIT\n", "grh-check", strings.TrimSpace(string(boot)), fmt.Sprintf("%x", digest.Sum(nil)), stamp}
+	args := []string{"sh", "-c", remote + auditSource(modules, decls) + "EOF_GRH_AUDIT\n", "grh-check", strings.TrimSpace(string(boot)), fmt.Sprintf("%x", digest.Sum(nil)), stamp}
 	cmd := exec.CommandContext(ctx, transport, append(args, modules...)...)
 	cmd.Stdin = f
 	cmd.WaitDelay = 2 * time.Second
@@ -96,7 +96,7 @@ func Check(ctx context.Context, root, revision string, decls []string) error {
 	if !ok || string(receipt) != stamp {
 		return errors.New("missing exact candidate build receipt")
 	}
-	if err := audit(msgs, decls, false); err != nil {
+	if err := audit(msgs, decls); err != nil {
 		return fmt.Errorf("audit %s: %w", revision, err)
 	}
 	return ctx.Err()
@@ -131,12 +131,9 @@ exec lake env lean --json --stdin <<'EOF_GRH_AUDIT'
 // Limit diagnostics returned to the workflow after a build or audit failure.
 func tail(b []byte) string { return strings.TrimSpace(string(b[max(0, len(b)-2048):])) }
 
-const (
-	moduleReceipt   = "checked project declarations"
-	signaturePrefix = "endpoint signature '"
-)
+const moduleReceipt = "checked project declarations"
 
-func auditSource(modules, decls []string, withTypes bool) string {
+func auditSource(modules, decls []string) string {
 	var b strings.Builder
 	b.WriteString("import Lean\n")
 	for _, m := range modules {
@@ -144,14 +141,8 @@ func auditSource(modules, decls []string, withTypes bool) string {
 	}
 	// A name from an imported dependency is
 	// not a project declaration. Likewise an
-	// unsafe implementation must not count
-	// as a mathematical result.
-	signatures := ""
-	if withTypes {
-		// Use the same signature printer as #check on a declaration name.
-		signatures = `    logInfo (m!"` + signaturePrefix + `{d}':\n" ++ .signature d)
-`
-	}
+	// unsafe implementation must not count as
+	// a mathematical result.
 	fmt.Fprintf(&b, `set_option pp.fullNames true
 open Lean in
 run_cmd do
@@ -173,22 +164,18 @@ run_cmd do
     unless modules.contains env.header.moduleNames[i]! do throwError m!"not a project endpoint: {d}"
     let some c := env.find? d | throwError m!"unknown endpoint {d}"
     if c.isUnsafe || c.isPartial then throwError m!"not a safe endpoint: {d}"
-%s  logInfo "%s"
-`, "`"+strings.Join(modules, ", `"), "`propext, `Classical.choice, `Quot.sound", "`"+strings.Join(decls, ", `"), signatures, moduleReceipt)
+  logInfo "%s"
+`, "`"+strings.Join(modules, ", `"), "`propext, `Classical.choice, `Quot.sound", "`"+strings.Join(decls, ", `"), moduleReceipt)
 	for _, d := range decls {
 		fmt.Fprintf(&b, "#print axioms %s\n", d)
 	}
 	return b.String()
 }
 
-func audit(output []byte, decls []string, withTypes bool) error {
+func audit(output []byte, decls []string) error {
 	pending := map[string]bool{}
-	pendingTypes := map[string]bool{}
 	for _, d := range decls {
 		pending[d] = true
-		if withTypes {
-			pendingTypes[d] = true
-		}
 	}
 	checked := false
 	dec := json.NewDecoder(bytes.NewReader(output))
@@ -201,14 +188,6 @@ func audit(output []byte, decls []string, withTypes bool) error {
 		}
 		if m.Severity == "information" && m.Data == moduleReceipt && !checked {
 			checked = true
-			continue
-		}
-		if data, ok := strings.CutPrefix(m.Data, signaturePrefix); ok {
-			name, body, found := strings.Cut(data, "':\n")
-			if !found || !pendingTypes[name] || strings.TrimSpace(body) == "" || m.Severity != "information" {
-				return errors.New("unexpected, empty, or duplicate Lean signature")
-			}
-			delete(pendingTypes, name)
 			continue
 		}
 		data, ok := strings.CutPrefix(m.Data, "'")
@@ -239,9 +218,6 @@ func audit(output []byte, decls []string, withTypes bool) error {
 		return errors.New("missing project declaration audit")
 	}
 	for _, d := range decls {
-		if pendingTypes[d] {
-			return fmt.Errorf("no type signature for %s", d)
-		}
 		if pending[d] {
 			return fmt.Errorf("no axiom report for %s", d)
 		}

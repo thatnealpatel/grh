@@ -85,7 +85,4 @@ For any replacement integration candidate, compare its exact diff against the ne
 
 ### Compatibility for pinned callers
 
-These entrypoints remain unchanged for in-flight prompts, not as routine landing gates:
-
-- From the repository root (uses a designated remote worker): `go run ./cmd/godel check <full-commit-id> <declaration> [<declaration> ...]`
-- From the integration workspace root: `go run ./cmd/godel audit-local <full-commit-id> <module> [...] -- <declaration> [...]`
+The designated remote worker check remains available for pinned callers, not as a routine landing gate. From the repository root, run `go run ./cmd/godel check <full-commit-id> <declaration> [<declaration> ...]`.
