@@ -1,7 +1,8 @@
 # An absolute majorant for the Hecke right line
 
-**Scope:** The two-index summation and integration step in (B.4.2.7)–(9),
-for any number field, without a meromorphic Hecke L-function interface.
+**Scope:** The finite Euler product differentiation, two-index
+summation, and integration in (B.4.2.5)–(9), for any number field,
+without a completed or meromorphically continued Hecke L-function.
 
 ## Source and needed estimate
 
@@ -46,7 +47,7 @@ $L^1$ norms, and equality of the integral of the sum with the sum of
 the integrals. The constant $i$ from $ds=i\,dt$ can be incorporated
 in $W$. The leading minus sign of $L'_v/L_v$ in (B.4.2.7) is not
 part of `finiteHeckeTerm`; the term represents the expansion of
-$-L'_v/L_v$, not yet a proven identity with it.
+$-L'_v/L_v$, as the following Lean theorem establishes.
 
 **Independent review:** `hecke-majorant-review` (`jZTGrdY`, read-only
 on `c20757d6ecd4e0634e2836bef2d6e79698f2d3fe`, Yah session
@@ -56,22 +57,73 @@ statements against SHA-256-verified extracts of pp. 122–124 and
 real power convention, and scope of the two-index interchange. This
 is a statement review, not visual verification or kernel evidence.
 
-## Next: Identify the checked series with the finite Euler factors
+## Finite Euler product and its logarithmic derivative
 
-First prove the local instance of (B.4.2.7): At each finite place,
-for $|z_v|\le1$ and $\Re s>0$, the factor
-$E_v(s)=(1-z_v\exp(-s\log q_v))^{-1}$ is nonzero and differentiable,
-and $-\operatorname{logDeriv}E_v(s)=\sum_{k\ge0}\texttt{finiteHeckeTerm}
-(z,s,(v,k))$. The bound $|z_v\exp(-s\log q_v)|<1$ permits the
-geometric sum; differentiate the local denominator by the chain rule.
-Then use the joint majorant on $\Re s\ge a>1$ to sum these local
-identities, retaining the sign and treating the finite Euler
-product separately from the Archimedean factors. Identifying that
-sum with the logarithmic derivative of the infinite product in
-(B.4.2.5)–(6) still requires product convergence, nonvanishing, and a
-differentiation argument. The Hecke character realization, contour
-identity, its continuation and growth premises, ramified Fourier
-calibration, and the global trace all remain separate obligations.
+[`Theorems.FiniteHeckeEulerProduct`](../../Proofs/Theorems/FiniteHeckeEulerProduct.lean)
+has two endpoints. `Masullo.finiteHeckeEulerFactor_logDeriv` proves, for
+$|z_v|\le1$ and $\Re s>0$, that $E_v(s)=(1-z_v\exp(-s\log q_v))^{-1}$
+is nonzero and differentiable and that the local positive-power series
+in (B.4.2.7) sums to $-\operatorname{logDeriv}E_v(s)$. At $z_v=0$ this
+means $E_v=1$ and a zero series; there is no constant-power term.
+`Masullo.finiteHeckeEulerProduct_logDeriv` proves nonvanishing and
+differentiability of $P(s)=\prod_v E_v(s)$ for $\Re s>1$, and identifies
+$-\operatorname{logDeriv}P(s)$ with the joint `HasSum` on places ×
+$\mathbb N$, not just an iterated series or an enumerated product.
+
+Masullo states compact-uniform convergence in Lemma 3.2.1.1,
+(3.2.1.2), and uses convergence in (B.4.2.5)–(7). Convergence just on
+the integration line would not justify complex differentiation, and
+compact-uniform product convergence alone does not give a whole-line
+majorant for the differentiated series. The Lean proof treats these
+separately. On $\Re s\ge a>1$, $|E_v-1|\le 2q_v^{-a}$; the
+first-power slice of the checked majorant bounds the sum of these
+deviations, since $\log q_v\ge\log 2$. The bound supplies the locally
+uniform net of finite products (`finiteHeckeEulerFactor_hasProdLocallyUniformlyOn`)
+and the nonzero limit (`finiteHeckeEulerProduct_ne_zero`). Mathlib's
+`logDeriv_tprod_eq_tsum` then applies on the open half-plane; the joint
+majorant and absolute Fubini identify the resulting sum with the
+positive-power series. The checked integration theorem applies to
+this series with any integrable right-line weight.
+
+**Independent review:** `hecke-euler-review` (`iwBtyxB`, read-only on
+`861ddae46e7a84e194d99880844c5fc1e4c05f3a`, Yah parent session
+`01a200c1-19b3-787f-899e-9af93b9f2bce`) checked the two statements
+against the same pinned PDF and Mathlib. In particular, (3.2.1.1)
+is the denominator, not the reciprocal; (B.4.2.7) says “every finite
+place,” but the coefficient is defined in §3.2.1 only at unramified
+places. The unit factor at an omitted place resolves this scope issue.
+Extraction does not reliably distinguish conjugation bars; the
+reflected character needs conjugate coefficients at the same $s$,
+not conjugation of the whole function value at $s$. These source
+findings are provisional pending rendered-page inspection.
+
+## Next: Realize the coefficients of a unitary Hecke character
+
+In (3.2.1.1), p. 122, the coefficient is the local character on a
+uniformizer, and the normalized absolute value of that uniformizer
+is $q_v^{-1}$. Use the pinned Mathlib `NumberField.HeckeCharacter`
+on `IdeleClassGroup (𝓞 K) K`, with the hypothesis that its values
+have norm one. Define $z_v$ by `χ.localValue v` on
+`χ.IsUnramifiedAt v` and zero otherwise. Prove the modulus bound and
+identify the Euler denominator at *every* unramified uniformizer with
+$1-\chi_v(\pi_v)|\pi_v|_v^s$; show the omitted factors are $1$.
+Then specialize the checked global `HasSum` to this product. The pin
+already has `restrict`, `IsUnramifiedAt.localValue_eq`, and
+`localPolynomial` in `NumberTheory/NumberField/HeckeLFunction.lean`,
+and `FinitePlace.norm_def` in `Completion/FinitePlace.lean` links
+completion norm to the discrete valuation. These are source-checked
+interfaces, not an elaborated bridge. Mathlib's `χ.LSeries` there is
+an arithmetic-function Dirichlet series: An identification with this
+analytic product needs its own proof if that interface is used.
+
+The Archimedean factors in (3.2.1.3)–(5), completed product,
+continuation, divisor and conductor data, and contour growth premises
+in (B.4.2.1)–(4) are not provided by the finite series. Neither are
+the Mellin evaluations (B.4.2.10)–(11), the ramified Fourier terms,
+or the global trace comparison. For the contour reflection, check
+the orientation of (3.2.1.6) against (B.4.2.3): Differentiating
+$L(1-s,\bar\chi)=\epsilon(s,\chi)L(s,\chi)$ gives a minus sign
+on the reflected logarithmic derivative before contour reversal.
 
 ## Reproduce the endpoint audit
 
@@ -81,7 +133,8 @@ with the exact candidate ID:
 
 ```sh
 go run ./cmd/godel audit-local "$CANDIDATE" \
-  Lemmas.FiniteHeckeMajorant Theorems.FiniteHeckeRightLine -- \
-  Masullo.finiteHecke_right_line_majorant \
-  Masullo.finiteHecke_right_line_integrals
+  Lemmas.FiniteHeckeEulerBounds Theorems.FiniteHeckeEulerProduct -- \
+  Masullo.finiteHeckeEulerFactor_hasProdLocallyUniformlyOn \
+  Masullo.finiteHeckeEulerFactor_logDeriv \
+  Masullo.finiteHeckeEulerProduct_logDeriv
 ```
