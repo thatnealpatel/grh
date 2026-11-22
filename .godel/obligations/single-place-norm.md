@@ -1660,6 +1660,15 @@ Replay: `lake build --wfail +Lemmas.AdeleFiniteStageMeasure
 +Theorems.AdeleFiniteStageHaar +Theorems.FiniteBoxPoisson`. Import the three
 modules together, `#check @` and `#print axioms` on the stage definition and
 Haar theorem, and `#print Masullo.adeleFiniteStageHaar` for the factors.
+The owning Yah ran these checks on adopted candidate
+`5ebb1863c3039c8c8d54c428f6624b4bae43a788`, based on
+`0342564585491fbce6725c6e1f7b65f07d239f42` (session
+`01a2048a-b0d1-738f-834c-e3fa0194075b`; independent reviewer `KDWPsmK`).
+The built statement has exactly the omitted mass premise above. The
+joint import also checked by `rfl` that both groups of local factors use
+the explicit canonical Borel Haar of `finiteBoxLocalFourier`, and that
+the omitted factors are comaps. All eight inspected declarations used
+only `propext`, `Classical.choice`, and `Quot.sound`.
 
 **Next: Compare the stage products with a single global additive Haar
 measure on the cofinal stages.** Exhibit a finite exceptional set $E$

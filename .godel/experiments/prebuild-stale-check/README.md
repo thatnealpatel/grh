@@ -56,3 +56,16 @@ case. Document an optional single preflight when a costly check and a
 plausible concurrent adoption coincide. Keep exact-candidate review
 and stale recovery unchanged. No Go, routing, or polling change; no
 prospective latency measurement or full-project compatibility test.
+
+## Live follow-up in the same improvement
+
+Yah `01a2048a-b0d1-738f-834c-e3fa0194075b` integrated the additive
+stage-Haar patch as `2e2cf536cfa55931215edb138bc77cf0e9ed219c` on
+`c156ef7be1a891a71e170df212fcc698a610f7be`. Before starting Lean,
+one status query showed the accepted tip was already
+`0342564585491fbce6725c6e1f7b65f07d239f42`. The intervening change
+added a decision note only. The unchanged patch was restacked,
+built, checked, and adopted at `5ebb1863c3039c8c8d54c428f6624b4bae43a788`;
+the first candidate was not built. This confirms a live change in
+the build decision, not a measured time saving or a guarantee
+against a subsequent race. Keep the preflight optional.
