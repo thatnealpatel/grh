@@ -2860,26 +2860,64 @@ reading uses the pinned Markdown and numbered PDF layout, with
 independent raster spot checks of the displays (not full rendered pages);
 the footnote prose remains provisional.
 
-**Next obligation:** Center the log coordinate by $y=x+\delta/2$ and
-split at $y=0$. If
-$I(s)=\int_0^\infty P(y-\delta/2)e^{sy}\,dy$,
-prove that $I$ is entire and that, for $\Re s>1$, the checked Euler
-integral is
+### Checked centered Mellin reflection and left vertical line
+
+[`centeredLogMellin_split`](../../Proofs/Lemmas/CenteredLogMellinReflection.lean)
+centers by $y=x+\delta/2$ and splits at $0$. The negative half-line uses
+the checked reflection. The positive half-line integral $J$ is entire:
+Use the already integrable weight at $s=2$ on the bounded initial interval
+and large-norm decay only where the original argument is nonnegative.
+For $\Re s>1$ the unscaled integral is
 
 $$
-L(s)=e^{(1-s)\delta/2}
-\left(I(s)+I(1-s)+\frac{a}{s-1}-\frac{a}{s}\right).
+\int_{\mathbb R}P(x)e^{sx}\,dx = e^{-s\delta/2}
+\left(J(s)+J(1-s)+\frac{a}{s-1}-\frac{a}{s}\right).
 $$
 
-The negative half-line substitution uses the proved reflection, rather
-than the decay estimate alone. For the positive half-line, beyond the
-fixed shift use the checked large-norm decay; on the remaining bounded
-interval use the corrected profile integrability and add back the two
-bounded zero terms. The pole-cleared identity theorem then transfers the
-symmetric expression to the **same** continuation used on the horizontal
-edges. This must give the germ $L(1-s)=e^{\delta(s-1/2)}L(s)$ at each
-$s=-1+it$, not just equality of two values there. The right-line
-nonvanishing, `completed_logDeriv_reflection`, and the triangle inequality
-then give left-line nonvanishing and growth. Signed residues, contour
-exhaustion, the all-height zero sum in (B.4.2.2), and the global trace
-comparison remain open.
+[`completedHecke_one_centeredMellin`](../../Proofs/Theorems/CompletedHeckeOneReflection.lean)
+uses the raw integral's $D^{-1/2}$ normalization from
+`exists_discriminantNormalizedIdeleHeckeGaussian_correctedRadialMellin`.
+Multiplying by $\sqrt D$ gives $e^{(1-s)\delta/2}$ in place of
+$e^{-s\delta/2}$. The two pole-cleared numerators are entire and agree
+on $\Re s>1$, so the identity theorem gives this formula for the **given**
+continued $L$ off $0,1$, not just for a new continuation. In particular
+it applies to the $L,H$ furnished by
+`exists_completedHeckeEulerProduct_one_gaussianContinuation_horizontal`.
+`completedHecke_one_reflection` gives the germ
+$L(1-s)=e^{\delta(s-1/2)}L(s)$ near each ordinary point. On the left
+line $s=-1+it$, this transfers nonvanishing from $2-it$;
+`completed_logDeriv_reflection` gives
+$L'/L(s)=-(L'/L)(1-s)-\delta$ there. The existing right-line bound then
+gives `completedHecke_one_leftLine_nonzero_logDeriv_bound`, with the
+same linear order in $|t|$. None of these endpoints identifies the
+assigned Lean values at $0,1$ with meromorphic limits.
+
+**Source and review:** The manuscript supplies the correction and radial
+input at (2.2.3.7), p. 83, (2.2.5.2), p. 95, (2.2.5.9), p. 97, and
+Theorem 3.2.2.1(3)/(3.2.2.4)–(5), p. 125. It compares integrals by the
+identity theorem after (3.2.2.11), p. 127. The centered formula with both
+zero contributions, its Euler normalization, and the exact exponential
+factor replace the use of unspecified epsilon in (3.2.1.6), p. 123, and
+the sign error in (B.4.2.3), p. 614; the latter equation's footnote 13
+asks for a precise epsilon reference. The signs here give the plus
+conductor term in (B.4.2.4), p. 615, when the upward left integral is
+subtracted. These source readings use pinned Markdown and numbered PDF
+layout and are provisional as readings of the rendered pages. Independent
+Yah reviewer `aaegcbd` checked the four fixed statements, normalizations,
+and this source correspondence. Owning Yah session
+`01a205a6-2328-79c2-827b-75cc5a01356a` records the independent review and
+exact candidate, base, build, joint signatures, axiom checks, and adoption.
+
+**Next obligation:** Establish the signed finite-rectangle residue sum
+for this same trivial $L$ and the compact-log Mellin test used in
+(B.4.2.2), p. 614. Use the horizontal witnesses and the two checked
+vertical edges to exclude boundary zeros. Show that the pole-cleared
+numerator $H$ is nonzero at both $0,1$ (the centered proof identifies
+its values as $\sqrt D\,a$ and $a$, but the public formula currently
+hides the Haar origin and nonvanishing of $a$). Then the logarithmic
+derivative contributes weight $-1$ at each of those points and the
+vanishing order at each other zero. Reuse the signed-divisor rectangle
+machinery of `Proofs/Props/RectangleResidue.lean`, checking the finite
+rectangle hypotheses against the rational and Dirichlet examples.
+Passage to the limit, the all-height zero sum, and the global trace
+comparison remain separate obligations. This does not prove RH or GRH.
