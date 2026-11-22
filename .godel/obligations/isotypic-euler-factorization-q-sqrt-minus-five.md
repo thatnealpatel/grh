@@ -591,13 +591,43 @@ the inherited source reading. Unitarity is needed only for the global
 Euler-product transfer; it is already available for the
 [normalized character](#checked-normalized-class-character).
 
+### Checked grouped denominator at two
+
+[`IdealClassPrimeTwoFactor`](../../Proofs/Theorems/IdealClassPrimeTwoFactor.lean)
+proves `Masullo.qSqrtNegFive_heckeRationalDenominator_at_two` for the
+constructed `qSqrtNegFiveClassCharacter`, with no additional hypotheses.
+At the bundled rational prime $2$, the actual grouped denominator is
+$(1-\chi_{-4}(2)X)(1-\chi_5(2)X)$ in $\mathbb C[X]$.
+`Masullo.qSqrtNegFive_heckeRationalDenominator_at_two_eq_one_add_X`
+identifies it as $1+X$.
+
+The [singleton reduction](#checked-grouped-denominator-at-five) uses
+[contraction, uniqueness, and absolute norm two](#checked-arithmetic-at-two)
+to reduce the grouped product to one residue-degree-one factor. Its
+coefficient is $-1$ by the [checked normalization](#checked-normalized-class-character).
+The Dirichlet coefficients are computed separately: $2$ is a nonunit
+modulo $4$ and a nonzero nonsquare modulo $5$, giving $(0,-1)$.
+A fresh import checks the specialization for any bundled prime with
+value $2$. Neither endpoint takes a separate unitarity assumption.
+
+This is arithmetic input to Masullo's finite product, not a repair of
+the switch on p. 309. The [accepted rendered reading](#manuscript-interface)
+of PDF p. 122, (3.2.1.1), and p. 124, Definition 3.2.1.4, (3.2.1.7),
+retains the place because the character, not the field, determines
+ramification. The pullback is trivial on local units by the
+[checked realization and local-unit criterion](#checked-idelic-realization-and-local-factors),
+using the inherited definition after (3.1.2.6), p. 121. No new visual
+reading was needed.
+
 ### Remaining grouped identity
 
 The all-prime grouped local polynomial identity for the
 [constructed quadratic class character](#checked-normalized-class-character)
 is still open in Lean. The [split row](#checked-grouped-split-prime-denominator),
-[inert row](#checked-grouped-inert-prime-denominator), and
-[row at $5$](#checked-grouped-denominator-at-five) are complete.
+[inert row](#checked-grouped-inert-prime-denominator),
+[row at $5$](#checked-grouped-denominator-at-five), and
+[row at $2$](#checked-grouped-denominator-at-two) are complete.
+The remaining step is to assemble these cases in Lean.
 [`HeckeDirichletFactorization`](../../Proofs/Theorems/HeckeDirichletFactorization.lean)
 proves `Masullo.finiteHeckeCharacterEulerProduct_eq_dirichlet_of_local`
 by regrouping the convergent product over the finite fibers of
@@ -625,10 +655,9 @@ pp. 800–801, identified in its [holomorphy section](isotypic-inverse-range-q-s
 
 **Open Lean premise for the Hecke transfer:** Instantiate the all-prime
 grouped polynomial identity for the constructed idèle-class character.
-**Next arithmetic check:** At $2$, apply the [singleton degree-one
-reduction](#checked-grouped-denominator-at-five) to the [checked
-uniqueness, contraction, and norm](#checked-arithmetic-at-two). Match
-the normalized character's $1+X$ denominator with the Dirichlet
-coefficients $(0,-1)$. The all-prime assembly remains separate.
+**Next arithmetic check:** Prove the all-prime identity by checking
+$p=2$ and $p=5$ first, then branching on whether $-5$ is a square
+in $\mathbb F_p$ to apply the split or inert row. This would supply
+`hlocal` for the existing Hecke transfer.
 The explicit product's circle growth and common-height estimate are
 already unconditional in Lean.
