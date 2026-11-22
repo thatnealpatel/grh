@@ -73,7 +73,7 @@ func run(ctx context.Context) error {
 		}
 	}()
 	g := godel.New("Formalize individual Masullo passages from Walk with checked, independently reviewed campaign landings.")
-	_, err = g.Run(ctx, &godel.Params{Node: startNode(ctx, repo, repo.tip, ledger, batchCap, &request), Loop: false, SelfImprove: nil})
+	_, err = g.Run(ctx, &godel.Params{Node: startNode(ctx, repo, repo.tip, ledger, batchCap, &request), Loop: true, SelfImprove: nil})
 	return err
 }
 
