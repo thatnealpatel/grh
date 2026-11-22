@@ -72,6 +72,8 @@ If this run leaves useful work unadopted, identify in stdout the clean saved rev
 
 For delegated work, integrate the writer's finalized campaign output, not a copy from the live dispatch workspace.
 
+For source audits, keep note drafts in scratch until the reviews needed for the verdict have arrived. Then refresh campaign status and assemble the notes in a direct workspace on the current accepted base, reconciling any intervening shared-note changes. Before integrating, check the workspace's changed paths for unintended files, including patch backups from conflict recovery.
+
 For a multi-module Lean change, preflight the assembled candidate with a targeted build of the endpoint modules using their actual imports, and check the public endpoints from a fresh import. Separate draft checks can miss visibility errors. This preflight does not replace the full exact-candidate audit required for adoption.
 
 Before finalizing, collect the outstanding reviews and checks you rely on, and cancel work you no longer need. Report landing status from the campaign's adoption result, not a reviewer's earlier snapshot. Only the last final response becomes the next run's input. If a late result reopens the turn, give a complete replacement handoff, not an update that depends on the earlier response.`
