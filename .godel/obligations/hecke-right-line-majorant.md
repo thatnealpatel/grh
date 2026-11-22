@@ -518,12 +518,61 @@ shifted-frequency expression in (A.3.1.5) or the real factor and product
 norm needed for the broader, partly provisional $S$-local comparison
 in the preceding modulus-three note.
 
-**Next bounded check:** Apply finite Plancherel to the general residue
-DFT to prove $|A|=p^{-n/2}$ in Lean. This would give the unit modulus of
-the central normalized quotient without choosing its phase. It does not
-build the local multiplicative-character extension or Lean zeta
-integrals, the finite-extension inverse-different and Haar comparison,
-or a global functional equation.
+### Central conductor Fourier modulus over $\mathbb Q_p$
+
+The [Lean endpoints](../../Proofs/Theorems/PadicConductorFourier.lean)
+add the size missing from the conductor-shell theorem. For every prime
+$p$, every $n\ge 0$, and every primitive
+`DirichletCharacter ℂ (p ^ n)`, `Masullo.padicConductorFourier_norm`
+proves
+$$
+\left|\operatorname{padicConductorFourier}(p,\chi,p^{-n})\right|
+=\frac{1}{\sqrt{p^n}}.
+$$
+This uses the inverse character, the negative-sign additive kernel, and
+additive Haar mass one on $\mathbb Z_p$. At $n=0$ it gives modulus
+one at frequency one; it does not assert the positive-level support
+characterization at level one.
+
+`Masullo.primitiveDirichletDFT_norm_one` is reusable at every positive
+modulus $N$ (`[NeZero N]`), not just prime powers. Put
+$B=\mathcal F(\chi^{-1})(1)$ for the unnormalized negative-sign DFT.
+Primitivity gives $\mathcal F(\chi^{-1})=B\chi$. Conjugating its defining
+sum at $1$ gives $\mathcal F(\chi)(-1)=\overline B$. Hence double DFT at
+$-1$ gives $B\overline B=N\chi^{-1}(1)=N$. The integral reduction at
+$a=1$ contributes the single factor $(p^n)^{-1}$. This proof does not
+use a global functional equation.
+
+**Manuscript scope.** For $n>0$, the unit-character conductor and
+normalization comparison in the [shell note above](#primitive-prime-power-conductor-shells-over-mathbb-q_p)
+apply, with trivial different and conductor norm $p^n$. The rendered
+reading of Masullo's (3.3.2.24), PDF p. 141, the normalized Gauss sum
+below (3.3.1.30), p. 136, and the relevant dual, Haar, and kernel
+conventions are inherited from the accepted notes above, including the
+review by `WNdLLkJ` (Yah `01a201d1-b153-77f9-960b-0aa6dfd16c95`).
+The worker read the prose following (3.3.2.24) in grayscale crops:
+It describes a root number of absolute value one independent of $s$.
+The current reviewer corroborated this by extraction, not an independent
+visual reading. The Lean result is independent of that prose reading.
+In the earlier **informal** forward-over-reflected quotient,
+$R_p(1/2)=p^{-n/2}/A$ with $A=\widehat f(p^{-n})$, so the new modulus
+makes its absolute value one. This does not identify the phase with
+Masullo's $\rho_0$, formalize either zeta integral, or treat finite
+extensions.
+
+**Statement review:** `ONimXXT` (transcript Yah
+`01a2029a-53c8-7475-8440-d5a8540e1b74`) checked both statements, the
+sign and residue-ball mass in the integral reduction, and why no
+hypothesis $n>0$ is needed for the modulus alone.
+
+**Next bounded check:** Prove in Lean that the primitive residue
+character restricted by reduction to $\mathbb Z_p^\times$ has exact
+positive conductor level $n$. Identify the reduction kernel with
+$1+p^n\mathbb Z_p$ and rule out factoring at a lower level by
+primitivity. This supplies the conductor identification for comparison
+with the manuscript's ramified hypothesis. The extension to
+$\mathbb Q_p^\times$, zeta-integral identities, phase comparison, and
+finite-extension and global steps remain separate.
 
 ### Separate global Fourier sign
 

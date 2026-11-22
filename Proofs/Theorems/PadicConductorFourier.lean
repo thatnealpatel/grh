@@ -5,6 +5,7 @@ public import Mathlib.Analysis.Fourier.ZMod
 
 import Lemmas.PadicBallPartition
 import Mathlib.MeasureTheory.Function.LocallyIntegrable
+import Mathlib.NumberTheory.MulChar.Lemmas
 import Mathlib.NumberTheory.Padics.ProperSpace
 
 /-!
@@ -13,7 +14,7 @@ import Mathlib.NumberTheory.Padics.ProperSpace
 The negative-sign additive Fourier integral of the inverse character on
 `ℤ_[p]ˣ`, extended by zero, is a normalized finite Fourier transform on the
 conductor ball. Primitivity and finite Fourier inversion give its exact
-nonvanishing shell.
+nonvanishing shell and the modulus of its central value.
 -/
 
 open scoped Padic ZMod
@@ -75,10 +76,9 @@ public theorem padicConductorTest_eq_zero_of_norm_ne_one (hn : 0 < n)
       PadicInt.isUnit_iff.mp ((isUnit_padicResidue p hn ⟨x, h⟩).mp hu)
   · rfl
 
-private theorem conj_padicResiduePhase (z : ZMod (p ^ n)) :
+private theorem conj_residuePhase {N : ℕ} [NeZero N] (z : ZMod N) :
     star (ZMod.stdAddChar z) = ZMod.stdAddChar (-z) := by
-  simp only [Complex.star_def, ZMod.stdAddChar_apply, ← Circle.coe_inv_eq_conj]
-  exact congrArg ((↑) : Circle → ℂ) (ZMod.toCircle.map_neg_eq_inv z).symm
+  simpa only [Complex.star_def] using (ZMod.stdAddChar.map_neg_eq_conj z).symm
 
 private theorem padicConductorFourier_sum (χ : DirichletCharacter ℂ (p ^ n)) (y : K) :
     padicConductorFourier p χ y =
@@ -155,21 +155,41 @@ public theorem padicConductorFourier_of_integral (χ : DirichletCharacter ℂ (p
     rw [ha]
     ring
   rw [padicStdAddChar_apply_of_scaled_integral p hj, map_mul, map_natCast, ZMod.natCast_zmod_val,
-    conj_padicResiduePhase p, smul_eq_mul, mul_comm]
+    conj_residuePhase, smul_eq_mul, mul_comm]
 
-private theorem padicConductorDFT (χ : DirichletCharacter ℂ (p ^ n)) (hχ : χ.IsPrimitive)
-    (k : ZMod (p ^ n)) :
-    𝓕 (χ⁻¹ : DirichletCharacter ℂ (p ^ n)) k = χ k * 𝓕 (χ⁻¹ : DirichletCharacter ℂ (p ^ n)) 1 := by
+private theorem primitiveDirichletDFT {N : ℕ} [NeZero N]
+    (χ : DirichletCharacter ℂ N) (hχ : χ.IsPrimitive) (k : ZMod N) :
+    𝓕 (χ⁻¹ : DirichletCharacter ℂ N) k = χ k * 𝓕 (χ⁻¹ : DirichletCharacter ℂ N) 1 := by
   have h := hχ.inv
   rw [h.fourierTransform_eq_inv_mul_gaussSum, h.fourierTransform_eq_inv_mul_gaussSum, inv_inv,
     ← mul_assoc, ← map_mul, mul_neg_one]
+
+/-- The counting-measure DFT of an inverse primitive character has modulus
+`√N` at `1`. Applying the DFT twice at `-1` gives `N`; covariance and
+conjugation identify that double transform with the squared amplitude. -/
+public theorem primitiveDirichletDFT_norm_one {N : ℕ} [NeZero N]
+    (χ : DirichletCharacter ℂ N) (hχ : χ.IsPrimitive) :
+    ‖𝓕 (χ⁻¹ : DirichletCharacter ℂ N) (1 : ZMod N)‖ = Real.sqrt (N : ℝ) := by
+  let A := 𝓕 (χ⁻¹ : DirichletCharacter ℂ N) (1 : ZMod N)
+  have hconj : 𝓕 χ (-1 : ZMod N) = star A := by
+    simp only [A, ZMod.dft_apply, smul_eq_mul, mul_neg, mul_one, star_sum, star_mul',
+      conj_residuePhase, neg_neg, MulChar.star_apply', inv_inv]
+  have hdf : 𝓕 (χ⁻¹ : DirichletCharacter ℂ N) = fun k ↦ A * χ k := by
+    funext k
+    rw [primitiveDirichletDFT χ hχ, mul_comm]
+  have hA : A * star A = (N : ℂ) := by
+    have h := congrFun (ZMod.dft_dft (χ⁻¹ : DirichletCharacter ℂ N)) (-1 : ZMod N)
+    simpa only [hdf, ZMod.dft_const_mul, hconj, neg_neg, map_one, smul_eq_mul, mul_one] using h
+  apply (sq_eq_sq₀ (norm_nonneg _) (Real.sqrt_nonneg _)).mp
+  rw [Real.sq_sqrt (Nat.cast_nonneg _), pow_two]
+  simpa only [norm_mul, norm_star, Complex.norm_natCast] using congrArg norm hA
 
 private theorem padicConductorDFT_one_ne_zero (χ : DirichletCharacter ℂ (p ^ n))
     (hχ : χ.IsPrimitive) : 𝓕 (χ⁻¹ : DirichletCharacter ℂ (p ^ n)) (1 : ZMod (p ^ n)) ≠ 0 := by
   intro hz
   have hzero : ZMod.dft (χ⁻¹ : DirichletCharacter ℂ (p ^ n)) = 0 := by
     ext k
-    rw [padicConductorDFT p χ hχ, hz, mul_zero]
+    rw [primitiveDirichletDFT χ hχ, hz, mul_zero]
     rfl
   rw [← map_zero ZMod.dft] at hzero
   have h := congrFun (ZMod.dft.injective hzero) (1 : ZMod (p ^ n))
@@ -181,7 +201,7 @@ public theorem padicConductorFourier_ne_zero_iff (hn : 0 < n)
     padicConductorFourier p χ y ≠ 0 ↔ ‖d * y‖ = 1 := by
   by_cases h : ‖d * y‖ ≤ 1
   · let a : O := ⟨d * y, h⟩
-    rw [padicConductorFourier_of_integral p χ y a rfl, padicConductorDFT p χ hχ, mul_ne_zero_iff,
+    rw [padicConductorFourier_of_integral p χ y a rfl, primitiveDirichletDFT χ hχ, mul_ne_zero_iff,
       mul_ne_zero_iff, and_iff_right (inv_ne_zero (pow_ne_zero _ (Nat.cast_ne_zero.mpr (NeZero.ne p)))),
       and_iff_left (padicConductorDFT_one_ne_zero p χ hχ), MulChar.apply_ne_zero_iff,
       isUnit_padicResidue p hn, PadicInt.isUnit_iff, ← PadicInt.norm_coe]
@@ -197,7 +217,20 @@ public theorem padicConductorFourier_unit (χ : DirichletCharacter ℂ (p ^ n))
   have hd : d ≠ 0 := pow_ne_zero _ (Nat.cast_ne_zero.mpr (NeZero.ne p))
   rw [padicConductorFourier_of_integral p χ _ (u : O) (by field_simp),
     padicConductorFourier_of_integral p χ _ 1 (by simp [hd]),
-    map_one, padicConductorDFT p χ hχ]
+    map_one, primitiveDirichletDFT χ hχ]
   ring
+
+/-- The central conductor-shell Fourier amplitude has modulus `1 / √(p ^ n)`
+for the negative-sign kernel and additive Haar mass one on `ℤ_[p]`.
+The modulus identity also holds at level one (`n = 0`). -/
+public theorem padicConductorFourier_norm
+    (χ : DirichletCharacter ℂ (p ^ n)) (hχ : χ.IsPrimitive) :
+    ‖padicConductorFourier p χ d⁻¹‖ = (Real.sqrt ((p : ℝ) ^ n))⁻¹ := by
+  have hd : d ≠ 0 := pow_ne_zero _ (Nat.cast_ne_zero.mpr (NeZero.ne p))
+  rw [padicConductorFourier_of_integral p χ _ 1 (by simp [hd]), map_one, norm_mul,
+    primitiveDirichletDFT_norm_one χ hχ, norm_inv, norm_pow, Complex.norm_natCast, Nat.cast_pow]
+  have hpos : 0 < (p : ℝ) ^ n := pow_pos (Nat.cast_pos.mpr (Fact.out : p.Prime).pos) _
+  nth_rw 1 [← Real.sq_sqrt hpos.le]
+  rw [pow_two, mul_inv_rev, mul_assoc, inv_mul_cancel₀ (Real.sqrt_pos.2 hpos).ne', mul_one]
 
 end Masullo
