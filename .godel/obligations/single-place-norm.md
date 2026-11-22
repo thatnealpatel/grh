@@ -2643,25 +2643,51 @@ and fresh joint signature, provenance, and axiom checks passed. The
 full signature report matched the reviewed candidate's, and the three
 endpoints use only `propext`, `Classical.choice`, and `Quot.sound`.
 
-**Next bounded Jensen step:** Specialize to the trivial character
-(identify $\lambda=0$ by uniqueness of the section phase), and prove,
-for the actual same $H$, $H(c_t)\ne0$ for $c_t=2+it$ and
-\[
+### Checked moving-disk Jensen count
+
+[`exists_completedHeckeEulerProduct_one_gaussianContinuation_zeroCount`](../../Proofs/Theorems/IdeleClassGaussianZeroCount.lean)
+uses the **same** continuation $L$ and entire numerator $H$ just
+constructed, specialized to the trivial Hecke character over any number
+field with the same Borel structures and ideal-class representatives.
+Uniqueness of the actual section phase gives $\lambda=0$, so
+$H(s)=(s-1)sL(s)$ off $0$ and $1$. For $c_t=2+it$, Lean proves
+$H(c_t)\ne0$ for every real $t$ and
+
+$$
 \exists C>0\ \forall t\in\mathbb R,\qquad
 \sum_{z\in\overline B(c_t,5),\ H(z)=0}\operatorname{ord}_z(H)
   \le C(1+|t|).
-\]
-Use the divisor on the closed inner disk to count full multiplicities,
-including boundary zeros. On the radius-six sphere use $-4\le\Re s\le8$
-and $|\Im s|\le |t|+6$ to obtain an envelope $M_t=C_0(1+|t|)^2$ with
-$C_0\ge1$. At the center the continuation agrees with the completed
-Euler product after pole clearing; use
-`completedHeckeEulerProduct_one_rightLine_lower_bound` for nonvanishing
-and `log_div_norm_poleCleared_completedHeckeEulerProduct_one_rightLine`
-for the Jensen cost $\log(M_t/\|H(c_t)\|)$, then apply
-`AnalyticOnNhd.sum_divisor_le` with radii $5$ and $6$ as in the
-[rational moving-disk count](rational-explicit-formula.md#checked-multiplicity-count-in-the-moving-disk).
-The checked strip estimate itself gives no zero count, slow growth of
-$L'/L$, left-contour reflection, or (B.4.2.2). General reflection,
-absolute convergence of the unaveraged class integral outside the
-starting half-plane, and any conclusion about RH or GRH are separate.
+$$
+
+The Lean sum is the finitely supported analytic divisor on the closed
+inner disk, including boundary zeros and using their full orders. On the
+radius-six sphere, $-4\le\Re s\le8$ and $|\Im s|\le|t|+6$ give an envelope
+$M_t=C_0(1+|t|)^2$ with $C_0\ge1$ from the checked strip estimate. At the
+center, the above-one identity gives the product times its pole-clearing
+factors. The two endpoints in `Theorems.CompletedHeckeEulerProductRightLine`
+then give nonvanishing and an affine bound in $|t|$ for the cost
+$\log(M_t/\|H(c_t)\|)$. `AnalyticOnNhd.sum_divisor_le` divides that cost by
+$\log(6/5)>0$. The endpoint retains the sphere envelope and cost for use
+in bounding a zero-free quotient.
+
+Section B.4.2.1 / (B.4.2.1), PDF p. 614, invokes Lang for slow growth of
+$L'/L$; it does not give this moving-disk proof. The count is an input to
+replacing the horizontal bound in Definition B.3.1.1, p. 604, used by
+Theorem B.3.2.1, pp. 605–606, to obtain an identity of the form (B.4.2.2).
+It does not yet give a derivative bound, separated heights, or exhaustion.
+Manuscript correspondence is provisional from pinned Markdown and PDF
+layout. Owning check session `01a20579-fd7d-77f1-98d5-746c75b548e4`
+records the exact candidate, Borel binders, build, and axiom results.
+Independent statement and manuscript review: `XRCTwYR` in that session.
+
+**Next:** On $\overline B(c_t,3)$ at distance at least $\delta>0$ from
+all zeros of $H$ in $\overline B(c_t,5)$, prove a uniform bound
+$D(1+|t|)+C(1+|t|)/\delta$ for $|H'/H|$. Reuse the
+[rational disk argument](rational-explicit-formula.md#checked-logarithmic-derivative-bound-on-the-moving-disk):
+remove the full radius-five divisor, use the sphere envelope and center
+cost to bound the zero-free quotient's logarithmic derivative via
+`norm_logDeriv_le_on_inner_ball`, and sum the derivatives of the removed
+factors using the count. This estimate would be used on separated
+horizontal segments $[-1,2]+iT$. A left-line estimate and global
+reflection for the trivial character over general fields remain separate,
+as do the trace comparison and RH or GRH.
