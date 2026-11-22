@@ -46,21 +46,71 @@ $\mathbb R_{>0}$.
 go run ./cmd/godel audit-local "$CANDIDATE" \
   Lemmas.ArchimedeanLogRadius Theorems.IdeleLogSection -- \
   Masullo.ideleLogSection Masullo.ideleLogSection_infinite \
-  Masullo.ideleLogSection_finite Masullo.ideleNorm_logSection \
+  Masullo.ideleLogSection_finite Masullo.ideleNorm_ideleLogSection \
   Masullo.ideleClassLogSection Masullo.ideleClassLogSection_apply \
   Masullo.ideleClassNorm_logSection
 ```
 
-**Next:** Build the topological multiplicative splitting (A.2.2.12),
-Lemma A.2.2.9, PDF p. 547, and its class analogue for this section. For
-`G` the idele group or its class group and `G₁` the kernel of the log norm
-`n`, check a `ContinuousMulEquiv (Multiplicative ℝ × G₁) G` with forward
-map $(x,k)\mapsto s_v(x)k$ and inverse
-$g\mapsto(n(g),s_v(n(g))^{-1}g)$. The construction requires a homomorphic
-section to give a group isomorphism, which this result provides. Use
-`Theorems.RationalIdeleLogSection` as an implementation control. The
-separate quotient-volume problem remains: Show that the product Haar
-constructed from (A.3.2.2), with counting measure on principal ideles and
-Lebesgue measure on the log radius, gives the exact norm-one volume
-(A.3.2.1), pp. 559–560. The splitting alone gives neither compactness in
-Theorem A.1.4.3(1), p. 542, nor that volume.
+## Log-norm product splittings
+
+[`Theorems.IdeleLogSplit`](../../Proofs/Theorems/IdeleLogSplit.lean)
+gives a continuous multiplicative equivalence
+$(\mathbb R \times G^1) \simeq G$ for actual ideles and idele classes
+of every number field. Here the first factor is the additive log radius,
+viewed as `Multiplicative ℝ`, and $G^1$ is the subgroup where the positive
+norm is one. The formulas are $(x,k)\mapsto s(x)k$ and
+$g\mapsto(n(g),s(n(g))^{-1}g)$, where $n$ is the log norm. The right-inverse
+law for $s$ puts the second inverse coordinate in $G^1$. The equivalence
+is instantiated by the sections at any infinite place. On those products
+the quotient map to classes acts on the norm-one coordinate and preserves
+the log radius, as checked by `ideleClassLogSplit_mk`.
+
+Masullo gives the multiplication formula in Lemma A.2.2.9, (A.2.2.12),
+PDF p. 547. The literal hypothesis of continuity alone gives a homeomorphism,
+not a group isomorphism: Restricting to $(x,1)$ recovers $s$ itself. The
+Lean equivalence explicitly requires the section to be homomorphic, as in
+Lemma A.2.2.6, p. 547, and §A.3.3.1, p. 561. The class-level statements use
+the norm descent of (A.1.3.6) and the map in (A.1.4.3), p. 542. The
+commuting square does not itself prove strict exactness or compactness.
+These readings are provisional: Pinned Markdown and numbered PDF layout,
+not rendered pages.
+
+Independent Yah review, session `01a2027a-7a02-74cb-918f-2b3bfb3310df`:
+`review-split-control` (`kaNwokQ`, read-only output
+`4ffe31e0eadc15d4e874f0bb2257d86a54aea2c9`) checked the idelic splitting,
+the repair to the section hypothesis, and both maps. The general norm
+law formerly named `ideleNorm_logSection` is renamed, with its signature
+unchanged, so the general and rational modules can be imported together.
+
+```sh
+go run ./cmd/godel audit-local "$CANDIDATE" \
+  Lemmas.ContinuousNormSplit Theorems.IdeleLogSection Theorems.IdeleLogSplit \
+  Theorems.RationalIdeleLogSection -- \
+  Masullo.ideleNorm_ideleLogSection Masullo.ideleNorm_logSection \
+  Masullo.ideleClassLogNorm Masullo.ideleClassLogNorm_apply \
+  Masullo.ideleLogNorm Masullo.ideleLogNorm_apply Masullo.ideleClassLogNorm_mk \
+  Masullo.ideleNormOne Masullo.ideleClassNormOne \
+  Masullo.mem_ideleNormOne Masullo.mem_ideleClassNormOne \
+  Masullo.ideleLogSplit Masullo.ideleLogSplit_apply Masullo.ideleLogSplit_symm \
+  Masullo.ideleClassLogSplit Masullo.ideleClassLogSplit_apply Masullo.ideleClassLogSplit_symm \
+  Masullo.ideleLogNorm_section Masullo.ideleClassLogNorm_section Masullo.ideleClassLogSplit_mk
+```
+
+**Next:** Construct the map from finite ideles to nonzero fractional
+ideals in (A.2.3.23), Proposition A.2.3.9, PDF p. 552. For a finite idele
+$g_f$, its $v$-th ideal exponent should be the negative of the additive
+exponent of the Mathlib valuation of $(g_f)_v$ in `ℤᵐ⁰`. Verify finite
+support from integrality of both $g_f$ and $g_f^{-1}$, check that the
+exponent of the image ideal is exactly this integer at each place, and
+prove that diagonal $a\in K^\times$ maps to $(a)$. The pinned
+`FractionalIdeal.count_finsuppProd`,
+`FractionalIdeal.finprod_heightOneSpectrum_factorization'`, and
+`adicCompletion.valuation` give concrete interfaces for this step.
+A single-place uniformizer will then give surjectivity, and the
+valuation-one test gives the finite integral unit kernel. This is a
+route to the class group fibers and compact cover in Proposition A.2.3.10,
+not a proof of them. The Archimedean fundamental domain, norm-one
+compactness (Theorem A.1.4.3(1), p. 542), and the comparison of the
+constructed product Haar measure with the counting-quotient volume
+(A.3.2.1), pp. 559–560, remain open. The source anchor for this next step
+was checked in Markdown and numbered PDF layout, not rendered pages.

@@ -55,7 +55,7 @@ public theorem ideleLogSection_finite (x : Multiplicative ℝ) (w : HeightOneSpe
   rfl
 
 /-- The normalized local power at `v` cancels the root in the section. -/
-public theorem ideleNorm_logSection (x : Multiplicative ℝ) :
+public theorem ideleNorm_ideleLogSection (x : Multiplicative ℝ) :
     ideleNorm (ideleLogSection v x) = Real.exp x.toAdd := by
   rw [ideleNorm_apply, AdeleRing.norm_apply_of_isUnit (ideleLogSection v x).isUnit]
   change (∏ w : InfinitePlace K, ‖(ideleLogSection v x : AdeleRing (𝓞 K) K).1 w‖ ^ w.mult) *
@@ -84,6 +84,6 @@ public theorem ideleClassLogSection_apply (x : Multiplicative ℝ) :
 
 public theorem ideleClassNorm_logSection (x : Multiplicative ℝ) :
     ideleClassNorm (ideleClassLogSection v x) = Real.exp x.toAdd := by
-  rw [ideleClassLogSection_apply, ideleClassNorm_mk, ideleNorm_logSection]
+  rw [ideleClassLogSection_apply, ideleClassNorm_mk, ideleNorm_ideleLogSection]
 
 end Masullo
