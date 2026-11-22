@@ -68,3 +68,38 @@ hashes and the signatures agreed at both the stale owner candidate
 import, and axiom checks on the restack; no second statement review was
 needed. See the [proof handoff](../../obligations/single-place-norm.md#corrected-archimedean-schwartz-factor-and-pointwise-hecke-theta-inversion).
 This exercises the separation on a landing, not a benchmark of it.
+
+## Follow-up: Weighted small-norm Gaussian
+
+Run `01a20546-eaa7-7d18-a842-172deb3eb3a4` matches work session
+`01a20546-ebfe-7af6-b8e4-93c438e74314` by input and final response.
+Its launch prompt names `68a509c25584718e1aa34b0ba36f1e75b3dc9daa`.
+The worker correctly skipped the pointwise estimate already landed by
+improvement at `9eaebdf11efdf33b8b510e8550e686cf2bedaf27` and worked on
+weighted averaging. Three draft builds failed (notation and instance
+elaboration, then rewriting and subtraction), and the fourth passed.
+The work reviewer `VDZDFkA` did not build the moving proof. It separated
+the additive Fourier Haar prerequisite from multiplicative Haar in the
+existing radial package and flagged the inverse-translation prose on
+p. 96. The final handoff identifies a checked, independent construction
+of the additive measure and declares the translation convention.
+
+Replay in improvement session `01a20550-d5a6-78a3-9def-ba66465b8227`:
+Extract the public theorem header from reviewer events 8 and 24, and
+compare it with the source at the three candidate IDs. All five headers
+match exactly. The owning worker checked `e028767607868f3572792f254362747962d1e5df`
+before the review was complete; it was not adopted. After reconciling
+the review and concurrent changes, `407a8986a00f849fdae134c00d96856028422cf1`
+passed but adoption returned stale. The exact restack
+`1939a522d23548256b8700abf1a7cd1f672d7d33` has byte-identical Lean
+source to the second candidate and passed the fresh checks including
+all eight signatures and axiom reports. Only that restack landed.
+The reviewer output `79103afe70ef0912c98d837d24a271d8aac01d9b` was
+review evidence, not integrated source. The incidental invalid `new`
+call with a description was corrected immediately; no Lake target
+typo or reviewer build failure recurred.
+
+**Decision:** The current separation worked on a fixed statement and
+surfaced a meaningful instantiation question. Do not add a node, a
+second review, or an adoption retry path for this case. This replay
+does not establish a speedup. See the [accepted mathematical handoff](../../obligations/single-place-norm.md#weighted-gaussian-decay-at-small-norm).
