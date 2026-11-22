@@ -475,33 +475,93 @@ analytic isomorphism. These source readings used Markdown and numbered PDF
 layout, not rendered pages. The theorem elaborated with warnings as errors
 and replayed in a separate `leanchecker` process in the writer workspace.
 
-## Next: Recognize the complex Archimedean restriction
+## Complex Archimedean restriction: Angular weight and radial frequency
 
-The complex instance of (3.1.2.3)–(4), p. 121, and the integer angular
-weight in (3.2.1.5), p. 123, are still open in Lean. For a complex place
-$v$, let $z=\operatorname{extensionEmbedding}(x)$ for
-$x\in F_v^\times$. Prove that there are $n\in\mathbb Z$ and
-$\tau\in\mathbb R$ such that, for every $x$,
+`Masullo.exists_archimedeanHeckeRestriction_complex` applies to an actual
+unitary Mathlib Hecke character and any complex place $v$. It gives one
+$n\in\mathbb Z$ and one $\tau\in\mathbb R$ for all completion units $x$:
 
 $$
 \chi(j_v(x))=(z/\lVert z\rVert)^n
-              \exp(i\tau\log(\lVert z\rVert^2)).
+              \exp(i\tau\log(\lVert z\rVert^2)),
+\qquad z=\operatorname{extensionEmbedding}_v(x).
 $$
 
-The complex ring and isometry equivalences transport the restriction to
-$\mathbb C^\times$. For its angular part, use `Circle.toUnits` and
-`Circle.exp` to apply the checked one-parameter classification on the
-covering real line. Use `Circle.exp_two_pi`, `Circle.exp_eq_one`, and
-`Circle.exp_surjective` to obtain integer weight on the full circle. For
-the radial part, pull back along $t\mapsto e^{t/2}$; §A.1, p. 539,
-normalizes the complex absolute value as the square of the Euclidean
-radius. The polar product then recombines the two characters. Neither this
-identification nor its subsequent use with the scalar Gamma factor is a
-consequence of the scalar log-derivative calculation alone.
+Masullo supplies the split and restriction map on p. 121,
+(3.1.2.3)–(4), the squared-norm convention in §A.1, p. 539,
+and the use of the integer angular weight on p. 123, (3.2.1.5).
+The project derives the parameters: Transport to $\mathbb C^\times$,
+apply the checked one-parameter classification on the real cover of the
+circle, descend using the period $2\pi$, apply the classification again
+along $t\mapsto e^{t/2}$, and recombine the polar factors. Thus the shift
+in the scalar Gamma argument is $s+|n|/2+i\tau$, not
+$s+|n|/2+2i\tau$. The local integral that realizes this factor is not
+part of the theorem. Source readings used Markdown and numbered layout,
+not rendered pages. The endpoint was independently reviewed by `CaWzqPh`
+in Yah session `01a2012a-2b95-7bce-8dcc-d7ca7b125aa6`.
 
-**Still open:** Complex character identification and the assembled
-completed product, continuation, divisor data, and contour growth
-in (B.4.2.1)–(4). The local pair does not establish the full test class
+## Next: Check and repair complex Gaussian recognition
+
+The local zeta integral in (3.3.1.7), p. 130, is bilinear in the
+integrand factors $f$ and $c$: It integrates $f(z)c(z)$, not
+$f(z)c(z)^{-1}$ or $f(z)\overline{c(z)}$. The global integral in
+(3.2.2.1), §3.2.2, uses the same orientation. On the provisional
+Markdown and layout reading, the test in (3.4.3.5)–(6), p. 152, has
+angular weight $m$ for the input angular character of weight $m$.
+But (3.4.3.12)–(13), p. 153, would evaluate that test at the *same*
+character to give the nonzero factor (3.2.1.5). For a direct control,
+take $m=1$, $s=2$, and $\tau=0$. Rotation by $i$ multiplies the
+integrand by $-1$, so Haar invariance forces its absolutely convergent
+integral to vanish. The scalar factor on p. 123 does not vanish there.
+This is a text-based mathematical mismatch, not a rendered-page
+finding or a checked Lean counterexample.
+
+**Runnable local repair:** Use the opposite angular weight in the
+Gaussian monomial while retaining the printed $1/(2\pi)$. With
+$r=\|z\|$, $u=z/r$, and $n$ the integer from the checked restriction,
+the corrected test on $\mathbb C^\times$ is
+
+$$
+E_n(z)=\frac{1}{2\pi}r^{|n|}u^{-n}e^{-2\pi r^2},
+$$
+
+which extends as a Gaussian times $\bar z^n$ for $n\ge0$ or $z^{-n}$
+for $n<0$. Prove absolute integrability and the exact identity for
+all $\operatorname{Re}s>0$ and $\tau\in\mathbb R$:
+
+$$
+\int_{\mathbb C^\times} E_n(z)u^n(r^2)^{s+i\tau}\,d^\times z
+= \operatorname{archimedeanGammaFactor}
+       (2\pi,1,|n|/2,\tau)(s).
+$$
+
+Use $d^\times z=2r^{-2}dx\,dy$ off zero, from Definitions
+A.3.1.2(2), p. 556, and A.3.2.2(1), p. 560. For a first Lean module,
+express the integral over `ℂ` with this density against `volume`, with
+value zero at the excluded origin. The angular factors cancel
+pointwise, so `Complex.integral_comp_polarCoord_symm` reduces it to a
+radial integral. With $t=r^2$ the resulting density after angular
+integration and the $1/(2\pi)$ is $dt/t$; use
+`Complex.integral_cpow_mul_exp_neg_mul_Ioi`. Use the corresponding
+`lintegral` polar formula and a real Gamma majorant for absolute
+integrability. Keep the printed $m=1$ control separate from the repaired
+identity. This is a local recognition step toward identifying
+$Z(E_\chi,s)$ with the product, not a proof of the global Fourier
+transform, continuation, or the normalized eigendistribution theorem.
+
+**Independent product step:** One can already define the right-half-plane
+product of (3.2.1.2)–(5) and prove its split logarithmic derivative in
+(B.4.2.5)–(6), p. 615. Choose the place parameters using the checked
+restriction theorems (real $b$ and complex $|n|/2$), use
+`NumberField.InfinitePlace`'s `Fintype` instance and `logDeriv_prod` for
+the finite Archimedean product, and combine with
+`finiteHeckeCharacterEulerProduct_logDeriv` on $\operatorname{Re}s>1$.
+This right-side definition and identity alone would not establish
+agreement with the zeta integral or continuation.
+
+**Still open:** The local Gaussian integral, the assembled completed
+product and its continuation, divisor data, and contour growth in
+(B.4.2.1)–(4). The local pair does not establish the full test class
 of (B.4.2.15) or (17), the ramified Fourier terms, or the global trace
 comparison. See the separate
 [local conductor obligation](#open-ramified-local-conductor-power-in-the-general-reflection)
@@ -586,6 +646,9 @@ go run ./cmd/godel audit-local "$CANDIDATE" Theorems.ArchimedeanHeckeRestriction
 
 go run ./cmd/godel audit-local "$CANDIDATE" Theorems.RealArchimedeanHeckeRestriction -- \
   Masullo.exists_archimedeanHeckeRestriction_real
+
+go run ./cmd/godel audit-local "$CANDIDATE" Theorems.ComplexArchimedeanHeckeRestriction -- \
+  Masullo.exists_archimedeanHeckeRestriction_complex
 ```
 
 For the compact-log tested shifted pair:
