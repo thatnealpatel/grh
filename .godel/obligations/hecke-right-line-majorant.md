@@ -1948,21 +1948,85 @@ go run ./cmd/godel audit-local "$CANDIDATE" \
   Masullo.finiteCompletion_norm_discr_eq_inv_globalDifferent_residueNorm_pow
 ```
 
-**Next:** For every finite $v$, use the compact open image of $O_v^\times$
-in $K_v^\times$ as a `PositiveCompacts` calibrator, then scale its unit-mass
-Haar by the positive finite `ENNReal.ofReal` of $q_v^{-d_v/2}$.
-Prove the exact unit mass and its equality with the square root in
-(A.3.2.2), independently of the integral basis. The local model to adapt
-is `Theorems.RationalLocalMultiplicativeHaar`; the unit inclusion and
-compact open facts for arbitrary $K$ are already available in
-`Lemmas.IdeleFiniteStageMeasure` and its imports. Apply
-`finite_differentIdeal_multiplicity_support` and
-`exists_ideleRestrictedProductHaar` with `archimedeanCompletionHaar`
-to obtain the exact stage restrictions for (A.3.2.5), then feed them to
-`ideleHeckeGaussian_zetaIntegral`. The finite mass factor is the inverse
-square root of the absolute field discriminant by
-`prod_differentIdeal_unit_scales`; it is not to be erased.
-(A.3.2.1)'s quotient normalization is a separate obligation.
+The comparison now feeds the [Haar construction below](#checked-discriminant-normalized-multiplicative-haar).
+
+### Checked discriminant-normalized multiplicative Haar
+
+[`FiniteCompletionMultiplicativeHaar.lean`](../../Proofs/Theorems/FiniteCompletionMultiplicativeHaar.lean)
+constructs Haar on every actual $K_v^\times$ by taking the compact open
+image of $O_v^\times$ as the unit-mass calibrator and multiplying the
+measure by a finite positive scalar. Its mass on that subgroup is
+
+$$
+\mu_v(O_v^\times)
+ = (\sqrt{q_v^{\operatorname{mult}_v(D_K)}})^{-1}
+ = \sqrt{\|\operatorname{disc}_{\mathbb Z_p}(b)\|_p}
+$$
+
+for every finite integral basis $b$. Haar uniqueness with that unit mass
+is checked. Off the support of $D_K$ the mass is one, and its product
+over any finite superset of the support is $|\operatorname{disc}K|^{-1/2}$.
+
+[`DiscriminantNormalizedIdeleHaar.lean`](../../Proofs/Theorems/DiscriminantNormalizedIdeleHaar.lean)
+uses those finite measures and `archimedeanCompletionHaar` in the checked
+restricted-product construction. The resulting regular Haar measure on
+the actual ideles is characterized among Borel measures by its comaps to
+all open stages containing the different support. For every compact
+Archimedean box $B$ with nonempty interior, the box with coordinates
+$B$ at infinity and integral units at all finite places has mass
+
+$$
+\left(\bigotimes_{v\mid\infty}\mu_v\right)(B)
+\,|\operatorname{disc}K|^{-1/2}.
+$$
+
+**Source and project proof (provisional):** Definition A.3.2.2(2),
+(A.3.2.2), PDF p. 560, fixes the finite unit mass. The norm comparison
+above proves that the scalar used to construct Haar is exactly the one
+in that prescription, without choosing an integral basis. Lemma A.3.2.4,
+(A.3.2.5), p. 560, asserts the restricted-product formula by reference
+and notes the unit masses off a finite set. The Lean endpoint verifies
+this finite-exception condition via the global different, constructs
+the product with exact stage restrictions, and computes its calibration.
+It does **not** identify this measure with the one defined by the quotient
+volume in (A.3.2.1), pp. 559–560. The pinned Appendix A Markdown and
+numbered PDF layout were read, but not the rendered pages.
+
+Independent Yah statement review: Session
+`01a20265-3820-7b1b-a9b3-689b6d12a219`, child `review-calibrated-haar`
+(agent `ZBxOiCT`, read-only outputs
+`685a2e4d961ff3c8aadffa3aab0de8dadb803b83` and
+`4e319c1b05814ace319d9e0e3c966af39bb95dd7`). It reviewed the local
+ambient group, basis and uniqueness statements, product of real masses,
+all Borel hypotheses, and the equivalent stage formulation with the
+support constructed internally rather than supplied as a parameter.
+
+```sh
+go run ./cmd/godel audit-local "$CANDIDATE" \
+  Theorems.FiniteCompletionMultiplicativeHaar Theorems.DiscriminantNormalizedIdeleHaar -- \
+  Masullo.finiteCompletionMultiplicativeHaar \
+  Masullo.finiteCompletionMultiplicativeHaar_isHaarMeasure \
+  Masullo.finiteCompletionMultiplicativeHaar_unitMass \
+  Masullo.finiteCompletionMultiplicativeHaar_unitMass_eq_sqrt_discr \
+  Masullo.finiteCompletionMultiplicativeHaar_eq \
+  Masullo.finiteCompletionMultiplicativeHaar_unitMass_eq_one \
+  Masullo.prod_finiteCompletionMultiplicativeHaar_unitMass \
+  Masullo.exists_discriminantNormalizedIdeleHaar
+```
+
+**Next:** Use `exists_discriminantNormalizedIdeleHaar` and
+`prod_finiteCompletionMultiplicativeHaar_unitMass` in
+`ideleHeckeGaussian_zetaIntegral` to put the raw Gaussian pairing on
+this Haar and obtain the factor $|\operatorname{disc}K|^{-1/2}$ on
+$\Re s>1$. A finite stage $T$ must contain both the different support
+and the ramification of $\chi$. The current Gaussian theorem takes
+unramifiedness off $T$ as a hypothesis. To remove the stage hypothesis
+for an arbitrary unitary Hecke character, prove its finite ramification:
+Pull back a small identity neighborhood of the unit circle along the
+character on the product of finite integral units. A product neighborhood
+contains every single-coordinate subgroup outside a finite set, and the
+circle neighborhood can be chosen to contain no nontrivial subgroup.
+The quotient-volume comparison in (A.3.2.1) remains separate.
 
 **Still open:** Meromorphic continuation, divisor data, and contour
 growth in (B.4.2.1)–(4), the broader test class, general ramified Fourier terms,
