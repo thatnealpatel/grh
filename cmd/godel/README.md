@@ -83,6 +83,26 @@ After a conflict, stale adoption, or ambiguous error, inspect `tool_campaign sta
 
 For any replacement integration candidate, compare its exact diff against the new base with the reviewed work, then repeat the proof landing checks on that candidate. Have any added endpoints or changed statements independently reviewed. An old handoff's audit or build-cache directions do not override this recipe.
 
+For a docs-only or other non-Lean restack, you can seed the replacement
+workspace's Lake build cache from your previous checked candidate. First
+verify that the Lean source tree, Lean/Lake inputs, and build environment
+are unchanged between the two candidates. From the replacement workspace,
+copy the artifact directories **into** its existing build directory:
+
+```sh
+# Set previous to the absolute path of the checked integration workspace.
+mkdir -p .lake/build &&
+  cp -a --reflink=auto "${previous:?set the old workspace}/.lake/build/"{lib,ir} .lake/build/
+```
+
+Copying the whole `build` directory onto an existing one nests it at
+`.lake/build/build`, where Lake does not look. This only provides cached
+inputs to the replacement's `lake build --wfail`. Run that build and the
+fresh joint import from the replacement workspace; do not reuse a verdict
+or skip the source and statement checks. If useful, compare the fresh
+report with the prior report already in the transcript, identifying both
+full candidate IDs and recording the comparison result.
+
 ### Compatibility for pinned callers
 
 The designated remote worker check remains available for pinned callers, not as a routine landing gate. From the repository root, run `go run ./cmd/godel check <full-commit-id> <declaration> [<declaration> ...]`.
