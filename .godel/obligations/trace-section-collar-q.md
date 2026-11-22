@@ -157,38 +157,98 @@ $J_f-M_f(-1/2)$. In the prescribed level-first global order the difference
 from that joint local value is $-M_f(1/2)+Z_{\rm full}(f)-Z_\alpha(f)$;
 the collar computation does not remove the omitted-zero residual.
 
-## What to test next
+## A bounded moving integral does not supply the missing moment
 
-The original shell route still needs a normalized lift tied to the
-actual projected orbital quotient, not a different generic collar or a
-limit of the same-chain mask already known to kill the shell. The
-replacement route needs an analytic comparison of the base trace with the
-joint local one that produces $-M_f(1/2)$ without assuming away omitted
-zeros. A concrete test is to impose a **bounded moving integral** on the
-actual [scaled real band](trace-joint-local-q.md#projection-and-localization-estimates),
-where the uncut integral is not continuous. For a fixed smooth even window
-$\eta$ supported in $1<|t|<2$, use $\int\eta(t/R)b(t)\,dt$ as a second
-constraint on $Q_Y H_Y$ and compare its rank-one trace under $M_p A_f$
-with $M_f(1/2)$. Take $Y\to\infty$, $R/Y\to\infty$, $L/R\to\infty$, and
-$\epsilon\to0$ in the notation of the joint local calculation. The first
-check is whether the projection of $W_Y^{-1}\eta(\cdot/R)$ onto $Q_Y H_Y$
-changes its leading norm and dilation pairing. One falsification test is
-whether this projection is asymptotically the identity on that seed in
-relative norm: On the moving annulus the limiting weight ratio under
-$D_g$ is $g^{2\alpha}$, so the normalized seed's limiting pairing has
-absolute value at most $g^\alpha<g^{1/2}$ for $g>1$. More precisely, test
-whether the limit is the pairing in $L^2(|v|^{2\alpha}\,dv)$ of the unit
-normalization of $|v|^{-2\alpha}\eta(v)$ with its dilation $D_g$. For a real seed, writing
-$D_g=g^\alpha U_g$ with $U_g$ unitary in that homogeneous space shows that
-the pairing has derivative $\alpha$ in $\log g$ at $g=1$: The real unitary
-pairing is even in $\log g$. The target $g^{1/2}$ has derivative $1/2$.
-This would separate the densities even on short mass-zero tests, for
-which a constant difference would be invisible. This is a test of a
-separately specified exhaustion, not a condition claimed by Masullo.
+This is a project test of a replacement exhaustion, not a constraint
+claimed by Masullo. Use the [actual scaled band](trace-joint-local-q.md#projection-and-localization-estimates)
+$Q_Y H_Y$, with $H_Y=L^2(W_Y(t)\,dt)$ on even functions and $Q_Y$ the
+unit-band projection with value zero. The uncut integral constraint has
+already disappeared in that closure. Fix $0<\alpha<1/2$ and a real,
+nonzero, smooth even $\eta$ supported in $1<|v|<2$. Impose the second,
+bounded condition $\ell_R(b)=\int\eta(t/R)b(t)\,dt=0$. Take
+$Y\to\infty$, $R/Y\to\infty$, $L/R\to\infty$, and $\epsilon\to0$,
+with the same position multiplier $p$ as in the local comparison.
+The dilation is $D_g b(t)=g^{-1/2}b(t/g)$ from (12.4.1.8–9), p. 517,
+and the positive Mellin convention is (12.5.1.3), p. 519 (provisional
+extraction locators).
+
+The ambient representer is $W_Y^{-1}\eta(\cdot/R)$. Under the unitary
+rescaling $b\mapsto\sqrt{RW_Y(R)}\,b(R\cdot)$ into $L^2(V\,dv)$,
+where $V(v)=W_Y(Rv)/W_Y(R)$, the representer is
+$\sqrt{R/W_Y(R)}\,h$ with $h=\eta/V$. Off zero,
+$V(v)\to |v|^{2\alpha}$, uniformly on compact annuli. The projected
+band now has radius $R$ and still requires value zero. The projection of
+$h$ differs from $h$ by $o(1)$ in $L^2(V\,dv)$, and its norm tends to
+$\|h_\infty\|_{L^2(|v|^{2\alpha}dv)}>0$, where
+$h_\infty(v)=\eta(v)|v|^{-2\alpha}$. Indeed $h-h_\infty$ tends to zero
+in the moving norm by annular convergence. Approximate $h_\infty$ by even
+Schwartz Fourier truncations of bandwidth at most $R$, subtracting the
+value at zero times a fixed bandlimited Schwartz function of value one
+there. The correction tends to zero in Schwartz seminorms. The uniform
+weight bound $V(v)\le C\max(|v|,|v|^{-1})^\gamma$ with
+$2\alpha<\gamma<1$ gives convergence in the moving norm as well.
+
+Thus the new projector is $Q_Y-E$, where $E$ is the rank-one projection
+onto the normalized projected representer. The same closure results if
+one imposes $\ell_R$ on the original dense generators: Correct an
+approximant by a scalar multiple of one generator with nonzero
+$\ell_R$, which exists since the projected representer is nonzero
+for large parameters. In the scaled coordinate write $e$ for the unit
+projected vector and $a=h/\|h\|_{L^2(V\,dv)}$. For $g$ in the compact
+test support, the ratio bound
+$V(gv)/V(v)\le C\max(g,g^{-1})^\gamma$ gives uniform dilation norms.
+Replacing $e$ by $a$ in the localized pairing costs at most
+$2\sup_g\|D_g\|\,\|e-a\|_{L^2(V\,dv)}=o(1)$. The position cutoff
+is one on the support of **$a$**, not necessarily on that of $e$:
+Eventually $L-\sqrt L>2R$ and $R>2\epsilon$. Annular weight convergence
+then gives, uniformly for $g$ on the test support,
+
+$$
+d(g)=\lim\langle p(R\cdot)D_g e,e\rangle
+=\frac{\langle D_g h_\infty,h_\infty\rangle_{L^2(|v|^{2\alpha}dv)}}
+{\|h_\infty\|^2_{L^2(|v|^{2\alpha}dv)}}.
+$$
+
+For an above-one test $f$, the old trace minus the trace with the
+extra constraint therefore tends to $\int f(x)d(e^x)\,dx$. The new
+trace is $J_f-M_f(-1/2)-\int f(x)d(e^x)\,dx$. The desired rank-one
+subtraction would instead be $M_f(1/2)$. To distinguish them even on
+mass-zero tests, put $G(x)=e^{x/2}-d(e^x)$. In the homogeneous limit,
+$e^{-\alpha x}D_{e^x}$ is unitary, and its correlation with the real
+smooth compact annular seed is even and differentiable in $x$. Hence
+$G'(0)=1/2-\alpha>0$. Take a nonnegative nonzero smooth bump $c$
+with compact support in a short subinterval of $(0,\log 2)$ on which
+$G'>0$, and set $f=c'$. This radial test vanishes near norm one and has
+zero mass, so it satisfies the rational radial instance of (13.3.1.2),
+p. 522: Nontrivial compact characters average out, and the norm phase
+of a character trivial on the compact factor cancels. But
+
+$$
+M_f(1/2)-\int f(x)d(e^x)\,dx=-\int c(x)G'(x)\,dx<0.
+$$
+
+This rules out this fixed-window constraint, with this joint limit,
+as the sole source of the $+1/2$ subtraction. It does not evaluate the
+global $S$-piece, identify an orbital quotient, or remove the omitted-zero
+residual. Do not repeat the same constraint with a different fixed smooth
+annular window: The derivative test is independent of that choice.
+
+## Remaining comparison
+
+The shell route still needs a normalized lift tied to the actual
+projected orbital quotient, not another generic collar or a limit of the
+same-chain mask that kills the shell. A replacement still owes a
+comparison of the actual level-first global diagonal with the joint local
+trace, including both the missing moment and the omitted-zero residual.
+The [general finite-place contour majorant](hecke-right-line-majorant.md)
+is independently runnable without a choice of that lift.
 
 **Review evidence:** `section-collar-review` (`DfYjINo`, read-only on
 `73acefdb0514114c439e1b1237549d104bef68be`) independently checked the source
 digest, the simultaneous angular average and its radial scope, the
 cutoff citation, the positive periodic control, and the short-window
-estimates through selection of a fixed nonzero annular trace. The moving
-integral test is a proposed next check, not part of the reviewed result.
+estimates through selection of a fixed nonzero annular trace. `moving-integral-review` (`oLaIxDK`, read-only on
+`b0aa4e006ff70a9f985fae322f8010b105253d8b`, Yah session
+`01a200ad-ee1e-7cd2-bdcc-ec33f44bd141`) independently checked the rescaled
+projection, the moving-limit pairing, and the admissible separating test.
+These are mathematical reviews, not Lean or rendered-page verification.
