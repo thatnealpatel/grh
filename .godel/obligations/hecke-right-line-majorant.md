@@ -500,7 +500,7 @@ part of the theorem. Source readings used Markdown and numbered layout,
 not rendered pages. The endpoint was independently reviewed by `CaWzqPh`
 in Yah session `01a2012a-2b95-7bce-8dcc-d7ca7b125aa6`.
 
-## Next: Check and repair complex Gaussian recognition
+## Checked complex Gaussian recognition with the opposite angular weight
 
 The local zeta integral in (3.3.1.7), p. 130, is bilinear in the
 integrand factors $f$ and $c$: It integrates $f(z)c(z)$, not
@@ -516,38 +516,53 @@ integral to vanish. The scalar factor on p. 123 does not vanish there.
 This is a text-based mathematical mismatch, not a rendered-page
 finding or a checked Lean counterexample.
 
-**Runnable local repair:** Use the opposite angular weight in the
-Gaussian monomial while retaining the printed $1/(2\pi)$. With
-$r=\|z\|$, $u=z/r$, and $n$ the integer from the checked restriction,
-the corrected test on $\mathbb C^\times$ is
+**Checked local repair:** `Masullo.complexGaussianZetaDensity_integral`
+in [`ComplexGaussianMellin.lean`](../../Proofs/Theorems/ComplexGaussianMellin.lean)
+uses the opposite angular weight, retaining the printed $1/(2\pi)$.
+With $r=\|z\|$ and $u=z/r$, its test off zero is
 
 $$
 E_n(z)=\frac{1}{2\pi}r^{|n|}u^{-n}e^{-2\pi r^2},
 $$
 
-which extends as a Gaussian times $\bar z^n$ for $n\ge0$ or $z^{-n}$
-for $n<0$. Prove absolute integrability and the exact identity for
-all $\operatorname{Re}s>0$ and $\tau\in\mathbb R$:
+implemented by the polynomial $\bar z^n$ for $n\ge 0$ or $z^{-n}$
+for $n<0$ times the same Gaussian. For every $n\in\mathbb Z$,
+$\tau\in\mathbb R$, and $\operatorname{Re}s>0$, Lean proves absolute
+integrability and the exact value of the pairing
 
 $$
-\int_{\mathbb C^\times} E_n(z)u^n(r^2)^{s+i\tau}\,d^\times z
-= \operatorname{archimedeanGammaFactor}
-       (2\pi,1,|n|/2,\tau)(s).
+\int_{\mathbb C^\times}E_n(z)u^n(r^2)^{s+i\tau}\,d^\times z
+=(2\pi)^{-a}\Gamma(a),\qquad a=s+|n|/2+i\tau.
 $$
 
-Use $d^\times z=2r^{-2}dx\,dy$ off zero, from Definitions
-A.3.1.2(2), p. 556, and A.3.2.2(1), p. 560. For a first Lean module,
-express the integral over `ℂ` with this density against `volume`, with
-value zero at the excluded origin. The angular factors cancel
-pointwise, so `Complex.integral_comp_polarCoord_symm` reduces it to a
-radial integral. With $t=r^2$ the resulting density after angular
-integration and the $1/(2\pi)$ is $dt/t$; use
-`Complex.integral_cpow_mul_exp_neg_mul_Ioi`. Use the corresponding
-`lintegral` polar formula and a real Gamma majorant for absolute
-integrability. Keep the printed $m=1$ control separate from the repaired
-identity. This is a local recognition step toward identifying
-$Z(E_\chi,s)$ with the product, not a proof of the global Fourier
-transform, continuation, or the normalized eigendistribution theorem.
+The formal integral is over ordinary complex `volume`, with density
+$2r^{-2}$ off zero and the integrand set to zero by totalized division
+at zero. The density follows from Definitions A.3.1.2(2), p. 556, and
+A.3.2.2(1), p. 560, with the squared norm in §A.1, p. 539. The Lean proof
+cancels the angular factors pointwise, then uses polar change of
+variables, the substitution $t=r^2$, and Euler's Gamma integral. The
+angular integral cancels $1/(2\pi)$, and $2\,dr/r=dt/t$. The right-hand
+side in Lean is `archimedeanGammaFactor (2 * Real.pi) 1 (|n|/2) τ s`,
+matching (3.2.1.5), p. 123, with the radial frequency included.
+Yah reviewer `TuyCYSe` in session `01a20131-bd05-7fe0-b8e3-88674066ebad`
+independently reviewed the endpoint. This is the scalar local integral,
+not a construction of multiplicative Haar on the actual completion units,
+a proof that the product of local Gaussians gives the global test, or an
+identity for its Fourier transform or eigendistribution.
+
+### Next: Recognize the real Gaussian local integral
+
+For (3.4.3.3)–(4), p. 152, combine the checked real-place restriction with
+the tests $x^b e^{-\pi x^2}$ for $b\in\{0,1\}$. Definition A.3.2.2(1),
+p. 560, gives $dx/|x|$ using A.3.1.2(1), p. 556. The two sign factors
+cancel, so reflection gives twice the positive-half-line integral. The
+same square substitution and scaled Gamma integrability used for the
+complex place should give, for $\operatorname{Re}s>0$, absolute
+integrability and `archimedeanGammaFactor Real.pi 2 b τ s`, realizing
+(3.2.1.4), p. 123, with the checked radial frequency. Use the real
+Lebesgue density off zero for the scalar theorem and keep the global
+measure and product identifications separate. This source reading is
+provisional (Markdown and layout, not rendered pages).
 
 **Independent product step:** One can already define the right-half-plane
 product of (3.2.1.2)–(5) and prove its split logarithmic derivative in
@@ -559,8 +574,9 @@ the finite Archimedean product, and combine with
 This right-side definition and identity alone would not establish
 agreement with the zeta integral or continuation.
 
-**Still open:** The local Gaussian integral, the assembled completed
-product and its continuation, divisor data, and contour growth in
+**Still open:** The real scalar Gaussian integral, identification with the
+actual completed zeta integral, the assembled completed product and its
+continuation, divisor data, and contour growth in
 (B.4.2.1)–(4). The local pair does not establish the full test class
 of (B.4.2.15) or (17), the ramified Fourier terms, or the global trace
 comparison. See the separate
@@ -649,6 +665,14 @@ go run ./cmd/godel audit-local "$CANDIDATE" Theorems.RealArchimedeanHeckeRestric
 
 go run ./cmd/godel audit-local "$CANDIDATE" Theorems.ComplexArchimedeanHeckeRestriction -- \
   Masullo.exists_archimedeanHeckeRestriction_complex
+```
+
+For the complex Gaussian pairing:
+
+```sh
+go run ./cmd/godel audit-local "$CANDIDATE" \
+  Lemmas.ComplexGaussianPolar Theorems.ComplexGaussianMellin -- \
+  Masullo.complexGaussianZetaDensity_integral
 ```
 
 For the compact-log tested shifted pair:
