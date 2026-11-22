@@ -72,6 +72,8 @@ For a source verdict, check the definitions that put the witness within the prin
 
 When a source verdict compares routes, ask the reviewer for a separate finding and its basis for each route. Substituting a disputed display checks the printed route, not the value of the defining expression. An accepted theorem may supply the latter without a new proof; distinguish who checked its applicability from who checked the printed source. Before landing, compare the review findings with the verdict and resolve any conflation or state explicitly which part the review did not check.
 
+Keep a retrievable locator with each Yah review you rely on: The session UUID and, for a delegated review, the agent handle within that session. Put it beside the findings in the accepted note or in the stdout handoff. A bare agent handle does not link a review to the Gödel run record.
+
 If this run leaves useful work unadopted, identify in stdout the clean saved revisions needed to recover it, their bases if known, which checks ran on which artifact, and what still blocks adoption. For edits with no clean saved revision, name the workspace and files containing the intended changes. A conflicted integration tree is not the recovery source. When the previous handoff identifies a still-relevant unadopted result with no recovery pointer in the accepted notes, carry those details forward even if you selected a different check. Label it unadopted and keep it separate from the next check. Drop the pointer if accepted work has superseded the result.
 
 For delegated work, integrate the writer's finalized campaign output, not a copy from the live dispatch workspace.
