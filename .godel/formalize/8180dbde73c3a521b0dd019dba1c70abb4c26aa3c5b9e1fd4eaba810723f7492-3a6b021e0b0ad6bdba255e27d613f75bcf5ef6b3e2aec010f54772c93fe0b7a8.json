@@ -1,0 +1,38 @@
+{
+  "key": "8180dbde73c3a521b0dd019dba1c70abb4c26aa3c5b9e1fd4eaba810723f7492",
+  "revision": "3a6b021e0b0ad6bdba255e27d613f75bcf5ef6b3e2aec010f54772c93fe0b7a8",
+  "outcome": "landed",
+  "source": "Masullo, The Music of the Primes, edition SHA-256 e039d3f6cf0a4b14f03c7edb85097752dd65c0a2fe543c76fe992be234f97bf5. Chapter 1, §1.1.4 fifth bullet, printed p. 12, one-based PDF ordinal 12 (first bullet gives the local theta quotient). All further printed pages cited here equal the one-based PDF ordinals: Chapter 2, Definition 2.3.1.1 pp. 99–100, (2.3.1.1)–(2.3.1.2) (group and S-unit sum); (2.3.1.13) p. 105 (local homogeneous integral with gh and ω(h)); (2.2.5.2) p. 95 and its proof pp. 96–97 (global homogeneous integral and explicit inverse-argument calculation); Chapter 5, Definition 5.2.2.1 p. 232, (5.2.2.3)–(5.2.2.4) (homogeneous kernel quotients); p. 235, (5.2.3.5)–(5.2.3.8) (continuous actions and eigenspaces); Proposition 5.2.3.2 pp. 236–237, especially (5.2.3.9), (5.2.3.15) and its proof; Theorem 5.4.1.1(1)–(2) pp. 265–266 and proof p. 274; Chapter 6, Theorem 6.2.1.1 and Corollary 6.2.1.2 pp. 295–297; Appendix C, Theorem C.4.3.5 p. 713. See rational-real-theta-translation.md for the rendered-source comparison and replay.",
+  "finding": "Partial. The printed bullet asserts intrinsic nuclear Fréchet local and global norm-one theta isotypes, jointly continuous left translation by the full groups, and convolution actions. Lean proves the local translation portion for F = ℚ, S = {∞}, retaining the actual quotient by the kernel of the S-unit theta sum and the actual group quotient J = ℝˣ/im(ℤˣ) with their respective quotient topologies. The full J action is jointly continuous and by complex continuous linear maps, with evaluation on any representative f at u⁻¹x given by the original unweighted two-term theta sum. It proves that the norm-one subgroup is trivial; mathematically in this case its only character gives the full local theta quotient, since the homogeneous average is multiplication by a positive Haar mass and has the same kernel. The existing Masullo.rationalRealThetaEquiv and Masullo.rationalRealThetaQuotient_frechet give the even Schwartz model and the intrinsic Fréchet properties (see rational-real-theta-quotient.md). The weighted dilation is used only after removing its scalar weight. The printed (5.2.3.9) uses the conjugated character on the inverse-translation operator; inversion gives the same-character operator P_ω in the homogeneous theta identity, not P_(conj ω) as printed in the proof of (5.2.3.15). Idempotence additionally requires division by the Haar mass if it is not one; that is separate from character conjugation. The code does not prove the general homogeneous-isotype identification or its transition diagrams, local or global nuclearity, the local result for other F or larger S, the global result, or the Pettis and convolution steps even in the real specialization.",
+  "retry": "Provide jointly continuous representative translation on a compatible Schwartz–Bruhat LF stage model with the actual kernel and open quotient maps, then a Pettis-averaging and quotient-to-closed-isotype theorem for compact norm-one actions with the same-character convention and compatible Haar measures. For the general Fréchet and nuclear steps, formalize the intrinsic-topology local closed embedding (or an alternative with closed range) and nuclearity/permanence, and prove the finite-stage topological isomorphisms and eventual global surjectivity under the Picard and ramification hypotheses. To obtain convolution, construct the compactly supported orbit Pettis integrals in those spaces, with compact-parameter seminorm bounds and the scalar Fubini identity for composition. For the real case alone, a nuclearity theorem for even real-line Schwartz space and that compact-support integration interface would extend the checked endpoint.",
+  "evidence": [
+    {
+      "path": "Proofs/Lemmas/SchwartzWeightedDilation.lean",
+      "declarations": [
+        "Masullo.continuous_schwartzWeightedInverseDilation"
+      ]
+    },
+    {
+      "path": "Proofs/Theorems/RationalRealThetaTranslation.lean",
+      "declarations": [
+        "Masullo.rationalRealSUnitImage",
+        "Masullo.RationalRealLocalIdeleGroup",
+        "Masullo.rationalRealLocalIdele",
+        "Masullo.rationalRealLocalIdeleNorm",
+        "Masullo.rationalRealLocalIdeleNorm_mk",
+        "Masullo.rationalRealLocalIdeleNorm_pos",
+        "Masullo.continuous_rationalRealLocalIdeleNorm",
+        "Masullo.rationalRealLocalIdeleNorm_eq_one",
+        "Masullo.rationalRealThetaTranslate",
+        "Masullo.rationalRealThetaMulAction",
+        "Masullo.rationalRealTheta_smul_eq_translate",
+        "Masullo.continuous_rationalRealThetaTranslate",
+        "Masullo.rationalRealThetaContinuousSMul",
+        "Masullo.rationalRealThetaValue",
+        "Masullo.rationalRealThetaValue_mkQ",
+        "Masullo.rationalRealThetaValue_smul",
+        "Masullo.rationalRealThetaValue_smul_mkQ"
+      ]
+    }
+  ]
+}

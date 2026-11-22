@@ -11,7 +11,8 @@ an ingredient of a rational-stage repair of Remark 2.2.4.6, p. 92.
 -/
 
 open scoped SchwartzMap
-open Set
+open Filter Set
+open scoped Topology
 
 namespace Masullo
 
@@ -175,6 +176,76 @@ public theorem seminorm_weightedInverseDilation_difference_quotient (a d : ℕ) 
     _ ≤ |s|⁻¹ * (Real.exp (|(a : ℝ) - d - 1|) * p a d (G (G b)) * |s| ^ 2) :=
       mul_le_mul_of_nonneg_left hrem (by positivity)
     _ = _ := by field_simp [hs']
+
+/-- The weighted inverse dilations are jointly continuous in log scale and
+Schwartz profile. The jet bound controls changes in the profile uniformly
+for log scales near zero. -/
+public theorem continuous_schwartzWeightedInverseDilation :
+    Continuous (fun z : ℝ × B ↦ U z.1 z.2) := by
+  have hzero (b : B) : U 0 b = b := by
+    ext x
+    simp
+  have hadd (s t : ℝ) (b : B) : U (s + t) b = U s (U t b) := by
+    ext x
+    simp only [schwartzWeightedInverseDilation_apply, smul_smul, ← Real.exp_add,
+      neg_add, add_comm (-s) (-t)]
+    rw [← mul_assoc, ← Real.exp_add]
+  have hnear (b : B) : Tendsto (fun z : ℝ × B ↦ U z.1 z.2) (𝓝 (0, b)) (𝓝 b) := by
+    let w := schwartz_withSeminorms ℂ ℝ ℂ
+    rw [w.tendsto_nhds]
+    rintro ⟨a, d⟩ ε hε
+    let C := Real.exp (|(a : ℝ) - d - 1|)
+    have hprofile (s : ℝ) (c : B) (hs : |s| ≤ 1) : p a d (U s c) ≤ C * p a d c := by
+      exact SchwartzMap.seminorm_le_bound' ℂ _ _ _ (by dsimp [C]; positivity)
+        (fun x ↦ dilation_jet_bound c a d x s hs)
+    have hscale (s : ℝ) (hs : |s| ≤ 1) : p a d (U s b - b) ≤ C * p a d (G b) * |s| := by
+      apply SchwartzMap.seminorm_le_bound' ℂ _ _ _ (by dsimp [C]; positivity)
+      intro x
+      let f (t : ℝ) := |x| ^ a • iteratedDeriv d (U t b) x
+      have hf (t : ℝ) : HasDerivAt f (|x| ^ a • iteratedDeriv d (U t (G b)) x) t :=
+        (hasDerivAt_dilation_jet b d x t).const_smul (|x| ^ a)
+      let I := Icc (-1 : ℝ) 1
+      have h := (convex_Icc (-1 : ℝ) 1).norm_image_sub_le_of_norm_hasDerivWithin_le
+        (f := f) (fun t _ ↦ (hf t).hasDerivWithinAt)
+        (fun t ht ↦ by
+          rw [norm_smul, Real.norm_of_nonneg (by positivity)]
+          exact dilation_jet_bound (G b) a d x t (abs_le.mpr ht))
+        (show (0 : ℝ) ∈ I from ⟨by norm_num, by norm_num⟩) (show s ∈ I from abs_le.mp hs)
+      rw [show f s - f 0 = |x| ^ a • (iteratedDeriv d (U s b) x - iteratedDeriv d b x) by
+        dsimp only [f]
+        rw [hzero, smul_sub], norm_smul, Real.norm_of_nonneg (by positivity), sub_zero,
+        Real.norm_eq_abs] at h
+      change |x| ^ a * ‖iteratedDeriv d (⇑(U s b) - ⇑b) x‖ ≤ _
+      rwa [iteratedDeriv_sub ((U s b).smooth d).contDiffAt (b.smooth d).contDiffAt]
+    have hfst : Tendsto (Prod.fst : ℝ × B → ℝ) (𝓝 (0, b)) (𝓝 0) := continuous_fst.tendsto _
+    have hsnd : Tendsto (Prod.snd : ℝ × B → B) (𝓝 (0, b)) (𝓝 b) := continuous_snd.tendsto _
+    have hsub : Tendsto (fun z : ℝ × B ↦ z.2 - b) (𝓝 (0, b)) (𝓝 0) := by
+      simpa only [sub_self] using hsnd.sub (tendsto_const_nhds (x := b))
+    have hp := (w.continuous_seminorm (a, d)).tendsto 0 |>.comp hsub
+    simp only [map_zero] at hp
+    have hsmall := ((tendsto_const_nhds (x := C)).mul hp).add
+      ((tendsto_const_nhds (x := C * p a d (G b))).mul hfst.abs)
+    simp only [abs_zero, mul_zero, add_zero] at hsmall
+    filter_upwards [hfst.abs.eventually (gt_mem_nhds (show |(0 : ℝ)| < 1 by simp)),
+      hsmall.eventually (gt_mem_nhds hε)] with z hz hεz
+    have he : U z.1 z.2 - b = U z.1 (z.2 - b) + (U z.1 b - b) := by
+      rw [map_sub]
+      abel
+    rw [he]
+    exact ((map_add_le_add _ _ _).trans (add_le_add (hprofile _ _ hz.le) (hscale _ hz.le))).trans_lt hεz
+  rw [continuous_iff_continuousAt]
+  rintro ⟨s, b⟩
+  let shift (z : ℝ × B) := (z.1 - s, z.2)
+  have hc : Continuous shift := (continuous_fst.sub continuous_const).prodMk continuous_snd
+  have he : shift (s, b) = (0, b) := by simp [shift]
+  have hshift : Tendsto shift (𝓝 (s, b)) (𝓝 (0, b)) := he ▸ hc.tendsto (s, b)
+  have h := ((U s).continuous.tendsto b).comp ((hnear b).comp hshift)
+  have heq : (U s : B → B) ∘ (fun z : ℝ × B ↦ U z.1 z.2) ∘ shift =
+      fun z : ℝ × B ↦ U z.1 z.2 := by
+    funext z
+    dsimp [shift]
+    rw [← hadd, add_sub_cancel]
+  rwa [heq] at h
 
 end
 end Masullo
