@@ -803,35 +803,64 @@ go run ./cmd/godel audit-local "$CANDIDATE" Lemmas.FiniteCompletionCompact -- \
   Masullo.isOpenEmbedding_finiteCompletionIntegralUnits
 ```
 
+### Checked restricted-product Haar for number fields
+
+[`Theorems.IdeleRestrictedProductHaar`](../../Proofs/Theorems/IdeleRestrictedProductHaar.lean)
+constructs regular Haar on the actual ideles from arbitrary Borel local
+Haar measures with finite integral-unit mass one off a finite set $E$.
+The comap to every stage $S\supseteq E$ is the product of the full
+Archimedean measures (including both real signs), full active finite
+measures, and the probability product of the inactive unit comaps.
+These comaps determine the measure among **all** Borel measures. For
+any positive compact Archimedean box $B$, the compact global box
+with Archimedean coordinates in $B$ and all finite coordinates in
+integer units has mass
+$$(\bigotimes_{v\mid\infty}\mu_v)(B)\prod_{v\in E}\mu_v(\mathcal O_v^\times).$$
+
+Lemma A.3.2.4 and (A.3.2.5), p. 560, invoke the restricted-product
+identification; the prescription on p. 556 refers out for the
+construction. For an inactive **probability** product one needs to
+include the mass exceptions in $S$. A formula with a normalized tail
+on a smaller stage would need the omitted masses as a scalar.
+Lean instead compares the Haar restrictions to one common positive
+compact box, retains the exceptional masses, and proves Borel
+uniqueness on the cofinal countable open cover. This does not derive
+(A.3.2.2)'s local discriminant masses or their finite exceptional
+support, or identify the product with (A.3.2.1)'s separate quotient
+normalization. The manuscript reading is provisional (pinned Markdown
+and PDF layout, not rendered pages). Independent Yah statement review:
+`SvSZHgF` (output `1a44475cac6933f9666c6701df476b9b8a3beba5`).
+Replay the endpoint and the definitions of its factors and box:
+
+```sh
+go run ./cmd/godel audit-local "$CANDIDATE" \
+  Lemmas.IdeleFiniteStageMeasure Theorems.IdeleRestrictedProductHaar -- \
+  Masullo.finiteCompletionUnitMass Masullo.ideleFiniteStageProduct \
+  Masullo.stageUnitBox Masullo.ideleCalibrationBox Masullo.image_ideleStageUnitBox \
+  Masullo.ideleFiniteStageProduct_unitBox Masullo.exists_ideleRestrictedProductHaar
+```
+
 ### Next: Identify the restricted-product zeta pairing
 
-Construct the Haar measure with the exact stage restrictions prescribed
-by (A.3.2.5), p. 560, for the checked embeddings. Start with given local
-Haar measures and a finite set $E$ such that the integral-unit mass is
-one outside $E$. For every $S\supseteq E$, prove that the comap is the
-product of the full Archimedean and active finite factors, and the
-product probability of the pulled-back integral-unit restrictions off
-$S$. Do not normalize away the masses of (A.3.2.2) inside $E$: On a
-calibration product with all finite coordinates integral units, the
-mass must include $\prod_{v\in E}\mu_v(\mathcal O_v^\times)$ times its
-Archimedean mass. This factor is independent of $S$. This suggests
-scaling upstairs Haar by one common positive compact box and applying
-`Measure.IsHaarMeasure.comap` and `Measure.haarMeasure_eq_iff` on each
-stage, rather than gluing measures. `RationalIdeleFiniteStageHaar` is a
-comparison pattern, not the general-field result. Use the compact open
-local integer units as a compact neighborhood of $1$ to obtain local
-compactness of the full finite-place unit groups. For the inactive factor,
-test `Measure.infinitePi_map_restrict` and `Measure.eq_infinitePi` on finite
-cylinders to prove left invariance of the product of local Haar
-probabilities. Establishing the actual discriminant masses and their
-finite exceptional support for
-(A.3.2.2), and identifying the product with the separate quotient
-normalization (A.3.2.1), are distinct obligations. Character ramification
-is not the exceptional set for these masses.
-
-Then use the local pairings on a tensor test, increasing the stage, to
-identify the absolutely integrable global zeta pairing for $\Re s>1$,
-with the product of those masses or with the corresponding scaled tests.
+First prove the finite-stage integral for a pure-tensor density $g$ on
+actual ideles. Let $E'$ include $E$ and all places where the local
+density on integer units is not identically one (in particular the
+character ramification and test exceptions). For $S\supseteq E'$, the
+restriction of $g$ along the stage embedding is the product of its full
+Archimedean and active finite factors, independent of the inactive
+coordinates. For measurable integrable local factors, prove that
+$g$ is integrable on this stage and that its integral is the product
+of those local integrals, with no additional tail scalar; also compute
+the integral of $|g|$ there as the product of the local absolute masses.
+Use the checked comap, product Fubini, and the inactive probability
+mass one. A first runnable interface is the factorization for an
+arbitrary complex density satisfying this stage coordinate identity;
+`integral_prod_mul` and `integral_fintype_prod_eq_prod` give the finite
+product steps. The global passage then needs a bound on the finite
+stage absolute masses along an increasing cofinal exhaustion, followed
+by convergence of the complex integrals. Keep the exceptional unit
+masses in the local integral values. Character ramification is not
+the exceptional set for Haar unit masses.
 
 **Still open:** Meromorphic continuation, divisor data, and contour
 growth in (B.4.2.1)–(4), the broader test class, ramified Fourier terms,
