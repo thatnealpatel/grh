@@ -634,45 +634,65 @@ gives the second split with the same local conventions. Yah reviewer
 `ywHnZGk` independently reviewed the statement and its source
 correspondence (review output `3b4c5ea7eeb3517288df10c6d3b69e336f2ce9dc`).
 
-### Next: Calibrate the finite local zeta integrals to the Haar measure
+## Finite local zeta pairings with the Haar unit mass retained
 
-Before identifying the completed product with the global zeta integral,
-check the finite test normalization. Definition 3.4.3.2, (3.4.3.7)–(8),
-p. 152, uses the integer-ring indicator for an unramified character and
-the inverse character on integer units for a ramified character. But
-(3.3.1.7), p. 130, pairs with the multiplicative Tamagawa measure, whose
-unit mass $M_v$ in (A.3.2.2), p. 560, is the local discriminant factor,
-not in general $1$. In particular, the inverse-character test pairs to
-$M_v$ (the norm twist is $1$ on units), whereas (3.4.3.11) and (13),
-p. 153, would give $1$ with the ramified Euler factor. Field ramification
-can also affect $M_v$ when the character is unramified. The reading is
-provisional (Markdown and PDF layout), and the Haar comparison is not
-yet proved in Lean.
+[`Theorems.FiniteHeckeLocalZeta`](../../Proofs/Theorems/FiniteHeckeLocalZeta.lean)
+evaluates both finite tests on the actual completion units:
 
-**Runnable obligation:** Work on the actual `(v.adicCompletion K)ˣ`.
-For multiplicatively invariant Borel measure of finite positive integer-unit
-mass $M_v$, prove absolute integrability for $\Re s>0$ and evaluate the
-bilinear integral of each printed finite test against the restricted
-unitary character times $|x|_v^s$. The result should be
-$M_v L_v(s,\chi)$, with $L_v=1$ in the ramified-character case. On the
-unramified test, partition into $\pi_v^k\mathcal O_v^\times$, $k\ge0$.
-`Valuation.exists_pow_Uniformizer` supplies the integer-ring
-factorization, `MeasureTheory.measure_preimage_mul` gives equal shell
-masses, and `uniformizer_norm_cpow` gives the geometric ratio. On the
-ramified test use pointwise cancellation on the unit group. Dividing
-the finite test by $M_v$, or using unit-mass Haar instead, should then
-give exactly the Euler factor. Do not replace the Tamagawa measure
-silently: (A.3.2.5), p. 560, uses it in the global restricted product,
-with just finitely many nonunit masses. The global repair must account
-for the accumulated scalar as well as the complex angular correction.
+- `Masullo.finiteHeckeLocalZeta_unramified` proves absolute integrability
+  for a unitary Hecke character and $\Re s>0$, and gives $M_v L_v(s,\chi)$
+  for the integer-ring indicator.
+- `Masullo.finiteHeckeLocalZeta_ramified` gives absolute integrability and
+  $M_v L_v(s,\chi)=M_v$ for the inverse-character test, for all complex
+  $s$. Since this integrand is the local unit indicator after cancellation,
+  the theorem requires neither unitarity nor measure invariance.
 
-**Still open:** Transport of the Archimedean scalar integrals to the
-completion units, the corrected global zeta integral identification,
-meromorphic continuation, divisor data, and contour growth in
-(B.4.2.1)–(4). The broader test class, ramified Fourier terms, and global
-trace remain open as well. See the separate
+Here $M_v$ is the real mass of the norm-one set. The theorems assume
+finite unit mass; its positivity is needed only to divide by it. The
+[local shell lemmas](../../Proofs/Lemmas/FiniteLocalNormShell.lean) identify
+that set with the image of the units of the **local** integer ring,
+partition the punctured integer ring by nonnegative uniformizer powers,
+and obtain the same mass on each shell by left invariance. The existing
+uniformizer norm and local coefficient lemmas identify the geometric
+ratio, so no Euler factor or convergence premise is added to the statement.
+
+In the provisional Markdown and PDF-layout reading, (3.4.3.7)–(8),
+p. 152, supply the two tests, and (3.3.1.7), p. 130, uses the local
+multiplicative Tamagawa measure in the bilinear pairing. But
+(A.3.2.2), p. 560, sets its unit mass to the local discriminant factor,
+which need not be one even for an unramified **character**. Combining
+(3.4.3.10)–(11) with (3.4.3.13), p. 153, would instead give the Euler
+factor without this scalar. The repair at the checked pairings is to
+retain the mass, or divide the test by it if the desired value is the
+Euler factor. This local result does not construct the Tamagawa measure,
+evaluate its discriminant mass in Lean, or establish the meromorphic
+eigendistribution identity. Independent Yah statement review: `mlDzIRC`
+(output `f48eaa338965ce0b79cba685588b9017d0f07526`). No rendered-page
+verification is claimed.
+
+### Next: Transport the Archimedean pairings to completion units
+
+In (3.3.1.7), p. 130, the domain is $F_v^\times$, not the entire additive
+coordinate field. Use Definition A.3.1.2(1)–(2), p. 556, and Definition
+A.3.2.2(1), p. 560: Transport $dx/|x|$ off zero and
+$2\,dx\,dy/|z|^2$ off zero along the real and complex completion
+coordinates used by the checked character restrictions. The runnable
+endpoint is a pair of absolutely integrable local pairings on
+`v.Completionˣ` for $\Re s>0$, with value the actual local Gamma factor
+of `Theorems.CompletedHeckeEulerProduct` and the opposite-angular
+complex Gaussian. Use `map_realMultiplicativeHaar_val` on the real side
+and prove the analogous pushforward of the complex density; zero is
+null for the original additive measure. Do not change the complex
+orientation between the character restriction and its Gaussian test.
+
+**Still open:** The corrected global zeta integral identification must
+apply (A.3.2.5), p. 560, with the accumulated finite unit mass (or scaled
+tests at the finitely many exceptional places), rather than silently
+switching to unit-mass factors. Meromorphic continuation, divisor data,
+and contour growth in (B.4.2.1)–(4), the broader test class, ramified
+Fourier terms, and global trace remain open. The
 [local conductor obligation](#open-ramified-local-conductor-power-in-the-general-reflection)
-for the missing epsilon factor upstream of the checked reflection.
+remains upstream of the checked reflection.
 
 ## Reproduce the endpoint audit
 
@@ -794,4 +814,14 @@ go run ./cmd/godel audit-local "$CANDIDATE" \
   Masullo.compactLogMellin_archimedeanGamma_direct \
   Masullo.compactLogMellin_archimedeanGamma_reflected \
   Masullo.compactLogMellin_archimedeanGamma_pair
+```
+
+For the finite local zeta evaluations, replay both modules:
+
+```sh
+go run ./cmd/godel audit-local "$CANDIDATE" \
+  Lemmas.FiniteLocalNormShell Theorems.FiniteHeckeLocalZeta -- \
+  Masullo.finiteLocalUnitSet_eq_range \
+  Masullo.finiteHeckeLocalZeta_unramified \
+  Masullo.finiteHeckeLocalZeta_ramified
 ```
