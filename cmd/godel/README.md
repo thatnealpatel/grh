@@ -53,6 +53,8 @@ endpoint.
    `#print axioms` if matching names exactly: Enabling it can print
    universe suffixes on allowed names. Match the expected declaration
    names, require one report per name, and check every axiom in each list.
+   When matching the signature diagnostic from `#check @Name`, allow its
+   leading `@`; the separate axiom report still names `Name` without it.
    A count of lines containing `depends on axioms:` is not a verdict.
 
 4. Obtain a fresh independent Yah review of the intended statements against the exact mathematical obligation, including any added endpoint or changed statement. Give the reviewer fixed statement text or an exact revision and the manuscript locators. For a statement review in parallel with elaboration, assign the build to the owner; the reviewer should not build a moving writer workspace. Compare the built signatures, including assumptions and scope, with the independently reviewed statements. A familiar declaration name, clean axiom report, or successful build cannot establish that the built statement is the right one. If a statement changes after review, send that statement back for independent review.
@@ -104,10 +106,14 @@ After a conflict, stale adoption, or ambiguous error, inspect `tool_campaign sta
 For any replacement integration candidate, compare its exact diff against the new base with the reviewed work, then repeat the proof landing checks on that candidate. Have any added endpoints or changed statements independently reviewed. An old handoff's audit or build-cache directions do not override this recipe.
 
 For a docs-only or other non-Lean restack, you can seed the replacement
-workspace's Lake build cache from your previous checked candidate. First
-verify that the Lean source tree, Lean/Lake inputs, and build environment
-are unchanged between the two candidates. From the replacement workspace,
-copy the artifact directories **into** its existing build directory:
+workspace's Lake build cache from your previous checked candidate if
+its artifacts are still present. Check both source directories before
+copying; an earlier check session is not a guarantee that its cache
+is available in a fresh invocation. If they are absent, proceed with
+the normal Lake build. First verify that the Lean source tree, Lean/Lake
+inputs, and build environment are unchanged between the two candidates.
+From the replacement workspace, copy the artifact directories **into**
+its existing build directory:
 
 ```sh
 # Set previous to the absolute path of the checked integration workspace.

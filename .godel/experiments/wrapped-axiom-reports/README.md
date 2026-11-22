@@ -76,3 +76,60 @@ be located without changing a candidate to insert its own hash. Keep
 the work/improvement topology: The inherited-input reconciliation,
 independent review, and scoped restack worked, and the remaining
 failure was report framing. No live routing or executable change.
+
+## Live follow-up: Fixed-Gaussian continuation
+
+Run `01a20567-41b5-7876-b0ed-5f26863a22b8` matches work Yah
+`01a20567-4317-7598-a876-3bfb612ca5c2` (input seq. 3, stdout seq. 142).
+The archive marker and initial accepted tip were
+`6ff80ff6becd42380c7800dddaf81d52477ac50f`. Its `cmd/godel` and
+shared Go inputs were unchanged at the work landing. This improvement
+is Yah `01a2056f-8344-7f8c-ab83-1ef134597ce8`, with the same marker.
+The work followed the matching [previous improvement](../restack-lake-cache/#live-follow-up-corrected-gaussian-mellin-entireness):
+It skipped the accepted entire-integral and scalar-mode results and
+assembled the missing continuation. It did not recover an unlanded
+artifact. It also inspected the intervening audit note, which concerned
+an already-closed normalization premise, not the continuation.
+
+- The first writer task stopped before Lean because the prior session's
+  recorded cache directories were missing (seqs. 38–49). Switching to
+  the available launch cache allowed a build. The next builds found
+  local notation capture, missing inherited Borel instances, proof
+  elaboration errors, and then unreachable tactics under `--wfail`
+  (seqs. 51, 60, 73, 82). These were repaired before the owner build.
+- Direct output `abc29e6ffc30d87fda2560b704a881f81a0dad6d` integrated
+  on `e7cf12509d9926d58b33c64fcc9be7b8e356ed99` as
+  `e593c9ce04bdff9151644ea015358d2e45685d3d`. Reviewer `bSxnAsU`
+  checked the frozen endpoint and exact first candidate without a build
+  (seqs. 115, 126). Its output `a01a969abf619b02a34e809b4ec480e54fddc8ff`
+  was a read-only snapshot, not a competing proof. The reviewer used
+  pinned Markdown, layout, and limited Braille raster transcriptions.
+  These are text-mode controls, not a direct rendered-page image review.
+- The first owning build passed (seq. 108). A JSON checker rejected
+  valid signatures because `#check @Name` printed `@Name` and the code
+  matched `Name` (109–114). Unlike the earlier wrapped-list failure,
+  this was signature matching, not axiom framing. The later status
+  found a different accepted parent; the owner did not attempt stale
+  adoption of this candidate (120–130). No prebuild check was made
+  at this decision, and the record does not establish that one would
+  then have found the move.
+- The restack on `a2f09a7a1fc08da97e122ad19cb64890e1d321a8` preserved
+  the proof patch. Its warning-failing build rebuilt the endpoint in
+  its own workspace and the fresh full joint diagnostic matched the
+  first full report. The owner adopted
+  `5401cebe488cc9a65902161f0054ca7c0e223c70` (131–141). See the
+  [theorem handoff](../../obligations/single-place-norm.md#meromorphic-continuation-of-the-fixed-gaussian-euler-product)
+  for the normalization, scope, and the separate contour obligation.
+
+**Bounded replay:** On the actual first-candidate JSON output, match
+signature diagnostics after removing at most one leading `@`, then
+require exactly one signature, defining module, and complete allowed
+axiom report for each of the three expected declarations. The original
+prefix test failed; the corrected test passed, and it rejected a missing
+signature, a duplicate signature, and `sorryAx` on a continuation line.
+This tests report matching, not the reviewed statements or a new proof.
+
+**Decision:** Clarify the optional signature matcher and distinguish a
+missing prior cache from a bad copy layout. Keep the exact-candidate
+checks, optional preflight, and current topology. No live router,
+standalone parser, or timing experiment was run.
