@@ -101,24 +101,19 @@ The endpoint does not instantiate that premise for the number field.
 
 For p. 309's analytic argument, the denominator to estimate on
 $-1/2\le\Re s\le2$ is precisely the entire Dirichlet product above.
-The inherited use of Corollary B.6.1.8, p. 643, (B.6.1.45) at $m=0$
-(or Theorem B.6.1.7, pp. 641–642, (B.6.1.35)) remains a provisional
-source premise, not an independently checked bound here. The prior
-lift also uses the provisional local image criterion, Theorem
-5.4.1.1(1), pp. 265–266, (5.4.1.3), the provisional completed and complex local normalizations on
-pp. 123 and 129, and the compact-strip Schwartz convention,
-Definition D.3.1.3, pp. 800–801, identified in its [holomorphy section](isotypic-inverse-range-q-sqrt-minus-five.md#holomorphy-and-overlap).
+The [common good-height proof](isotypic-good-heights-q-sqrt-minus-five.md)
+now supplies the $m=0$ polynomial reciprocal bound for p. 309 directly,
+without the provisional readings of pp. 641–643, (B.6.1.35) and
+(B.6.1.45). One moving disk counts all zeros of the product with
+multiplicity; averaging the **total** logarithmic loss bounds it by
+$O(\log H)$ at one common height. The prior lift still uses the provisional local
+image criterion, Theorem 5.4.1.1(1), pp. 265–266, (5.4.1.3), the
+provisional completed and complex local normalizations on pp. 123 and
+129, and the compact-strip Schwartz convention, Definition D.3.1.3,
+pp. 800–801, identified in its [holomorphy section](isotypic-inverse-range-q-sqrt-minus-five.md#holomorphy-and-overlap).
 
-**Next analytic check:** For $D=L(\cdot,\chi_{-4})L(\cdot,\chi_5)$,
-obtain a polynomial upper bound on a fixed moving disk enclosing the
-horizontal segment, a lower bound at a right-half-plane anchor, and
-an $O(\log T)$ count of the disk zeros with multiplicities. Test
-whether integrating the negative logarithms of the distances to
-**all** those zeros over a unit interval yields one common height
-where the total loss is $O(\log T)$, enough for a polynomial
-reciprocal estimate. A minimum gap of size $1/\log T$ alone can lose
-$O(\log T\log\log T)$ in a product of $O(\log T)$ factors. The two
-characters have real coefficients, so a good positive ordinate for
-the product gives a good negative one by conjugation. The arithmetic
-Lean follow-up is separate: Instantiate the polynomial premise for
-this class character using the norm test above.
+**Open Lean premises:** Formalize the polynomial upper circle growth
+of the explicit product to make its common-height estimate
+unconditional in Lean. Separately, instantiate the all-prime grouped
+polynomial identity for the actual class character using the norm
+test above.

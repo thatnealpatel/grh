@@ -92,16 +92,13 @@ writing $s=\sigma+it$.
   for $|t|\ge 1$. Also $|E(s)|$ is constant on this line. The bounded
   ordinates are harmless by continuity and the same nonvanishing
   argument. Thus the reciprocal is bounded on this entire edge.
-- Corollary B.6.1.8, (B.6.1.45), p. 643, at $m=0$ bounds $1/D$ by
-  $A|T|^\beta$ uniformly on $[-1,2]+iT$ at arbitrarily large $|T|$.
-  Here the omitted product is exactly $D$. The real Euler coefficients
-  give $D(\overline s)=\overline{D(s)}$ by continuation, so each good
-  absolute height gives a pair of good opposite edges. We use the
-  polynomial bound in the actual ordinate, not the sequence index.
-  No bound on derivatives of $1/D$ is needed: The $m=0$ estimate
-  also follows directly from Theorem B.6.1.7, (B.6.1.35), pp. 641–642.
-  These are provisional text readings used as manuscript inputs, not
-  a new proof of the estimates.
+- The [common good-height proof](isotypic-good-heights-q-sqrt-minus-five.md)
+  supplies an $m=0$ polynomial reciprocal bound uniformly on
+  $[-1/2,2]+iT$ at some $T$ in every sufficiently high unit interval.
+  Real Euler coefficients give $D(\overline s)=\overline{D(s)}$ by
+  continuation, so each such $T$ provides a pair of opposite edges.
+  The proof uses the explicit Dirichlet product, not (B.6.1.35) or
+  (B.6.1.45), and no bound on derivatives of $1/D$ is needed.
 
 For each $N\ge0$, the rapid decay of $\Phi$ on the closed strip gives
 one constant $C_N$ bounding $|s^N B(s)|$ on the two vertical edges
@@ -176,10 +173,13 @@ Dirichlet product and the comparison with the accepted Hecke product
 conditional on the grouped local polynomial identity. The actual
 class-character specialization of that identity is not yet in Lean.
 
-The reciprocal estimate remains a separate analytic premise. Test
-whether a moving-disk factorization for this explicit product, with
-a good right-half-plane anchor and a bound on the **total** loss from
-nearby zeros, yields the $m=0$ estimate at common good heights for
-$[-1/2,2]$. This would discharge the horizontal-edge estimate rather
-than extrapolating the right-line Euler result. The reflected identity
-and the archimedean image criterion also need a formal model.
+The [horizontal reciprocal estimate](isotypic-good-heights-q-sqrt-minus-five.md)
+is now unconditional for this explicit denominator in ordinary
+mathematics. Lean derives it from one remaining upper-growth premise:
+$|D(z)|\le C_0 H^k$ on the radius-six circle about $2+i(H+1/2)$
+for all real $H\ge H_0$. The next analytic formalization is to discharge
+that premise (e.g. with five bounded centered periodic primitives of
+each character sum). The reflected identity and the archimedean image
+criterion still need a formal model. The latter and the exact
+completed/local normalizations and Schwartz convention above still
+use provisional source readings.
