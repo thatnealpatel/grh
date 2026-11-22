@@ -27,15 +27,23 @@ Work reports an observable result or stall; improvement can test and change any 
 
 ## Checking a proof candidate
 
-Use this machine. Have a second agent review the proposed statement against the mathematical obligation. Elaborate drafts in the writer workspace, then use `tool_campaign integrate`. From the **workspace returned by integration**, pass the full candidate ID, every changed Lean module, and the independently reviewed endpoints to:
+Use these checks for routine proof landings. Elaborate drafts in the writer workspace and integrate them through the campaign. Neither a writer build nor a passing helper establishes the integrated endpoint.
 
-```sh
-go run ./cmd/godel audit-local <full-candidate-id> Lemmas.Example -- Masullo.exampleLemma
-```
+1. Read the exact integrated candidate diff against the base returned by `tool_campaign integrate`. Verify that the patch matches the intended work and that the workspace sources and pinned Lean/Lake inputs are those of the candidate. Inspect changed Lean source for proof placeholders, new axioms, or unsafe substitutes. Trace the intended declarations to their defining project modules and distinguish manuscript steps from repairs against the pinned source.
+2. Use the owning Yah's Bash in the **integration workspace**, not the writer or durable launch checkout. Start the command with a literal `cd /actual/path`, replacing `/actual/path` with the real absolute path returned by integration, not a shell variable. Build the changed and affected project modules as applicable with `lake build --wfail +Module`. Verify the actual Lake target spelling: For example, `Proofs/Lemmas/AddSubgroupCharIntegral.lean` is `+Lemmas.AddSubgroupCharIntegral`, not `+Proofs.Lemmas.AddSubgroupCharIntegral`. Include the modules defining the endpoints and affected importers when relevant; pass multiple targets to the build as needed.
+3. From that same workspace in the owning Yah's Bash, run a fresh scratch check with `lake env lean` on the scratch file. Import the selected modules **together** in that file. Run `#check` on each intended built declaration and inspect its binders and hypotheses (use `@` to expose implicit arguments when needed). Run `#print axioms` on each declaration. Only `propext`, `Classical.choice`, and `Quot.sound` are allowed transitively. Reject `sorryAx` or any unknown or unapproved axiom. For example, a check importing one selected module would contain:
 
-The command compares `Proofs/` and the pinned Lake inputs on disk with the candidate, runs `lake --wfail build Proofs`, and checks that all project modules import together. This catches duplicate declarations that a parallel build of separate modules can miss. It replays each listed module in a separate `leanchecker` process, checks their axioms and endpoint provenance in Lean, and reports each requested declaration's built signature alongside its axiom report. It repeats the input comparison before reporting success. It uses the workspace's trusted local Lake dependencies, and neither contacts a proof worker nor adopts the candidate. Run it with a time bound and keep its output. The joint import is not a kernel or axiom audit of the entire project: Those checks cover the modules named on the command line. The command does not select them or certify that a declaration has the intended statement.
+   ```lean
+   import Lemmas.AddSubgroupCharIntegral
 
-Compare the built signatures in the audit output with the independently reviewed statements, and inspect changed Lean sources for new axioms, proof placeholders, or unsafe substitutes. The theorem must be proved in the project and depend only on `propext`, `Classical.choice`, and `Quot.sound`. Record the candidate ID, declarations, and results. Adopt that exact ID only on success. If a proof needs repair, edit in a writer workspace, integrate, and repeat the checks on the new candidate. The older `cmd/godel check` uses a designated remote worker and is not part of this workflow.
+   #check @Masullo.addSubgroup_integral_star_char
+   #print axioms Masullo.addSubgroup_integral_star_char
+   ```
+
+4. Obtain a fresh independent Yah review of the intended statements against the exact mathematical obligation, including any added endpoint or changed statement. Compare the built signatures, including assumptions and scope, with the independently reviewed statements. A familiar declaration name, clean axiom report, or successful build cannot establish that the built statement is the right one.
+5. Keep the full candidate ID and base, reviewed declarations, build and import results, built signatures, axiom reports, and source and independent review evidence (or their durable references). Adopt only that exact checked ID, and report whether adoption succeeded. If a proof needs repair, edit in a writer workspace and integrate again. A restack is a new candidate: Repeat the landing checks and get independent review of any changed statement.
+
+A full-project audit, all-project joint import, and separate kernel replay are not routine landing gates. Continuous rigorous `cmd/audit` is deferred; do not assume any future auditor has covered a result. Do not claim RH or GRH closure without a separate rigorous audit. Keep old per-revision audit logs as historical evidence for their stated revisions, not as instructions or checks for new candidates.
 
 ### Integrating a direct edit
 
@@ -51,7 +59,7 @@ the setup race; it does not remove it.
 Once the edit is ready, call `tool_campaign integrate` with `description`
 but without `on` or `outputs`. The campaign finalizes the direct work and
 integrates it on the current accepted target. Check the returned base
-and patch before running the audit or tests, especially if another
+and patch before running the landing checks or tests, especially if another
 campaign has advanced the target. Passing the old accepted hash as
 `on` after the target moves can be rejected as an unknown integration
 candidate. A superseded accepted commit is not a pending candidate.
@@ -62,45 +70,14 @@ tool's separate `on` and Change-Id rules.
 
 After a conflict, stale adoption, or ambiguous error, inspect `tool_campaign status` and the current accepted source. Recover only what is still needed.
 
-- **Stale adoption:** The candidate did not land. If it is still pending on its intended parent, land the parent through its normal checks, then retry the same audited child without rebuilding it. If the base or parent was superseded, reconcile the needed changes with its successor. Integrate the registered outputs on the intended base; do not replay a child alone on accepted if it still needs an unlanded parent's changes. If an output is readable in jj but no longer registered in this campaign (`status` with `verbose=true`), restore the needed changes from its clean patch in a fresh workspace on the intended base.
+- **Stale adoption:** The candidate did not land. If it is still pending on its intended parent, land the parent through its normal checks, then retry the same child without rebuilding it only if the candidate ID is unchanged and its evidence meets the landing checks above. If the base or parent was superseded, reconcile the needed changes with its successor. Integrate the registered outputs on the intended base; do not replay a child alone on accepted if it still needs an unlanded parent's changes. If an output is readable in jj but no longer registered in this campaign (`status` with `verbose=true`), restore the needed changes from its clean patch in a fresh workspace on the intended base.
 - **Content conflict:** Replaying the same outputs on the same base will not resolve the conflict. Even if the outputs are registered, open a fresh direct workspace on the intended base: Use the pending parent if the change still depends on it, or the current accepted revision otherwise. Compare the clean saved outputs with their original bases and reconcile the intended changes with intervening work. Do not use the conflicted integration tree as the source of the patch.
 
-For any new integration candidate, compare its patch with the reviewed work. Have any changed statement independently reviewed and audit that exact candidate before adoption.
+For any replacement integration candidate, compare its exact diff against the new base with the reviewed work, then repeat the proof landing checks on that candidate. Have any added endpoints or changed statements independently reviewed. An old handoff's audit or build-cache directions do not override this recipe.
 
-For a restack with identical Lean build inputs, reuse the trusted project build cache from the finished audit rather than starting cold. From the repository root, use the full old and new candidate IDs and the workspace paths returned by integration. First compare the pinned inputs:
+### Compatibility for pinned callers
 
-```sh
-jj --ignore-working-copy diff --summary \
-  --from "commit_id(\"$OLD\")" --to "commit_id(\"$NEW\")" -- \
-  Proofs lakefile.toml lake-manifest.json lean-toolchain
-```
+These entrypoints remain unchanged for in-flight prompts, not as routine landing gates:
 
-If the comparison is empty, seed the new workspace if its build directory does not exist:
-
-```sh
-test ! -e "$NEW_WS/.lake/build" &&
-cp -a --reflink=auto "$OLD_WS/.lake/build" "$NEW_WS/.lake/build"
-```
-
-You can also use this copy on a strictly additive restack: The only reported differences may be additions of `.lean` modules under `Proofs/`. Before copying, check that the seed contains no cached build artifacts for those modules. If there are any modifications, deletions, renames, Lake input changes, or uncertainty about the cache, use an ordinary audit without the copy. See the [additive-restack replay](../../.godel/experiments/additive-audit-restack/).
-
-Only seed from a finished local audit under the same trusted toolchain and Lake dependencies. Run `audit-local` in the new integration workspace, confirm that Lake builds any newly added modules, and inspect the reported endpoint signatures before adoption. Reusing build artifacts saves elaboration time; it does not transfer an audit verdict to a new candidate.
-
-If the workspace filesystem cannot hold another cache and does not
-support reflinks, the same validated seed can be copied into a private
-`/dev/shm` directory, provided it and the host have enough free space
-and memory. In the new integration workspace, point `.lake/build` at
-that private copy, never at the original cache:
-
-```sh
-test ! -e "$NEW_WS/.lake/build" && test ! -L "$NEW_WS/.lake/build" &&
-RAM=$(mktemp -d /dev/shm/grh-audit.XXXXXXXX) &&
-cp -a "$OLD_WS/.lake/build" "$RAM/build" &&
-ln -s "$RAM/build" "$NEW_WS/.lake/build"
-```
-
-Run the same exact-candidate audit from `$NEW_WS`. Keep the audit log
-outside the temporary directory. When no check is using the copy,
-remove the new symlink and the private directory you created. Do not
-use this route if the seed comparison or the space check fails. See
-the [low-disk cache replay](../../.godel/experiments/tmpfs-audit-cache/).
+- From the repository root (uses a designated remote worker): `go run ./cmd/godel check <full-commit-id> <declaration> [<declaration> ...]`
+- From the integration workspace root: `go run ./cmd/godel audit-local <full-commit-id> <module> [...] -- <declaration> [...]`
