@@ -333,24 +333,64 @@ via the LF universal property. The reviewer checked the two
 stage-to-fixed-test implications and the applicability of the
 inherited source readings, not the manuscript pixels anew.
 
-**Next bounded check:** In the same real factor, prove in Lean that
-flatness gives $\|b(\pm e^t)\|\le C_N e^{Nt}$ for $t\le0$ and every
-integer $N\ge1$, using the zero Taylor coefficients and a derivative
-bound on $[-1,1]$. This supplies the missing negative-log tail
-estimate for the forward real local integral. In the already checked
-signed log Haar model the test profiles are exactly $b(\pm e^t)$,
-and the real twist contributes a fixed parity sign and
-$\exp((s+i\tau)t)$, not a change of log coordinate. See the
-[signed real log Haar](single-place-norm.md#checked-signed-real-log-haar)
-and the [real character restriction](hecke-right-line-majorant.md#real-archimedean-restriction-parity-and-radial-frequency).
-Their manuscript mappings to the density and real restriction are
-provisional; the Lean coordinate identities are checked. The
-pairing is (3.3.1.7), p. 130, with the density locator at Definitions
-A.3.1.2(1), p. 556, and A.3.2.2(1), p. 560. Positive-log decay is
-the ordinary Schwartz bound, and holomorphic integration on the
-whole line is a separate step. On the finite side the
-[compact-away shell calculation](finite-local-zeta-residue.md)
-already gives forward entireness on each local character component.
+## Checked negative-log decay of flat real tests
+
+[`Lemmas.RealSchwartzFlatTail`](../../Proofs/Lemmas/RealSchwartzFlatTail.lean)
+checks `exists_realSchwartz_negLog_tail_bound`: For each
+$b\in\mathcal S(\mathbb R,\mathbb C)$ with $b^{(j)}(0)=0$ for every
+$j\in\mathbb N$, and each natural $N\ge1$, there is a single $C_N\ge0$
+for both signs such that $\|b(\pm e^t)\|\le C_N e^{Nt}$ for all $t\le0$.
+There is no support gap at zero. The preceding closed-image theorem
+supplies exactly these jet hypotheses for each real profile of the
+repaired image, including at $p=3$; it did not provide the estimate.
+
+The reusable `exists_twoRay_pow_bound_of_vanishing_jets` needs only
+$C^{n+1}$ regularity on $\mathbb R$ and vanishing jets through order $n$
+for a function into any real normed space. Apply the pinned Mathlib
+Taylor remainder bound on $[0,1]$ to $f(x)$ and $f(-x)$ separately.
+The interval is uniquely differentiable, so the within derivatives at
+zero equal the corresponding ordinary derivatives. Reflection only
+multiplies the $j$-th jet at zero by $(-1)^j$. Thus both degree-$n$
+Taylor polynomials are zero. Take the maximum of zero and the two
+remainder constants, giving order $x^{n+1}$ on both rays. Substituting
+$x=e^t\in[0,1]$ and $n=N-1$ gives the log estimate. Independent Yah
+reviewer `ietJPWl` (transcript `01a204a9-beaa-7ad6-9e5b-b1e2c7292079`)
+checked both statements, the Taylor reduction, and applicability to
+the preceding jet and signed-log interfaces.
+
+**Source and scope:** This is a local input to the repaired forward
+claim of Lemma 5.3.4.2(2), pp. 259–261, not the printed proof or a
+proof of entireness. The real jet condition comes from the inherited
+rendered reading of (5.3.3.10), p. 252, and Definition 5.3.4.1,
+p. 259, in the [domain audit](#the-finite-only-repair-is-not-projectively-continuous).
+The [angular audit](complex-gaussian-angular.md#rendered-readings)
+verifies the bilinear integrand of (3.3.1.7), p. 130, and the direction
+of local restriction in §3.1.2.2, p. 121. The
+[real-prime audit](trace-real-prime-q.md#source-and-domain) verifies
+full real Haar $dx/|x|$ on both signs in A.3.2.2(1), p. 560, and the
+usual real absolute value in (A.2.2.2), p. 546. The checked
+[signed-log pushforward](single-place-norm.md#checked-signed-real-log-haar)
+has $t=\log|x|$ and mass one per sign. The checked
+[real restriction](hecke-right-line-majorant.md#real-archimedean-restriction-parity-and-radial-frequency)
+uses that same $t$; its manuscript mapping of the real split in
+(3.1.2.3), p. 121, remains provisional. No pixels were reread here.
+
+**Next bounded check:** For fixed parity $\epsilon\in\{0,1\}$ and
+$z\in\mathbb C$, let $f_\epsilon(t)=b(e^t)+(-1)^\epsilon b(-e^t)$.
+Use the new negative tail and the positive-tail Schwartz seminorm of
+order $(K,0)$, with $K\ge |\Re z|+3$, to check in Lean that
+$\|f_\epsilon(t)e^{zt}\|\le C e^{-3|t|}$ on the whole line. This
+is the missing input to
+[`hasDerivAt_logMellin_of_decay`](../../Proofs/Lemmas/LogMellinDerivative.lean)
+with $r=1$; that theorem already supplies complex differentiation,
+absolute integrability, and its first log moment. The checked real
+restriction and the usual norm power give $z=s+i\tau$, with parity
+constant on each sign; the defining pairing uses the raw character,
+not a Gaussian-normalized zeta factor. The folded log integral is the
+target of this check. Transport back to the actual completion-unit
+pairing, assembling the finite tensor sum with the
+[compact-away shell result](finite-local-zeta-residue.md), and descent
+on the character space remain separate.
 This closed-image check does not prove real or tensor entireness,
 character descent, or anything about the completed tensor, and it
 does not rehabilitate the printed finite factor or projective map.
