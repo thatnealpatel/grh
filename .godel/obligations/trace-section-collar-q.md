@@ -157,6 +157,45 @@ $J_f-M_f(-1/2)$. In the prescribed level-first global order the difference
 from that joint local value is $-M_f(1/2)+Z_{\rm full}(f)-Z_\alpha(f)$;
 the collar computation does not remove the omitted-zero residual.
 
+## A short test excludes fixed prime-two spread weights
+
+Apply the [Haar lift on principal translates](trace-orbital-q.md#the-right-cutoff-erases-a-fixed-shell-in-the-literal-chain)
+with $p=2$ to the Haar-relative kernel of the **already formed** radial
+operator $T_{\rho,B}=M_\rho P A_f Q_B$. Fix finitely supported weights
+$m_j\ge0$ of sum one, at least two positive. The indentation is $m_j$
+on $2^jD$ (diagonal rational $2^j$) and zero on other translates. It
+normalizes the full orbit sum, not the separate base-stage sum.
+
+For the output representative in $D$, the simultaneous two-leg weight
+at an input in $2^\ell D$ is $\sum_j m_jm_{j+\ell}$. Summing all input
+translates gives one. The right unit cutoff taken **outside** $2$ is one
+on these translates; the signed input mask $\alpha_1-\alpha_0$ is $-1$
+exactly for $\ell\ne0$ there. Unfolding with counting measure and
+mass-one compact Haar therefore gives the masked radial operator
+
+$$
+T^{\rm shell}_{\rho,B}=-cT_{\rho,B},\qquad c=1-\sum_jm_j^2>0.
+$$
+
+No mask has passed through a projection. The output section matters:
+With the same masks at $2^r d$ instead of $d\in D$, the unit-at-two
+input has weight $\sum_j m_jm_{j-r}$, not necessarily $\sum_jm_j^2$.
+The masked kernel is thus not asserted to descend independently of the
+chosen section.
+
+For the short mass-zero test above, fix a common good width and then a
+sufficiently small $\delta$ so the whole ordered trace is positive. At fixed $\rho$, the band limit
+retains $M_\rho A_{f_\delta}P$; only then exhaust position. Since $c$
+is fixed, the ordered shell trace is strictly negative. On the same test
+the half-twisted orbital circle trace is zero: With $L=\log 2$, the
+samples in $L\sum_{n\in\mathbb Z}e^{-nL/2}f_\delta(nL)$ all miss the
+support in $(0,L)$. Thus no such fixed spread gives the proposed
+prime-two transfer even on this short class. The test does not exclude
+weights concentrating on one translate as cutoffs move ($c\to0$), or a
+shell operation inside the level projection. Nor does it identify the
+additional norm cutoff in (11.3.2.4). It tests a replacement, not a
+necessary property of every lift of the manuscript diagonal.
+
 ## A bounded moving integral does not supply the missing moment
 
 This is a project test of a replacement exhaustion, not a constraint
@@ -252,3 +291,8 @@ estimates through selection of a fixed nonzero annular trace. `moving-integral-r
 `01a200ad-ee1e-7cd2-bdcc-ec33f44bd141`) independently checked the rescaled
 projection, the moving-limit pairing, and the admissible separating test.
 These are mathematical reviews, not Lean or rendered-page verification.
+`spread-shell-review` (`uLAjSbM`, read-only on
+`5c735c27e6b5ab0bb8233c70737c275ef8af8d34`) independently checked the
+section-dependent shell factor, rebased unit cutoff, ordered trace,
+and zero circle sample for the fixed-spread exclusion. That exclusion
+is reviewed mathematics, not a Lean theorem.
