@@ -4,8 +4,9 @@
 finite residue formula, not local meromorphic continuation or the
 forward polar-free entireness claim. The decisive hat, measure
 conversion, and witness normalizations were independently checked
-on the rendered pinned edition. The calculation is informal and
-uses the accepted Lean inputs listed below.
+on the rendered pinned edition. The two-ball and reflected calculations
+are informal. The translated-ball defining integral is now checked in Lean
+at every rational finite place, as detailed below.
 
 ## Printed residue and admissible tests
 
@@ -107,9 +108,49 @@ gives mass one on every integer shell. The accepted
 [`finiteHeckeLocalZeta_unramified`](../../Proofs/Theorems/FiniteHeckeLocalZeta.lean)
 gives the integer-ball integral on $\Re s>0$ with its unit mass retained.
 It does not state the residues or the translated-ball zeta integral.
-No new Lean proof or audit is claimed here: The zeta sums, their
-residues, and the manuscript comparison above are mathematical checks
-using those interfaces, not new formal endpoints.
+The shell sums, residues, and manuscript comparison above are mathematical
+checks, not formal endpoints. The following Lean result checks the
+translated witness by measure conversion instead of shell sums.
+
+### Checked translated-ball defining integral
+
+[`Masullo.rationalLocalOneResidueBall_zeta` and
+`Masullo.rationalLocalOneResidueBall_three`](../../Proofs/Theorems/RationalLocalResidueBallZeta.lean)
+use the actual rational finite completion $K_v$ and Borel structures on
+$K_v^\times$. If $p$ is the prime below $v$, the test on $K_v$ is the
+indicator of the preimage of $1+p\mathbb Z_p$ under `padicEquiv`.
+For every $s\in\mathbb C$, the integrand $f(x)\|x\|_v^s$ is integrable
+and its integral against `rationalLocalMultiplicativeHaar v` is
+$(p-1)^{-1}$. The proof transports the additive mass $p^{-1}$ via
+`padicAddHaar_map_inv_pow`, additive translation invariance, and the
+completion equivalence. Norm preservation and the ultrametric inequality
+give norm one on the ball. Thus neither the punctured-field restriction
+nor the density $\|x\|_v^{-1}$ changes its additive mass there, and
+`map_rationalLocalMultiplicativeHaar_val` supplies the sole factor
+$(1-p^{-1})^{-1}$. The norm twist is identically one on the support.
+
+At the place over $3$, the Lean endpoint gives $1/2$ for the defining
+integral and $1/3$ for the additive integral of the test. The latter is
+$\widehat f(0)$, not the integral of $\widehat f$. This admissible compact
+open indicator therefore gives a constant germ, whose residue is zero,
+versus $2/(9\log 3)$ from (3.3.2.23), p. 141. The residue comparison uses
+ordinary complex analysis and the inherited rendered readings above,
+including (3.3.1.7), p. 130, the norm-character coordinate on p. 120,
+and (A.3.2.2–3), p. 560. No new visual readings or Lean residue
+operator are claimed. The centered witness, arbitrary shell tails, and
+any corrected residue theorem remain outside this result.
+
+**Evidence:** Exact-source statement and applicability review by
+`mpNlIQj` in Yah `01a20509-48ad-7934-86cd-3b0cd6a7cfdc`, reviewing
+`1066deffa4dbd0053325372ed781b69040c4e65e`. The reviewer separately
+checked the printed prediction from the inherited note and applicability
+to the defining integral from the Lean sources. The owning build,
+joint-import signature and axiom checks, and adoption are recorded in
+that same Yah session. The joint import also instantiates the theorem
+at `primesEquiv.symm ⟨3, Nat.prime_three⟩` with the rational stage Borel
+instances and checks equality of the full parameter function to the constant.
+
+### Consequence for the repaired Chapter 5 test class
 
 For the finite-place ingredient of Lemma 5.3.4.2(2), p. 260, the
 corrected functional vanishes exactly when $f(0)=0$ on additive
