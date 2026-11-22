@@ -1027,4 +1027,191 @@ there is no self-dual normalization assumption. This is the local input for
 Example A.3.1.10, (A.3.1.8), p. 558, not full adelic inversion. Use it to
 match the finite factors and Haar constants with the global Gaussian
 and the compatible Archimedean Fourier normalization in (2.2.3.2), p. 82.
-Do not remove either zero mode before nontrivial character averaging.
+The subsequent [normalized test inversion](../../Proofs/Theorems/FiniteCompletionFourierSquare.lean)
+constructs Haar with integer-ring mass $(N v)^{-d_v/2}$, where $d_v$ is the
+local different exponent. Its negative-sign finite transform is defined
+with the conjugated *positive* local character. For the corrected global
+sign, use that transform at the negated argument (equivalently remove the
+conjugation in its kernel); the integer-ring indicator alone does not
+detect this change. Do not remove either zero mode before nontrivial
+character averaging.
+
+#### Finite additive Gaussian and its two local zero modes
+
+[The finite additive Gaussian](../../Proofs/Theorems/FiniteAdditiveHeckeGaussian.lean)
+realizes (3.4.3.7)–(8), Definition 3.4.3.2, PDF p. 152, on all of
+`v.adicCompletion K`, not just on its group of units. Its restriction is
+exactly the existing `finiteHeckeGaussian`, so no factor in the idele
+periodization is changed. The additive test is continuous with compact
+support. Its value at the origin is `1` at an unramified place and `0` at
+a ramified place. Its integral for any additive Borel Haar is the actual
+Haar mass of the integer ring at an unramified place, and `0` at a
+ramified place. In particular, the latter is a Fourier value at zero,
+not a multiplicative zeta factor.
+
+The manuscript specifies the tests, not this computation for arbitrary
+additive Haar. The ramified calculation uses an integral unit on which
+the local character is nontrivial. Multiplication by that unit preserves
+the closed integer ball, so uniqueness of additive Haar with that ball's
+mass gives `finiteCompletion_measurePreserving_mul_unit`. The substitution
+multiplies the integral by the inverse character value; cancellation gives
+zero. This uses no local mass-one or self-duality assumption.
+
+Independent Yah statement review: Session
+`01a20427-e819-7e2a-8e0b-1805c56c7463`, child `DPzChUH` (communicated
+its conclusions before timeout). The source reading is provisional:
+Pinned Markdown and numbered PDF layout, without rendered-page inspection.
+Exact-candidate replay on this proof revision:
+
+```sh
+go run ./cmd/godel audit-local "$CANDIDATE" \
+  Lemmas.FiniteCompletionAddHaar Theorems.FiniteAdditiveHeckeGaussian -- \
+  Masullo.finiteCompletionIntegers_eq_closedBall \
+  Masullo.finiteCompletion_measurePreserving_mul_unit \
+  Masullo.finiteAdditiveHeckeGaussian \
+  Masullo.finiteAdditiveHeckeGaussian_coe_unit \
+  Masullo.continuous_hasCompactSupport_finiteAdditiveHeckeGaussian \
+  Masullo.finiteAdditiveHeckeGaussian_zero \
+  Masullo.integral_finiteAdditiveHeckeGaussian
+```
+
+Next use the local tests in the global additive tensor (3.4.3.9). This
+requires the Archimedean additive extension, additive measure product and
+normalization, and Fourier transforms away from zero (including the ramified
+tests). For a proof via finite-coset reduction, also establish local
+constancy of the ramified tests with an open additive subgroup of
+periods. Do not infer a global Fourier formula from the checked local
+integral. Keep both terms of (2.2.3.2), p. 82, until the norm-one
+averaging is justified.
+
+#### Archimedean fractional-ideal dual and covolume
+
+[The trace pairing](../../Proofs/Lemmas/ArchimedeanTracePairing.lean) and
+[its lattice identification](../../Proofs/Theorems/ArchimedeanIdealDual.lean)
+provide the Archimedean inputs for a lattice proof of (2.2.3.2), PDF p. 82.
+Theorem 2.2.3.2 cites adelic Riemann–Roch; Remark 2.2.3.3 fixes mass one
+on the **additive adelic quotient** with counting measure on the diagonal.
+This is not a Euclidean lattice volume calculation. Definition A.3.1.2,
+PDF p. 556, and Example A.3.1.5, p. 557, supply $dx$, $2\,dx\,dy$, and the
+positive trace character, whose conjugate is in the Fourier integral.
+Lemma A.3.1.3, p. 556, uses the Archimedean volume of the integer-ring
+lattice. Example A.3.1.11, pp. 558–559, describes an $S$-adelic annihilator,
+not the full Euclidean dual of an arbitrary fractional-ideal lattice.
+These readings use pinned Markdown and numbered PDF layout, not verified
+rendered pages, and are provisional.
+
+For $E=\mathbf R^{r_1}\times\mathbf C^{r_2}$ with its ordinary real
+Euclidean metric, write $e:K\to E$ for the mixed embedding and $T$ for the
+frequency map, identity in real coordinates and $z\mapsto 2\bar z$ in
+complex coordinates. `inner_archimedeanTraceFrequency` proves that
+$\langle x,T(y)\rangle$ is the sum of the real products and $2\Re(x_v y_v)$
+at the complex places. On field elements this is
+$\operatorname{Tr}_{K/\mathbf Q}(xy)$, by regrouping conjugate embeddings.
+For a nonzero fractional ideal $I$, `mem_archimedeanIdealLattice` identifies
+its lattice $L_I$ with $e(I)$. The new substantive step
+`mem_archimedeanIdealLattice_euclideanDual` shows that an **arbitrary**
+$v\in E$ has integral inner product against every $u\in L_I$ if and only
+if $v=T(e(y))$ for some $y\in I^\vee$. The reverse construction from a
+frequency uses its integer values on the embedded integral basis as
+coefficients in the rational trace-dual basis. The original embedded
+basis is a full **real** basis of $E$, so equality of its inner products
+recovers the ambient frequency itself. Algebraically
+$I^\vee=\mathfrak d_K^{-1}I^{-1}$ (`fractionalIdeal_traceDual_eq`).
+
+Volume preservation of the change to Euclidean coordinates gives
+$\operatorname{covol}_{dx}(L_I)=N(I)2^{-r_2}\sqrt{|D_K|}$ from Mathlib's mixed
+embedding formula. With `archimedeanTraceMeasure`, the scalar
+$2^{r_2}$ times the same Euclidean volume, the covolume is
+$N(I)\sqrt{|D_K|}$. This is an Archimedean computation, not a global
+adelic quotient mass or an invocation of self-duality. For Mathlib's
+negative-phase volume Fourier transform $\mathcal F_E$, the compatible
+trace-normalized integral has the expression
+$\widehat\phi_{\mathrm{tr}}(y)=2^{r_2}\mathcal F_E\phi(T(y))$; one must use
+it with the **scaled** covolume or use $\mathcal F_E$ with the **unscaled**
+covolume, not mix the two.
+
+Independent Yah statement review: Session
+`01a20427-e819-7e2a-8e0b-1805c56c7463`, child `arch-dual-review` (`PgIjkqP`,
+read-only output `47651bd8a11a02cc1eaf96cd19e1eb53fcb59c03`). The review
+confirmed the coordinate conventions, both directions of the unrestricted
+ambient dual statement, the inverse different, and both covolumes. Writer
+base `61da655e889bc45bab4a530dd7f8d6e19b65f09b`; Mathlib
+`fc4f59e577feb1a4956671bc04ac18aaaf8cd842`. The writer's
+`lake --wfail build +Theorems.ArchimedeanIdealDual` and separate imported
+signature and axiom checks succeeded. The first checked signatures match
+the reviewed statements with $L_I=e(I)$ via the membership lemma; all
+seven theorem endpoints below reported only `propext`, `Classical.choice`,
+and `Quot.sound`. Exact integrated candidate audit (separate from writer
+elaboration):
+
+```sh
+go run ./cmd/godel audit-local "$CANDIDATE" \
+  Lemmas.ArchimedeanTracePairing Theorems.ArchimedeanIdealDual -- \
+  Masullo.inner_archimedeanTraceFrequency \
+  Masullo.inner_archimedeanEuclideanEmbedding_traceFrequency \
+  Masullo.mem_archimedeanIdealLattice Masullo.fractionalIdeal_traceDual_eq \
+  Masullo.mem_archimedeanIdealLattice_euclideanDual \
+  Masullo.covolume_archimedeanIdealLattice \
+  Masullo.covolume_archimedeanIdealLattice_traceMeasure
+```
+
+**Next Archimedean input, not yet proved:** For every complex Schwartz
+function $\phi$ on $E$, every nonzero $I$, and $a\in E$, prove absolute
+summability of both series and
+
+$$
+\sum_{u\in L_I}\phi(a+u)=\frac{1}{\operatorname{covol}_{dx}(L_I)}
+\sum_{y\in I^\vee} e^{2\pi i\langle a,T(e(y))\rangle}\,
+  \mathcal F_E\phi(T(e(y))).
+$$
+
+Equivalently, multiply the Fourier value and the covolume by $2^{r_2}$
+together. This is the elaborated target proposition, **not a proof**
+(run `lake env lean` on the following input):
+
+```lean
+import Theorems.ArchimedeanIdealDual
+import Mathlib.Analysis.Distribution.SchwartzSpace.Fourier
+
+open NumberField MeasureTheory Masullo
+open scoped Classical nonZeroDivisors SchwartzMap FourierTransform InnerProductSpace
+
+example : Prop :=
+  ∀ (K : Type) [Field K] [NumberField K]
+    (I : (FractionalIdeal (𝓞 K)⁰ K)ˣ)
+    (φ : 𝓢(mixedEmbedding.euclidean.mixedSpace K, ℂ))
+    (a : mixedEmbedding.euclidean.mixedSpace K),
+    let p (u : archimedeanIdealLattice K I) := φ (a + u)
+    let q (y : ↥(FractionalIdeal.dual ℤ ℚ I.val)) :=
+      let v := archimedeanTraceFrequency K (archimedeanEuclideanEmbedding K y)
+      Complex.exp ((↑(2 * Real.pi * ⟪a, v⟫_ℝ) : ℂ) * Complex.I) * 𝓕 (⇑φ) v
+    Summable (fun u ↦ ‖p u‖) ∧ Summable (fun y ↦ ‖q y‖) ∧
+      ∑' u, p u = ((↑(ZLattice.covolume (archimedeanIdealLattice K I)
+        volume) : ℂ)⁻¹) * ∑' y, q y
+```
+
+Here the sums include zero on both sides, and $a$ allows the translated
+lattice boxes needed for ramified finite weights. Start with an integral
+basis $b$ of $L_I$ and periodize $\phi$ in its real basis coordinates on
+`UnitAddTorus`. The interface to check first is the coefficient formula:
+`UnitAddTorus.mFourierCoeff_eq_integral`, unfolding with
+`MeasureTheory.IsAddFundamentalDomain.integral_eq_tsum` on the half-open
+domain, and the Lebesgue Jacobian from basis coordinates
+(`ZLattice.covolume_eq_det` in the real pi space). Use
+`ZLattice.summable_norm_sub_inv_pow` for absolute convergence and a
+compact-uniform majorant for continuity; use
+`UnitAddTorus.hasSum_mFourier_series_apply_of_summable` for the pointwise
+identity. `VectorFourier.fourier_eq'` fixes the negative sign of the
+integral and thus the positive translation phase in the sum. Pinned
+Mathlib's `PoissonSummation.lean` gives the real-line case, not this
+lattice statement. This step must still be connected to finite support
+boxes and their compatible character and Haar factors on both sides.
+In particular, prove cancellation on the number-field diagonal using the
+positive Archimedean character and **conjugated** positive finite trace
+characters, as required by the
+[rational sign repair](theta-inversion-q.md#rendered-sign-check-a-translated-box-breaks-the-printed-theta-identity).
+Thus the finite Fourier kernel uses the positive finite exponent; an
+integer-ring indicator centered at zero cannot distinguish the two signs.
+This does not yet yield pointwise adelic theta inversion. In the final
+passage to the nonzero-orbit sums, retain **both** zero modes before
+norm-one averaging.
