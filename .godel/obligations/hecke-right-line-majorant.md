@@ -297,8 +297,12 @@ factor included, conductor power not included) at modulus $N>1$. Its
 functional equation for $\chi^{-1}$ gives $\kappa=\log N$ with the
 orientation above. The integral theorem proves left-line nonvanishing
 for $a>1$ from the primitive functional equation and Mathlib right
-half-plane nonvanishing. The remaining input is absolute integrability
-of $\Phi(1-s)(L'/L)(s,\chi^{-1})$ on $s=a+it$. This is not a proof
+half-plane nonvanishing. On $s=a+it$, the [completed right-line estimate](../../Proofs/Lemmas/CompletedDirichletRightLine.lean)
+proves absolute integrability against $\Phi(1-s)$ for every Dirichlet
+character, hence for $\chi^{-1}$. It splits the completed logarithmic
+derivative on $\Re s>1$, using the twisted von Mangoldt series for the
+ordinary factor and the reflected Mellin estimate for the Gamma factor.
+This is not a proof
 of contour exhaustion, or an identification of the Dirichlet and idelic
 completions. The nonzero contact is detectable only on tests with
 $g(0)\ne0$.

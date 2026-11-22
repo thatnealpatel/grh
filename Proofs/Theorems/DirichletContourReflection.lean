@@ -1,7 +1,7 @@
 module
 
 public import Props.HeckeContourReflection
-public import Mathlib.NumberTheory.LSeries.Nonvanishing
+public import Lemmas.CompletedDirichletRightLine
 
 /-!
 # The conductor term for primitive Dirichlet L-functions
@@ -44,13 +44,9 @@ public theorem completedDirichlet_logDeriv_reflection (hχ : χ.IsPrimitive) (hN
       (exp (Real.log N * (s - 1 / 2))) (DirichletCharacter.rootNumber χ⁻¹)]
 
 /-- Reflect the tested left line for a primitive Dirichlet character.
-Right-line integrability `hright` is assumed; left-line integrability
-and nonvanishing are consequences, not extra hypotheses. -/
+Both line integrability estimates follow from the test hypotheses. -/
 public theorem completedDirichlet_reflect_left_integral (hχ : χ.IsPrimitive) (hN : 1 < N)
-    {a : ℝ} (ha : 1 < a) {g : ℝ → ℂ} (hg : ContDiff ℝ ∞ g) (hc : HasCompactSupport g)
-    (hright : Integrable (fun t : ℝ ↦
-      let s := (a : ℂ) + (t : ℂ) * I
-      compactLogMellin g (1 - s) * logDeriv (χ⁻¹).completedLFunction s)) :
+    {a : ℝ} (ha : 1 < a) {g : ℝ → ℂ} (hg : ContDiff ℝ ∞ g) (hc : HasCompactSupport g) :
     let L := fun t : ℝ ↦
       let z := ((1 - a : ℝ) : ℂ) + (t : ℂ) * I
       compactLogMellin g z * logDeriv χ.completedLFunction z
@@ -59,7 +55,8 @@ public theorem completedDirichlet_reflect_left_integral (hχ : χ.IsPrimitive) (
       compactLogMellin g (1 - s) * logDeriv (χ⁻¹).completedLFunction s
     Integrable L ∧ (∫ t, L t) / (2 * (Real.pi : ℂ)) =
       -((∫ t, R t) / (2 * (Real.pi : ℂ))) - (Real.log N : ℂ) * g 0 := by
-  refine completed_reflect_left_integral a hg hc (fun t ↦ ?_) hright
+  refine completed_reflect_left_integral a hg hc (fun t ↦ ?_)
+    (integrable_compactLogMellin_completedDirichlet_reflected χ⁻¹ hg hc ha)
   let z := ((1 - a : ℝ) : ℂ) + (t : ℂ) * I
   have hz : 1 < (1 - z).re := by simp [z, sub_re, mul_re, ha]
   have hG := (χ⁻¹).completedLFunction_ne_zero_of_one_le_re
