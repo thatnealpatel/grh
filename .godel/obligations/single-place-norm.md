@@ -624,23 +624,60 @@ go run ./cmd/godel audit-local "$CANDIDATE" Lemmas.IdeleFiniteStageMeasure \
   Masullo.measure_ideleLogSplit_fundamentalDomain
 ```
 
+### Checked log-Haar decomposition and fundamental-domain mass
+
+`Theorems.IdeleLogHaar` checks the Haar decomposition used in §A.3.3.1,
+p. 561. For any continuous homomorphic section, `ideleLogSplit_haar`
+transports upstairs Haar to `logVolume.prod ν` with `ν` Haar on
+`ideleNormOne`: The norm-one factor absorbs the positive scalar from
+Haar uniqueness. No ambient measure is restricted to the norm-one fibre.
+For the canonical section at the omitted place, evaluate on the product
+of `[0,1]` (in log coordinates) and `ideleFundamentalDomain v r`.
+`measure_ideleFundamentalDomain_of_logSplit` then gives `ν`-mass
+
+$$
+h_F R_F\,(\omega(\mathrm{univ})/w_F)\,|d_F|^{-1/2}
+$$
+
+for every ideal-class section `r` and torsion-sector place `v`. Here
+`ω` is the checked product of real counting and complex angular
+measures, and the upstream normalization is the one-stage restriction
+from (A.3.2.5), supplied by `exists_discriminantNormalizedIdeleHaar`.
+The theorem uses left invariance of `μ` and an `SFinite` second factor
+with the exact product equality; in particular it applies to the Haar
+factor just constructed. This computes the mass of the fundamental
+domain in the norm-one ideles, not the Haar mass of the class group in
+(A.3.2.1). Source reading is provisional (Markdown and numbered PDF
+text, not rendered pages).
+
+Independent statement review: Yah session
+`01a20315-7831-7273-a051-683329eec269`, child `review-log-haar`
+(`JiwXbAi`). Exact-candidate replay:
+
+```sh
+go run ./cmd/godel audit-local "$CANDIDATE" \
+  Lemmas.LogVolume Lemmas.HaarLogSplit Theorems.IdeleLogHaar -- \
+  Masullo.isHaarMeasure_logVolume_prod Masullo.logVolume_prod_of_split_haar \
+  Masullo.ideleLogSplit_haar Masullo.measure_ideleFundamentalDomain_of_logSplit
+```
+
 ### Next normalization step: Identify the counting-normalized quotient Haar
 
-For normalized upstairs Haar `μ`, factor its transport by
-`ideleLogSplit` as `logVolume.prod μ₁` with `μ₁` Haar on the norm-one
-ideles. One construction is to choose a Haar there and use
-second-countable Haar uniqueness on the product to fix its positive
-scale. Do not restrict ambient Haar to the null norm-one fibre.
-Let `D := ideleFundamentalDomain v r`, and let `q₁` be the restriction
+Let `ν` be the Haar factor constructed above. Let
+`D := ideleFundamentalDomain v r`, and let `q₁` be the restriction
 of the principal quotient to `ideleClassNormOne`. Show that
-`Measure.map q₁ (μ₁.restrict D)` is Haar on that actual quotient and
+`Measure.map q₁ (ν.restrict D)` is Haar on the actual quotient and
 satisfies Weil's formula for counting measure on the principal
-subgroup, as in Theorem D.1.2.1, p. 747. The existing fundamental-domain
-API gives integration of sums over translates on the restricted
-pushforward; still identify its orbit quotient with the actual
-norm-one idele-class group and establish invariance and finite mass.
-The ambient log-split compatibility `ideleClassLogSplit_mk` gives a
-route to show `q₁` is an open quotient map. The strip formula with a
-unit-length log interval then fixes its total mass at (A.3.2.1).
-These bridges, and any subsequent quotient-level analytic use, are
-not proved by the upstairs strip formula alone.
+subgroup, as in Theorem D.1.2.1, p. 747. Its mass comes from
+`measure_ideleFundamentalDomain_of_logSplit`; expand the angular
+product to $2^{r_1}(2\pi)^{r_2}$ for the numerical form of (A.3.2.1).
+For the immediate next step, construct the actual surjective open map
+`q₁` by restricting `QuotientGroup.isOpenQuotientMap_mk` to the
+preimage of the norm-one classes, identified by `ideleClassLogNorm_mk`,
+and prove its fibres are the principal orbits. The existing
+fundamental-domain API gives integration of sums over translates on
+the restricted pushforward once the periodization descends as a
+Borel function. Discrete-kernel quotient charts give a route to
+measurable descent. Invariance can be proved independently by
+comparing the domain with its translate. This is a separate bridge,
+not a consequence of the strip mass alone.

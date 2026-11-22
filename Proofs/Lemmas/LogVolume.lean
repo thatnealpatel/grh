@@ -33,7 +33,7 @@ private theorem isHaarMeasure_logVolume : logVolume.IsHaarMeasure := by
 This avoids needing joint measurability of multiplication on the norm-one group. -/
 public theorem isHaarMeasure_logVolume_prod {K : Type*} [Group K] [TopologicalSpace K]
     [MeasurableSpace K] [BorelSpace K] [ContinuousMul K] (μ : Measure K)
-    [μ.IsHaarMeasure] [IsFiniteMeasure μ] : (logVolume.prod μ).IsHaarMeasure := by
+    [μ.IsHaarMeasure] [SFinite μ] : (logVolume.prod μ).IsHaarMeasure := by
   let := isHaarMeasure_logVolume
   refine { map_mul_left_eq_self := ?_ }
   rintro ⟨x, k⟩
