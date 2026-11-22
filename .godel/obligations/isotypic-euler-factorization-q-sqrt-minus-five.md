@@ -547,12 +547,57 @@ single inert place is retained by the
 Its class pullback is trivial on finite local units. This is not a
 new visual reading or a claim about p. 309.
 
+### Checked grouped denominator at five
+
+[`IdealClassPrimeFiveFactor`](../../Proofs/Theorems/IdealClassPrimeFiveFactor.lean)
+proves `Masullo.qSqrtNegFive_heckeRationalDenominator_at_five` for every
+monoid homomorphism `φ : ClassGroup (𝓞 QSqrtNegFive) →* ℂ`. At the
+bundled rational prime $5$, the actual grouped denominator of
+`idealClassHeckeCharacter φ` is
+$(1-\chi_{-4}(5)X)(1-\chi_5(5)X)$ in $\mathbb C[X]$. The endpoint
+`Masullo.qSqrtNegFive_heckeRationalDenominator_at_five_eq_one_sub_X`
+gives $1-X$. Neither requires normalization or a norm-one hypothesis.
+
+The reusable `Masullo.heckeRationalDenominator_idealClassHeckeCharacter_of_unique_prime_absNorm`
+works over any number field. It takes a finite place $v$ of absolute
+norm $p$, contraction $(p)$, and uniqueness among prime ideals
+containing $p$. Contraction puts $v$ in the rational-prime fiber and
+puts $p$ in every other member's ideal, so the grouped product has
+exactly one term. The ideal norm identity $p^{f_v}=p$ with $p\ge2$
+gives $f_v=1$. The polynomial is then $1-\varphi([\mathfrak p_v])X$,
+with the coefficient expressed as `localValue` in the reusable
+endpoint. At $5$ the [checked arithmetic](#checked-arithmetic-at-five)
+identifies the unique place and its identity class. The Dirichlet
+characters are evaluated at $1$ modulo $4$ and $0$ modulo $5$,
+respectively. A fresh import checks the coefficients $(1,0)$, their
+product denominator $1-X$, and the comparison at a bundled prime of
+value $5$ for `qSqrtNegFiveClassCharacter`.
+
+This is arithmetic input to Masullo's finite product, not a
+manuscript theorem or a repair of the switch on p. 309. The
+[accepted rendered reading](#manuscript-interface) of PDF p. 122,
+§3.2.1, (3.2.1.1), and p. 124, Definition 3.2.1.4, (3.2.1.7),
+retains the place despite field ramification: The character pullback
+is trivial on finite local units by the [checked realization and
+local-unit criterion](#checked-idelic-realization-and-local-factors),
+with the inherited definition after (3.1.2.6), p. 121. No new visual
+reading was needed.
+
+Independent statement and applicability review: `ygOrbnc` (transcript
+Yah `01a2032b-ec77-7283-a9b8-11bcb6b1337f`). The review checked all
+three statements, fiber membership and exclusion, the norm identity,
+the actual Dirichlet coefficients in an import probe, and the use of
+the inherited source reading. Unitarity is needed only for the global
+Euler-product transfer; it is already available for the
+[normalized character](#checked-normalized-class-character).
+
 ### Remaining grouped identity
 
 The all-prime grouped local polynomial identity for the
 [constructed quadratic class character](#checked-normalized-class-character)
-is still open in Lean. The [split row](#checked-grouped-split-prime-denominator)
-and the [inert row](#checked-grouped-inert-prime-denominator) are complete.
+is still open in Lean. The [split row](#checked-grouped-split-prime-denominator),
+[inert row](#checked-grouped-inert-prime-denominator), and
+[row at $5$](#checked-grouped-denominator-at-five) are complete.
 [`HeckeDirichletFactorization`](../../Proofs/Theorems/HeckeDirichletFactorization.lean)
 proves `Masullo.finiteHeckeCharacterEulerProduct_eq_dirichlet_of_local`
 by regrouping the convergent product over the finite fibers of
@@ -580,10 +625,10 @@ pp. 800–801, identified in its [holomorphy section](isotypic-inverse-range-q-s
 
 **Open Lean premise for the Hecke transfer:** Instantiate the all-prime
 grouped polynomial identity for the constructed idèle-class character.
-**Next arithmetic check:** At $5$, use [prime uniqueness and the residue
-norm](#checked-arithmetic-at-five) to reduce the grouped product to
-one degree-one factor. Match its principal-class value $1-X$ with
-the Dirichlet coefficients $(1,0)$. The grouped comparison at $2$
-and the all-prime assembly remain separate.
+**Next arithmetic check:** At $2$, apply the [singleton degree-one
+reduction](#checked-grouped-denominator-at-five) to the [checked
+uniqueness, contraction, and norm](#checked-arithmetic-at-two). Match
+the normalized character's $1+X$ denominator with the Dirichlet
+coefficients $(0,-1)$. The all-prime assembly remains separate.
 The explicit product's circle growth and common-height estimate are
 already unconditional in Lean.
