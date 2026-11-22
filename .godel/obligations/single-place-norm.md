@@ -1762,7 +1762,7 @@ continuous unit-modulus character. Its conjugate has the positive
 local phases of `finiteBoxLocalFourier`; its value at a diagonal
 $x$ cancels the positive Archimedean phase of $\mathrm{Tr}_{K/\mathbb Q}(x)$.
 The source reading remains provisional (pinned Markdown and numbered
-PDF layout).
+PDF layout). See the [exact-candidate check and independent review](finite-adele-trace-character-check.md).
 
 **Next: Identify the actual global Fourier integral for one translated
 finite box.** Use this $\mu$, a finite adele $a$, a finite idele $g$, a
