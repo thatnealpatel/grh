@@ -1771,22 +1771,9 @@ go run ./cmd/godel audit-local "$CANDIDATE" Lemmas.FiniteCompletionCodifferent -
   Masullo.finiteCompletion_traceDual_iff_mem_span_globalCodifferent
 ```
 
-**Next on global-to-local comparison:** Prove that extending
-`differentIdeal ℤ (𝓞 K)` along $\mathcal O_K\to\mathcal O_{K_v}$ gives
-`differentIdeal ℤ_[p] O[v]` for the same fixed-prime scalar map.
-Invert the fractional-ideal form of the checked trace-dual equality.
-Use `FractionalIdeal.coeToSubmodule_dual_one`,
-`FractionalIdeal.coeIdeal_differentIdeal`,
-`FractionalIdeal.coeToSubmodule_extended_eq_span`, and
-`FractionalIdeal.extendedHom_coeIdeal_eq_map`. Identify the localization
-map in the span formula with the canonical $K\to K_v$ by checking it
-on $\mathcal O_K$. Do not use `coeToSubmodule_extendedHom_eq_span`,
-which requires the completion integers to be integral over the global
-integers. For `coeIdeal_differentIdeal`, discharge the local fraction-ring
-and $\mathbb Z_p$-integral-closure instances. Then
-`map_finiteCompletion_ideal` identifies the extended ideal with
-$\mathfrak m_v^{n_v}$. The local quotient cardinality below is a
-separate obligation and does not require this extension equality.
+**Global-to-local comparison:** See the [checked extension of the global
+different](#checked-extension-of-the-global-different) for the canonical
+completion and its exponent.
 
 ### Local discriminant as the trace-dual index
 
@@ -1907,15 +1894,75 @@ go run ./cmd/godel audit-local "$CANDIDATE" \
   Masullo.finiteCompletion_norm_discr_eq_inv_residueNorm_pow
 ```
 
-**Next:** Invert the [checked extension of the global
-codifferent](#checked-the-codifferent-in-each-actual-finite-completion)
-to identify $\mathfrak d_v$ with the extension of the global different.
-Use `map_finiteCompletion_ideal` and uniqueness of the local exponent
-(`IsDiscreteValuationRing.coheight_pow_maximalIdeal`) to match $d_v$
-with the exponent on the global arithmetic-product branch. Then use
-(A.3.2.5), p. 560, to connect the exact Haar stage restrictions to the
-raw Gaussian theorem; do not drop the finite-place scales. Quotient
-Haar is separate.
+### Checked extension of the global different
+
+[`FiniteCompletionDifferentExtension.lean`](../../Proofs/Theorems/FiniteCompletionDifferentExtension.lean)
+proves that for every finite place $v$ of a number field $K$, with
+canonical completion map $i_v : \mathcal O_K\to O_v$ and residue
+characteristic $p$,
+
+$$
+\operatorname{map}_{i_v}(\mathfrak D_{K/\mathbb Q})
+  = \mathfrak d_{O_v/\mathbb Z_p},\qquad
+ d_v=\operatorname{mult}_v(\mathfrak D_{K/\mathbb Q}),\qquad
+ \|\operatorname{disc}_{\mathbb Z_p}(b)\|_p
+  = q_v^{-\operatorname{mult}_v(\mathfrak D_{K/\mathbb Q})}.
+$$
+
+Here $q_v=\#(\mathcal O_K/v)$, $b$ is any finite $\mathbb Z_p$-basis
+of $O_v$, and the norm is the **base** $p$-adic norm. The supporting
+lemma specializes the checked codifferent comparison to the canonical
+$p$-adic scalar action by equality of the two algebra maps. The main
+proof identifies the extended inverse different with the local trace
+dual and inverts in the fractional ideal rings. The checked extension
+formula for integral ideals and uniqueness of the maximal-ideal power
+then match the two exponents.
+
+**Source and repair (provisional):** (A.3.1.2), PDF p. 556, prescribes
+the additive mass using the local discriminant and different norms.
+The proof of Lemma A.3.1.3 on the same page uses the product of the
+local different norms as the global different norm, without giving
+the extension-of-differents comparison. (A.3.2.2), PDF p. 560,
+prescribes the same arithmetic scale for the multiplicative unit mass.
+Lean supplies the missing placewise comparison. The Markdown and
+numbered PDF layout were read, but not the rendered pages. This does
+not yet construct the measures or compare their quotient normalizations.
+
+Independent Yah statement review: Session
+`01a2025c-7915-73f1-8e02-7f052f349642`, child
+`different-extension-review` (agent `aPvQkjI`, read-only output
+`44dbb28de2704aa21a7c1727be74c1b3b765c311`). The review elaborated the
+three endpoint propositions and checked the scalar transport needed for
+the supporting equality. It identified the fractional-ideal inverse
+comparison as the missing step and ruled out an integrality hypothesis
+on the completion integers.
+
+Replay the built declarations and both modules:
+
+```sh
+go run ./cmd/godel audit-local "$CANDIDATE" \
+  Lemmas.FiniteCompletionCanonicalTraceDual Theorems.FiniteCompletionDifferentExtension -- \
+  Masullo.finiteCompletion_traceDual_eq_span_globalCodifferent \
+  Masullo.map_globalDifferent_eq_finiteCompletionDifferent \
+  Masullo.finiteCompletionDifferentExponent_eq_global_multiplicity \
+  Masullo.finiteCompletion_norm_discr_eq_inv_globalDifferent_residueNorm_pow
+```
+
+**Next:** For every finite $v$, use the compact open image of $O_v^\times$
+in $K_v^\times$ as a `PositiveCompacts` calibrator, then scale its unit-mass
+Haar by the positive finite `ENNReal.ofReal` of $q_v^{-d_v/2}$.
+Prove the exact unit mass and its equality with the square root in
+(A.3.2.2), independently of the integral basis. The local model to adapt
+is `Theorems.RationalLocalMultiplicativeHaar`; the unit inclusion and
+compact open facts for arbitrary $K$ are already available in
+`Lemmas.IdeleFiniteStageMeasure` and its imports. Apply
+`finite_differentIdeal_multiplicity_support` and
+`exists_ideleRestrictedProductHaar` with `archimedeanCompletionHaar`
+to obtain the exact stage restrictions for (A.3.2.5), then feed them to
+`ideleHeckeGaussian_zetaIntegral`. The finite mass factor is the inverse
+square root of the absolute field discriminant by
+`prod_differentIdeal_unit_scales`; it is not to be erased.
+(A.3.2.1)'s quotient normalization is a separate obligation.
 
 **Still open:** Meromorphic continuation, divisor data, and contour
 growth in (B.4.2.1)–(4), the broader test class, general ramified Fourier terms,
