@@ -523,30 +523,81 @@ No pages were reread. Compact-away support is a repair, not the printed
 finite test space. This proves local entireness, not tensor entireness,
 character descent, or passage to a completion.
 
-**Next bounded check:** Over $\mathbb Q$, identify the grouped
-Archimedean density and its integral in `ideleFiniteStage_zetaIntegral`
-with the actual single-real-place flat-Schwartz pairing. Its measure
-is `Measure.pi μa` on the product of completion units; use the singleton
-infinite-place evaluation with $\mu_a(v)$ equal to `realCompletionHaar`
-at the unique real place. The grouping has a product of the same
-local character evaluations and a norm with real multiplicity one.
-Check the evaluation pushforward and the density transport, with no
-extra scalar. This supplies the real integrability premise for one
-repaired pure tensor on a stage with all its finite exceptions and
-ramification active. Taking the exception set equal to the stage
-makes each active finite input exactly the compact-away endpoint
-above. The [stage Fubini formula](hecke-right-line-majorant.md#checked-grouped-zeta-integrals-on-each-stage)
-is already checked, with an exact stage comap hypothesis. A global
-upstairs support reduction, algebraic tensor assembly, and the
-completion and character-descent questions are separate.
+## Checked singleton Archimedean factor of the rational stage integral
 
-For this bridge, the [real Haar handoff](#checked-raw-flat-schwartz-pairing-on-real-completion-units)
-records the inherited source for jets, insertion, and mass on both
-signs. The [global sign audit](global-mellin-sign-q.md#what-the-source-prints)
-verifies the raw bilinear density in (3.2.2.1), p. 124; the
-[relative 1-line audit](idele-relative-one-line-q.md#source-checked-on-rendered-pages)
-verifies the rational local normalization and restricted product
-in (A.3.2.2) and (A.3.2.5), p. 560. The grouped-factor mapping of
-(3.4.1.2), p. 143, in the stage note is provisional and is not a
-premise of the singleton evaluation check.
+[`Masullo.rationalArchimedeanEval_measurePreserving` and
+`Masullo.rationalArchimedeanSchwartzMellinPair`](../../Proofs/Theorems/RationalArchimedeanSchwartzMellin.lean)
+use the Borel structures on the actual rational completion units. Write
+$w$ for the unique real place and $e(x)=x_w$. Lean proves
+$$
+e_*\operatorname{Measure.pi}(v\mapsto\mathrm{archimedeanCompletionHaar}(v))
+  =\mathrm{realCompletionHaar}(w).
+$$
+This measure endpoint needs no test, character, stage, or probability
+hypothesis. The target is full signed Haar, not its positive half or
+half of the full measure.
 
+For a unitary Mathlib Hecke character $\chi$ and a complex Schwartz
+profile $b$ with all jets zero at zero, set the infinite test to
+$b\circ\iota_w\circ e$, with $\iota_w$ the real embedding on units.
+The grouped infinite density of
+[`ideleFiniteStage_zetaIntegral`](hecke-right-line-majorant.md#checked-grouped-zeta-integrals-on-each-stage)
+is pointwise the pullback of
+$b(\iota_w(u))\chi(j_w(u))\|u\|_w^s$. Both products over infinite places
+collapse to $w$: The character insertion is unchanged, and the local
+norm has multiplicity one by `Rat.isReal_infinitePlace.mult_eq_one`.
+The real isometry identifies that completion norm with $|\iota_w(u)|$.
+For every $s\in\mathbb C$, Lean transports absolute integrability and
+equality of the integral with the
+[real completion pairing](#checked-raw-flat-schwartz-pairing-on-real-completion-units),
+so the inherited signed-log value applies with the same fixed parity
+and radial frequency. There is no scalar and no half-plane condition.
+
+**Evidence and scope:** Independent statement and applicability review
+against `2c5c54646c2d084a150179022e8454ea1b3ce6f6`: Yah
+`01a204d9-06bb-77e4-a5a1-bb61f1fb154f`, agent `nIukxDJ`. The reviewer
+checked the singleton measure and density reductions and the stage
+interfaces. The owner separately elaborated the dependent local
+applications with the actual Borel instance families. The repaired
+scope and jet condition are inherited from the
+[domain audit](#scope-of-the-repair-and-use-in-lemma-5342) and
+[real pairing handoff](#checked-raw-flat-schwartz-pairing-on-real-completion-units):
+(5.3.3.10), p. 252, and Definition 5.3.4.1 and Lemma 5.3.4.2(2),
+pp. 259–261. Inherit the rendered raw density (3.2.2.1), p. 124,
+from the [global sign audit](global-mellin-sign-q.md#what-the-source-prints);
+the bilinear local pairing (3.3.1.7), p. 130, and insertion §3.1.2.2,
+p. 121, from the [angular audit](complex-gaussian-angular.md#rendered-readings);
+and the signed Haar and restricted-product normalizations in
+(A.3.2.2) and (A.3.2.5), p. 560, from the
+[real prime audit](trace-real-prime-q.md#source-and-domain) and
+[relative 1-line audit](idele-relative-one-line-q.md#source-checked-on-rendered-pages).
+No pages were reread. The manuscript mapping of the grouped factor
+to (3.4.1.2), p. 143, remains provisional and is not a Lean premise.
+This is a check on the compact-away repair, not on the printed finite
+test space or its completion.
+
+**Next bounded check:** On one actual stage with $E=S$, prove that the
+raw stage integral is entire and equals the product of the real and
+active finite pairings for every $s$. Use `ideleFiniteStage_zetaIntegral`
+with `archimedeanCompletionHaar` and `rationalLocalMultiplicativeHaar`.
+Keep the exact comap along `ideleFiniteStageEmbedding ℚ S` and
+unramifiedness off $S$ explicit. The active tests need continuity and
+compact support in the units. The grouped real premise is now checked;
+`ideleFiniteTest` on the active subtype reduces to the specified finite
+test, and `rationalFiniteCompactMellinPair` gives its local integrability
+and entireness. In the writer's exact-source workspace, a Lean
+scratch probe applied the stage theorem with these instance families,
+`E = S`, the exact comap, and off-stage unramifiedness. It confirmed
+`IntegrableOn` for an arbitrary exponent and that
+`rationalLocalMultiplicativeHaar_unitMass` directly supplies the
+unit-mass premise on the same inclusion. The probe is not a landed
+stage endpoint and did not test differentiation. The finite norm and
+unit-triviality readings, §3.1.2.1, p. 120, and the definition after
+(3.1.2.6), p. 121, are inherited from the
+[finite normalization audit](finite-gaussian-tamagawa.md#source-and-the-two-readings-of-l_v).
+The real integral is the entire [signed-log expression](#checked-entireness-of-the-raw-real-log-mellin-pairing)
+at $s+i\tau$ for one fixed $\tau$. Transfer those local identities along
+the stage product and differentiate the finite product, rather than
+seeking an upstairs domination bound. A global support reduction,
+algebraic tensor assembly, character descent, and extension to a
+completion remain separate.
