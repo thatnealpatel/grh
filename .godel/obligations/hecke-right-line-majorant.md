@@ -550,37 +550,72 @@ not a construction of multiplicative Haar on the actual completion units,
 a proof that the product of local Gaussians gives the global test, or an
 identity for its Fourier transform or eigendistribution.
 
-### Next: Recognize the real Gaussian local integral
+## Checked real Gaussian pairing for both parities
 
-For (3.4.3.3)–(4), p. 152, combine the checked real-place restriction with
-the tests $x^b e^{-\pi x^2}$ for $b\in\{0,1\}$. Definition A.3.2.2(1),
-p. 560, gives $dx/|x|$ using A.3.1.2(1), p. 556. The two sign factors
-cancel, so reflection gives twice the positive-half-line integral. The
-same square substitution and scaled Gamma integrability used for the
-complex place should give, for $\operatorname{Re}s>0$, absolute
-integrability and `archimedeanGammaFactor Real.pi 2 b τ s`, realizing
-(3.2.1.4), p. 123, with the checked radial frequency. Use the real
-Lebesgue density off zero for the scalar theorem and keep the global
-measure and product identifications separate. This source reading is
-provisional (Markdown and layout, not rendered pages).
+Masullo gives the two tests $x^b e^{-\pi x^2}$, $b=0,1$, in
+(3.4.3.3)–(4), p. 152. The bilinear pairing (3.3.1.7), p. 130, and
+Definitions A.3.1.2(1) and A.3.2.2(1), pp. 556 and 560, specify
+multiplication by the character and the density $dx/|x|$ off zero.
+With the real-place classification above, the norm exponent is
+$s+i\tau$, and (3.2.1.4), p. 123, supplies the target Gamma factor.
+This is a provisional source reading from Markdown and PDF layout.
 
-**Independent product step:** One can already define the right-half-plane
-product of (3.2.1.2)–(5) and prove its split logarithmic derivative in
-(B.4.2.5)–(6), p. 615. Choose the place parameters using the checked
-restriction theorems (real $b$ and complex $|n|/2$), use
-`NumberField.InfinitePlace`'s `Fintype` instance and `logDeriv_prod` for
-the finite Archimedean product, and combine with
-`finiteHeckeCharacterEulerProduct_logDeriv` on $\operatorname{Re}s>1$.
-This right-side definition and identity alone would not establish
-agreement with the zeta integral or continuation.
+The project supplies the scalar integral and its absolute convergence,
+needed for the local normalization in (3.4.3.12)–(13), p. 153.
+[`Masullo.realGaussianZetaDensity_integral`](../../Proofs/Theorems/RealGaussianMellin.lean)
+proves for both parities, all $\tau\in\mathbb R$, and $\Re s>0$ that
 
-**Still open:** The real scalar Gaussian integral, identification with the
-actual completed zeta integral, the assembled completed product and its
-continuation, divisor data, and contour growth in
-(B.4.2.1)–(4). The local pair does not establish the full test class
-of (B.4.2.15) or (17), the ramified Fourier terms, or the global trace
-comparison. See the separate
-[local conductor obligation](#open-ramified-local-conductor-power-in-the-general-reflection)
+$$
+\int_{\mathbb R^\times}x^b e^{-\pi x^2}\operatorname{sgn}(x)^b
+    |x|^{s+i\tau}\,\frac{dx}{|x|}
+= \pi^{-a}\Gamma(a),\qquad a=(s+b+i\tau)/2.
+$$
+
+The Lean endpoint uses additive `volume` on $\mathbb R$ with the
+multiplicative density included in the integrand and a zero value at
+the origin. It cancels the two sign factors, reflects the even
+integrand onto the positive half-line, and uses the shared square
+substitution: The Jacobian cancels the factor of two from reflection.
+The absolute convergence follows from positive real part of $a$ and
+the scaled Gamma density. The right-hand side is
+`archimedeanGammaFactor Real.pi 2 (b : ℝ) τ s`. Yah reviewer `PEgotXT`
+independently checked the statement and source correspondence in
+session `01a2013b-713a-7232-b3a6-8f5ebb0898b2`. As in the complex case,
+this is not measure transport to the completion units, a global
+Schwartz–Bruhat test construction, or a Fourier identity.
+
+### Next: Assemble the Hecke product and its right-half-plane logarithmic derivative
+
+Use (3.2.1.2)–(5), p. 123, to define the product over any number field
+and any unitary Mathlib Hecke character. Choose the place parameters
+from the checked restriction theorems above, using real $b$ and
+complex $|n|/2$ as the shifts and the same normalized radial frequency.
+Use `NumberField.InfinitePlace`'s `Fintype` and `logDeriv_prod` for the
+finite Archimedean product. Multiply it by
+`finiteHeckeCharacterEulerProduct χ` for the non-Archimedean part.
+
+The runnable endpoint for (B.4.2.5)–(7), p. 615, is nonvanishing and
+complex differentiability on $\Re s>1$, with
+
+$$
+\logDeriv L(s,\chi) = \sum_{v\mid\infty}\logDeriv L_v(s,\chi)
+  -\sum_{(v,m),\,v\nmid\infty,\,m>0}\operatorname{finiteHeckeTerm}(\chi,s,v,m).
+$$
+
+Keep the second sum as a `HasSum` with value the Archimedean sum minus
+`logDeriv L`, using `finiteHeckeCharacterEulerProduct_logDeriv`. The
+same statement applies to `heckeConjugate χ` using its checked unitary
+lemma. Do not assert an all-height bound on the Archimedean sum from
+uniform estimates for the finite sum. The source comparison for this
+next step used Markdown and PDF layout, not rendered pages.
+
+**Still open:** Measure transport of the local scalar integrals,
+identification with the global zeta integral, meromorphic continuation,
+divisor data, and contour growth in (B.4.2.1)–(4). Even the assembled
+right-half-plane identity will not establish any of these. The local
+pair does not establish the full test class of (B.4.2.15) or (17),
+the ramified Fourier terms, or the global trace comparison. See the
+separate [local conductor obligation](#open-ramified-local-conductor-power-in-the-general-reflection)
 for the missing epsilon factor upstream of the checked reflection.
 
 ## Reproduce the endpoint audit
@@ -673,6 +708,14 @@ For the complex Gaussian pairing:
 go run ./cmd/godel audit-local "$CANDIDATE" \
   Lemmas.ComplexGaussianPolar Theorems.ComplexGaussianMellin -- \
   Masullo.complexGaussianZetaDensity_integral
+```
+
+For the real Gaussian pairing:
+
+```sh
+go run ./cmd/godel audit-local "$CANDIDATE" \
+  Lemmas.EvenRealIntegral Theorems.RealGaussianMellin -- \
+  Masullo.even_real_integral Masullo.realGaussianZetaDensity_integral
 ```
 
 For the compact-log tested shifted pair:
