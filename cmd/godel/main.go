@@ -27,6 +27,9 @@ var mission string
 //go:embed selection.txt
 var selection string
 
+//go:embed source-revision.txt
+var archiveRevision string
+
 func main() {
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
@@ -42,7 +45,7 @@ func run(ctx context.Context) error {
 		if err := accepted.Enter(ctx, "godel"); err != nil {
 			return err
 		}
-		work, improve := missionNodes(mission)
+		work, improve := missionNodes(mission, archiveRevision)
 		result, err := runTree(ctx, work, improve)
 		if err != nil {
 			return err

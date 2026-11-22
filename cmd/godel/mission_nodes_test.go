@@ -10,7 +10,8 @@ import (
 
 func TestMissionNodesUseHeadlessYah(t *testing.T) {
 	const goal = "fixture manuscript goal"
-	work, improve := missionNodes(goal)
+	const revision = "756b8cd07027d5a4eb88c74abb657e9e8d00a912"
+	work, improve := missionNodes(goal, revision+"\n")
 	for _, tt := range []struct {
 		name string
 		node *godel.Node
@@ -29,9 +30,22 @@ func TestMissionNodesUseHeadlessYah(t *testing.T) {
 			if !strings.Contains(n.Args[4], goal) {
 				t.Error("appended instructions omit manuscript goal")
 			}
+			if !strings.HasPrefix(n.Args[4], "Gödel launch source commit: "+revision+".") {
+				t.Error("appended instructions omit the exact archive commit")
+			}
 		})
 	}
 	if slices.Equal(work.Args, improve.Args) {
 		t.Error("work and improver should receive different role instructions")
+	}
+}
+
+func TestMissionNodesDoNotClaimProvenanceForCheckout(t *testing.T) {
+	const goal = "fixture manuscript goal"
+	work, improve := missionNodes(goal, "$Format:%H$\n")
+	for _, n := range []*godel.Node{work, improve} {
+		if !strings.HasPrefix(n.Args[4], goal+"\n\n") {
+			t.Error("unexpanded archive marker should not be shown as provenance")
+		}
 	}
 }

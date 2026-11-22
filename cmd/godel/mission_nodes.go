@@ -6,13 +6,21 @@ import (
 	"patel.codes/godel"
 )
 
-// missionNodes is a bootstrap, not a protocol later versions
-// must implement.
-func missionNodes(goal string) (work, improve *godel.Node) {
+// missionNodes is a bootstrap, not a protocol later versions must implement.
+func missionNodes(goal, archiveRevision string) (work, improve *godel.Node) {
+	// git archive expands this marker in the
+	// accepted build, even when an older bootstrap
+	// launched it. A checkout build has no such
+	// provenance.
+	revision := strings.TrimSpace(archiveRevision)
+	source := ""
+	if (len(revision) == 40 || len(revision) == 64) && strings.Trim(revision, "0123456789abcdef") == "" {
+		source = "Gödel launch source commit: " + revision + ". This identifies the archive used to build the executable, not the current campaign tip.\n\n"
+	}
 	codingNode := func(role string) *godel.Node {
 		// Yah attaches to the campaign at its cwd, not an ancestor.
 		return &godel.Node{Exec: "yah", Directory: "../..", Args: []string{
-			"-yolo", "-effort", "high", "-append", goal + "\n\n" + practice + "\n\n" + role,
+			"-yolo", "-effort", "high", "-append", source + goal + "\n\n" + practice + "\n\n" + role,
 		}}
 	}
 	work = codingNode(`Act on the operator's objective or the preceding handoff on stdin. Choose useful work yourself and carry it out with your tools. Take one meaningful step, then yield to improvement.
