@@ -352,19 +352,45 @@ normalization. This was exact-source review, not elaboration. The same
 owning Yah transcript records the candidate build, joint-import
 signature and axiom check, and specialization at $L=\log 3$.
 
-**Next bounded check (formalization only).** On smooth compact log
-profiles, turn simultaneous vanishing of these lattice Mellin samples
-into pointwise vanishing of `logPeriodization L g`. The same-coordinate
-[`logPeriodization_smooth`](../../Proofs/Theorems/MonogenicPeriodizationSection.lean)
-already gives a smooth periodic profile after supplying `LogWeightedSchwartz`
-(the module's proof uses the compact-support specialization internally).
-[`fourierCoeff_periodicProfile_eq` and `hasSum_periodicProfile`](../../Proofs/Lemmas/CircleSynthesis.lean)
-then identify the circle coefficients and recover the profile: If each
-coefficient is zero, summability is automatic. The remaining check is
-this composition in Lean, including the index change $n\mapsto -n$;
-there is no new manuscript dependency. Relating actual poles to the
-samples and constructing a compactly supported difference primitive
-are separate from this step.
+**Checked Fourier uniqueness (Lean).**
+[`Masullo.logPeriodization_eq_zero_of_compactLogMellin_samples_eq_zero`](../../Proofs/Lemmas/CompactLogMellinPeriodization.lean)
+proves pointwise vanishing of `logPeriodization L g` if every sample
+`compactLogMellin g (2 * π * n * I / L)` is zero, for all $L>0$ and
+continuous compactly supported $g:\mathbb R\to\mathbb C$. The proof
+reuses the coefficient bridge's compact-translate summability and
+Fourier rescaling for $u\mapsto g(Lu)$. It reindexes $n\mapsto -n$ to
+get a zero Fourier sample sequence, applies Mathlib's unit-period
+Poisson formula at $x/L$, and transports the result back to $x$.
+The owning check includes $L=\log 3$ with the same hypotheses, not
+smoothness or a Schwartz condition. It proves the Fourier implication
+in the repair only, not the adelic residue identity, pole removal, the
+existence of the lift, or the printed reverse inference. The manuscript
+conventions are inherited from the evidence above.
+
+**Uniqueness evidence.** `compact-log-uniqueness-review` (`RlpbOpt`,
+transcript Yah `01a20562-2211-7f0f-b01c-f419a5877c37`) independently
+checked the statement, sign, physical coordinate, and applicability of
+the reduction against `c6ba655a2bd4172c960654957aa0f0f4a2f8ad26` and
+pinned Mathlib, without elaborating. The same owning transcript records
+the integrated candidate, warning-free build, joint-import signatures
+and axioms, and $\log 3$ specialization.
+
+**Next bounded check (formalization only).** From zero periodization,
+formalize the compactly supported continuous difference primitive in the
+physical log coordinate: $q(x)=\sum_{k\ge0}g(x+kL)$ with
+$g(x)=q(x)-q(x+L)$. The coefficient proof's private
+`summable_norm_restrict_int_translate` already proves uniform finite
+support of the restricted integer translates; passing to $k\ge0$ and
+rescaling gives the local finite-sum input for continuity. That support
+fact is proof-local, not an exported finite-support lemma.
+The remaining check is the shift of the one-sided sum and its compact
+support, using zero periodization to identify it with the negative of
+the strictly negative sum on the left tail. The [compact-log difference
+calculation](trace-orbital-q.md#which-quotient-is-closed) already gives
+the smooth construction in ordinary mathematics; no new manuscript
+reading is needed for this check. Smoothness of the primitive for
+smooth input and passage to the adelic lift are separate from the
+continuous endpoint.
 
 ## The finite-only repair is not projectively continuous
 

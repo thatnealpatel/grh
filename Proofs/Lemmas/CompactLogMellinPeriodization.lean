@@ -6,11 +6,11 @@ public import Mathlib.Analysis.Fourier.AddCircle
 import Mathlib.Analysis.Fourier.PoissonSummation
 import Mathlib.Tactic.FieldSimp
 
-/-! # Fourier coefficients of compact log Mellin profiles
+/-! # Fourier coefficients and uniqueness for compact log Mellin profiles
 
-This gives the Fourier coefficient input to the compact-away repair of
-Masullo's Lemma 5.3.4.2(2), p. 260, at period `log 3`. It does not assert
-pole removal or identify an adelic lift.
+These give the Fourier steps in the compact-away repair of Masullo's
+Lemma 5.3.4.2(2), p. 260, at period `log 3`. They do not assert pole
+removal or identify an adelic lift.
 -/
 
 open ContinuousMap Function MeasureTheory Set TopologicalSpace
@@ -93,5 +93,24 @@ public theorem fourierCoeffOn_logPeriodization_neg {L : ℝ} (hL : 0 < L) {g : �
       (intervalIntegral.integral_comp_mul_left (a := 0) (b := 1) F hL.ne')
   rw [← hcoeff]
   exact (Real.fourierCoeff_tsum_comp_add hs (-n)).trans (fourier_rescale_neg hL g n)
+
+/-- A continuous compact log profile with zero Mellin samples on the imaginary
+lattice of period `L` has identically zero `L`-periodization. -/
+public theorem logPeriodization_eq_zero_of_compactLogMellin_samples_eq_zero {L : ℝ} (hL : 0 < L)
+    {g : ℝ → ℂ} (hg : Continuous g) (hc : HasCompactSupport g)
+    (hM : ∀ n : ℤ, compactLogMellin g (2 * (Real.pi : ℂ) * n * Complex.I / (L : ℂ)) = 0)
+    (x : ℝ) : logPeriodization L g x = 0 := by
+  let f : C(ℝ, ℂ) := ⟨fun u ↦ g (L * u), hg.comp (continuous_const.mul continuous_id)⟩
+  have hf : HasCompactSupport (f : ℝ → ℂ) :=
+    hc.comp_homeomorph (Homeomorph.mulLeft₀ L hL.ne')
+  have hF (n : ℤ) : 𝓕 (f : ℝ → ℂ) (n : ℝ) = 0 := by
+    simpa only [f, ContinuousMap.coe_mk, neg_neg, hM, zero_div] using fourier_rescale_neg hL g (-n)
+  have hsum : Summable fun n : ℤ ↦ 𝓕 (f : ℝ → ℂ) (n : ℝ) := by
+    simp only [hF, summable_zero]
+  have hP := Real.tsum_eq_tsum_fourier (summable_norm_restrict_int_translate hf) hsum (x / L)
+  simp only [hF, zero_mul, tsum_zero] at hP
+  have harg (k : ℤ) : L * (x / L + k) = x + (k : ℝ) * L := by
+    rw [mul_add, mul_comm L (x / L), div_mul_cancel₀ _ hL.ne', mul_comm L (k : ℝ)]
+  simpa only [f, ContinuousMap.coe_mk, harg, logPeriodization] using hP
 
 end Masullo
