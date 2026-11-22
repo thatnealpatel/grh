@@ -9,6 +9,7 @@ public import Lemmas.InteriorLogJet
 import Lemmas.HardySobolevWeight
 import Lemmas.SinglePlaceNorm
 import Lemmas.RationalAdeleAffineIntegral
+import Mathlib.Data.Finset.NoncommProd
 
 /-! # The radial two-mode theta core over `ℚ`
 
@@ -133,6 +134,11 @@ public theorem mem_rationalThetaRadialInputSubmodule (f : E) :
 /-- Class theta restricted to the canonical log section. -/
 public noncomputable def rationalThetaRadialProfile (f : RationalThetaRadialInput) (x : ℝ) : ℂ :=
   Θ[f.val] (τ x)
+
+public theorem rationalThetaRadialProfile_apply (f : RationalThetaRadialInput) (x : ℝ) :
+    rationalThetaRadialProfile f x = Θ[f.val] (τ x) := by
+  unfold rationalThetaRadialProfile
+  rfl
 
 /-- The once-twisted radial theta profile in the manuscript's convention. -/
 public noncomputable def rationalThetaRadialTwistedProfile (a : ℝ) (f : RationalThetaRadialInput)
@@ -404,5 +410,91 @@ public theorem rationalThetaRadialProfile_primeDifference (v : V) (f : RationalT
       rationalThetaRadialProfile f x - rationalThetaRadialProfile f (x + Real.log (P[v] : ℝ)) := by
   rw [rationalThetaRadialProfile_uniformizer, norm_section, Real.log_exp]
   rfl
+
+section PrimeDifferences
+
+local notation "R" => RationalThetaRadialInput
+
+private noncomputable def radialTranslateEnd (d : ℝ) : AddMonoid.End R :=
+  rationalThetaRadialInputTranslateAdd d
+
+private theorem translate_commute (d e : ℝ) :
+    Commute (radialTranslateEnd d) (radialTranslateEnd e) := by
+  apply AddMonoidHom.ext
+  intro f
+  apply Subtype.ext
+  apply RationalAdeleSchwartzLF.ext
+  funext z
+  change (rationalAdeleLFLogTranslate d (rationalAdeleLFLogTranslate e f.val)).toUnion.val z =
+    (rationalAdeleLFLogTranslate e (rationalAdeleLFLogTranslate d f.val)).toUnion.val z
+  simp only [rationalAdeleLFLogTranslate_apply]
+  ac_rfl
+
+/-- The represented prime difference, before any weight or cutoff. -/
+public noncomputable def rationalThetaRadialPrimeDifference (v : V) : AddMonoid.End R :=
+  1 - radialTranslateEnd (Real.log (P[v] : ℝ))
+
+public theorem rationalThetaRadialPrimeDifference_apply (v : V) (f : R) :
+    rationalThetaRadialPrimeDifference v f =
+      f - rationalThetaRadialInputTranslateAdd (Real.log (P[v] : ℝ)) f := by
+  unfold rationalThetaRadialPrimeDifference radialTranslateEnd
+  rfl
+
+private theorem translate_commute_primeDifference (d : ℝ) (v : V) :
+    Commute (radialTranslateEnd d) (rationalThetaRadialPrimeDifference v) :=
+  (Commute.one_right _).sub_right (translate_commute d _)
+
+public theorem rationalThetaRadialPrimeDifference_commute (v w : V) :
+    Commute (rationalThetaRadialPrimeDifference v) (rationalThetaRadialPrimeDifference w) :=
+  (Commute.one_left _).sub_left (translate_commute_primeDifference _ _)
+
+/-- The order-independent product of the prime differences over a finite set of places.
+It acts on radial inputs and therefore realizes the successive differences of their raw theta. -/
+public noncomputable def rationalThetaRadialPrimeDifferences (P : Finset V) : AddMonoid.End R :=
+  P.noncommProd rationalThetaRadialPrimeDifference fun v _ w _ _ ↦
+    rationalThetaRadialPrimeDifference_commute v w
+
+@[simp] public theorem rationalThetaRadialPrimeDifferences_empty :
+    rationalThetaRadialPrimeDifferences ∅ = 1 :=
+  Finset.noncommProd_empty _ _
+
+public theorem rationalThetaRadialPrimeDifferences_insert [DecidableEq V] {P : Finset V}
+    {v : V} (hv : v ∉ P) :
+    rationalThetaRadialPrimeDifferences (insert v P) =
+      rationalThetaRadialPrimeDifference v * rationalThetaRadialPrimeDifferences P :=
+  Finset.noncommProd_insert_of_notMem _ _ _ _ hv
+
+public theorem rationalThetaRadialPrimeDifferences_insert' [DecidableEq V] {P : Finset V}
+    {v : V} (hv : v ∉ P) :
+    rationalThetaRadialPrimeDifferences (insert v P) =
+      rationalThetaRadialPrimeDifferences P * rationalThetaRadialPrimeDifference v :=
+  Finset.noncommProd_insert_of_notMem' _ _ _ _ hv
+
+public theorem rationalThetaRadialPrimeDifferences_commute_translate (P : Finset V) (d : ℝ) :
+    Function.Commute (rationalThetaRadialPrimeDifferences P)
+      (rationalThetaRadialInputTranslateAdd d) := by
+  have h : Commute (radialTranslateEnd d) (rationalThetaRadialPrimeDifferences P) :=
+    Finset.noncommProd_commute _ _ _ _ fun v _ ↦ translate_commute_primeDifference d v
+  exact fun f ↦ DFunLike.congr_fun h.symm.eq f
+
+@[simp] public theorem rationalThetaRadialPrimeDifferences_class_empty (f : R) (g : C) :
+    Θ[(rationalThetaRadialPrimeDifferences ∅ f).val] g = Θ[f.val] g := by
+  rw [rationalThetaRadialPrimeDifferences_empty, AddMonoid.End.coe_one, id_eq]
+
+/-- The represented product inserts the actual inverse-uniformizer difference of the
+raw class theta, without a scalar or weight. -/
+public theorem rationalThetaRadialPrimeDifferences_class_insert [DecidableEq V] {P : Finset V}
+    {v : V} (hv : v ∉ P) (f : R) (g : C) :
+    Θ[(rationalThetaRadialPrimeDifferences (insert v P) f).val] g =
+      Θ[(rationalThetaRadialPrimeDifferences P f).val] g -
+        Θ[(rationalThetaRadialPrimeDifferences P f).val] (
+          (QuotientGroup.mk (rationalThetaRadialUniformizer v) : C)⁻¹ * g) := by
+  rw [rationalThetaRadialPrimeDifferences_insert hv, AddMonoid.End.coe_mul, Function.comp_apply,
+    rationalThetaRadialPrimeDifference_apply, rationalThetaRadialProfile_class,
+    rationalThetaRadialProfile_sub, rationalThetaRadialInputTranslateAdd_apply,
+    rationalThetaRadialProfile_translate, rationalThetaRadialProfile_uniformizer,
+    rationalThetaRadialProfile_class]
+
+end PrimeDifferences
 
 end Masullo

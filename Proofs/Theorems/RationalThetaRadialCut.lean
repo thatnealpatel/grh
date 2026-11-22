@@ -4,14 +4,13 @@ public import Theorems.RationalThetaCutClosure
 public import Theorems.RationalThetaRadialCore
 public import Theorems.RationalIdeleClassHaar
 
-/-! # A forward prime difference after a rational radial cutoff
+/-! # Finite prime differences after a rational radial cutoff
 
-On the zero line, inserting one new rational finite place has a different
-behavior before and after applying an indicator whose log support is bounded
-below. After the indicator, the range of the forward difference on the
-entire represented two-mode radial theta core is dense in the cut theta
-closure. The same identity holds in normalized idele-class `L²` after
-multiplying by the square root of the polynomial Sobolev weight.
+On the zero line, after a cutoff whose log support is bounded below, the
+range of a finite product of forward prime differences on the entire
+represented two-mode radial theta core is dense in the cut theta closure.
+The same identity holds in normalized idele-class `L²` after multiplying by
+the square root of the polynomial Sobolev weight.
 
 This is an equality for represented theta images. It does not use or assert
 that the indicator of a norm region maps closed subspaces to closed
@@ -82,6 +81,16 @@ private theorem translated_profile_iterate (d : ℝ) (n : ℕ) (f : R) (x : ℝ)
     congr 1
     ring
 
+private theorem tendsto_weightedLogCut_translate_iterate {S : Set ℝ} (hS : MeasurableSet S)
+    {a s d : ℝ} (ha : S ⊆ Ici a) (hs : 0 ≤ s) (hd : 0 < d) (f : R) :
+    Tendsto (fun n : ℕ ↦ rationalThetaRadialWeightedLogCut hS hs
+      ((rationalThetaRadialInputTranslateAdd d)^[n] f)) atTop (𝓝 0) := by
+  apply tendsto_zeroLineWeightedLog_cut_translate hs ha hd (rationalThetaRadialProfile f)
+    (rationalThetaRadialProfile_log_bound f)
+  intro n
+  exact (rationalThetaRadialWeightedLogCut_ae hS hs _).trans (Eventually.of_forall fun _ ↦
+    congrFun (indicator_congr fun x _ ↦ by rw [translated_profile_iterate]) _)
+
 /-- Identity minus left translation by the uniformizer, then the zero-line
 weight and cutoff. This realizes the difference itself by a radial test. -/
 public noncomputable def rationalThetaRadialPrimeDifferenceCut {S : Set ℝ} (hS : MeasurableSet S)
@@ -113,11 +122,91 @@ public theorem rationalThetaRadialPrimeDifferenceCut_closure {S : Set ℝ} (hS :
   apply closure_range_sub_iterate_eq
   intro f
   have hp : 1 < (P[v] : ℝ) := by exact_mod_cast (Rat.HeightOneSpectrum.primesEquiv v).property.one_lt
-  apply tendsto_zeroLineWeightedLog_cut_translate hs ha (Real.log_pos hp) (rationalThetaRadialProfile f)
-    (rationalThetaRadialProfile_log_bound f)
-  intro n
-  exact (rationalThetaRadialWeightedLogCut_ae hS hs _).trans (Eventually.of_forall fun _ ↦
-    congrFun (indicator_congr fun x _ ↦ by rw [translated_profile_iterate]) _)
+  exact tendsto_weightedLogCut_translate_iterate hS ha hs (Real.log_pos hp) f
+
+/-- Apply the finite product to the raw radial theta input, then weight and cut. -/
+public noncomputable def rationalThetaRadialPrimeDifferencesCut {S : Set ℝ} (hS : MeasurableSet S)
+    {s : ℝ} (hs : 0 ≤ s) (P : Finset V) : R →+ LogL2 :=
+  (rationalThetaRadialWeightedLogCut hS hs).comp (rationalThetaRadialPrimeDifferences P)
+
+public theorem rationalThetaRadialPrimeDifferencesCut_apply {S : Set ℝ} (hS : MeasurableSet S)
+    {s : ℝ} (hs : 0 ≤ s) (P : Finset V) (f : R) :
+    rationalThetaRadialPrimeDifferencesCut hS hs P f =
+      rationalThetaRadialWeightedLogCut hS hs (rationalThetaRadialPrimeDifferences P f) := by
+  unfold rationalThetaRadialPrimeDifferencesCut
+  rfl
+
+@[simp] public theorem rationalThetaRadialPrimeDifferencesCut_empty {S : Set ℝ}
+    (hS : MeasurableSet S) {s : ℝ} (hs : 0 ≤ s) :
+    rationalThetaRadialPrimeDifferencesCut hS hs ∅ = rationalThetaRadialWeightedLogCut hS hs := by
+  apply AddMonoidHom.ext
+  intro f
+  rw [rationalThetaRadialPrimeDifferencesCut_apply, rationalThetaRadialPrimeDifferences_empty,
+    AddMonoid.End.coe_one, id_eq]
+
+/-- The finite product recovers the original single-prime cut map on a singleton. -/
+public theorem rationalThetaRadialPrimeDifferencesCut_singleton [DecidableEq V] {S : Set ℝ}
+    (hS : MeasurableSet S) {s : ℝ} (hs : 0 ≤ s) (v : V) (f : R) :
+    rationalThetaRadialPrimeDifferencesCut hS hs {v} f =
+      rationalThetaRadialPrimeDifferenceCut hS hs v f := by
+  rw [rationalThetaRadialPrimeDifferencesCut_apply, ← Finset.insert_empty,
+    rationalThetaRadialPrimeDifferences_insert (Finset.notMem_empty v),
+    rationalThetaRadialPrimeDifferences_empty, mul_one, rationalThetaRadialPrimeDifference_apply]
+  unfold rationalThetaRadialPrimeDifferenceCut
+  rfl
+
+/-- On the log section, only the result of the raw class-theta differences
+is weighted and cut. -/
+public theorem rationalThetaRadialPrimeDifferencesCut_ae {S : Set ℝ} (hS : MeasurableSet S)
+    {s : ℝ} (hs : 0 ≤ s) (P : Finset V) (f : R) :
+    ⇑(rationalThetaRadialPrimeDifferencesCut hS hs P f) =ᵐ[volume]
+      S.indicator (fun x ↦ (symmetricStripWeightRoot 0 s x : ℂ) *
+        Θ[rationalThetaRadialPrimeDifferences P f] (τ x)) := by
+  rw [rationalThetaRadialPrimeDifferencesCut_apply]
+  simpa only [rationalThetaRadialProfile_apply] using
+    rationalThetaRadialWeightedLogCut_ae hS hs (rationalThetaRadialPrimeDifferences P f)
+
+/-- Carving out any finite set of rational finite places leaves the cut closure
+of the full represented radial core unchanged. -/
+public theorem rationalThetaRadialPrimeDifferencesCut_closure {S : Set ℝ} (hS : MeasurableSet S)
+    {a s : ℝ} (ha : S ⊆ Ici a) (hs : 0 ≤ s) (P : Finset V) :
+    closure (range (rationalThetaRadialPrimeDifferencesCut hS hs P)) =
+      closure (range (rationalThetaRadialWeightedLogCut hS hs)) := by
+  classical
+  induction P using Finset.induction_on with
+  | empty => rw [rationalThetaRadialPrimeDifferencesCut_empty]
+  | @insert v P hv ih =>
+    let F := rationalThetaRadialPrimeDifferencesCut hS hs P
+    let d := Real.log (P[v] : ℝ)
+    let T := rationalThetaRadialInputTranslateAdd d
+    have hcomm : Function.Commute (rationalThetaRadialPrimeDifferences P) T :=
+      rationalThetaRadialPrimeDifferences_commute_translate P d
+    have hp : 1 < (P[v] : ℝ) := by
+      exact_mod_cast (Rat.HeightOneSpectrum.primesEquiv v).property.one_lt
+    have hinsert : ⇑(rationalThetaRadialPrimeDifferencesCut hS hs (insert v P)) =
+        fun f ↦ F (f - T f) := by
+      funext f
+      change rationalThetaRadialPrimeDifferencesCut hS hs (insert v P) f =
+        rationalThetaRadialPrimeDifferencesCut hS hs P (f - T f)
+      rw [rationalThetaRadialPrimeDifferencesCut_apply, rationalThetaRadialPrimeDifferencesCut_apply,
+        rationalThetaRadialPrimeDifferences_insert' hv, AddMonoid.End.coe_mul,
+        Function.comp_apply, rationalThetaRadialPrimeDifference_apply]
+    rw [hinsert, ← ih]
+    apply closure_range_sub_iterate_eq T F
+    intro f
+    change Tendsto (fun n : ℕ ↦ rationalThetaRadialWeightedLogCut hS hs
+      (rationalThetaRadialPrimeDifferences P (T^[n] f))) atTop (𝓝 0)
+    simpa only [(hcomm.iterate_right _).eq] using
+      tendsto_weightedLogCut_translate_iterate hS ha hs (Real.log_pos hp)
+        (rationalThetaRadialPrimeDifferences P f)
+
+/-- In particular, the cut closures of any two finite sets of places agree. -/
+public theorem rationalThetaRadialPrimeDifferencesCut_closure_eq {S : Set ℝ} (hS : MeasurableSet S)
+    {a s : ℝ} (ha : S ⊆ Ici a) (hs : 0 ≤ s) (P Q : Finset V) :
+    closure (range (rationalThetaRadialPrimeDifferencesCut hS hs P)) =
+      closure (range (rationalThetaRadialPrimeDifferencesCut hS hs Q)) :=
+  (rationalThetaRadialPrimeDifferencesCut_closure hS ha hs P).trans
+    (rationalThetaRadialPrimeDifferencesCut_closure hS ha hs Q).symm
 
 section ClassHaar
 
@@ -185,6 +274,37 @@ public theorem rationalThetaRadialPrimeDifferenceCut_haar_closure {S : Set ℝ} 
     rationalThetaRadialHaarPullback.isometry.isClosedEmbedding.closure_image_eq,
     rationalThetaRadialHaarPullback.isometry.isClosedEmbedding.closure_image_eq,
     rationalThetaRadialPrimeDifferenceCut_closure hS ha hs v]
+
+/-- The weighted, cut finite-prime difference in normalized idele-class Haar `L²`
+is represented by the actual class theta of the raw difference input. -/
+public theorem rationalThetaRadialPrimeDifferencesCut_haar_ae {S : Set ℝ} (hS : MeasurableSet S)
+    {s : ℝ} (hs : 0 ≤ s) (P : Finset V) (f : R) :
+    ⇑(rationalThetaRadialHaarPullback (rationalThetaRadialPrimeDifferencesCut hS hs P f))
+        =ᵐ[rationalIdeleClassHaar] (ℓ ⁻¹' S).indicator
+          (fun g ↦ (symmetricStripWeightRoot 0 s (ℓ g) : ℂ) *
+            Θ[rationalThetaRadialPrimeDifferences P f] g) := by
+  rw [rationalThetaRadialPrimeDifferencesCut_apply]
+  exact rationalThetaRadialWeightedLogCut_haar_ae hS hs _
+
+/-- The finite-prime cut closure equals the uncarved cut closure in normalized
+idele-class Haar `L²`. -/
+public theorem rationalThetaRadialPrimeDifferencesCut_haar_closure {S : Set ℝ} (hS : MeasurableSet S)
+    {a s : ℝ} (ha : S ⊆ Ici a) (hs : 0 ≤ s) (P : Finset V) :
+    closure (range (rationalThetaRadialHaarPullback ∘ rationalThetaRadialPrimeDifferencesCut hS hs P)) =
+      closure (range (rationalThetaRadialHaarPullback ∘ rationalThetaRadialWeightedLogCut hS hs)) := by
+  rw [range_comp, range_comp,
+    rationalThetaRadialHaarPullback.isometry.isClosedEmbedding.closure_image_eq,
+    rationalThetaRadialHaarPullback.isometry.isClosedEmbedding.closure_image_eq,
+    rationalThetaRadialPrimeDifferencesCut_closure hS ha hs P]
+
+/-- The cut closures of any two finite sets of places agree in normalized
+idele-class Haar `L²`. -/
+public theorem rationalThetaRadialPrimeDifferencesCut_haar_closure_eq {S : Set ℝ} (hS : MeasurableSet S)
+    {a s : ℝ} (ha : S ⊆ Ici a) (hs : 0 ≤ s) (P Q : Finset V) :
+    closure (range (rationalThetaRadialHaarPullback ∘ rationalThetaRadialPrimeDifferencesCut hS hs P)) =
+      closure (range (rationalThetaRadialHaarPullback ∘ rationalThetaRadialPrimeDifferencesCut hS hs Q)) :=
+  (rationalThetaRadialPrimeDifferencesCut_haar_closure hS ha hs P).trans
+    (rationalThetaRadialPrimeDifferencesCut_haar_closure hS ha hs Q).symm
 
 end ClassHaar
 
