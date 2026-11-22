@@ -840,27 +840,60 @@ go run ./cmd/godel audit-local "$CANDIDATE" \
   Masullo.ideleFiniteStageProduct_unitBox Masullo.exists_ideleRestrictedProductHaar
 ```
 
-### Next: Identify the restricted-product zeta pairing
+### Checked pure-tensor integration on the actual finite stages
 
-First prove the finite-stage integral for a pure-tensor density $g$ on
-actual ideles. Let $E'$ include $E$ and all places where the local
-density on integer units is not identically one (in particular the
-character ramification and test exceptions). For $S\supseteq E'$, the
-restriction of $g$ along the stage embedding is the product of its full
-Archimedean and active finite factors, independent of the inactive
-coordinates. For measurable integrable local factors, prove that
-$g$ is integrable on this stage and that its integral is the product
-of those local integrals, with no additional tail scalar; also compute
-the integral of $|g|$ there as the product of the local absolute masses.
-Use the checked comap, product Fubini, and the inactive probability
-mass one. A first runnable interface is the factorization for an
-arbitrary complex density satisfying this stage coordinate identity;
-`integral_prod_mul` and `integral_fintype_prod_eq_prod` give the finite
-product steps. The global passage then needs a bound on the finite
-stage absolute masses along an increasing cofinal exhaustion, followed
-by convergence of the complex integrals. Keep the exceptional unit
-masses in the local integral values. Character ramification is not
-the exceptional set for Haar unit masses.
+[`Masullo.ideleFiniteStage_integral`](../../Proofs/Theorems/IdeleFiniteStageIntegral.lean)
+applies to a Borel measure $\mu$ with the prescribed comap along the
+actual open stage $j_S$, with local Haar measures and integral-unit
+mass one off $S$. If a complex density $g$ pulls back pointwise to
+$\prod_{v\mid\infty}a_v\prod_{v\in S}f_v$ and every factor is integrable
+for its full local measure, then $g$ is integrable for
+$\mu|_{\operatorname{range}j_S}$. Its complex integral and its real
+integral of $\|g\|$ there are the products of the corresponding local
+integrals. Nothing is assumed about $g$ off this stage, and no active
+factor is rescaled. The Haar construction supplies the comap for every
+$S$ containing its finite set of mass exceptions.
+
+**Source and repair (provisional):** The proof of Theorem 3.3.1.1(1),
+p. 130, factors the finite $S$-local pairing. For (3.2.2.1), p. 124,
+Masullo uses the global absolute product (3.2.2.6), p. 126, and asserts
+(3.4.1.6) in the right half-plane on p. 144, where footnote 3 asks for
+further justification. The project's theorem factors the restriction
+on the actual global topology, using the product prescription
+(A.3.2.5), p. 560, with a probability tail and the actual active masses.
+It does not assert either the global limit or independence of the printed
+formula from the admissible set. The pinned Markdown and PDF layout
+were read, but not the rendered pages. Independent endpoint review:
+Yah session `01a2019b-59ea-7f53-972c-3bbcf75b3d17`, agent `QzOsmoe`.
+Replay the build, modules, and built signatures from the candidate
+workspace with:
+
+```sh
+go run ./cmd/godel audit-local "$CANDIDATE" \
+  Lemmas.IdeleFiniteStageMeasure Theorems.IdeleFiniteStageIntegral -- \
+  Masullo.ideleFiniteStageProduct_tensor Masullo.ideleFiniteStage_integral
+```
+
+### Next: Exhaust the restricted-product zeta pairing
+
+Prove the cofinal passage for $g$ with a uniform finite bound on the
+stage absolute masses. Take an increasing sequence of finite stages
+containing all Haar mass exceptions, test exceptions, and ramified
+places. Countability and `range_ideleFiniteStageEmbedding` give an
+increasing measurable cover of the actual group. Glue the stage AE
+strong measurability, use `lintegral_iUnion` on the extended norm,
+and then use `tendsto_setIntegral_of_monotone` on the complex integrals.
+This should need no separate assumption of upstairs integrability.
+
+For the actual right-half-plane density, prove the pointwise coordinate
+identity and the absolute bound: Outside the initial stage the standard
+local absolute masses are the unramified Euler factors at $\Re s$ for
+the trivial unitary character. Use the checked convergent finite Euler
+product there, keeping all exceptional Haar masses in the initial local
+values. Identify the complex stage limit with the corrected product.
+The comparison with the separately specified quotient normalization
+and the discriminant evaluation of the exceptional mass product are
+not consequences of this exhaustion.
 
 **Still open:** Meromorphic continuation, divisor data, and contour
 growth in (B.4.2.1)–(4), the broader test class, ramified Fourier terms,

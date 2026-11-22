@@ -6,6 +6,7 @@ public import Mathlib.MeasureTheory.Measure.Haar.Basic
 public import Mathlib.Probability.ProductMeasure
 public import Mathlib.Topology.Algebra.Group.Units
 import Mathlib.LinearAlgebra.Countable
+import Mathlib.MeasureTheory.Integral.Pi
 import Mathlib.MeasureTheory.Measure.Haar.Unique
 import Mathlib.NumberTheory.NumberField.Completion.InfinitePlace
 
@@ -252,6 +253,38 @@ public theorem ideleFiniteStageProduct_isHaar (S : Finset V)
   change ((Measure.pi μa).prod ((Measure.pi (fun v : {v // v ∈ S} ↦ μf v.val)).prod
     (Measure.infinitePi (inactiveHaar K μf S)))).IsHaarMeasure
   apply Measure.prod.instIsHaarMeasure
+
+omit ba in
+/-- Fubini for a stage density with independent Archimedean and active finite
+coordinates and no dependence on the inactive coordinates. -/
+public theorem ideleFiniteStageProduct_tensor {L : Type*} [RCLike L]
+    (S : Finset V) (hS : ∀ v ∉ S, finiteCompletionUnitMass K μf v = 1)
+    (a : (v : InfinitePlace K) → v.Completionˣ → L)
+    (f : (v : {v // v ∈ S}) → (F v.val)ˣ → L)
+    (hA : ∀ v, Integrable (a v) (μa v)) (hF : ∀ v, Integrable (f v) (μf v.val)) :
+    (Integrable (fun x : IdeleFiniteStage K S ↦ (∏ v, a v (x.1 v)) * (∏ v, f v (x.2.1 v)))
+      (ideleFiniteStageProduct K μa μf S)) ∧
+    (∫ x : IdeleFiniteStage K S, (∏ v, a v (x.1 v)) * (∏ v, f v (x.2.1 v))
+      ∂ideleFiniteStageProduct K μa μf S) =
+      (∏ v, ∫ x, a v x ∂μa v) * (∏ v, ∫ x, f v x ∂μf v.val) := by
+  let (v : {v // v ∉ S}) := inactiveHaar_probability K μf S hS v
+  let μu := Measure.infinitePi (inactiveHaar K μf S)
+  let mF := Measure.pi (fun v : {v // v ∈ S} ↦ μf v.val)
+  let af (x : A) := ∏ v, a v (x v)
+  let ff (x : (v : {v // v ∈ S}) → (F v.val)ˣ) := ∏ v, f v (x v)
+  have hAf : Integrable af (Measure.pi μa) := Integrable.fintype_prod_dep hA
+  have hFf : Integrable ff mF := Integrable.fintype_prod_dep hF
+  change Integrable (fun x ↦ af x.1 * ff x.2.1) ((Measure.pi μa).prod (mF.prod μu)) ∧ _
+  refine ⟨hAf.mul_prod (hFf.comp_fst μu), ?_⟩
+  have hf_tail : (∫ x, ff x.1 ∂mF.prod μu) = ∫ x, ff x ∂mF := by
+    simpa only [measureReal_def, measure_univ, ENNReal.toReal_one, one_smul] using
+      (integral_fun_fst (μ := mF) (ν := μu) ff)
+  calc
+    _ = (∫ x, af x ∂Measure.pi μa) * (∫ x, ff x.1 ∂mF.prod μu) :=
+      integral_prod_mul (μ := Measure.pi μa) (ν := mF.prod μu) af (fun x ↦ ff x.1)
+    _ = (∫ x, af x ∂Measure.pi μa) * (∫ x, ff x ∂mF) := congrArg (_ * ·) hf_tail
+    _ = _ := congrArg₂ (· * ·) (integral_fintype_prod_eq_prod (μ := μa) a)
+      (integral_fintype_prod_eq_prod (μ := fun v : {v // v ∈ S} ↦ μf v.val) f)
 
 omit ha ba in
 /-- The calibration mass in stage coordinates retains all active unit masses. -/
