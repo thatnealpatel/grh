@@ -42,7 +42,26 @@ Evaluate at $h^{-1}x$, multiply by the lifted diagonal, and integrate. The disjo
 
 This is a split of an already identified diagonal, not an evaluation by the periodic orbital kernels. In fact, the $S$ part weights $d(q)$ by $\sum_{h\in H\cap G_S}w(q,h)$. Group the numbers $a(j^{-1}x)$ by cosets in $H/(H\cap G_S)$: The weight is the sum of the squares of the coset masses. For an indentation on $G_S$ relative to $H\cap G_S$, extension by zero gives an indentation on $G$, because $G_S/(H\cap G_S)\simeq G/H$ and $G_S$ is clopen. Its entire orbit mass is in one coset, giving $S$ weight one. Averaging it with a translate by a principal idele outside $G_S$ gives two distinct cosets of mass $1/2$, hence $S$ weight $1/2$. Thus a general indentation can change the partition without changing the total. Choosing a lift with no orbital tail by construction does not show that its $S$ part is the Paley–Wiener trace or explains the Mellin corrections.
 
-**Specific orbital interface to check.** The extracted (11.3.2.2), p. 495, appears to use the product of two indicators of the exact section $\tau(\mathbb R_{>0})$, averaged over $\xi\in F^\times$ and $g\in E_F^1$, with the latter fundamental domain as in (A.2.3.14), p. 549. If interpreted literally as integration with norm-one Haar on this domain, even the first indicator has integral zero for each $\xi,x$: $\xi g x$ must equal $\tau(|x|_F)$, so at most one $g$ contributes. Norm-one Haar is nonatomic, since the group contains infinite compact local unit subgroups. The countable sum is then also zero, not a normalized lift. This is a reading to verify on the rendered page, not a verdict on the intended orbital formula. For a text-based next step, use the periodic model of Theorem 7.4.2.1 at a single rational prime for $F=\mathbb Q$ and look for a genuine lift and cutoff trace that works for tests on both sides of norm one. A periodic scalar alone does not identify that trace with the stratum piece above.
+**Checked rational obstruction.** The rendered displays on pp. 494–495 of the
+pinned PDF give separate exact-section indicators at $\xi gx$ and $\xi gy$
+in (11.3.2.2). The display does not specify the inner differential;
+upstairs norm-one Haar restricted to $E$ is the reading suggested by the
+neighboring integral, not a claim about every possible intended lift.
+[The section-weight proof](../../Proofs/Theorems/RationalOrbitalSectionWeight.lean)
+shows that for fixed $\xi,x$, taking the norm fixes the section parameter,
+so at most one $g$ contributes. Haar on the actual rational norm-one
+idele group is nonatomic. The weight is therefore zero for every pair,
+every $E$, and every Haar normalization, even before the shell cutoff.
+
+For the [prime-two class test](../../Proofs/Theorems/RationalOrbitalPrimeTwo.lean),
+the local uniformizer has norm $1/2$. Only its inverse hits the bump,
+and the discriminant-normalized mass of the local unit group is one.
+The unshifted right side is $\log 2$. The [joint theorem](../../Proofs/Theorems/RationalOrbitalObstruction.lean)
+therefore rules out equality for **any** kernel with this literal weight.
+It uses the rational canonical section in log coordinates. This is a
+`grh` theorem, not an import of the companion's `Printed` proposition or
+a construction of a shell-preserving replacement. The [companion draft](https://github.com/mccorvie/riemann-masullo/pull/2885)
+already identifies the prime-two witness and the separate later-cutoff defect.
 
 ## Base normalization forces zero off-stage weight
 
