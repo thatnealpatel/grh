@@ -316,14 +316,12 @@ extraction, not independent inspection of rendered pages.
 ### Ramified local conductor power: The modulus-three test
 
 **Scope of the source verdict:** The finite-place calculation is independent
-of the printed real factor. Applying it to the printed $S$-local identity
-also uses the product norm after (3.1.2.1), p. 120, the odd Gamma factor
-(3.2.1.4), p. 123, and the constant real epsilon rule accompanying
-(3.3.1.28), p. 135. These three readings remain provisional (pinned Markdown
-and layout extraction). The rendered findings below are inherited from the
-prior independent reviewers, not a new visual audit of this recovery.
+of the printed real factor. The [odd real residual](#checked-odd-real-residual-at-two-points)
+is now checked from rendered pages. Applying the combined comparison to
+the printed $S$-local identity still uses the provisional reading of the
+product norm after (3.1.2.1), p. 120.
 
-**Rendered source.** In the [pinned edition](../sources/masullo/README.md),
+**Inherited rendered source.** In the [pinned edition](../sources/masullo/README.md),
 (3.3.1.30), p. 136, prints only $N(\mathfrak d_v)^{s-1/2}$ outside the
 Gauss sum. Although $\rho_0$ is written with a norm twist as an argument,
 the displayed formula uses $N(\mathfrak f)^{-1/2}$, the fixed values
@@ -389,31 +387,6 @@ reflected quotient is therefore $R_3(s)=A^{-1}3^{s-1}$, or
 $i3^{s-1/2}$ in the checked convention. These Mellin evaluations are
 ordinary mathematics using the checked additive formula.
 
-**Discriminant.** Both $3$-adic Euler factors are one, by (3.2.1.2),
-p. 123, and the ramified case stated in the proof after (3.3.1.33),
-p. 137. The first omits the ramified place, and the second explicitly
-sets the local factor to one. Both conventions were read on the
-rendered pages. In the tensor with the real test
-$h(t)=t e^{-\pi t^2}$, the two real zeta integrals are the odd Gamma
-factors at $s$ and $1-s$, the latter times a constant nonzero Fourier
-phase. For the negative Fourier kernel, $\widehat h=-ih$ and the real
-forward/reflected quotient after Gamma normalization is $+i$. The
-comparison does not require equality with the printed constant phase.
-Dividing out the odd Gamma ratio from (3.2.1.4), p. 123, therefore leaves
-only an $s$-independent real phase. Only the constant-in-$s$
-feature of the printed real rule in the discussion of (3.3.1.28),
-p. 135, is needed; that rule is a provisional text and layout reading.
-In this normalized $S$-quotient, the ratio of the value at $3/4$ to
-that at $1/4$ is $\sqrt{3}$, not the $1$ required by (3.3.1.30) and
-(3.3.1.32), and not the $1/\sqrt{3}$ from the reversed conductor exponent.
-It agrees with (3.3.2.24) in its conductor power, independently of
-constant phases. Subject to the source-scope readings above, this is a
-counterexample to compatibility of the printed formulas within their
-common scope, not to the local functional equation with the repaired
-factor. For this place and character, inserting $N(\mathfrak f)^{s-1/2}$
-in (3.3.1.30) repairs the power; the comparison does not adjudicate the
-manuscript's constant phase conventions.
-
 **Appendix B interface.** The local contribution has logarithmic
 derivative $+\log 3$. This is a forward-over-reflected **local zeta**
 quotient; the exponential in (3.2.1.6), p. 123, is the
@@ -433,6 +406,76 @@ checked here; the source product description after (3.2.1.6), p. 123,
 remains provisional for that purpose. The prior rendered review of
 (B.4.2.3), p. 614, confirmed the sign issue explained above; the local
 test does not justify that displayed differentiation.
+
+#### Checked odd real residual at two points
+
+**Printed route.** In the pinned edition, the real rule (i) after
+(3.3.1.28), p. 135, assigns $\epsilon_v(c_v)=-i$ on the sign component.
+By the restriction definition in (3.1.1.1)–(2), p. 119, inherited from
+the [angular audit](complex-gaussian-angular.md#rendered-readings), and
+the real norm-one group $\mu_2$ in §3.1.2.1, p. 120, the character
+$c_{\infty,s}(x)=\operatorname{sgn}(x)|x|^s$ is in this component for
+both $s=1/4$ and $s=3/4$: Its norm twist is one at $\pm1$. The
+inherited dual (3.1.1.4), p. 119, gives $\widehat c_{\infty,s}=c_{\infty,1-s}$.
+The rendered odd case of (3.2.1.4), p. 123, gives
+$G(s)=\pi^{-(s+1)/2}\Gamma((s+1)/2)$. The Gamma arguments are $5/8$
+and $7/8$, so both values are finite and positive. Using the inherited
+forward-over-reflected orientation of (3.3.1.2), p. 129, and the local
+factor identity below (3.3.1.32), p. 136, the printed real factor is
+$\epsilon_v(c_{\infty,s})G(s)/G(1-s)$. After division by $G(s)/G(1-s)$
+the residual is the same nonzero scalar at both points; the residual
+at $3/4$ divided by the residual at $1/4$ is **$1$**. The rule is constant
+on the whole odd component, not only at these values.
+
+**Defining route.** Use the bilinear pairing (3.3.1.7), p. 130, and
+full real Haar $dx/|x|$ from A.3.2.2(1), p. 560, as recorded in the
+[angular](complex-gaussian-angular.md#rendered-readings) and
+[real-prime](trace-real-prime-q.md#source-and-domain) audits. For the odd
+Schwartz test $h(t)=t e^{-\pi t^2}$, `realGaussianZetaDensity_integral`
+with parity one and zero radial frequency gives $G(s)$ and $G(1-s)$ for
+the test $h$ on the common strip $0<\Re s<1$, with absolute convergence.
+For the reflected test, differentiating the Gaussian Fourier identity
+shows $\widehat h=\lambda h$ with a fixed nonzero $\lambda$, so the defining
+quotient is $\lambda^{-1}G(s)/G(1-s)$. This use of Fourier and the
+normalized quotient inference are ordinary mathematics, not new Lean
+endpoints. The defining real residual ratio is also $1$; no equality of
+phases is needed.
+
+**Evidence:** The owner and independent reviewer `hpJdwiW` (Yah
+`01a20515-f40a-7d86-8748-a710d7cab5e0`) inspected readable Poppler
+pixel crops of the pinned PDF for the real rule after (3.3.1.28), p. 135,
+the odd case of (3.2.1.4), p. 123, and the local real norm-one group in
+§3.1.2.1, p. 120. The reviewer separately checked sign-component
+membership and the defining Gaussian quotient by the square substitution
+and Fourier differentiation. The orientation, dual, and finite source
+readings are inherited, not new renders.
+
+**Conditional $S$-local comparison.** The inherited rendered (3.2.1.2),
+p. 123, omits ramified places, and the proof following (3.3.1.33),
+p. 137, explicitly sets the local Euler factors to one. The printed
+finite factor (3.3.1.30), p. 136, has ratio $1$ for the modulo-three
+character, whereas `padicRamifiedThreeZeta_ratio_div` gives $\sqrt{3}$
+for the actual finite quotient. The respective normalized product
+ratios are $1$ and $\sqrt{3}$, not the $1/\sqrt{3}$ that a reversed
+conductor exponent would give. The real factor cannot compensate for
+the missing conductor power. Inserting $N(\mathfrak f)^{s-1/2}$ in
+(3.3.1.30) repairs that power, in agreement with (3.3.2.24), p. 141,
+without adjudicating the phases. Applying this mismatch to the printed
+$S$-local statement still uses the provisional product-norm reading
+after (3.1.2.1), p. 120.
+This is not a refutation of a functional equation with corrected factors.
+
+**Next source check:** Read just that product-norm clause to identify
+the manuscript's abscissa and local twists for $S=\{\infty,3\}$ in the
+same $s$ coordinate. The [accepted stage norm split](#checked-norm-and-raw-zeta-density-on-the-open-stages),
+restricted to the stage with active finite place $3$ and other finite
+coordinates set to one, already gives $|x_\infty||x_3|_3$. For rational
+$S$-units $\pm3^n$ this product is one. The exact norm of the printed
+$S$-unit quotient is the remaining source check, not a new norm theorem.
+The rendered full-idele product and descent in (A.1.3.3), p. 541, and
+(A.1.3.6), p. 542, are inherited from the
+[finite normalization audit](finite-gaussian-tamagawa.md); they are not
+an inspection of the sentence after (3.1.2.1), p. 120.
 
 ### Primitive prime-power conductor shells over $\mathbb Q_p$
 
@@ -923,7 +966,8 @@ Definitions A.3.1.2(1) and A.3.2.2(1), pp. 556 and 560, specify
 multiplication by the character and the density $dx/|x|$ off zero.
 With the real-place classification above, the norm exponent is
 $s+i\tau$, and (3.2.1.4), p. 123, supplies the target Gamma factor.
-This is a provisional source reading from Markdown and PDF layout.
+Its odd case is [rendered and checked above](#checked-odd-real-residual-at-two-points);
+this section's other text and layout mappings remain provisional.
 
 The project supplies the scalar integral and its absolute convergence,
 needed for the local normalization in (3.4.3.12)–(13), p. 153.
