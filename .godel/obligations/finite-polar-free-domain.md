@@ -477,31 +477,76 @@ No pages were reread. This supplies one local input to the repaired
 forward direction of Lemma 5.3.4.2(2), pp. 259–261, not a proof on its
 printed tensor domain.
 
-**Next bounded check:** On the actual units of one rational finite
-completion, prove absolute integrability and a finite shell formula
-for a compactly supported locally constant test paired with the
-actual restricted character times the normalized norm power. Use
-`RationalLocalNormShell.iUnion_eq_univ`, `.log_norm`, and `.measure`
-for the same rational unit domain and `rationalLocalMultiplicativeHaar`.
-Compact support in the units bounds $\log\|u.\mathrm{val}\|$ and thus
-both ends of the integer shell index. In the formula, keep the whole
-character-weighted test integral as the coefficient on shell $k$,
-so it need not be radial or unramified. The parameter-dependent factor
-is exactly $\exp(-ks\log p)$ by `.log_norm`. A finite sum of these
-terms would supply the missing Lean finite-local entireness input;
-the [shell argument](finite-local-zeta-residue.md#what-is-checked-in-lean-and-what-chapter-5-can-use)
-is presently informal for this test class.
+## Checked compact-away finite pairing on rational completion units
 
-For that check, inherit the finite-domain repair and the reviewed
-forward-direction scope, (5.3.4.1) and Lemma 5.3.4.2(2), pp. 259–261,
-from the [domain audit](#scope-of-the-repair-and-use-in-lemma-5342).
-The compact-away class is a repair, not the printed finite test space.
-Inherit the bilinear pairing and insertion from the angular audit as
-above, and the normalized finite coordinate (§3.1.2.1, p. 120) and
-unit mass (A.3.2.2, p. 560) from the
+[`Masullo.rationalFiniteCompactMellinPair`](../../Proofs/Theorems/RationalFiniteCompactMellin.lean)
+replaces the [informal finite shell argument](finite-local-zeta-residue.md#what-is-checked-in-lean-and-what-chapter-5-can-use)
+for this rational case. At any finite place $v$ of $\mathbb Q$, take a
+continuous compactly supported $b:F_v^\times\to\mathbb C$, with the Borel
+structure on the actual completion units, and a fixed Mathlib Hecke
+character $\chi$. Lean supplies integers $L\le U$ such that the entire
+topological support of $b$ is in the union of the shells from $L$ to $U$.
+These bounds are chosen before $s$. For every $s\in\mathbb C$ the raw
+integrand is absolutely integrable against `rationalLocalMultiplicativeHaar`,
+and its integral is
+$$
+\sum_{k=L}^{U}\exp(-ks\log p)
+  \int_{\operatorname{shell}(k)} b(u)\chi(j_v(u))\,d^\times u.
+$$
+Lean also proves complex differentiability on all of $\mathbb C$.
+Here `χ.restrict v u.val` evaluates the actual single-place insertion
+`IdeleClassGroup.ofAdicCompletion` on $u$, and $p$ is the prime of $v$.
+
+The continuous coordinate $-\log\|u\|/\log p$ equals $k$ on shell $k$.
+Its compact image on the support gives both bounds, even though the
+ambient field norm tends to zero along shells with $k\to+\infty$.
+The support is compact *in the units*. Continuity of the restricted
+character and the norm power on units gives compact-support
+integrability on Haar, without requiring unitarity. The finite disjoint
+union and the log-norm identity pull out only the exponential, not the
+character or the test. Locally constant tests are included by continuity;
+there is no radiality, unramifiedness, or half-plane hypothesis. The
+shells have mass one in the accepted normalization, but no coefficient
+is replaced by a shell mass.
+
+**Evidence and scope:** Independent statement and applicability review:
+Yah `01a204cc-c59d-7f4e-b2ac-7073aab9a2d7`, agent `VtkshAk`, at
+`6ad2f07c6fa0a979abf3ecd63fa4077a47c71283`. Inherit the rendered reading
+of (5.3.4.1) and Lemma 5.3.4.2(2), pp. 259–261, from the
+[domain audit](#scope-of-the-repair-and-use-in-lemma-5342); the pairing
+(3.3.1.7), p. 130, and insertion §3.1.2.2, p. 121, from the
+[real Haar handoff](#checked-raw-flat-schwartz-pairing-on-real-completion-units);
+and the normalized finite norm and measure, §3.1.2.1, p. 120, and
+A.3.2.2, p. 560, from the
 [finite normalization audit](finite-gaussian-tamagawa.md#source-and-the-two-readings-of-l_v).
-In the rational field the local extension is trivial and that unit
-mass is one, as in the [finite residue audit](finite-local-zeta-residue.md#printed-residue-and-admissible-tests).
-No reflected pairing or Euler factor is used for the next check.
-Beyond it, assembly on a repaired algebraic tensor, character descent,
-and passage to a completed tensor remain separate.
+No pages were reread. Compact-away support is a repair, not the printed
+finite test space. This proves local entireness, not tensor entireness,
+character descent, or passage to a completion.
+
+**Next bounded check:** Over $\mathbb Q$, identify the grouped
+Archimedean density and its integral in `ideleFiniteStage_zetaIntegral`
+with the actual single-real-place flat-Schwartz pairing. Its measure
+is `Measure.pi μa` on the product of completion units; use the singleton
+infinite-place evaluation with $\mu_a(v)$ equal to `realCompletionHaar`
+at the unique real place. The grouping has a product of the same
+local character evaluations and a norm with real multiplicity one.
+Check the evaluation pushforward and the density transport, with no
+extra scalar. This supplies the real integrability premise for one
+repaired pure tensor on a stage with all its finite exceptions and
+ramification active. Taking the exception set equal to the stage
+makes each active finite input exactly the compact-away endpoint
+above. The [stage Fubini formula](hecke-right-line-majorant.md#checked-grouped-zeta-integrals-on-each-stage)
+is already checked, with an exact stage comap hypothesis. A global
+upstairs support reduction, algebraic tensor assembly, and the
+completion and character-descent questions are separate.
+
+For this bridge, the [real Haar handoff](#checked-raw-flat-schwartz-pairing-on-real-completion-units)
+records the inherited source for jets, insertion, and mass on both
+signs. The [global sign audit](global-mellin-sign-q.md#what-the-source-prints)
+verifies the raw bilinear density in (3.2.2.1), p. 124; the
+[relative 1-line audit](idele-relative-one-line-q.md#source-checked-on-rendered-pages)
+verifies the rational local normalization and restricted product
+in (A.3.2.2) and (A.3.2.5), p. 560. The grouped-factor mapping of
+(3.4.1.2), p. 143, in the stage note is provisional and is not a
+premise of the singleton evaluation check.
+
