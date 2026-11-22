@@ -939,6 +939,15 @@ review: Child `ItiKqaM`, output `bfcab7af98deab3f567a5d4ca5aaf101ea9c8f47`,
 in Yah session `01a20350-96e4-7bfd-a9ef-8a2f45d5a914`. The source reading
 is provisional (Markdown and numbered PDF layout, not rendered pages).
 
+`audit-local` passed on accepted proof revision
+`00d93f83469610f817c3727f8e386b8f7ef278b5` (log
+`/tmp/grh-audit-00d93f83.log`): A full `Proofs` build, joint import,
+and kernel replay of `Lemmas.IdeleCompactDenominators` and
+`Theorems.IdeleClassGaussianSupport`. The five built signatures matched
+review, including `exists_compact_cover_ideleClassNormOne` and the four
+names cited above. Each uses only `propext`, `Classical.choice`, and
+`Quot.sound`.
+
 **Next Lean obligation:** For the fixed `χ`, `T`, and for each `N : ℕ`,
 choose `C > 0` and a natural `k > Module.finrank ℤ (mixedEmbedding.integerLattice K)`.
 Show that on the compact representatives `b`, for `x.toAdd ≥ 0` and
