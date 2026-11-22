@@ -176,8 +176,10 @@ The [horizontal reciprocal estimate](isotypic-good-heights-q-sqrt-minus-five.md)
 is now unconditional in Lean for the explicit denominator $D$. Five
 centered periodic primitives give $|D(z)|\le C_0 H^{12}$ on the
 radius-six circle about $2+i(H+1/2)$ for every real $H\ge1$. This
-supplies the $m=0$ good-height estimate, not bounds on reciprocal
-derivatives. The reflected identity and the archimedean image
-criterion still need a formal model. The latter and the exact
+supplies the $m=0$ good-height estimate. The separate
+[all-orders Cauchy estimate](isotypic-good-heights-q-sqrt-minus-five.md#all-orders-cauchy-bound-at-the-same-height)
+now bounds reciprocal derivatives in Lean at the same height and all
+centers of the closed segment. The reflected identity and the
+archimedean image criterion still need a formal model. The latter and the exact
 completed/local normalizations and Schwartz convention above still
 use provisional source readings.

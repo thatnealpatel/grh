@@ -14,9 +14,10 @@ $$
 This supplies the $m=0$ horizontal edge in the
 [corrected inverse range](isotypic-inverse-range-q-sqrt-minus-five.md)
 at $S=S_\infty$ for the nontrivial class character of
-$\mathbb Q(\sqrt{-5})$. It does not prove the general Hecke claim or a
-bound on derivatives of the reciprocal. The same height also gives
-polynomial reciprocal bounds for both individual factors.
+$\mathbb Q(\sqrt{-5})$. The same height also gives polynomial
+reciprocal bounds for both individual factors. The segment estimate
+alone does not bound derivatives; the [Cauchy step below](#all-orders-cauchy-bound-at-the-same-height)
+uses the full closed disks.
 
 ## Source interface
 
@@ -230,13 +231,54 @@ A separate fresh import in the integration workspace applied it with
 both Dirichlet factors written out. Neither check assumes or proves a
 bound for higher derivatives.
 
-**Next check:** Apply the disk Cauchy estimate to $D^{-1}$ at each
-center. With the same $T$ and constants, the target for every natural
-$m$ is $|(D^{-1})^{(m)}(s)|\le m!\,C c^{-m} T^{A+Bm}$. The disk
-nonvanishing should supply differentiability on the open ball and
-continuity on its closure, the hypotheses of that estimate. This would
-check the reciprocal derivatives, not the reflected identity or the
-local image criterion. The [inverse-range realization](isotypic-inverse-range-q-sqrt-minus-five.md)
+## All-orders Cauchy bound at the same height
+
+[`Masullo.qSqrtNegFiveDirichletProduct_good_height_inv_iteratedDeriv`](../../Proofs/Theorems/IdealClassGoodHeightDerivatives.lean)
+reuses the constants $c,C,A,B>0$ and the witness $T\in(H,H+1)$ from
+the closed-disk theorem for each real $H\ge1$. The **same** $T$ works
+for every $\sigma\in[-1/2,2]$ and every $m\in\mathbb N$:
+
+$$
+\bigl|(D^{-1})^{(m)}(\sigma+iT)\bigr|
+  \le m!\,C\,c^{-m}T^{A+Bm}.
+$$
+
+At each center the positive radius is $r=cT^{-B}$. Entireness and
+nonvanishing on the closed disk make the reciprocal differentiable
+on the open disk and continuous on its closure (`DiffContOnCl`). The
+sphere bound is $CT^A$, so Cauchy's estimate gives $m!\,(CT^A)/r^m$.
+Substitution gives the displayed bound, including $CT^A$ at $m=0$.
+Both endpoint centers use the same full disks as the interior centers.
+
+Independent statement and reduction review: Yah
+`01a203de-6ff5-7f39-bb69-3f2a117e55d3`, agent `nPAgazk`. The review
+checked the product definition, complex differentiability, full closed
+disk and Cauchy interfaces, both endpoints, the $m=0$ specialization,
+and the quantifier order. It also checked applicability of the
+[inherited rendered reading](isotypic-inverse-range-q-sqrt-minus-five.md#printed-versus-corrected-denominators)
+of pp. 308–309, §6.3.2, (6.3.2.16)–(17). This is a repair for the
+omitted finite product, not an estimate for the printed retained
+Archimedean denominator. No new manuscript reading is used.
+
+This supplies the reciprocal derivative input for the corrected
+forward quotient at the selected heights. It does not give such
+bounds at arbitrary heights, on either full vertical line, through
+zeros, or for general Hecke characters. The all-prime identification
+on $\Re s>1$ is a separate accepted result, not a premise here.
+
+**Next check:** For an entire numerator whose derivatives have
+uniform rapid decay on the closed strip, use the iterated Leibniz
+rule and this endpoint to bound every derivative of the corrected
+forward quotient on the same selected horizontal segments. For
+fixed order $m$ and desired decay $T^{-N}$, a numerator bound of
+order $T^{-(N+A+Bm)}$ for derivatives through order $m$ suffices,
+since $T>1$ and every reciprocal order $j\le m$ costs at most
+$T^{A+Bm}$. This would transfer the assumed numerator seminorms at
+the selected heights, not derive them from the printed test space.
+
+**Separate obligations:** The reflected identity and the local
+image criterion are not formalized here. The
+[inverse-range realization](isotypic-inverse-range-q-sqrt-minus-five.md)
 still uses provisional readings of the completed and complex local
 normalizations (pp. 123 and 129), the interior-strip Schwartz
 convention (pp. 800–801, Definition D.3.1.3), and the local image
