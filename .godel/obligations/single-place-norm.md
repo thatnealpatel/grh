@@ -436,15 +436,56 @@ go run ./cmd/godel audit-local "$CANDIDATE" \
   Masullo.measurePreserving_infiniteAdeleHaarCoordinates
 ```
 
-### Next normalization step: Prove the regulator box mass
+## Checked half-open regulator box
 
-The logarithmic part of (A.2.3.9)–(11), p. 549, can proceed separately:
-For `b := basisUnitLattice K`, take `ZSpan.fundamentalDomain
-(b.ofZLatticeBasis ℝ)`. `ZSpan.exist_unique_vadd_mem_fundamentalDomain`
-and `Module.Basis.ofZLatticeBasis_span` give the **pointwise** unique
-lattice translate, not just an almost-everywhere cover.
-`ZLattice.covolume_eq_measure_fundamentalDomain` and the definition of
-`NumberField.Units.regulator` give its real product-Lebesgue mass.
-The angular torsion slice still must be shown to give exactly $1/w_F$
-of the angular mass, with one representative per orbit. The global
-Borel domain and the quotient comparison remain open.
+[`Theorems.RegulatorBox`](../../Proofs/Theorems/RegulatorBox.lean) realizes
+Masullo's half-open parallelotope $P$ in (A.2.3.8)–(11) and Lemma
+A.2.3.5(2), p. 549, as `regulatorBox K` in the retained weighted log
+coordinates. It is Borel. Every point has a unique translation into it
+by an element of `NumberField.Units.unitLattice K`, pointwise, not just
+almost everywhere. This uses Mathlib's unit-log basis and the equality
+of its integer span with the unit lattice.
+
+For the factor $R_F$ in (A.3.2.1), pp. 559–560, Lean supplies the
+product-Lebesgue calculation `volume_regulatorBox` using the covolume of
+this particular fundamental domain. `NumberField.Units.regulator_eq_det`
+identifies it with the absolute determinant of the weighted log matrix
+with a place omitted. The preceding `measurePreserving_archimedeanLogSplit`
+is what gives this product measure from the full Archimedean measure;
+no hyperplane surface measure enters. The proofs include unit rank zero.
+
+Independent Yah statement review: Session
+`01a202d9-c7ac-71f6-a674-b86e8a264530`, child `review-regulator-box`
+(`cPhHGXS`). Source readings are provisional: Pinned Markdown and
+numbered PDF text, not rendered pages.
+
+```sh
+go run ./cmd/godel audit-local "$CANDIDATE" Theorems.RegulatorBox -- \
+  Masullo.regulatorBox Masullo.measurableSet_regulatorBox \
+  Masullo.existsUnique_unitLattice_vadd_mem_regulatorBox Masullo.volume_regulatorBox
+```
+
+### Next normalization step: Prove the angular torsion slice
+
+Definition A.2.3.6, (A.2.3.13), p. 549, and Lemma A.2.3.8(2),
+pp. 550–551, choose the positive sign at a real $v_0$ or the half-open
+sector $[0,2\pi/w_F)$ at a complex $v_0$. For `v₀ := w₀`, prove that
+for **each** `g : archimedeanNormOne` there is a unique
+`ζ : NumberField.Units.torsion K` such that `archimedeanDiagonalUnit ζ.val * g`
+satisfies that condition. Prove separately that the corresponding cylinder
+in `Measure.pi archimedeanAngularMeasure` has mass $1/w_F$ times the
+whole angular mass. This adds no constraint on the other places. The
+pointwise statement must include input on the negative-real ray at a
+complex place, although that ray has zero angular measure.
+
+For the complex case, `NumberField.Units.map_complexEmbedding_torsion`
+identifies the embedded group with all complex $w_F$-th roots, and
+`even_torsionOrder` and `torsionOrder_pos` give $w_F\ge 2$. Reduce the
+argument modulo $2\pi/w_F$ using its real floor; the reducing rotation
+is a $w_F$-th root, and `Complex.exp_eq_exp_iff_exists_int` tests uniqueness.
+The interval lies inside the measure chart $(-\pi,\pi)$ and has length
+$2\pi/w_F$. In the real case use the two signs and the fact that a real
+embedding is injective and maps torsion units into $\{\pm1\}$. Then use
+`NumberField.Units.logEmbedding_ker`, the checked pointwise box theorem,
+and the torsion slice to obtain (A.2.3.17). The global Borel domain and
+quotient measure comparison remain open.
