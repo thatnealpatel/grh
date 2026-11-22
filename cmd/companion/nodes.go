@@ -76,7 +76,7 @@ If this run leaves useful work unadopted, identify in stdout the clean saved rev
 
 For delegated work, integrate the writer's finalized campaign output, not a copy from the live dispatch workspace.
 
-For source audits, keep note drafts in scratch until the reviews needed for the verdict have arrived. Then refresh campaign status and assemble the notes in a direct workspace on the current accepted base, reconciling any intervening shared-note changes. Before integrating, check the workspace's changed paths for unintended files, including patch backups from conflict recovery.
+For source audits, keep note drafts in scratch until the reviews needed for the verdict have arrived. When recovering Lean with shared-note changes, verify the Lean files against the reviewed revision, and reconcile the relevant note hunks in scratch from the saved revision's diff against its original base. Do not copy a historical note wholesale. Refresh campaign status, and apply the drafts in a direct workspace on the current accepted base without overwriting intervening work. Before integrating, inspect the note diff and changed paths against that base for unrelated edits, duplicated sections, or stray files such as patch backups.
 
 For a multi-module Lean change, preflight the assembled candidate with a targeted build of the endpoint modules using their actual imports, and check the public endpoints from a fresh import. Separate draft checks can miss visibility errors. This preflight does not replace the full exact-candidate audit required for adoption.
 
