@@ -237,16 +237,162 @@ finite different places in $S$ is an alternative repair allowed by the
 proof's choice of stage. The witness refutes the gluing inference under
 its stated stage conditions, not a proof using that stronger choice.
 
-**Next bounded source check:** At $S''=S'\cup\{\mathfrak p_5\}$ this
-gluing obstruction is absent. In the factorization just after (6.3.2.13),
-p. 306, and the unnumbered unfolding on p. 307, check whether the glued
-pair then agrees exactly with $L\circ\overline\pi_{S''}$ with the printed
-global and $S''$-local Haar conventions, or requires a common scalar.
-This checks the identification of the glued function with the global
-zeta image, not closedness or surjectivity of that image.
+The [Haar normalization check](#exact-global-normalization-at-the-stage-containing-the-different)
+below identifies the glued pair with the global zeta image at $S''$.
 
 **Separate results and premises:** The [corrected inverse-range proof](isotypic-inverse-range-q-sqrt-minus-five.md)
 uses the corrected multipliers to lift every target in the claimed range
 at $S_\infty$. Its checked denominator switch on pp. 308–309 is separate
 from this gluing counterexample. The general converse and global Lean
 realization are not addressed here.
+
+## Exact global normalization at the stage containing the different
+
+**Result (reviewed ordinary mathematics, not Lean):** Put
+$S''=S_\infty\cup\{\mathfrak p_2,\mathfrak p_5\}$. For the nontrivial
+ideal-class character $\chi$ of $F=\mathbb Q(\sqrt{-5})$, the operator
+induced by gluing in the paragraph after (6.3.2.13), p. 306, is
+**exactly** $L\circ\overline\pi_{S''}$ on every local test class. The
+scalar is one. This is not obtained by canceling an unspecified common
+unit mass, as in the smaller-stage overlap comparison.
+
+### The printed identification and the defining integrals
+
+The paragraph after (6.3.2.13), p. 306, defines $A$ by the two
+restrictions of one entire function and calls the factor of
+$T_{S,\chi}U_{S,\chi}$ through $A$ the map $L\circ\overline\pi_S$.
+The unnumbered line on p. 307 asserts, with generic $S$ and no scalar,
+$Z(\pi_S f,\chi|\cdot|_F^s)=Z_S(f,\chi_S|\cdot|_{F,S}^s)
+L_{\Sigma_F-S}(\chi,s)$. This is the **printed route**: By the
+[accepted source interface](#source-interface), its right side is
+precisely the forward leg of (6.3.2.10)–(11), p. 305, since there is
+no polar multiplier. The choice of stage is satisfied: Inverting
+$\mathfrak p_2$ already kills the class group, the norm-one idèle
+with component $\varpi_2$ and Archimedean component $\sqrt 2$ still
+witnesses $\chi|_{C_F^1}\ne1$, and $\chi$ is unramified at every
+finite place. Take the norm section $t\mapsto(\sqrt t,1,\ldots)$,
+so $\chi$ has no twist on the section. The domain is the full
+isotypic Schwartz quotient, not its zero-moment subspace.
+
+For the **defining-integral route**, write $c_s=\chi|\cdot|_F^s$ and
+$h=\pi_S f=f\otimes\bigotimes_{v\notin S}1_{O_v}$. The descended
+insertion sends $[f]$ to $[h]$, with no rescaling, by (2.1.4.3), p. 71,
+(5.2.3.2), p. 233, and (6.3.2.9), p. 305. The kernel criterion
+(5.1.2.2), p. 224, makes evaluation of $L(h,c_s)=Z(h,c_s)$
+well-defined on this class. In particular $L$ is the Mellin transform
+of the periodization against $\bar\mu$ in (3.2.2.3), p. 124, or
+equivalently the radial Mellin transform of the homogeneous average in
+(3.2.2.5), p. 125.
+The latter does not integrate a second time against norm-one Haar.
+
+On $\Re s>1$, apply counting Weil to $h(x)c_s(x)$, which is absolutely
+integrable. Definition A.3.2.1, pp. 559–560, uses counting measure on
+$F^\times$ to induce $\bar\mu$ from $\mu$. Since $c_s$ is constant on
+each principal fibre, (3.2.2.11), p. 127, gives
+
+$$
+(L\circ\overline\pi_S)([f])(s)
+ =\int_{C_F}\sum_{\xi\in F^\times}h(\xi x)c_s(x)\,d\bar\mu(x)
+ =\int_{\mathrm{GL}_1(\mathbf A_F)}h(x)c_s(x)\,d\mu(x).
+$$
+
+There is no quotient-to-idèle scalar: Each $\xi$ counts once. In
+particular the norm-one volume in (A.3.2.1) is not a multiplier for
+this unfolding. The upstairs measure is the restricted product in
+(A.3.2.5), p. 560; the local pairing (3.3.1.1), p. 129, uses the
+product over $S$ in (A.3.4.2), p. 561, of the **same** local measures.
+Thus the two integrals do not differ by a renormalization at a
+retained place.
+
+### Euler tail and nonzero control
+
+For $a_v=\chi_v(\varpi_v)$ and $u_v=\mu_v(O_v^\times)$, each omitted
+ball contributes $u_v/(1-a_vq_v^{-s})$ by valuation shells. This
+uses unramifiedness of the character there; the separate condition
+$u_v=1$ depends on the field discriminant, by (A.3.2.2), p. 560.
+Factor first on stages allowing arbitrary valuations at finitely many
+places, including $S$ and the exceptional unit masses, and unit
+entries elsewhere. These stages exhaust the idèles; absolute
+integrability and absolute Euler convergence on $\Re s>1$ justify
+the limit. This keeps $f$ as a single $S$-block, so no pure-tensor
+hypothesis on $f$ is needed. With $D_S(s)=L_{\Sigma_F-S}(\chi,s)$,
+
+$$
+Z(\pi_S f,c_s)
+ =\left(\prod_{v\notin S}u_v\right) Z_S(f,c_s|_S)D_S(s)
+ \qquad(\Re s>1).
+$$
+
+At $S''$, the retained unit masses are $u_2=1/2$ and $u_5=1/\sqrt5$,
+using the different exponents computed [above](#omitted-balls-and-their-mellin-multipliers).
+Every omitted $u_v$ is one. The printed p. 307 identity therefore
+holds as written at this stage. The formula for the omitted mass is
+reusable over any number field on $\Re s>1$ for an inserted local
+Schwartz test and a unitary character unramified off $S$, with the
+same product Haar conventions. If an exceptional unit mass is omitted,
+the **global** integral is the printed forward expression multiplied
+by $\prod_{v\notin S}u_v$, not the other way around. This is a forward
+formula, not a claim that the literal reflected leg glues at such a
+stage.
+
+For the reflection at $S''$, every omitted ball is Fourier-fixed,
+so $\widehat{\pi_{S''} f}=\pi_{S''}\widehat f$ with the actual
+self-dual measures. On $\Re s<0$, apply the same absolute unfolding
+to $\widehat f$ at $1-s$ with $\chi^{-1}=\chi$, and use (3.2.2.2),
+p. 124. This gives the printed reflected leg with the same scalar
+one. By holomorphic continuation the legs are restrictions of
+$L\circ\overline\pi_{S''}$ on $\Re s>0$ and $\Re s<1$ respectively.
+They agree on the overlap, and uniqueness of the glued function
+identifies the operator in p. 306. The same measure and Fourier
+argument applies at larger stages on this isotype, and character- and
+field-unramifiedness off $S$ suffice for these two absolute evaluations
+in general. No general Converse Theorem is used.
+
+For a nonzero control take $f_0=e^{-2\pi|z|^2}\otimes
+1_{O_{\mathfrak p_2}}\otimes1_{O_{\mathfrak p_5}}$. The Gaussian
+factor is self-dual; the retained balls need not be. The local
+forward integral is
+
+$$
+2\pi(2\pi)^{-s}\Gamma(s)\,
+\frac{1/2}{1+2^{-s}}\,\frac{1/\sqrt5}{1-5^{-s}}.
+$$
+
+At $s=2$ the omitted Euler product is strictly positive by absolute
+convergence and real unitary coefficients $\pm1$. Both global and
+glued values are $G(2)L_f(2,\chi)/\sqrt{20}>0$, in the notation of
+[the Gaussian calculation](#gaussian-discrepancy-and-boundary-cancellation).
+In particular $[f_0]$ cannot be the zero class, and the ratio one is
+not a consequence of comparing two vanishing expressions.
+
+### Evidence and limits
+
+The worker and reviewer `cUqiVab` (transcript Yah
+`01a20460-7cf8-7714-b62e-3ac1a6879123`, reviewed base
+`beec9711ce91e866712d93df734f572d220deac1`) inspected readable pixels
+from the digest-matched [pinned PDF](../sources/masullo/README.md).
+On the printed route the reviewer confirmed the closing identification
+on p. 306 and the unnumbered identity with no scalar on p. 307. On the
+defining-integral route the reviewer confirmed $\bar\mu$ in (3.2.2.3),
+p. 124, and the quotient, principal sum, and $\mu$ integral in
+(3.2.2.11), p. 127; the counting clause of Definition A.3.2.1,
+p. 559; the finite mass and global product (A.3.2.2) and (A.3.2.5),
+p. 560; and the $S$-product (A.3.4.2), p. 561, used in the local
+integral (3.3.1.1), p. 129. This resolves the previous extraction-only
+reading of the $S$-product. The worker also inspected the radial formula
+(3.2.2.5), p. 125. The reviewer's additional check of the quotient and
+induced-map definitions in (5.2.2.3)–(4) and (5.2.3.14) was textual,
+not a new rendering. The reviewer checked the counting unfolding, absolute
+Euler factorization, Fourier compatibility, and nonzero test as
+mathematics, not by assuming the p. 307 identity. Stage, multiplier,
+insertion, and Fourier readings are inherited from the
+[accepted source interface](#source-interface); their applicability,
+not their rendering, was rechecked here.
+
+The [checked raw integral](hecke-right-line-majorant.md#checked-exhaust-the-raw-zeta-integral-above-one)
+and the [checked counting Weil bridge](single-place-norm.md#full-class-counting-weil-and-the-absolutely-integrable-weighted-pairing)
+provide separate Lean inputs, not a formalization of this gluing
+identity. This audit identifies the map, not closedness or
+surjectivity of its image. The printed smaller-stage gluing remains
+incorrect; the general converse and a global Lean realization
+remain separate.
