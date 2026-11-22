@@ -1,0 +1,23 @@
+{
+  "key": "58469615efdbe7e33adee9fe3aa2d6d79d5efa230a561354c926c7dffbbb34ba",
+  "revision": "c43d404f6e8e356bfae391287d8802991fb1da30df617d0f834407a282e9ecd4",
+  "outcome": "landed",
+  "source": "Masullo pinned PDF SHA-256 e039d3f6cf0a4b14f03c7edb85097752dd65c0a2fe543c76fe992be234f97bf5; Ch. 1 §1.1.3, printed p. 12 = PDF ordinal 12, unnumbered two-edge derivative L²(dx) display and even-s sentences, with the general modulated group, weighted completion and maximum weight on p. 11 = ordinal 11. Related rendered displays: Ch. 9 (9.2.2.5), (9.2.2.17)–(9.2.2.18), pp. 412–413 = ordinals 412–413, raw ordinate |dz| and the radial Plancherel step; (9.2.2.32)–(9.2.2.34), pp. 416–417 = ordinals 416–417, compact-dual norm, separate interior-line topology and weighted maximum. Appendix (D.3.2.2), p. 802 = ordinal 802, radial t^z dt/t; Theorem D.3.3.13 and (D.3.3.12)–(D.3.3.13), pp. 812–813 = ordinals 812–813, full transform retaining the character unlike the unnumbered recalled integrals on pp. 403 and 416 = ordinals 403 and 416.",
+  "finding": "Partial radial repair, not the general printed claim. For even s the printed display proposes the L²-ordinate seminorms of derivatives 0 through s/2 at both edges as generators of the weighted-completion topology on modulated-group tests; it does not display a compact-dual norm. At the literal scalar reading a compact sign mode on R_{>0} × C₂ is eligible in the test space and has positive weighted norm but zero angular average. In the contextual vector reading it survives in the nontrivial Fourier mode, so does not refute the full-transform version. The radial Plancherel step for the source's positive-sign Mellin transform and raw |dz| needs a factor 2π for squared norms. The new endpoints identify actual complex derivatives as integrable log moments on the accepted all-weight radial tests, prove the corrected Parseval identity and exact binomially weighted one-edge identity, compare the unweighted two-edge sum to the accepted squared weighted norm for s=2n, and extend each actual test-stage derivative trace as a contractive L² map on the weighted image closure. The trace agrees almost everywhere on the test image in frequency coordinate ξ=-u/(2π); there is no pointwise assertion on arbitrary completion elements. See .godel/formalize/radial-mellin-edges.md for the source audit and argument. The full compact-kernel edge theorem is not proved; the accepted .godel/obligations/boundary-trace-interior-lines.md gives a separate obstruction to identifying the weighted closure with the interior-line completion of (9.2.2.33).",
+  "retry": "Supply a formal full-character Fourier–Mellin bridge on the modulated Schwartz–Bruhat stages, with a verified or explicit splitting assumption: for each edge and derivative prove product Plancherel in normalized ordinate and compact-dual Plancherel measure against the Haar-weighted 2k-th log moment, tracking fixed-Haar scaling. Use it to obtain bounded vector traces on the weighted image and its closure. Any separate interior-line identification needs a corrected topology or a uniform endpoint bound that excludes the accepted radial counterexample.",
+  "evidence": [
+    {
+      "path": "Proofs/Theorems/RadialMellinEdges.lean",
+      "declarations": [
+        "Masullo.logMellin",
+        "Masullo.iteratedDeriv_logMellin",
+        "Masullo.logMellin_edge_parseval",
+        "Masullo.logMellinEdgeEnergy",
+        "Masullo.sum_choose_logMellinEdgeEnergy",
+        "Masullo.logMellin_edgeEnergy_equivalent",
+        "Masullo.logMellinCompletion",
+        "Masullo.exists_logMellin_edgeTrace"
+      ]
+    }
+  ]
+}
