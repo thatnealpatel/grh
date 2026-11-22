@@ -646,23 +646,95 @@ verifies the finite norm (§3.1.2.1, p. 120), the unit condition (after
 were reread. The provisional manuscript mapping of the grouped
 factor to (3.4.1.2), p. 143, is not a premise.
 
-**Next bounded check:** On a common upstairs measure with the exact
-comaps for all stages containing $S$, compare the raw integral of the
-*same* tensor on the whole idele group with $T_S(s)$ for $\Re s>1$.
-Specialize [`ideleZetaIntegral_rightHalfPlane`](hecke-right-line-majorant.md#checked-exhaust-the-raw-zeta-integral-above-one)
-at `E = T = S`, using the same grouped and finite inputs as here.
-Match the retained product to $T_S(s)$, so the proposed global value
-is $T_S(s)$ times `finiteHeckeEulerProduct` with coefficients zeroed
-on $S$. The support premise for dropping the tail is not built in:
-`ideleZetaTest` merely requires integral values off $S$, whereas
-`range_ideleFiniteStageEmbedding` requires both the values and their
-inverses to be integral. The comparison tests the exact omitted factor,
-not analytic continuation of the upstairs Lebesgue integral. The
-[raw density](global-mellin-sign-q.md#what-the-source-prints) and
-[product Haar](idele-relative-one-line-q.md#source-checked-on-rendered-pages)
-readings are inherited. The [rendered admissible-set audit](weil-admissible-set.md#source-and-admissibility)
-checks the printed subscript of (3.4.1.6), p. 143: It excludes $S_0$,
-not the actual stage set. The proposed Lean tail is off $S$ and is
-not an instantiation of that printed formula. Tensor assembly,
-character descent to the manuscript quotient, and extension to its
-completion remain separate.
+**Successor:** The comparison to the global integral on the same measure
+is checked below.
+
+## Checked stage-to-global pairing above one
+
+[`Masullo.rationalIdeleZetaIntegral_schwartzMellin`](../../Proofs/Theorems/RationalIdeleZetaIntegralSchwartzMellin.lean)
+uses the **same** rational tensor, unitary character unramified off $S$,
+and Borel structures as the exact-stage theorem. The real Schwartz
+profile has all jets zero at zero; the finite profiles are continuous
+and compactly supported on the full local multiplicative groups for
+$v\in S$. No regularity is assumed of the supplied profiles off $S$.
+Let $\mu$ be one upstairs measure whose comap on **every** stage
+$U\supseteq S$ is `ideleFiniteStageProduct ℚ μa μf U` for the same
+actual local Haar families as above. For $\Re s>1$, Lean proves that
+$g_s$ is absolutely integrable upstairs and that
+
+$$
+\int g_s\,d\mu = T_S(s)\operatorname{finiteHeckeEulerProduct}(z,s),
+\qquad z_v = \begin{cases}0 & v\in S, \\
+\operatorname{finiteHeckeCoefficient}(\chi)_v & v\notin S.\end{cases}
+$$
+
+Here $T_S$ is the **integral of $g_s$ over the range of the exact stage
+embedding**, against the same $\mu$. There is no scalar, additional Haar
+hypothesis on $\mu$, or nonvanishing premise on the retained factors.
+The theorem includes $S=\varnothing$. Existence with the required
+comaps follows from the [general restricted-product Haar construction](hecke-right-line-majorant.md#checked-restricted-product-haar-for-number-fields)
+and rational unit masses; the theorem itself takes the comaps as a
+hypothesis and does not name the calibrated `rationalIdeleHaar`.
+
+**Checked reduction:** Apply `ideleZetaIntegral_rightHalfPlane` at
+`E = T = S`. `rationalLocalMultiplicativeHaar_unitMass` and the actual
+local Haar instances supply the measure premises.
+`rationalArchimedeanSchwartzMellinPair` supplies grouped integrability
+and the signed real value. On $S$, `ideleFiniteTest` is the supplied
+profile, so `rationalFiniteCompactMellinPair` supplies integrability.
+`Finset.prod_coe_sort` aligns the active product with the stage theorem,
+which evaluates $T_S$ using precisely these raw local factors. This is
+a product comparison, not a support reduction: Off $S$ the global test
+requires integral values, whereas the stage requires integral values
+and inverses. In particular the upstream omitted integrals run over
+the full completion units with the ball indicator, not over just the
+integral-unit subgroup.
+
+**Manuscript scope:** Inherit the rendered readings of Lemma
+5.3.4.2(2), pp. 259–261, the density (3.2.2.1), p. 124, and the local
+and product Haar conventions (A.3.2.2), (A.3.2.5), p. 560, via the
+[singleton real handoff](#checked-singleton-archimedean-factor-of-the-rational-stage-integral).
+Inherit the finite norm and unit condition, pp. 120–121, and product
+norm (A.1.3.3), p. 541, from the
+[finite normalization audit](finite-gaussian-tamagawa.md#source-and-the-two-readings-of-l_v).
+The [admissible-set audit](weil-admissible-set.md#source-and-admissibility)
+verifies that (3.4.1.6), p. 143, excludes $S_0$, not the actual stage
+set. The theorem checks the compact-away **repair** with the tail off
+$S$, not that printed formula, continuation of the upstairs Lebesgue
+integral, tensor assembly, descent to the manuscript test quotient, or
+extension to the completed test space. No pages were reread. The
+provisional mapping to (3.4.1.2), p. 143, is not a premise.
+
+**Evidence:** Independent statement and interface review against
+`6f1d672bc14e2f53d6fc17f45019bf1b61e64e8b`: Yah
+`01a204f0-cbfc-7476-bcfc-a7055bca25e0`, agent `PKAAzTC`. The reviewer
+checked the proposed binders, accepted dependencies, and inherited
+readings' applicability, and built and inspected the dependency
+signatures. The owner elaborated their applications in the actual Borel
+context and aligned the products in the new theorem, not in the old
+stage theorem. The owning candidate build, signature, axiom check, and
+adoption are recorded in the same Yah session.
+
+**Next bounded check:** Supply the exact generic-coordinate comaps for
+the named `rationalIdeleHaar`, not a second proof of the stage integral.
+First compare `ideleCalibrationBox ℚ B` with
+`rationalIdeleWindowUnitStrip` as upstairs sets,
+where $B$ is the preimage of $[1,e]$ under the sole signed real
+coordinate $x\mapsto\iota_w((x_w)_{\rm val})$. The generic rectangle
+has all finite coordinates integral units, and
+`ideleNorm_eq_abs_rationalIdeleReal` identifies the norm on that set.
+The real-coordinate preimage has mass one by
+`rationalArchimedeanEval_measurePreserving`, `realCompletionHaar_map`,
+`map_realMultiplicativeHaar_val`, and `realMultiplicativeHaar_unitStrip`.
+The remaining inference is the equality of the two sets. This would
+allow the mass formula of `exists_ideleRestrictedProductHaar` at the
+empty base and Haar uniqueness on the common compact strip to give
+the desired comaps. The accepted
+[`comap_rationalIdeleHaar_finiteStage`](theta-inversion-q.md#checked-finite-stage-product-of-local-haar-measures)
+alone has a different domain and embedding (an explicit $\mathbb R^\times$
+factor), so it is not a direct rewrite of the generic comap. For the
+source comparison, (A.3.2.2) and (A.3.2.5), p. 560, have the inherited
+rendered calibration cited above; the p. 556 stage prescription and
+the §A.3.3.1, p. 561, strip mapping in the
+[rational Haar note](theta-inversion-q.md#checked-haar-comparison-for-a-normalized-upstairs-window)
+are layout readings, not premises of this Lean interface check.
