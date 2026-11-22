@@ -222,41 +222,79 @@ Mathlib and the digest-verified manuscript. It also independently
 identified the Archimedean tail obstruction below. This was
 extracted-text review, not visual verification.
 
-## Next: Shift the Archimedean digamma calculation
+## Checked: Shifted Archimedean digamma identity
 
-Read (3.2.1.3)–(5), p. 123, before (B.4.2.12)–(16), pp. 615–616.
-Those factors retain a real sign parity or complex angular weight.
-A purely imaginary radial parameter alone, as in the provisional
-extraction of (B.4.2.12) and (16), cannot account for those shifts.
-On a compact log profile with $g(0)\ne0$, both samples in (B.4.2.15)
-vanish for large $x$, while the extracted $N_v\phi(1)/x$ does not
-integrate at infinity. This is a test of the literal extracted formula,
-not a verified visual reading. The checked rational Gamma evaluation
-already replaces that bare subtraction by a decaying subtraction and
-a contact term.
+The factors in (3.2.1.3)–(5), p. 123, retain real sign parity and
+complex angular weight. The extracted (B.4.2.12) and (16), pp. 615–616,
+use a purely imaginary shift, which cannot distinguish these weights.
+Also, on a compact log profile with $g(0)\ne0$, both displaced samples
+in (B.4.2.15) vanish for large $x$, while the displayed subtraction
+$N_v\phi(1)/x$ is not integrable there. These are checks of the literal
+extracted formulas, not visual readings of the equations.
 
-A runnable first repair is the scalar logarithmic derivative on
-$\Re s>0$ for the parameterized factor
-$B^{-(s+b+i\tau)/d}\Gamma((s+b+i\tau)/d)$, with $B>0$, $d>0$, real
-$b\ge0$, and $\tau\in\mathbb R$. Prove that it is nonzero and
-holomorphic there and that its log derivative is
+[`Props.ArchimedeanGammaLogDerivative`](../../Proofs/Props/ArchimedeanGammaLogDerivative.lean)
+starts from the factor $B^{-z}\Gamma(z)$ with $B>0$ and
+$z=w/d$, $w=s+b+i\tau$, $d>0$, $b\ge0$, and $\tau\in\mathbb R$.
+`archimedeanGammaFactor_real` and `archimedeanGammaFactor_complex`
+match (3.2.1.4) and (5): Use $B=\pi$, $d=2$, $b\in\{0,1\}$ for
+real parity, and $(B,d,b)=(2\pi,1,|n|/2)$ for the complex angular weight. The
+complex factor is half of Mathlib's `Gammaℂ`. Here $\tau$ is the
+radial exponent of the **normalized** local norm: If a complex
+character is written using ordinary radius $r$ with power $r^{i\eta}$,
+then $\tau=\eta/2$ under the squared-norm convention of §A.1, p. 539.
+These identities do not classify actual local characters.
+
+`analyticOnNhd_archimedeanGammaFactor` proves holomorphy on $\Re s>0$.
+`logDeriv_archimedeanGammaFactor_eq_integral` proves nonvanishing
+there and replaces the scalar digamma expression of (B.4.2.12) by
 $$
--\frac{\log B+\gamma}{d}+
-\int_0^\infty \frac{e^{-dx}-e^{-(s+b+i\tau)x}}{1-e^{-dx}}\,dx,
+-\frac{\log B+\gamma}{d}+\int_0^\infty K_{d,w}(x)\,dx,\qquad
+K_{d,w}(x)=\frac{e^{-dx}-e^{-wx}}{1-e^{-dx}}.
 $$
-with absolute integrability. Use `digamma_one_sub_eq_integral` and
-the $t=e^{-dx}$ substitution in `logDeriv_GammaReal_eq_integral`.
-At $d=2$, $B=\pi$ this allows real parity $b\in\{0,1\}$; at $d=1$,
-$B=2\pi$ this allows $b=|n|/2$ (Mathlib's `Complex.Gammaℂ` includes a
-constant factor $2$ that the manuscript omits). Here $\tau$ is the
-radial exponent in the **normalized** local norm, not in the raw
-complex radius. This scalar theorem does not classify actual local
-characters or identify the completed function. For the subsequent
-pair use $-\tau$ in the reflected factor and retain the same $b$;
-apply the accepted separate inversions rather than shifting the
-contour for this local calculation.
+The integral is absolute. The actual prefactor contributes
+$-\log B/d$ and the Gamma derivative contributes $\psi(z)/d$.
+`digamma_sub_one_eq_exponential_integral` substitutes $t=e^{-dx}$
+in the checked Gauss difference, preserving the subtraction at zero
+and producing a decaying subtraction at infinity. The existing
+`logDeriv_GammaReal_eq_integral` is now the unshifted real
+specialization, with its statement unchanged. The Lean factor is
+written with `Real.log B`, so its scalar derivative identity also
+holds for the totalized expression at nonpositive $B$; identification
+with the positive-base power only uses $B>0$.
 
-**Still open:** The actual Archimedean character parameters and tested
+**Independent statement review:** `arch-gamma-review` (`wTTTKPB`, Yah
+parent session `01a200e8-a984-7963-8cd0-43194e3cfad9`, exact base
+`f56270f6bd581e9d84c69bf27f36646d55509ec5`) checked the signs, scale,
+local weights, and Mathlib's factor of two against the digest-verified
+PDF and pinned definitions. It confirmed that the literal extracted
+subtraction in (B.4.2.15) fails the compact-log tail test. This is
+extracted-text review, not rendered-page verification.
+
+## Next: Test the shifted Archimedean pair
+
+For $a>1$, $s=a+it$, and a smooth compact log profile $g$, prove
+absolute convergence and evaluate the two normalized upward legs
+$\Phi(s)\operatorname{logDeriv}F_{\tau}(s)$ and
+$\Phi(1-s)\operatorname{logDeriv}F_{-\tau}(s)$ in (B.4.2.13)–(14),
+p. 616. Retain the same $b$ in both. The target for their sum is
+$$
+-\frac{2(\log B+\gamma)}{d}g(0)+
+\int_0^\infty
+\frac{2g(0)e^{-dx}-e^{-(b+i\tau)x}g(x)-e^{-(1+b-i\tau)x}g(-x)}
+     {1-e^{-dx}}\,dx.
+$$
+Use the accepted separate inversions at $x$ and at $0$; no local
+contour shift is needed. For Fubini, generalize the joint domination
+in `Lemmas.GammaRealRightLine`: With $m=\min(d,a+b)>0$, split the
+numerator into a real damping difference and a phase difference, to
+bound it by $x e^{-mx}(|d-a-b|+|t\pm\tau|)$ for $x>0$. Since
+$1-e^{-dx}\ge dx/(1+dx)$, this gives an integrable polynomial times
+$e^{-mx}$ in $x$ and requires only the first absolute ordinate moment
+of each Mellin weight. Keep the subtraction intact when exchanging
+the integrals. This is a repair for the compact log test scope, not
+an assertion about every test in (B.4.2.15) or (17).
+
+**Still open:** The actual Archimedean character parameter classification and tested
 terms, the completed product, continuation, divisor and conductor data,
 and contour growth premises in (B.4.2.1)–(4) do not follow from these
 finite evaluations.
@@ -315,4 +353,17 @@ go run ./cmd/godel audit-local "$CANDIDATE" \
   Masullo.heckeConjugate_isUnramifiedAt_iff \
   Masullo.finiteHeckeCoefficient_conjugate \
   Masullo.finiteHecke_paired_right_line
+```
+
+For the shifted scalar factors and the preserved rational specialization:
+
+```sh
+go run ./cmd/godel audit-local "$CANDIDATE" \
+  Lemmas.DigammaExponential Props.ArchimedeanGammaLogDerivative Props.GammaRealLogDerivative -- \
+  Masullo.digamma_sub_one_eq_exponential_integral \
+  Masullo.archimedeanGammaFactor_real \
+  Masullo.archimedeanGammaFactor_complex \
+  Masullo.analyticOnNhd_archimedeanGammaFactor \
+  Masullo.logDeriv_archimedeanGammaFactor_eq_integral \
+  Masullo.logDeriv_GammaReal_eq_integral
 ```
