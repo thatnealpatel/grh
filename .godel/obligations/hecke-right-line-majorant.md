@@ -449,43 +449,57 @@ replay, and endpoint checks passed at accepted
 the independent review and used only `propext`, `Classical.choice`,
 and `Quot.sound`.
 
-## Next: Recognize the actual Archimedean restrictions
+## Real Archimedean restriction: Parity and radial frequency
 
-The scalar repair still takes $b$ and $\tau$ as parameters. To use it
-in (3.2.1.3)–(5), p. 123, obtain them from the restriction of a unitary
-Hecke character. Pinned `HeckeCharacter.restrict` is finite-only.
-
-**Runnable next step (real place):** Given a unitary `χ` and a real
-infinite place $v$, put $x_v=\operatorname{extensionEmbeddingOfIsReal}(hv)(x)$
-for $x\in F_v^\times$. Prove that there exist $\epsilon\in\{0,1\}$
-and $\tau\in\mathbb R$ with
+[The Lean theorem](../../Proofs/Theorems/RealArchimedeanHeckeRestriction.lean)
+`Masullo.exists_archimedeanHeckeRestriction_real` gives, for every unitary
+Mathlib Hecke character and every real place $v$, one parity $b\in\{0,1\}$
+and one frequency $\tau\in\mathbb R$ valid on all of $F_v^\times$:
 
 $$
-\chi(j_v(x))=\operatorname{sgn}(x_v)^\epsilon
-                \exp(i\tau\log |x_v|)\qquad(x\in F_v^\times).
+\chi(j_v(x))=\operatorname{sgn}(y)^b\exp(i\tau\log|y|),
+\qquad y=\operatorname{extensionEmbeddingOfIsReal}(hv)(x).
 $$
 
-Use the inverse of `NumberField.InfinitePlace.Completion.ringEquivRealOfIsReal`
-on units, with continuity from `isometryEquivRealOfIsReal` in the same
-namespace and `Units.continuous_map`. Apply the checked one-parameter
-theorem to the restriction on `Units.mk0 (Real.exp t) (Real.exp_ne_zero t)`.
-A scratch control elaborated its continuity (`Units.continuous_iff`
-and `Real.exp_neg`), multiplicativity (`Real.exp_add`), and the value
-at `Real.log ↑x` (`Real.exp_log_eq_abs`). The classification still
-needs the character of $-1$ (whose square is one) and the signed
-decomposition of each nonzero real. This proves the unitary decomposition
-used in (3.1.2.3), p. 121, before inserting the norm power that gives
-the real factor in (3.2.1.4).
+Masullo supplies the split of the real units in (3.1.2.3), the
+restriction $\chi_v=\chi\circ j_v$ in (3.1.2.4), p. 121, and the two
+parity cases in (3.2.1.4), p. 123. The project fills in the actual
+unitary restriction calculation: Transport along the isometric real
+completion equivalence, pull back to $t\mapsto e^t$ and apply the checked
+one-parameter classification, then use $\chi_v(-1)^2=1$ and the split
+$x=\operatorname{sgn}(y)|y|$ in real coordinates. Multiplying by the
+norm power $|y|^s$ gives the real shift $s+i\tau$ before the parity shift
+in the scalar Gamma argument. The theorem establishes the local character
+identity, not an evaluation of its zeta integral or the character-space
+analytic isomorphism. These source readings used Markdown and numbered PDF
+layout, not rendered pages. The theorem elaborated with warnings as errors
+and replayed in a separate `leanchecker` process in the writer workspace.
 
-For the later complex angular circle, pull back along `Circle.exp`
-and derive integer weight by $2\pi$-periodicity. Use
-$\log \lVert z\rVert^2$ for the complex radial exponent, per §A.1,
-p. 539; a frequency $\eta$ in $\log\lVert z\rVert$ gives
-$\tau=\eta/2$ on this scale. The complex completion ring equivalence
-and isometry give the local coordinates. These identifications are
-not consequences of the scalar Gamma calculation alone.
+## Next: Recognize the complex Archimedean restriction
 
-**Still open:** Actual character identification and the assembled
+The complex instance of (3.1.2.3)–(4), p. 121, and the integer angular
+weight in (3.2.1.5), p. 123, are still open in Lean. For a complex place
+$v$, let $z=\operatorname{extensionEmbedding}(x)$ for
+$x\in F_v^\times$. Prove that there are $n\in\mathbb Z$ and
+$\tau\in\mathbb R$ such that, for every $x$,
+
+$$
+\chi(j_v(x))=(z/\lVert z\rVert)^n
+              \exp(i\tau\log(\lVert z\rVert^2)).
+$$
+
+The complex ring and isometry equivalences transport the restriction to
+$\mathbb C^\times$. For its angular part, use `Circle.toUnits` and
+`Circle.exp` to apply the checked one-parameter classification on the
+covering real line. Use `Circle.exp_two_pi`, `Circle.exp_eq_one`, and
+`Circle.exp_surjective` to obtain integer weight on the full circle. For
+the radial part, pull back along $t\mapsto e^{t/2}$; §A.1, p. 539,
+normalizes the complex absolute value as the square of the Euclidean
+radius. The polar product then recombines the two characters. Neither this
+identification nor its subsequent use with the scalar Gamma factor is a
+consequence of the scalar log-derivative calculation alone.
+
+**Still open:** Complex character identification and the assembled
 completed product, continuation, divisor data, and contour growth
 in (B.4.2.1)–(4). The local pair does not establish the full test class
 of (B.4.2.15) or (17), the ramified Fourier terms, or the global trace
@@ -569,6 +583,9 @@ go run ./cmd/godel audit-local "$CANDIDATE" Lemmas.OneParameterCharacter -- \
 go run ./cmd/godel audit-local "$CANDIDATE" Theorems.ArchimedeanHeckeRestriction -- \
   Masullo.continuous_ideleClassGroup_ofCompletion \
   Masullo.continuous_archimedeanHeckeRestriction
+
+go run ./cmd/godel audit-local "$CANDIDATE" Theorems.RealArchimedeanHeckeRestriction -- \
+  Masullo.exists_archimedeanHeckeRestriction_real
 ```
 
 For the compact-log tested shifted pair:
