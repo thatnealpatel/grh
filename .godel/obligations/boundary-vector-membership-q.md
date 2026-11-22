@@ -110,12 +110,11 @@ range of the later spectral nuclearity and trace theorem (Theorem
 10.3.2.1, pp. 453–454, assumes $s>1$). It also does not test a strip
 without boundary zeros or decide RH or GRH.
 
-**Next bounded check:** Inspect the rendered Corollary 9.2.2.5(2),
-p. 414, (9.2.2.24), and test $k=0$, $s=1$ on smooth compact log profiles
-using the positive Hardy–Sobolev norm and Mellin convention it cites.
-This would determine whether the boundary membership defect already
-appears as an upstream continuity assertion. The [existing smooth
-obstruction][smooth] provides a log-model test, not the source check.
+**Checked successor:** The [strip point-evaluation audit][point]
+checks the rendered Corollary 9.2.2.5(2), p. 414, (9.2.2.24).
+Smooth compact log profiles contradict its $s=1$ claim in the
+printed defining line topology, independently of the positive-norm
+obstruction. The degree-two control separates those two topologies.
 Formal transport to rational quotient Haar, quotient annihilation,
 totality, and trace assembly are separate obligations.
 
@@ -156,5 +155,5 @@ the idelic completion. No Lean sources were changed.
 [haar]: ../../Proofs/Theorems/RationalIdeleClassHaar.lean
 [jet]: ../../Proofs/Props/BoundaryLogJet.lean
 [model]: theta-inversion-q.md#checked-strict-integrability-threshold-for-boundary-jets
-[smooth]: theta-inversion-q.md#checked-obstruction-on-smooth-compactly-supported-profiles
+[point]: boundary-point-evaluation.md
 [total]: trace-spectral-strip-q.md#source-interface-a-missing-totality-step
