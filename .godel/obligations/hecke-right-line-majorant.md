@@ -1341,6 +1341,50 @@ go run ./cmd/godel audit-local "$CANDIDATE" Theorems.DifferentUnitScales -- \
   Masullo.prod_differentIdeal_unit_scales
 ```
 
+### The p-adic base of the actual finite completion
+
+Appendix A.1.1.1, p. 539, uses $K_v$ as a finite extension of
+$\mathbb Q_p$, and (A.3.2.2), p. 560, takes its discriminant over
+$\mathbb Z_p$. These passages specify the objects; they do not give
+compatible maps on the chosen Lean completion types. This reading was
+checked against Markdown and numbered PDF layout, not newly rendered
+pages. See the rendered normalization control linked above.
+
+[`FiniteCompletionPadic.lean`](../../Proofs/Lemmas/FiniteCompletionPadic.lean)
+constructs continuous ring embeddings $\mathbb Q_p\to K_v$ and
+$\mathbb Z_p\to\mathcal O_{K_v}$ for every number field and finite place,
+with $p$ the prime below $v$. The field map extends the canonical
+rational map, and its inverse image of $\mathcal O_{K_v}$ is exactly the
+base unit ball $\{x:\|x\|_p\le 1\}$. The integer map is its restriction.
+The integer criterion follows by comparing the two clopen sets on the
+dense rational image, where the valuations differ by the positive
+ramification power. The induced scalar actions give the compatible
+rational and integral towers. The image of $\mathbb Q_p\otimes_{\mathbb Q} K$
+is finite-dimensional and closed, and contains the dense image of $K$,
+so `finiteCompletion_moduleFinite` gives finite dimensionality for this
+same scalar action.
+
+Independent Yah statement and route review: Session
+`01a201e9-bb5f-7b22-ae80-89d143d16a70`, child
+`review-padic-completion-interface` (agent `wOQreHk`, read-only output
+`a63eac6af49ab0c9471fa766d7b3035976f7accf`). The review distinguishes the
+integrality test from a real norm identity and verifies that the finite
+span uses the canonical rational square. Reproduce the endpoint audit:
+
+```sh
+go run ./cmd/godel audit-local "$CANDIDATE" Lemmas.FiniteCompletionPadic -- \
+  Masullo.finiteCompletionBasePrime Masullo.finiteCompletionPadicMap \
+  Masullo.continuous_finiteCompletionPadicMap \
+  Masullo.finiteCompletionPadicMap_algebraMap \
+  Masullo.finiteCompletionPadicMap_mem_integers_iff \
+  Masullo.finiteCompletionPadicIntMap Masullo.coe_finiteCompletionPadicIntMap \
+  Masullo.continuous_finiteCompletionPadicIntMap \
+  Masullo.finiteCompletionRatPadicTower \
+  Masullo.finiteCompletionPadicIntPadicTower \
+  Masullo.finiteCompletionPadicIntIntegersTower \
+  Masullo.finiteCompletionPadicContinuousSMul Masullo.finiteCompletion_moduleFinite
+```
+
 ### Next: Identify the placewise discriminant scales
 
 For $v$ over $p$, in the **actual** completion $K_v$ prove
@@ -1355,15 +1399,18 @@ normalized on-place norm extending a power of it. At the place over $2$
 in $\mathbb Q(i)$ this must give $q_v^{-n_v}=1/4$ and unit mass $1/2$,
 not unit mass one.
 
-Start with the compatible field and integer maps from the rational
-completion at the prime below $v$ into $K_v$. Pinned Mathlib has
-`HeightOneSpectrum.uniformContinuous_algebraMap_liesOver`,
-`UniformSpace.Completion.mapRingHom`, and the rational `padicEquiv` and
-`padicIntEquiv`. Use these to extend the dense rational embedding and
-restrict it to the valuation subrings. The finite completion extension
-instance in `NumberField/Completion/FinitePlace.lean` takes the completion
-algebra, continuous scalar multiplication, and tower as inputs. Next
-compare the trace dual after base change, projecting to the $v$-factor.
+First prove that $\mathcal O_{K_v}$ is finite free and spans $K_v$ over
+$\mathbb Q_p$, using the compatible maps and finite-dimensionality just
+established. `FiniteCompletionCompact.lean` already supplies compactness
+and the canonical residue-field equivalence, so $q_v$ needs no new
+residue-field construction (`Ideal.absNorm_eq_natCard`). For a finite
+$\mathbb Q_p$-basis, its coordinate functions are continuous. On the
+compact integer ring their norms are bounded; multiplying all coordinates
+by a common sufficiently large power of $p$ embeds the integer ring
+$\mathbb Z_p$-linearly into a finite power of $\mathbb Z_p$. Apply
+`Module.Finite.of_injective` and freeness over the PID, and use openness
+of the integer ring to scale any vector into it. Then compare the trace
+dual after integral base change and projection to the $v$-factor.
 The local identity is not a consequence of equality of the aggregate
 products. Once it is checked, construct or identify the local Haar
 scales, then use the exact stage restrictions of (A.3.2.5), p. 560, in the
