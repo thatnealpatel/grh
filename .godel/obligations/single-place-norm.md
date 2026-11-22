@@ -533,26 +533,68 @@ go run ./cmd/godel audit-local "$CANDIDATE" Theorems.ArchimedeanUnitDomain -- \
   Masullo.measurableSet_archimedeanUnitDomain Masullo.measure_archimedeanUnitDomainCoordinates
 ```
 
-### Next normalization step: Construct the global disjoint domain
+## Global Borel fundamental domain for the principal action
 
-For a section `r` of `ideleIdealClassNormOne`, use the union of `r p`
-translates of the empty finite stage with infinite component in $E_0$,
-as in (A.2.3.12)–(16), pp. 549–550. Prove Borel measurability on the
-actual norm-one subgroup and, for every norm-one idele `g`, prove
-exactly one `a : Kˣ` sends `g` into this union. This is Proposition
-A.2.3.10(2), (A.2.3.25)–(26), p. 552. Reuse the residual norm-one
-factorization from `ideleIdealClass_normOne_eq_one_iff` and the
-compact-cover proof in `Theorems.IdeleClassCompact` for existence. For
-uniqueness, the class map forces the same `p`. A diagonal principal
-idele relating the two residuals has integral units everywhere at
-finite places. Apply `finiteIdeleIdeal_unitEmbedding` to that field
-multiplier and its inverse. `FractionalIdeal.mem_spanSingleton_self`
-and `FractionalIdeal.mem_one_iff` then lift both elements to the ring of
-integers, where injectivity of the fraction-ring map shows that the two
-lifts multiply to one. Apply the pointwise
-`existsUnique_archimedeanUnit_translate` to finish uniqueness. The
-resulting Borel domain and pointwise uniqueness give the hypotheses of
-`MeasureTheory.IsFundamentalDomain.mk'` for the diagonal action.
-Keep the quotient measure comparison separate: It still needs agreement
-of the checked local product with log-norm and norm-one quotient Haar,
-including the finite-place discriminant and ideal-class factors.
+`Theorems.IdeleFundamentalDomain` constructs Masullo's union of norm-one
+ideal-class translates, (A.2.3.12)–(16), pp. 549–550. It takes any section
+of `ideleIdealClassNormOne`, supplied by `ideleIdealClass_normOne_surjective`.
+The manuscript chooses the identity lift to be one; the Lean result does
+not require this convention. The window, each translated piece, and the
+union are Borel in the actual norm-one subgroup, and the pieces are
+pairwise disjoint by their ideal classes.
+
+`existsUnique_idelePrincipal_translate` proves the coverage and
+pointwise disjointness in Proposition A.2.3.10(2), (A.2.3.25)–(26), p. 552:
+For every norm-one idele `g`, exactly one `a : Kˣ` has `d a * g` in the
+union, where `d` is the actual diagonal by `coe_idelePrincipalNormOne`.
+The coverage reduction in the extracted proof after (A.2.3.28) drops the
+norm-one superscript. Lean retains the norm-one infinite factor from
+(A.2.3.24), (28), and Lemma A.2.3.8(2), as checked by
+`ideleInfinitePart_mem_archimedeanNormOne`. In the disjointness argument,
+`idelePrincipalNormOne_mem_finiteUnits_iff` proves the integral-unit test
+used in the manuscript: The field multiplier and its inverse have unit
+principal fractional ideal, so both lift and multiply to one over the
+ring of integers. `isFundamentalDomain_ideleFundamentalDomain` packages
+the exact partition for the opposite principal subgroup acting by right
+multiplication, for any Borel measure. It does not establish relative
+compactness, nonempty interior, local finiteness, or Haar normalization.
+
+Independent Yah statement review: Session
+`01a202f7-5de6-7fa9-a643-b500a1879bcf`, child `review-global-domain`
+(`DAVCUPC`). Source readings are provisional: Pinned Markdown and numbered
+PDF text, not rendered pages.
+
+```sh
+go run ./cmd/godel audit-local "$CANDIDATE" Theorems.IdeleClassCompact \
+  Lemmas.IdeleUnitWindow Theorems.IdeleFundamentalDomain -- \
+  Masullo.ideleInfinitePart_val Masullo.continuous_ideleInfinitePart \
+  Masullo.integralUnit_mem_ideleFiniteUnits Masullo.coe_idelePrincipalNormOne \
+  Masullo.idelePrincipalNormOne_injective Masullo.idelePrincipalNormOne_mem_finiteUnits_iff \
+  Masullo.ideleInfinitePart_mem_archimedeanNormOne Masullo.ideleUnitWindow \
+  Masullo.measurableSet_ideleUnitWindow Masullo.ideleFundamentalDomain \
+  Masullo.measurableSet_ideleFundamentalDomain_piece Masullo.measurableSet_ideleFundamentalDomain \
+  Masullo.ideleFundamentalDomain_piece_subset Masullo.pairwiseDisjoint_ideleFundamentalDomain_pieces \
+  Masullo.existsUnique_idelePrincipal_translate Masullo.isFundamentalDomain_ideleFundamentalDomain
+```
+
+### Next normalization step: Compute the local-product mass of the unit-window strip
+
+For the Haar `μ` from `exists_discriminantNormalizedIdeleHaar`, compute
+`μ (σ '' (J ×ˢ ideleUnitWindow v))`, where `σ` is `ideleLogSplit` for the
+single-place section and `J` is the log interval corresponding to
+`[1,T]`, `1 ≤ T`. The target is the interval length times the checked
+Archimedean coordinate mass of `E₀` times
+`ENNReal.ofReal ((Real.sqrt ((discr K).natAbs : ℝ))⁻¹)`. This is the
+identity-class contribution to the strip in § A.3.3.1, p. 561. The finite
+coordinates of the section are one. Use the stage restriction at a
+finite set containing the different's support, not the existing
+positive-compact calibration-box formula on an arbitrary Borel set. In
+that stage the strip has the Archimedean strip as its infinite factor
+and the full integral-unit subgroup at each finite place. Combine the
+Archimedean split and coordinate mass with the finite unit-mass product.
+
+The disjoint translated pieces then give the class-number factor by
+Haar invariance. Separately show that the log-split Haar factor on the
+norm-one ideles pushes from the Borel domain to the quotient Haar
+with counting measure on principal ideles, to compare with (A.3.2.1),
+pp. 559–560. Do not restrict full Haar to the null norm-one fibre.

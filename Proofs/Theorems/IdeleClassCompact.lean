@@ -33,6 +33,17 @@ local notation "V" => HeightOneSpectrum (𝓞 K)
 public noncomputable def ideleInfinitePart : I →* (InfiniteAdeleRing K)ˣ :=
   Units.map (MonoidHom.fst (InfiniteAdeleRing K) (FiniteAdeleRing (𝓞 K) K))
 
+/-- The underlying infinite adele is the first component. -/
+public theorem ideleInfinitePart_val (g : I) : (ideleInfinitePart g).val = g.val.1 := by
+  unfold ideleInfinitePart
+  rfl
+
+/-- The infinite projection is continuous in the units topology. -/
+public theorem continuous_ideleInfinitePart : Continuous (ideleInfinitePart (K := K)) := by
+  unfold ideleInfinitePart
+  exact Continuous.units_map
+    (MonoidHom.fst (InfiniteAdeleRing K) (FiniteAdeleRing (𝓞 K) K)) continuous_fst
+
 /-- The Archimedean embedding of a global integral unit agrees with the infinite
 projection of its diagonal principal idele. -/
 public theorem ideleInfinitePart_integralUnit (u : (𝓞 K)ˣ) :
@@ -42,7 +53,8 @@ public theorem ideleInfinitePart_integralUnit (u : (𝓞 K)ˣ) :
   change algebraMap K (InfiniteAdeleRing K) (algebraMap (𝓞 K) K (u : 𝓞 K)) = _
   exact IsScalarTower.algebraMap_apply (𝓞 K) K (InfiniteAdeleRing K) (u : 𝓞 K) |>.symm
 
-private theorem integralUnit_mem_ideleFiniteUnits (u : (𝓞 K)ˣ) :
+/-- A global integral unit is a local integral unit at every finite place. -/
+public theorem integralUnit_mem_ideleFiniteUnits (u : (𝓞 K)ˣ) :
     IdeleGroup.unitEmbedding (𝓞 K) K (Units.map (algebraMap (𝓞 K) K) u) ∈ ideleFiniteUnits := by
   change _ ∈ (ideleFiniteUnits (K := K) : Set I)
   rw [← range_ideleFiniteStageEmbedding_empty, range_ideleFiniteStageEmbedding]
