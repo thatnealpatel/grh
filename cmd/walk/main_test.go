@@ -285,6 +285,8 @@ func TestInvalidReviewDoesNotRetry(t *testing.T) {
 		{"chapter", `{"chapter":"chapter-02","complete":true}`, "unexpected chapter"},
 		{"type", `{"chapter":"chapter-01","complete":"true"}`, "cannot unmarshal"},
 		{"null", `null`, "unexpected chapter"},
+		{"misspelled final record", `{"chapter":"chapter-01","complete":true,"recrod":{"printed_finding":"last passage"}}`, `unknown field "recrod"`},
+		{"unknown nested field", `{"chapter":"chapter-01","record":{"formal":{"evidnce":"claim"}}}`, `unknown field "evidnce"`},
 		{"missing disposition", `{"chapter":"chapter-01"}`, "must supply a passage or complete"},
 	} {
 		t.Run(tc.name, func(t *testing.T) {

@@ -35,6 +35,9 @@ func TestMissionNodesUseHeadlessYah(t *testing.T) {
 					t.Errorf("appended instructions omit scratch policy: %q", text)
 				}
 			}
+			if !strings.Contains(n.Args[4], "refresh .godel/audit/") || !strings.Contains(n.Args[4], "Use the publication revision, not the reviewed hash") {
+				t.Error("proof-producing role must refresh findings by publication revision")
+			}
 			if !strings.HasPrefix(n.Args[4], "Gödel launch source commit: "+revision+".") {
 				t.Error("appended instructions omit the exact archive commit")
 			}

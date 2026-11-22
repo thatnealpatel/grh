@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"slices"
@@ -131,11 +132,20 @@ func (t *traversal) node(launchRoot string, chapterIndex, recordIndex int) (*god
 	attempt = func(diagnostic string) *godel.Node {
 		node := passageReviewer(launchRoot, t.dir, string(arg), diagnostic)
 		node.Next = func(result godel.Result) (*godel.Node, error) {
-			var out review
-			if err := json.Unmarshal([]byte(result.Text), &out); err != nil {
+			// Validate the whole response,
+			// including trailing text, before
+			// decoding the review schema.
+			var raw json.RawMessage
+			if err := json.Unmarshal([]byte(result.Text), &raw); err != nil {
 				if syntax, ok := err.(*json.SyntaxError); ok && diagnostic == "" {
 					return attempt(fmt.Sprintf("The previous response was not valid JSON (byte %d). Check the JSON and answer the same request.", syntax.Offset)), nil
 				}
+				return nil, fmt.Errorf("%s review: %w", req.Chapter, err)
+			}
+			var out review
+			dec := json.NewDecoder(bytes.NewReader(raw))
+			dec.DisallowUnknownFields()
+			if err := dec.Decode(&out); err != nil {
 				return nil, fmt.Errorf("%s review: %w", req.Chapter, err)
 			}
 			if err := t.applyReview(chapterIndex, recordIndex, out); err != nil {
