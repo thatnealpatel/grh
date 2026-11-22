@@ -236,18 +236,92 @@ go run ./cmd/godel audit-local "$CANDIDATE" Theorems.IdeleClassSeparation -- \
   Masullo.t2Space_ideleClassGroup
 ```
 
-**Next: The Archimedean compact cover.** For every number field, in the
-norm-one subgroup of `∀ v : InfinitePlace K, v.Completionˣ`, construct a
-compact set whose translates by `(𝓞 K)ˣ` cover that subgroup. This is the
-cover part of Lemma A.2.3.8(1)–(2), pp. 550–551, in the form needed for
-compactness. Match the weighted logarithms from (A.2.3.3) to Mathlib's
-`NumberField.Units.logEmbedding` with one place omitted. Its `unitLattice`
-is a full `IsZLattice`; `Module.Basis.ofZLatticeBasis`, `ZSpan.fract`, and the
-closed parallelepiped give a compact log window. Pull it back using bounded
-norm and inverse norm at every place, restoring the omitted coordinate by
-the norm-one relation. This does not yet choose a disjoint torsion section
-or compute any mass. Next combine this cover with the compact product of
-local integral units and the finitely many norm-one class lifts to get the
-compact cover in Proposition A.2.3.10, and hence Theorem A.1.4.3(1), p. 542.
-The standalone presentation (A.2.3.22), the disjoint fundamental domain,
-and the exact quotient Haar volume (A.3.2.1), pp. 559–560, remain open.
+## Compact Hausdorff norm-one classes
+
+[`Theorems.IdeleClassCompactHausdorff`](../../Proofs/Theorems/IdeleClassCompactHausdorff.lean)
+proves Theorem A.1.4.3(1), PDF p. 542: For every number field, the norm-one
+subgroup of the actual idele class group is compact Hausdorff in its
+induced topology. There is no compact-cover hypothesis at this endpoint.
+The subgroup is the kernel of the continuous class log norm in
+`Theorems.IdeleLogSplit`, so it is closed independently of compactness.
+
+* `archimedean_compact_cover` follows the weighted log coordinates and
+  lattice reduction (A.2.3.3)–(A.2.3.10), pp. 548–549. To obtain the
+  compact-cover consequence of Lemma A.2.3.8(1)–(2), pp. 550–551, the
+  project takes the **closed** log window and keeps the entire angular
+  fiber. `isCompact_preimage_archimedeanDroppedLog` supplies the required
+  compactness in the units topology, rather than assuming properness:
+  Restore the omitted log by the zero-sum relation and bound both the
+  value and the inverse at each place.
+* `compactSpace_ideleClassNormOne_of_archimedean_cover` implements the
+  finite union (A.2.3.14), p. 549, and the coverage step of Proposition
+  A.2.3.10(1)–(2), p. 552, using the compact empty-stage finite-unit block.
+  The kernel step (A.2.3.28) leaves a **norm-one** residual after removing
+  the norm-one class lift and a principal idele. The Archimedean unit
+  correction preserves the finite integral-unit stage. The quotient image
+  of the finite union is exactly the norm-one class subgroup.
+* The endpoint erases the Archimedean subtype by continuous inclusion,
+  matches the two embeddings of an integral unit, and uses
+  `t2Space_ideleClassGroup` for the Hausdorff part.
+
+Independent Yah statement review: Session
+`01a202a6-4063-74b7-99da-31335e5b3f4f`, children `review-compactness`
+(`gRumDYP`) and `review-full-compact` (`hzrzCgv`, read-only output
+`e1852db3a62de62ce132c5902c92bbd7a048ffeb`). Source readings are
+provisional: Pinned Markdown and numbered PDF layout, not rendered pages.
+
+```sh
+go run ./cmd/godel audit-local "$CANDIDATE" \
+  Lemmas.IdeleArchimedeanCover Theorems.IdeleArchimedeanCover \
+  Theorems.IdeleClassCompact Theorems.IdeleClassCompactHausdorff -- \
+  Masullo.archimedeanNorm Masullo.archimedeanNorm_apply \
+  Masullo.archimedeanNormOne Masullo.mem_archimedeanNormOne \
+  Masullo.archimedeanDiagonalUnit Masullo.coe_archimedeanDiagonalUnit \
+  Masullo.archimedeanDroppedLog Masullo.archimedeanDroppedLog_apply \
+  Masullo.archimedeanDroppedLog_diagonalUnit Masullo.archimedeanDroppedLog_inv_mul \
+  Masullo.isCompact_preimage_archimedeanDroppedLog Masullo.archimedean_compact_cover \
+  Masullo.ideleInfinitePart Masullo.ideleInfinitePart_integralUnit \
+  Masullo.compactSpace_ideleClassNormOne_of_archimedean_cover \
+  Masullo.compactHausdorff_ideleClassNormOne
+```
+
+## Next normalization step: Complex log-polar Haar
+
+The compact cover is not a disjoint fundamental domain and gives no Haar
+mass. Definition A.3.2.1, pp. 559–560, prescribes the quotient volume, and
+Lemma A.3.2.4, p. 560, identifies the same measure with the restricted
+product by citation. §A.3.3.1, p. 561, uses the prescribed volume in the
+strip mass, not as an independent calculation. The outstanding comparison
+is from the **checked upstairs local normalizations**, divided by counting
+measure on principal ideles and by Lebesgue measure in the log-norm
+coordinate, to the mass $2^{r_1}(2\pi)^{r_2}h_FR_F/(\sqrt{|d_F|}w_F)$
+on the actual norm-one quotient. The standalone presentation (A.2.3.22),
+the measurable disjoint domain, and the quotient comparison remain open.
+
+Start with the following local measure identity for the complex coordinate,
+using `Masullo.complexTamagawaDensity` from `Lemmas.ArchimedeanCompletionHaar`:
+
+```lean
+MeasureTheory.Measure.map (fun z : ℂ ↦ (2 * Real.log ‖z‖, Complex.arg z))
+    Masullo.complexTamagawaDensity =
+  (MeasureTheory.volume : MeasureTheory.Measure ℝ).prod
+    (MeasureTheory.volume.restrict (Set.Ioo (-Real.pi) Real.pi))
+```
+
+This is the change of variables needed to use the angular interval
+(A.2.3.21), p. 550, with the density in Definitions A.3.1.2(2), p. 556,
+and A.3.2.2(1), p. 560. The factor two in additive Haar cancels the
+factor one-half in $dr/r=dx/2$ for $x=2\log r$; the cut ray is null, so
+open angle endpoints suffice for the measure identity. The pinned
+`Complex.lintegral_comp_polarCoord_symm` gives the radial Jacobian and
+`MeasureTheory.lintegral_image_eq_lintegral_abs_deriv_mul` applies to
+$r=\exp(x/2)$ on the full real line. Transfer the result to the actual
+complex completion units via `complexCompletionHaar_map`. Then prove
+the corresponding signed real coordinate formula and combine the local
+identities using the **sum** of weighted logs as the norm coordinate and
+Mathlib's dropped coordinates for the other logs. In those coordinates
+reconstruct the deleted log as the sum coordinate minus the retained
+sum, so the splitting has unit Jacobian. The half-open unit lattice
+window can then be measured by `NumberField.Units.regulator`; angular
+torsion costs a factor $1/w_F$, which still needs proof with the counting
+quotient. This route does not infer a scalar from Haar uniqueness alone.
