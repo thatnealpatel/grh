@@ -576,28 +576,93 @@ to (3.4.1.2), p. 143, remains provisional and is not a Lean premise.
 This is a check on the compact-away repair, not on the printed finite
 test space or its completion.
 
-**Next bounded check:** On one actual stage with $E=S$, prove that the
-raw stage integral is entire and equals the product of the real and
-active finite pairings for every $s$. Use `ideleFiniteStage_zetaIntegral`
-with `archimedeanCompletionHaar` and `rationalLocalMultiplicativeHaar`.
-Keep the exact comap along `ideleFiniteStageEmbedding ℚ S` and
-unramifiedness off $S$ explicit. The active tests need continuity and
-compact support in the units. The grouped real premise is now checked;
-`ideleFiniteTest` on the active subtype reduces to the specified finite
-test, and `rationalFiniteCompactMellinPair` gives its local integrability
-and entireness. In the writer's exact-source workspace, a Lean
-scratch probe applied the stage theorem with these instance families,
-`E = S`, the exact comap, and off-stage unramifiedness. It confirmed
-`IntegrableOn` for an arbitrary exponent and that
-`rationalLocalMultiplicativeHaar_unitMass` directly supplies the
-unit-mass premise on the same inclusion. The probe is not a landed
-stage endpoint and did not test differentiation. The finite norm and
-unit-triviality readings, §3.1.2.1, p. 120, and the definition after
-(3.1.2.6), p. 121, are inherited from the
-[finite normalization audit](finite-gaussian-tamagawa.md#source-and-the-two-readings-of-l_v).
-The real integral is the entire [signed-log expression](#checked-entireness-of-the-raw-real-log-mellin-pairing)
-at $s+i\tau$ for one fixed $\tau$. Transfer those local identities along
-the stage product and differentiate the finite product, rather than
-seeking an upstairs domination bound. A global support reduction,
-algebraic tensor assembly, character descent, and extension to a
+**Previous check:** A scratch probe on the then-accepted source supplied
+stage integrability using these local inputs and off-stage unit masses.
+It neither landed a stage theorem nor checked differentiation. The
+following endpoint supersedes that probe.
+
+## Checked entire pairing on the exact rational idele stage
+
+[`Masullo.rationalIdeleFiniteStage_schwartzMellin`](../../Proofs/Theorems/RationalIdeleFiniteStageSchwartzMellin.lean)
+uses the actual rational idele group with the indicated Borel
+structures. Let $S$ be the finite set of test exceptions, $U_S$ the
+range of `ideleFiniteStageEmbedding ℚ S`, and $\mu$ a measure with
+exact comap `ideleFiniteStageProduct ℚ μa μf S`. Here $\mu_a$ is the
+family `archimedeanCompletionHaar` and $\mu_f$ is the family
+`rationalLocalMultiplicativeHaar`. Fix a unitary Hecke character $\chi$
+unramified outside $S$, a complex real Schwartz profile $b$ with
+all jets zero at zero, and continuous compactly supported $f_v$ on
+$F_v^\times$ for $v\in S$. No assumption on $f_v$ off $S$ is needed:
+`ideleZetaTest` uses the integer-ring indicator there. On $U_S$ the
+inactive coordinates already lie in the integer-unit groups.
+
+Write $g_s$ for `ideleZetaTest` times $\chi$ evaluated on the idele
+class times the idelic norm to $s$. For every $s\in\mathbb C$, Lean
+proves `IntegrableOn` for $g_s$ on $U_S$ and the identity
+
+$$
+ T_S(s)=\int_{U_S} g_s\,d\mu=R(s)\prod_{v\in S}L_v(s).
+$$
+
+Here $R$ is the full signed real completion integral, and $L_v$ is the
+raw finite integral of $f_v(u)\chi(j_v(u))\|u\|_v^s$ on the full
+completion units against $\mu_f(v)$. Neither is divided by a Gamma or
+Euler factor. There is no scalar. Lean proves `Differentiable ℂ T_S`,
+with no restriction on $s$ and no nonvanishing hypothesis. The finite
+product includes the case $S=\varnothing$ with the empty product one.
+
+**Reduction checked in Lean:** At `E = S`, the active `ideleFiniteTest`
+is exactly $f_v$. `rationalFiniteCompactMellinPair` handles its integral
+and complex differentiability. `rationalArchimedeanSchwartzMellinPair`
+identifies the grouped infinite integral and supplies its integrability.
+The off-stage mass required by `ideleFiniteStage_zetaIntegral` is
+supplied directly by `rationalLocalMultiplicativeHaar_unitMass` in the
+actual Borel instance families; no bridge or extra mass assumption is
+needed. The real pairing is the checked signed-log integral with
+profile $b(e^t)+(-1)^\epsilon b(-e^t)$ evaluated at $s+i\tau$ for
+one fixed $\epsilon,\tau$ for the character. Translation and the finite
+product rule give entireness without differentiating under the upstairs
+integral.
+
+**Evidence and scope:** Independent exact-source statement and reduction
+review against `3b8584b048a2c6a5fa82a87612add28a89e02e02`: Yah
+`01a204e7-042d-7c33-aeda-4beeb570780b`, agent `wUandyg`. The reviewer
+checked the actual stage, density, local interfaces, and applicability
+of the inherited source readings, and flagged the equality of the
+unit-mass inclusions as an elaboration question. The owner resolved
+that question by applying the theorem with the direct argument above
+in the matching Borel context, not by changing its hypothesis.
+
+This is a forward step for the compact-away **repair** of Lemma
+5.3.4.2(2), pp. 259–261, not the printed finite test space. Inherit the
+rendered readings of the lemma and flatness (5.3.3.10), p. 252, the
+raw density (3.2.2.1), p. 124, the local pairing (3.3.1.7), p. 130, and
+insertion §3.1.2.2, p. 121, and the signed and product Haar conventions
+(A.3.2.2), (A.3.2.5), p. 560, through the
+[singleton real handoff](#checked-singleton-archimedean-factor-of-the-rational-stage-integral).
+The [finite normalization audit](finite-gaussian-tamagawa.md#source-and-the-two-readings-of-l_v)
+verifies the finite norm (§3.1.2.1, p. 120), the unit condition (after
+(3.1.2.6), p. 121), and the product norm (A.1.3.3), p. 541. No pages
+were reread. The provisional manuscript mapping of the grouped
+factor to (3.4.1.2), p. 143, is not a premise.
+
+**Next bounded check:** On a common upstairs measure with the exact
+comaps for all stages containing $S$, compare the raw integral of the
+*same* tensor on the whole idele group with $T_S(s)$ for $\Re s>1$.
+Specialize [`ideleZetaIntegral_rightHalfPlane`](hecke-right-line-majorant.md#checked-exhaust-the-raw-zeta-integral-above-one)
+at `E = T = S`, using the same grouped and finite inputs as here.
+Match the retained product to $T_S(s)$, so the proposed global value
+is $T_S(s)$ times `finiteHeckeEulerProduct` with coefficients zeroed
+on $S$. The support premise for dropping the tail is not built in:
+`ideleZetaTest` merely requires integral values off $S$, whereas
+`range_ideleFiniteStageEmbedding` requires both the values and their
+inverses to be integral. The comparison tests the exact omitted factor,
+not analytic continuation of the upstairs Lebesgue integral. The
+[raw density](global-mellin-sign-q.md#what-the-source-prints) and
+[product Haar](idele-relative-one-line-q.md#source-checked-on-rendered-pages)
+readings are inherited. The [rendered admissible-set audit](weil-admissible-set.md#source-and-admissibility)
+checks the printed subscript of (3.4.1.6), p. 143: It excludes $S_0$,
+not the actual stage set. The proposed Lean tail is off $S$ and is
+not an instantiation of that printed formula. Tensor assembly,
+character descent to the manuscript quotient, and extension to its
 completion remain separate.
