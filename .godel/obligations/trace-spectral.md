@@ -47,7 +47,122 @@ For the repaired Haar-relative geometric kernel $G(x,y)=\varphi(xy^{-1})-K(x,y)$
 
 ### The averaging boxes must actually shrink
 
-**Provisional source blocker.** In the extraction of (A.5.2.19)–(A.5.2.20), p. 576, the Archimedean box is $L^{-1}(P_k)$, where $L$ records only absolute-value logarithms (p. 574). Every such box contains $\ker L$. Equations (A.5.2.23)–(A.5.2.24), p. 577, carry $\ker L\times\{1\}$ into every global box of Definition A.5.2.18(2), p. 578. Its image in $C_F$ is injective: A principal idele with all finite components equal to $1$ must come from $1\in F^\times$. For $F=\mathbb Q(i)$, the extracted Archimedean norm-one boxes are the whole unit circle at every scale. Thus the boxes as written cannot be a neighborhood base at the identity of $C_F$, as required by Definition 12.1.1.1. Verify whether the rendered equations impose an additional angular restriction. This failure of the neighborhood-base condition does not by itself show a wrong diagonal value for any test allowed by Theorem 12.5.1.1.
+**Verified source and ordinary-math counterexample on $C_{\mathbb Q(i)}$.**
+The previous extraction check only located a missing shrinking hypothesis.
+The rendered displays and the two computations below show that the literal
+boxes also give a different diagonal integral for a continuous rank-one
+kernel. This does not refute Theorem 12.1.1.2 under its stated $D'$ hypothesis.
+
+**Printed route.** The logarithm in §A.5.2.2, p. 574, just below
+(A.5.2.9), records $\log|u_v|_v$, not the complex phase. The rendered
+(A.5.2.19)–(20), p. 576, give the full inverse image $\mathscr L^{-1}(P_k)$,
+with the coefficient indices $1\le i\le r_1+r_2-1$, and no angular
+restriction. Thus the general-field Archimedean boxes are invariant
+under $\ker\mathscr L$. This is not an angular slice of the fundamental
+domain in (A.5.2.7), p. 574. For $F=\mathbb Q(i)$ the defining sum is
+empty, so $P_k=\{0\}$ and $U_{S_\infty,k}=S^1$. Equations
+(A.5.2.23)–(24), p. 577, give $U_k=\tau(I_k)(S^1\times B_k)$ with
+$I_k=(1-1/k,1+1/k)$; take the tail $k\ge2$. Lemma A.5.2.17(1), p. 577, takes the quotient **image**
+$\overline U_k=q(U_k)$ in $C_F$, and Definition A.5.2.18(2), p. 578,
+designates these images as standard. Here $q$ is the diagonal-principal
+quotient and $N(x)=|x|_F$ is the descended norm, as in (A.1.4.1)–(2),
+p. 542. The image $H=q(S^1\times\{1\})$ is an embedded circle:
+A principal idele equal to $1$ at all finite places comes from $1\in F^\times$.
+Every $\overline U_k$ contains and is translation-invariant under $H$,
+regardless of the permitted $B_k$ or norm section $\tau$. Indeed,
+$S^1\times B_k$ is an open compact subgroup of the norm-one ideles:
+Inside the open finite-unit stage, norm one means exactly $|z|=1$ at
+infinity. The section splits off $I_k$, whose closure is compact in
+$\mathbb R_{>0}$ on this tail, and $q$ is open. The boxes therefore have
+positive finite Haar mass, but cannot fit inside an identity neighborhood
+missing a fixed nonidentity point of $H$. They fail the shrinking
+requirement of Definition A.5.2.1, p. 569, recalled in Definition
+12.1.1.1, p. 498.
+
+**Witness and hypotheses.** Write $G=C_{\mathbb Q(i)}$, and let $\mu$ be
+Haar measure on $G$. For an idele $a$, the finite fractional ideal with
+valuations $v(a_v)$ is principal because $\mathbb Z[i]$ is Euclidean. If
+$\alpha$ generates it, then $a/\alpha$ is a representative with every
+finite component a unit. Two such representatives of a class differ by a
+Gaussian unit, and each Gaussian unit has fourth power $1$. The restriction
+of $q$ to the open subgroup $\mathbb C^\times\times\widehat{\mathbb Z[i]}^\times$
+is therefore an open surjection with kernel the diagonal Gaussian units.
+In this quotient model the formula $\chi([z,u])=(z/|z|)^4$ gives a
+continuous unitary character. Its restriction to $H$ sends $\zeta$ to
+$\zeta^4$, hence is nontrivial. The quotient model also gives a Hausdorff,
+locally compact, second countable abelian group. On its normalized
+representatives $N([z,u])=|z|^2$; the complex norm convention is as in
+Lemma A.2.2.6, p. 547. In particular the inverse image of a compact
+log-norm interval is the image of a compact annulus times the compact
+finite unit group. For nonzero $b\in C_c^\infty(\mathbb R)$, both
+$f(x)=b(\log N(x))\chi(x)$ and the radial control $f_0(x)=b(\log N(x))$
+are nonzero in $C_c(G)$ and have the same absolute value.
+
+**Box average, calculated directly.** Definition 12.1.1.1 and (12.1.1.1),
+p. 498, normalize Haar on each translated box; the opening of p. 499
+specifies product boxes for a kernel. The same p. 498 names the Appendix A
+construction for the idelic groups. Applying the averaging expression
+outside its $D'$ hypothesis, set
+$A_k g(x)=\mu(\overline U_k)^{-1}\int_{x\overline U_k}g(y)\,d\mu(y)$.
+For $h\in H$ with $\chi(h)\ne 1$, translating the integration set by $h$
+leaves both the set and Haar measure unchanged, while $f(hy)=\chi(h)f(y)$.
+It follows that $A_k f=0$ for every $k\ge2$. By Fubini, the average of
+$K(x,y)=f(x)\overline{f(y)}$ on the product is
+$A_k f(x)\overline{A_k f(y)}$. Its limit is identically zero, including
+on the diagonal, so the left side of (12.1.1.2), p. 499, is zero.
+For $f_0$, every $v\in\overline U_k$ has $N(v)\in I_k$, so
+$$
+ |A_k f_0(x)-f_0(x)|\le
+ \sup_{t\in I_k}|b(\log N(x)+\log t)-b(\log N(x))|\longrightarrow 0.
+$$
+The radial limiting diagonal is $|f_0|^2$ and integrates to its true trace.
+The control tests the norm coordinate, not differentiation in the finite
+directions. The same cancellation applies to any integrable-on-boxes
+function transforming by a nontrivial character of $H$.
+
+**Operator trace, calculated without the boxes.** Take $\lambda=\mu$ in
+Theorem 12.1.1.2, p. 499, so the continuous positive density is $1$.
+The kernel $K$ is continuous, locally integrable for product Haar measure,
+and Hilbert–Schmidt. The integral operator
+$Tg=f\int_G\overline f g\,d\lambda$ is positive rank one, hence nuclear,
+with sole nonzero eigenvalue $\|f\|_{L^2(\lambda)}^2>0$. This is the trace;
+it is the same positive value as the radial trace. The comparison works
+also for any measure $\lambda=w\mu$ with continuous strictly positive $w$:
+The averaging in the definition still uses Haar measure, and the rank-one
+trace changes to the squared norm for $\lambda$, still positive. The kernel
+and measure here are for the rank-one test, not an identification of a
+spectral or geometric operator in Chapter 12.
+
+**Scope and handoff.** The rank-one mismatch rules out treating the
+printed global boxes as general trace-diagonal boxes on the nontrivial
+angular isotype. The theorem on p. 499 explicitly assumes a $D'$-sequence,
+and no claim about agreement for its actual trace-formula operators or
+refutation of Theorem 12.5.1.1 follows. For a bounded next check, pass these
+same boxes to $G/H$ and test whether their product averages for an arbitrary
+trace-class kernel with a radial positive continuous weight compute the
+trace of the angular-invariant compression $P_H T P_H$, where $P_H$ is
+normalized circle averaging. That would identify exactly what the literal
+procedure measures, before testing the missing trace on the actual
+Chapter 12 operators. The weighted-kernel convention and local-to-global
+comparison remain separate.
+
+**Review evidence.** Worker session
+`01a2024b-f7e1-7425-9679-b5f9d300a2e7` inspected rendered crops of the
+box path (pp. 574, 576–578), the class-group and norm conventions
+(pp. 542, 547), the shrinking requirement (p. 569), and the averaging
+and trace statements (pp. 498–499). The independent dispatch
+`angular-review` (`wbutWxa`, Yah session
+`01a2024b-f7e1-7425-9679-b5f9d300a2e7`) corroborated the source path by
+extraction only, not by viewing the renderings. It separately checked
+character descent, cancellation in each Haar average, the radial limit,
+and the positive eigenvalue for $\lambda=\mu$. Its identification of
+$H$ as a quotient by the Gaussian units is not used: The units are
+embedded diagonally and have nontrivial finite entries unless they are
+$1$, so the Archimedean-only circle maps injectively. This correction
+does not affect the review's transformation law $\chi(q(\zeta,1))=\zeta^4$
+or its two numerical conclusions. No claims about other fields or
+finite-direction differentiation from the review are needed. This is
+ordinary mathematics, not a Lean result.
 
 **Project repair.** Use shrinking symmetric coordinate boxes in the identity component of $F_\infty^\times$ (including complex angular coordinates) times a decreasing compact open subgroup base in the finite ideles. Choose the initial product small enough that the quotient by discrete $F^\times$ is injective on its difference set. The compact open factors do not grow under $U_nU_n^{-1}$, and the real coordinate boxes double in each coordinate. Haar measure on the quotient agrees locally up to scale, so the required volume ratio is bounded. The singular-value formula gives the same trace-class diagonal almost everywhere for any two bases satisfying the shrinking and doubling hypotheses, but not for the literal nonshrinking boxes. The local-to-global comparison must use compatible repaired bases or prove that the difference does not affect its tests.
 
