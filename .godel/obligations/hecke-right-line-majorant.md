@@ -736,19 +736,69 @@ Independent Yah statement and text review: `ZTZcZfz` (output
 `28497fba430c60d17edeb89e1d7540dbe164c462`). The pinned Markdown and PDF
 layout were checked, but no rendered-page verification is claimed.
 
+### Checked topology for the number-field stages
+
+[`Theorems.IdeleFiniteStage`](../../Proofs/Theorems/IdeleFiniteStage.lean)
+works in the actual `IdeleGroup (𝓞 K) K` for every number field `K`.
+For each finite set $S$ of finite places, the stage is
+$\prod_{v\mid\infty} K_v^\times\times\bigl(\prod_{v\in S} K_v^\times
+\times\prod_{v\notin S}\mathcal O_v^\times\bigr)$, where the last product
+is over finite places. The monoid homomorphism inserts the three sets of
+coordinates literally, with no sign restriction at real places.
+`range_ideleFiniteStageEmbedding` tests integrality of both the idele
+and its inverse outside $S$. `isOpenEmbedding_ideleFiniteStageEmbedding`
+uses the additive stage embedding and then the induced topology on
+units. `iUnion_range_ideleFiniteStageEmbedding` takes the finite union
+of the exceptions for the value and inverse, giving a cover. By the
+range test, the cover still holds with only stages containing any fixed
+finite set $E$: Enlarge each witnessing stage $S$ to $S\cup E$.
+
+Definition A.1.3.1 and Lemma A.1.3.3, p. 541, supply the anti-diagonal
+topology and the restricted-product identification. The stage restriction
+used on p. 556 and in (A.3.2.5), p. 560, needs this exact coordinate and
+topology interface. Lean fills it using the adelic stage and its units;
+it does not take the identification as an assumption. The source reading
+is provisional (Pinned Markdown and PDF layout, not rendered pages).
+Independent Yah statement and source review: `lhUkGIq` (output
+`c3697ad56a5ec7146950cf26bbb015d60ee19caf`). Audit the two modules from the
+integration workspace with:
+
+```sh
+go run ./cmd/godel audit-local "$CANDIDATE" \
+  Lemmas.AdeleFiniteStage Theorems.IdeleFiniteStage -- \
+  Masullo.IdeleFiniteStage Masullo.ideleFiniteStageEmbedding \
+  Masullo.ideleFiniteStageEmbedding_infinite \
+  Masullo.ideleFiniteStageEmbedding_finite_mem \
+  Masullo.ideleFiniteStageEmbedding_finite_notMem \
+  Masullo.range_ideleFiniteStageEmbedding \
+  Masullo.isOpenEmbedding_ideleFiniteStageEmbedding \
+  Masullo.iUnion_range_ideleFiniteStageEmbedding
+```
+
 ### Next: Identify the restricted-product zeta pairing
 
-First prove the exact restriction of the idele Haar measure of (A.3.2.5),
-p. 560, to each open finite stage containing the exceptional finite
-places. In stage coordinates the Archimedean factors above and the
-finite local Haar measures on the active places are full factors; the
-other finite factors are restricted to unit groups of mass one.
-`RationalIdeleFiniteStageHaar` supplies the rational comparison pattern,
-not the general-field result. The new comparison must keep the finite
-unit masses of (A.3.2.2), p. 560, on the active places. Then use the
-local pairings on a tensor test, increasing the stage, to identify the
-absolutely integrable global zeta pairing for $\Re s>1$, with the product
-of those masses or with the corresponding scaled tests.
+Construct the Haar measure with the exact stage restrictions prescribed
+by (A.3.2.5), p. 560, for the checked embeddings. Start with given local
+Haar measures and a finite set $E$ such that the integral-unit mass is
+one outside $E$. For every $S\supseteq E$, prove that the comap is the
+product of the full Archimedean and active finite factors, and the
+product probability of the pulled-back integral-unit restrictions off
+$S$. Do not normalize away the masses of (A.3.2.2) inside $E$: On a
+calibration product with all finite coordinates integral units, the
+mass must include $\prod_{v\in E}\mu_v(\mathcal O_v^\times)$ times its
+Archimedean mass. This factor is independent of $S$. This suggests
+scaling upstairs Haar by one common positive compact box and applying
+`Measure.IsHaarMeasure.comap` and `Measure.haarMeasure_eq_iff` on each
+stage, rather than gluing measures. `RationalIdeleFiniteStageHaar` is a
+comparison pattern, not the general-field result. Establishing the
+actual discriminant masses and their finite exceptional support for
+(A.3.2.2), and identifying the product with the separate quotient
+normalization (A.3.2.1), are distinct obligations. Character ramification
+is not the exceptional set for these masses.
+
+Then use the local pairings on a tensor test, increasing the stage, to
+identify the absolutely integrable global zeta pairing for $\Re s>1$,
+with the product of those masses or with the corresponding scaled tests.
 
 **Still open:** Meromorphic continuation, divisor data, and contour
 growth in (B.4.2.1)–(4), the broader test class, ramified Fourier terms,
