@@ -397,23 +397,46 @@ go run ./cmd/godel audit-local "$CANDIDATE" Theorems.ArchimedeanLogMeasure -- \
   Masullo.measurePreserving_archimedeanLogSplit
 ```
 
-### Next normalization step: Assemble the Archimedean product formula
+## Checked Archimedean product Haar coordinates
 
-On the product of the actual completion units, equip each place with
-its checked local measure. For an infinite place $v$, let $A_v$ be
-`Bool` at a real place and $\mathbb R$ at a complex place, with measure
-$\alpha_v$ respectively counting or Lebesgue restricted to $(-\pi,\pi)$.
-For the map taking a unit tuple to
-$(\sum_v x_v,(x_v)_{v\ne w_0},(a_v)_v)$, show that the pushforward of
-`Measure.pi` of the local Haar measures is
-`volume.prod (volume.prod (Measure.pi α))`. Here $(x_v,a_v)$ is exactly
-the coordinate from the signed real or complex log-polar theorem. Use
-`MeasureTheory.measurePreserving_pi` for the finite family, separate the
-product of pairs into log and angular tuples by the product formula on
-measurable rectangles, and apply `measurePreserving_archimedeanLogSplit`
-to the log tuple. Transport through the units-of-a-product equivalence
-when using the Archimedean adele units. This is still an upstairs
-formula, not a quotient Haar comparison.
+[`Theorems.ArchimedeanHaarCoordinates`](../../Proofs/Theorems/ArchimedeanHaarCoordinates.lean)
+uses the weighted logs of (A.2.3.3)–(5), PDF p. 548, and the local
+normalizations of Definitions A.3.1.2(1)–(2), p. 556, and A.3.2.2(1),
+p. 560. For the Archimedean factor of (A.3.2.5), p. 560, Lean proves the
+additional coordinate calculation: `measurePreserving_archimedeanHaarCoordinates`
+sends the product of actual completion-unit Haar measures under
+$(u_v)_v \mapsto (\sum_v x_v,(x_v)_{v\ne w_0},(a_v)_v)$ to
+`volume.prod (volume.prod (Measure.pi archimedeanAngularMeasure))`.
+Here $x_v=v.\mathrm{mult}\log\|u_v\|$. The angular coordinate is the sign
+with counting measure (mass one per sign), or `Complex.arg` with Lebesgue
+measure on $(-\pi,\pi)$ (total mass $2\pi$). The retained logs use
+product Lebesgue measure, not hyperplane surface measure.
+
+`measurePreserving_archimedeanLocalCoordinates` packages the checked local
+identities. `measurePreserving_piProd` proves the interchange of finite
+products and pairs on measurable rectangles. The main proof applies the
+checked log split to the reordered product, leaving the angular factor
+fixed. `measurePreserving_infiniteAdeleHaarCoordinates` transports the
+result to `(InfiniteAdeleRing K)ˣ` with the comap of precisely that local
+product measure. It does not identify an independently normalized Haar
+measure or give a pointwise angular fundamental domain.
+
+Independent Yah statement review: Session
+`01a202d2-0b9c-7544-b307-83c5a1a823a5`, child `review-arch-product`
+(`MvwPSWE`). Source readings are provisional: Pinned Markdown and numbered
+PDF layout, not rendered pages.
+
+```sh
+go run ./cmd/godel audit-local "$CANDIDATE" \
+  Lemmas.ArchimedeanAngularChart Lemmas.MeasurePreservingPiProd \
+  Theorems.ArchimedeanHaarCoordinates -- \
+  Masullo.measurePreserving_archimedeanLocalCoordinates \
+  Masullo.measurePreserving_piProd \
+  Masullo.measurePreserving_archimedeanHaarCoordinates \
+  Masullo.measurePreserving_infiniteAdeleHaarCoordinates
+```
+
+### Next normalization step: Prove the regulator box mass
 
 The logarithmic part of (A.2.3.9)–(11), p. 549, can proceed separately:
 For `b := basisUnitLattice K`, take `ZSpan.fundamentalDomain
