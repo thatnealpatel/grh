@@ -40,8 +40,15 @@ Use these checks for routine proof landings. Elaborate drafts in the writer work
    #print axioms Masullo.addSubgroup_integral_star_char
    ```
 
+   Lean can wrap an axiom list across lines. Read the complete report
+   for every expected declaration. If checking mechanically, prefer
+   `lake env lean --json`: Each diagnostic's `data` contains the entire
+   message, including any newlines. Match the expected declaration names,
+   require one report per name, and check every axiom in each list.
+   A count of lines containing `depends on axioms:` is not a verdict.
+
 4. Obtain a fresh independent Yah review of the intended statements against the exact mathematical obligation, including any added endpoint or changed statement. Compare the built signatures, including assumptions and scope, with the independently reviewed statements. A familiar declaration name, clean axiom report, or successful build cannot establish that the built statement is the right one.
-5. Keep the full candidate ID and base, reviewed declarations, build and import results, built signatures, axiom reports, and source and independent review evidence (or their durable references). Adopt only that exact checked ID, and report whether adoption succeeded. If a proof needs repair, edit in a writer workspace and integrate again. A restack is a new candidate: Repeat the landing checks and get independent review of any changed statement.
+5. Keep the full candidate ID and base, reviewed declarations, build and import results, built signatures, axiom reports, and source and independent review evidence (or their durable references). In the accepted branch handoff, point to the **owning** check session as well as any writer checks. Put that session ID in the handoff before integration if the checks are still pending, and record the full candidate ID, check results, and adoption in that session. This avoids changing the checked candidate merely to insert its own ID. Adopt only that exact checked ID, and report whether adoption succeeded. If a proof needs repair, edit in a writer workspace and integrate again. A restack is a new candidate: Repeat the landing checks and get independent review of any changed statement.
 
 A full-project audit, all-project joint import, and separate kernel replay are not routine landing gates. Continuous rigorous `cmd/audit` is deferred; do not assume any future auditor has covered a result. Do not claim RH or GRH closure without a separate rigorous audit. Keep old per-revision audit logs as historical evidence for their stated revisions, not as instructions or checks for new candidates.
 

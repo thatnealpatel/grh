@@ -1954,6 +1954,21 @@ and axioms of 35 declarations, including the named endpoints above.
 Only `propext`, `Classical.choice`, and `Quot.sound` were reported.
 Writer checks are not exact-candidate adoption evidence.
 
+**Exact landing evidence.** Candidate
+`3b8584b048a2c6a5fa82a87612add28a89e02e02`, base
+`0a7f05464e5b82cc4061852dfb039f430bfe1627`, was checked and adopted in
+owning Yah session `01a204d4-bcfe-762c-89dc-4e1088d83973`. The independent
+review (`UPaVyiI`, responses at child events 60, 79, and 93) covered the
+geometry, mass, and counting-Weil statements and verified the final
+reviewed Lean sources on first candidate `40087805f5850109404cc4e7f5449b634b469934`.
+That candidate went stale. The replacement had identical Lean and pinned
+build inputs. Owner events 180–194 record the source comparison, fresh
+`lake build --wfail`, joint import with 35 signatures and axiom reports
+(byte-identical to the owner's first check), and successful adoption.
+The first check's reports and their validation are at events 167 and 169.
+All reported axioms were allowed. These are scoped checks, not a project
+or GRH audit.
+
 **Next: Pointwise inversion for finite linear combinations of boxes.**
 In Theorem 2.2.3.2, p. 82, Abstract Weil normalization is invoked in
 Remark 2.2.3.3 to eliminate the volume factor. Use the same $\mu$ as
