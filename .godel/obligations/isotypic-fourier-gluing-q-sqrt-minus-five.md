@@ -65,6 +65,14 @@ Z_v(\widehat{1_{O_v}},\chi_v^{-1}|\cdot|^{1-s})
  = u_v L_v(1-s)\,a_v^{d_v}q_v^{d_v(1/2-s)}.
 $$
 
+**Lean (finite local test only):** [FiniteCompletionFourierSquare](../../Proofs/Theorems/FiniteCompletionFourierSquare.lean)
+proves `finiteCompletionFourier_square_integers_eq_iff` and constructs the Haar
+fixing this test under the double transform. [FiniteCompletionFourierMellin](../../Proofs/Theorems/FiniteCompletionFourierMellin.lean)
+proves the displayed identity (`finiteCompletionFourier_reflectedMellin`) for
+an unramified self-inverse unitary character at the place, with absolute
+convergence exactly for $\Re s<1$. The multiplicative Haar is independent.
+These results do not formalize the global product or gluing argument.
+
 The factors relative to the reflected unit-ball Mellin transforms are
 as follows:
 
