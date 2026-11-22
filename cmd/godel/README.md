@@ -39,9 +39,17 @@ Compare the built signatures in the audit output with the independently reviewed
 
 ### Integrating a direct edit
 
-Open `tool_campaign new` on the accepted hash you inspected. Once the
-edit is ready, call `tool_campaign integrate` with `description` but
-without `on` or `outputs`. The campaign finalizes the direct work and
+If investigation separated the initial `tool_campaign status` from
+workspace allocation, refresh status just before `tool_campaign new`.
+If the accepted tip moved, review the intervening changes for overlap
+before opening on the new tip. If allocation fails with `unknown
+integration candidate`, stop repository edits and use a read-only
+status check to distinguish an observed target move from a rejection
+with no observed move. Do not keep retrying the same hash. This narrows
+the setup race; it does not remove it.
+
+Once the edit is ready, call `tool_campaign integrate` with `description`
+but without `on` or `outputs`. The campaign finalizes the direct work and
 integrates it on the current accepted target. Check the returned base
 and patch before running the audit or tests, especially if another
 campaign has advanced the target. Passing the old accepted hash as
