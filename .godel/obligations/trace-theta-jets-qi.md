@@ -244,16 +244,11 @@ of the surrounding duality argument.
 Selector Yah `01a2028c-0ad3-75e4-b55d-bdc9b6106fb6`; worker Yah
 `01a2028d-6b7a-77f1-ae2e-e2642ed5da64`.
 
-**Next bounded check:** At $s=4$ use the
-[accepted single-Gaussian inclusion](trace-theta-density-qi.md)
-$Z v\in\mathcal F_+M_{1/2}$ for every compact smooth $v$, where
-$Z(t)=L(1/2+it,\bar\eta)$, together with the proved annihilation.
-Test whether every $H^{-2}$ functional annihilating this range is
-locally a sum of the capped delta derivatives at the isolated real
-zeros: Check localization at each zero and passage from compactly
-supported profiles by bounded exhausting cutoffs. This would identify
-the full closed theta space with the common kernel of these jets in
-the selected block.
+**Resolved successor:** The [singleton totality check](trace-theta-totality-qi.md)
+uses the single-Gaussian inclusion and this annihilation result to
+identify the full closed theta block with the common capped jet kernel.
+It checks the cap by local division and shrinking bumps, and obtains
+exhaustion by strongly convergent Sobolev cutoffs.
 
 **Separate open premises:** Scalar trace evaluation and nonvanishing
 for specific bumps, printed kernel convergence and identification,
