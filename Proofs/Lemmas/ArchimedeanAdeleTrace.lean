@@ -24,7 +24,8 @@ local notation "E" => mixedEmbedding.euclidean.mixedSpace K
 local notation "A∞" => InfiniteAdeleRing K
 local notation "ι∞" => (archimedeanEuclideanToAdele K)
 
-private theorem euclideanToAdele_embedding (y : K) :
+/-- The Euclidean embedding of a field element transports to its infinite diagonal. -/
+public theorem euclideanToAdele_embedding (y : K) :
     ι∞ (archimedeanEuclideanEmbedding K y) = algebraMap K A∞ y := by
   apply ι∞.symm.injective
   apply (mixedEmbedding.euclidean.toMixed K).injective

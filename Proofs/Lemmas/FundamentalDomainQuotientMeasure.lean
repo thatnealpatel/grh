@@ -77,6 +77,7 @@ variable {G Q Γ : Type*} [Group G] [Group Q] [Group Γ]
     (q : G →* Q)
 
 /-- The restriction pushforward is invariant under the quotient group. -/
+@[to_additive addInvariant_map_restrict]
 public theorem invariant_map_restrict [Countable Γ] (hD : IsFundamentalDomain Γ D μ)
     (hq : Measurable q) (hsurj : Function.Surjective q)
     (horbit : ∀ (a : Γ) (x : G), q (a • x) = q x) :
@@ -101,6 +102,7 @@ public theorem invariant_map_restrict [Countable Γ] (hD : IsFundamentalDomain �
 
 omit [MeasurableMul G] [MeasurableMul Q] [SMulCommClass G Γ G] [μ.IsMulLeftInvariant] in
 /-- Nonnegative Weil identity for a measurably descended periodization. -/
+@[to_additive lintegral_addPeriodization]
 public theorem lintegral_periodization (hD : IsFundamentalDomain Γ D μ) (hq : Measurable q)
     [Countable Γ] {f : G → ℝ≥0∞} (hf : Measurable f)
     {F : Q → ℝ≥0∞} (hF : Measurable F) (hperiod : ∀ x, F (q x) = ∑' a : Γ, f (a • x)) :
@@ -114,6 +116,7 @@ public theorem lintegral_periodization (hD : IsFundamentalDomain Γ D μ) (hq : 
 omit [MeasurableMul G] [MeasurableMul Q] [SMulCommClass G Γ G] [μ.IsMulLeftInvariant] in
 /-- The complex Weil identity and integrability for a measurably descended
 periodization of a Borel L¹ function. -/
+@[to_additive integral_addPeriodization]
 public theorem integral_periodization (hD : IsFundamentalDomain Γ D μ) (hq : Measurable q)
     [Countable Γ] {f : G → ℂ} (hf : Measurable f) (hfi : Integrable f μ)
     {F : Q → ℂ} (hF : Measurable F) (hperiod : ∀ x, F (q x) = ∑' a : Γ, f (a • x)) :

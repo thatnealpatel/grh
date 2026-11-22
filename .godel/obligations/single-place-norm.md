@@ -1858,8 +1858,8 @@ follows. The check transcript and review are in Yah session
 `01a204cc-1b12-7aec-9ee7-3bcbcd0c5b7f`. Lean `v4.36.0`, Mathlib
 `fc4f59e577feb1a4956671bc04ac18aaaf8cd842`.
 
-**Next: Identify this product Haar with the counting-quotient
-normalization.** Use the same $\mu$ and diagonal $K\subset\mathbf A_K$.
+**Earlier target (completed in the section below): Identify this product
+Haar with the counting-quotient normalization.** Use the same $\mu$ and diagonal $K\subset\mathbf A_K$.
 Construct a Borel fundamental domain $D=P\times\prod_v\mathcal O_v$.
 Masullo gives the product form in (A.2.1.2), PDF p. 545, but (A.2.1.1)
 indexes the half-open cube by infinite places. In a field with complex
@@ -1885,3 +1885,99 @@ bridge from the local scales, Definition A.3.1.2 and Lemma A.3.1.3,
 PDF p. 556, to Definition A.3.1.1, PDF p. 555, not an $S$-local
 normalization assertion. Inversion for the ramified Gaussian and GRH
 remain separate open obligations.
+
+### Global counting-quotient normalization for the box Fourier measure
+
+This checks the global bridge from Definition A.3.1.2 and Lemma A.3.1.3,
+PDF p. 556, to the counting normalization in Definition A.3.1.1, p. 555.
+It uses the actual additive adeles and their actual diagonal quotient,
+for every number field. It is not the $S$-local equality of A.3.1.3.
+Source readings are provisional: They use the pinned Markdown and numbered
+PDF layout (PDF SHA-256 `e039d3f6cf0a4b14f03c7edb85097752dd65c0a2fe543c76fe992be234f97bf5`),
+not independent rendered-page inspection.
+
+- **Geometry and repair.** Definition A.2.1.1 and Lemma A.2.1.2(1),
+  p. 545, supply the product form (A.2.1.2) and the intended translate
+  cover (A.2.1.3). The absolute values in (A.2.1.1) do not give unique
+  reduction in signed real coordinates; the printed $r_1+r_2$ index
+  is also too short for coordinates in an integral basis when $r_2>0$.
+  Use the full signed real half-open cube $[0,1)^{[K:\mathbb Q]}$ in the
+  real extension of the integral basis, consistent with the argument
+  in Lemma A.2.4.2(2), p. 554. At a finite adele, the unit-box diagonal
+  coset specifies all reductions modulo $\mathcal O_K$. At infinity
+  the basis cell then gives a unique reduction by $\mathcal O_K$.
+  `adeleIntegralCell` is the image in the actual adele ring of this cell
+  times the integral finite box. `measurableSet_adeleIntegralCell` uses
+  the open stage embedding; `existsUnique_sub_mem_adeleIntegralCell`
+  proves $\forall a\;\exists!t\in K,\ a-t\in D$. This yields
+  `adeleIntegralCell_isAddFundamentalDomain` for any upstairs measure.
+- **Mass, without rescaling.** In `adeleIntegralCell_mass_one`, assume
+  exactly the cofinal comap interface of `adeleBox_fourier_integral`:
+  for some finite $E$, the comap of $\mu$ on each stage $S\supseteq E$
+  is `adeleFiniteStageHaar K S`. Enlarge $S$ to include the finite
+  integer-mass exceptions. Transfer the rectangle through the actual
+  stage embedding, then multiply the Archimedean trace covolume of the
+  unit ideal lattice (`archimedeanIntegralCell_traceMass`) by its
+  reciprocal (`finiteIntegerBox_stageMass`). This is Masullo's
+  cancellation in Lemma A.3.1.3, p. 556, applied to the corrected cell.
+- **Counting Weil formula.** Theorems C.4.4.3, equation (C.4.4.5),
+  p. 718, and D.1.2.1, p. 747, use integration along the fibers.
+  `adeleIntegralClassMeasure K μ` is $(\mu|_D)$ pushed forward along
+  $\pi\colon\mathbf A_K\to\mathbf A_K/K$. Translates of the interior
+  give open injective charts for Borel descent. The diagonal is discrete
+  and closed; the closed coordinate box and finite integral box have
+  compact quotient image and meet every class. For Haar $\mu$ with the
+  same stage comaps, `adeleIntegralClassMeasure_haar_probability` proves
+  that the pushforward is additive Haar of mass one. For any additive
+  Haar $\mu$, `adeleIntegralClassMeasure_lintegral_counting` gives the
+  nonnegative Borel Weil formula, and
+  `adeleIntegralClassMeasure_integral_counting` the Borel complex
+  $L^1$ formula. Both give a Borel class function, agreeing at every
+  lift $a$ with the (totalized) sum $\sum_{t\in K}f(t+a)$, and its integral
+  equals the upstairs integral. The complex result proves absolute
+  summability for **every** lift of almost every class, not everywhere.
+  The index equivalence `adelePrincipalIndex` introduces no multiplicity.
+  No scale, relative Haar, or quotient is changed on the way from the
+  box Fourier theorem to this probability measure.
+
+Writer check at base `af2e69d9f26188e34fe1b98c901a5c76533edb46`, Yah session
+`01a204d4-bcfe-762c-89dc-4e1088d83973`: `lake build --wfail` on
+`Lemmas.ArchimedeanAdeleTrace`, `Lemmas.AdeleIntegralCell`,
+`Theorems.AdeleFundamentalDomain`, `Lemmas.AdeleIntegralCellMass`,
+`Theorems.AdeleIntegralCellMass`, `Lemmas.FundamentalDomainQuotientMeasure`,
+`Lemmas.AdeleIntegralQuotient`, `Theorems.AdeleIntegralClassMeasure`,
+`Theorems.AdeleBoxFourier`, `Theorems.FiniteBoxPoisson`, and
+`Theorems.IdeleClassWeil` (use `+` for each Lake target). Fresh joint
+import of the class measure, cell mass helper, box Fourier, finite box
+Poisson, idele Weil, and trace character modules checked the binders
+and axioms of 35 declarations, including the named endpoints above.
+Only `propext`, `Classical.choice`, and `Quot.sound` were reported.
+Writer checks are not exact-candidate adoption evidence.
+
+**Next: Pointwise inversion for finite linear combinations of boxes.**
+In Theorem 2.2.3.2, p. 82, Abstract Weil normalization is invoked in
+Remark 2.2.3.3 to eliminate the volume factor. Use the same $\mu$ as
+above, and define $\widehat f(z)=\int f(w)\overline{\psi(wz)}\,d\mu(w)$
+with `numberFieldAdeleAddChar`. For $f$ any finite complex linear
+combination of `adeleBoxTensor` and $h$ any actual idele, prove
+absolute summability of $t\mapsto f(th)$ and
+$t\mapsto\widehat f(th^{-1})$ on $K$, and the pointwise equality
+\[
+\sum_{t\in K^\times} f(th)
+=|h|_K^{-1}\sum_{t\in K^\times}\widehat f(th^{-1})
+ +|h|_K^{-1}\widehat f(0)-f(0).
+\]
+For the identity at $h=1$, use `finiteBox_diagonal_poisson` and
+`adeleBox_fourier_integral` at every diagonal sample, including zero.
+For general $h$, check that pullback by $w\mapsto hw$ preserves the
+box span: It is a real-linear automorphism at infinity acting on the
+Schwartz input and translates/rescales the finite box by the inverse
+finite part. Use the pushforward
+$(w\mapsto hw)_*\mu=|h|_K^{-1}\mu$ (the comap uses $|h|_K$),
+the precise change of variables from Lemma A.3.1.4, p. 556. This gives
+$\widehat{f(h\,\cdot)}(t)=|h|_K^{-1}\widehat f(th^{-1})$ at the samples.
+Then split off both zero indices; do not appeal to a second quotient
+construction. This next obligation is pointwise, not yet continuity on
+the idele class group or the whole Schwartz–Bruhat space. The ramified
+Gaussian still needs its own decomposition or inversion argument; GRH
+remains open.
