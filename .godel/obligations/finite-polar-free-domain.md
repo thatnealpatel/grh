@@ -126,12 +126,123 @@ the uses of the inclusion in Lemma 5.3.4.2 and the full valuation
 factor immediately before (5.3.4.7), but did not redo the residue audit
 or review the topology of the replacement.
 
-**Next bounded check:** In the same $(\mathbb Q,\{\infty,3\})$ model,
-test whether the repaired canonical map with the printed projective
-tensor topology is continuous into the additive LF space of (2.1.4.1).
-Use disjoint shells $3^{-n}\mathbb Z_3^\times$ and an LF seminorm
-that measures increasing real derivative orders on their sampled
-slices. Only finitely many samples occur in any fixed additive stage.
-Apply the joint-continuity criterion in (C.2.3.14), p. 679. This would
-decide whether replacing the finite factor alone suffices for the
-claimed topological inclusion, separately from entireness and descent.
+## The finite-only repair is not projectively continuous
+
+**Result:** For $F=\mathbb Q$ and $S=\{\infty,3\}$, set
+$E=\mathcal S_{00}(\mathbb R)$ with its induced Schwartz topology,
+$H=C_c^\infty(\mathbb Q_3^\times)$ with its usual locally convex LF
+topology, and $D=\mathcal S(\mathbb R\times\mathbb Q_3)$ with its
+additive Schwartz–Bruhat topology. The pointwise zero-extension map
+$T:E\otimes_\pi H\to D$ is defined on the algebraic tensor product but
+is **not continuous**. This is a second obstruction, not a restatement
+of the failure of pointwise extension on the original finite factor.
+
+**Printed source, checked on the pinned rendered pages:** (A.1.5.1),
+p. 543, identifies the $S$-adeles with the finite product, here
+$\mathbb R\times\mathbb Q_3$. (5.3.4.1), p. 259, uses $\otimes_\pi$,
+and the proof of Lemma 5.3.4.2(1), p. 260, uses completeness of that
+projective tensor product to argue closedness.
+The criterion surrounding (C.2.3.14), p. 679, requires joint continuity
+of the bilinear map, not merely separate continuity. In contrast,
+(2.1.4.1), p. 71, uses $\otimes_\iota$; Proposition 2.1.4.1(1)–(2)
+identifies the additive target with this tensor and gives its strict
+LF topology. Its proof on pp. 71–72 gives the finite-dimensional
+finite-factor stages tensored with the real Schwartz space. Proposition
+2.1.2.4 and Example 2.1.2.5, p. 64, give the additive compact support
+and congruence stages. Example 2.1.1.3, p. 60, gives the Schwartz
+seminorms; (5.3.3.10), p. 252, and Definition 5.3.4.1, p. 259,
+give the closed real subspace via flatness at zero in this model.
+In particular every smooth bump supported in $(1,2)$ is in $E$.
+Remark 2.1.3.3, p. 69, already distinguishes the two topologies for
+the full additive finite-adelic factor; it does not test this repair.
+
+**Additive LF test:** For $r,s\ge0$, use the additive stage with
+support in $3^{-r}\mathbb Z_3$ in the finite variable and invariance under
+$3^s\mathbb Z_3$. Its real Schwartz coordinates are indexed by the
+finite quotient $3^{-r}\mathbb Z_3/3^s\mathbb Z_3$. These stages are
+cofinal: Finite tests have compact support and a common open
+congruence subgroup of local constancy. Fix $t_0\in(1,2)$ and set
+$$
+q(\Phi)=\sup_{n\ge1}\left|\partial_x^n\Phi(t_0,3^{-n})\right|.
+$$
+On the $(r,s)$ stage only $1\le n\le r$ can contribute, and each
+contributing term evaluates a derivative at $t_0$ of one Schwartz
+coordinate. Thus $q$ is finite and is a continuous seminorm on each
+stage (zero for $r=0$). It is continuous on $D$ by the **locally
+convex** inductive-limit topology.
+
+**Projective test:** For the bilinear map $B(b,h)(x,y)=b(x)\widetilde h(y)$,
+where $\widetilde h$ is zero extension, take arbitrary zero neighborhoods
+$U\subset E$ and $V\subset H$. A basic neighborhood contained in $U$
+uses finitely many Schwartz seminorms, with real derivative orders at
+most $m$. Choose $n>m$ and $h_n=\mathbf1_{3^{-n}\mathbb Z_3^\times}$,
+a locally constant test on one compact open shell away from zero.
+Continuity of scalar multiplication lets us choose $a\ne0$ with
+$a h_n\in V$. For $\chi\in C_c^\infty((1,2))$ equal to $1$ near $t_0$,
+let
+$$
+b_\lambda(x)=c\lambda^{-m}\chi(x)e^{i\lambda(x-t_0)},\qquad \lambda\ge1.
+$$
+The weights are bounded on the fixed compact support, and the product
+rule bounds each tested weighted derivative independently of $\lambda$
+by a constant times $c$. Fix $c>0$ small enough for $b_\lambda\in U$
+for every $\lambda\ge1$. Since $\chi$ is identically $1$ near $t_0$,
+we have $|b_\lambda^{(n)}(t_0)|=c\lambda^{n-m}$. The shell contains
+exactly the $n$th sample among the $3^{-j}$, giving
+$$
+q(B(b_\lambda,a h_n))=|a|c\lambda^{n-m}\longrightarrow\infty.
+$$
+No product of zero neighborhoods maps into $\{q<1\}$. Thus $B$ is
+not jointly continuous at zero, and (C.2.3.14), p. 679, rules out
+continuity of $T$. The same proof works with the real factor unchanged
+and any non-Archimedean local field in place of $\mathbb Q_3$, using
+powers of a uniformizer. No feature of the residue size is used.
+
+**Control and scope:** On the single fixed shell line $\mathbb C h_1$,
+the map is jointly continuous into one additive stage, and $q$ there
+reduces to $|a|\,|b'(t_0)|$. For the usual LF topology of $H$, take
+finite-dimensional stages supported in $-r\le v_3(y)\le r$ and invariant
+under $1+3^j\mathbb Z_3$ for $j\ge1$. Their zero extensions land in the
+additive $(r,r+j)$ stage: For $y$ in the annulus and
+$\delta\in3^{r+j}\mathbb Z_3$, $\delta/y\in3^j\mathbb Z_3$, so
+$y+\delta=y(1+\delta/y)$ preserves both the annulus and the function;
+the complement is preserved too. On each such fixed stage $B$ is
+jointly continuous by its finite coordinates. On the full domain $B$
+is separately continuous: With the finite factor fixed it has
+finitely many Schwartz coordinates, and with the real factor fixed
+it is continuous on every LF stage of $H$. It follows that
+$E\otimes_\iota H\to D$ is continuous by the criterion at (C.2.3.22),
+p. 682. This is a topology repair, not a reading of (5.3.4.1). The
+test rules out the continuous inclusion
+needed for the projective-completeness argument in Lemma 5.3.4.2(1),
+even after repairing the finite factor. A continuous extension from
+the projective completion would restrict to the same impossible map.
+The test does not decide whether the repaired image is closed by
+another argument or prove entireness or character descent. The
+finite-local input remains the one in the
+[accepted residue audit](finite-local-zeta-residue.md).
+
+**Independent review:** Yah session `01a20200-e0f8-7ec2-acfd-a61b86a31e58`,
+agent `gENGQlD` (`tensor-topology-review`). The reviewer matched the
+source pin and independently inspected raster glyphs and prose at the
+cited loci. For the projective route, the reviewer confirmed the
+uncompleted $\otimes_\pi$ in (5.3.4.1), the real flatness condition,
+the joint-continuity requirement on p. 679, and the completeness use
+on p. 260, and checked the arbitrary-neighborhood oscillatory test.
+For the additive route, the reviewer confirmed the finite product,
+finite support and congruence stages, and $\otimes_\iota$/strict LF
+identification on pp. 71–72, and checked finiteness and LF continuity
+of $q$, the fixed shell line, and the separate-continuity repair.
+No decisive source reading remains provisional. This is reviewed
+mathematics, not Lean. The reviewer did not test closedness, entireness,
+or descent. The earlier printed-domain audit and finite residue audit
+are inherited, not redone.
+
+**Next bounded check:** In this same local model, test whether the
+image of $E\otimes_\iota H$ is exactly the common kernel in $D$ of
+$\Phi(x,0)$ for every $x$ and $\partial_x^j\Phi(0,y)$ for every $j\ge0$
+and $y$. Use the finite quotient stage containing $\Phi$ to turn this
+into coordinate conditions, including vanishing on the zero coset.
+This would decide closedness of the repaired image independently of
+projective completeness. Archimedean forward entireness, passage to a
+completed repaired tensor, and character descent are separate.
