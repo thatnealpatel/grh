@@ -133,13 +133,128 @@ local terms had already been reconciled. This audit does not decide
 the capped trace, the full-versus-capped zero sums, or the
 [conditional zeta endpoint](../../Proofs/Props/ZetaTestSumComparison.lean).
 
-**Next bounded source check (mapped):** On the same tests, compare
-rendered (12.4.1.1), p. 514, and the real term of (12.4.1.25) and
-(12.5.1.1), p. 519. Track the prime's reference to Proposition
-B.4.3.2 and the passage through $y\mapsto y^{-1}$, which preserves
-$|y|^{1/2}/|1-y|$ and $d\mu_\infty$. Check whether the real
-coefficient in the cited geometric derivation uses the printed
-full-Haar kernel or the defining negative Fourier pairing before
-the external $1/2$. This constrains what Chapter 13 can inherit from
-Chapter 12; it does not supply the global $s=2$ diagonal comparison
-or either spectral equality.
+## The Chapter 12 real coefficient
+
+**Verdict:** On the witness above, the sharp scalar displayed in
+(12.4.1.24), p. 518, has limit $+R(f)/2$. The real contribution in
+(12.4.1.25), p. 519, is $+R(f)/4$ using the **defined** prime.
+Substituting the **printed full-Haar kernel** (B.4.3.13), p. 619,
+reproduces the scalar coefficient but does not evaluate the defined
+prime. This is a discrepancy in the local inference, not a
+calculation of the Paley–Wiener trace or the global diagonal.
+
+**Domain and measures.** Theorem 12.4.1.1, p. 514, has the $S$-class,
+ramification, and outside-$S$ unit-invariance hypotheses. With
+$F=\mathbb Q$ and $S=\{\infty\}$ the ring in §A.1.5.1, p. 543, is
+$\mathbb Z$, so the class group is trivial, and there are no ramified
+finite places. The test factors smoothly through the positive norm
+coordinate, is invariant under the outside-$S$ units, and has compact
+support by the rational splitting in (A.2.2.2)–(4), p. 546; see the
+[accepted domain check](trace-moment-codimension-q.md). The rendered
+Theorem 12.5.1.1, p. 519, requires $\varphi(C_F^1)=0$, not just zero
+mass. The support gap ensures this, and the mass condition is for the
+shared Chapter 13 test. The band in the proof on p. 520 can be chosen
+with $T<2$. The local norms give zero restrictions at all finite
+places, as checked above; this does not evaluate the omitted finite
+orbital traces.
+
+Here $G=\mathbb R^\times$, $U=\{\pm1\}$, and $J_{F,S}=G/U$ by
+Remark 4.3.1.2, p. 175. Definition A.3.4.1, p. 561, gives the local
+product measures and disintegration against $dt/t$. For the quotient
+$J_{F,S}$, Proposition 12.2.2.2, p. 508, uses counting measure on the
+discrete subgroup and the quotient rule (D.1.2.1), p. 747. This uses
+the quotient specified by the measures, not the $C_{F,S}$ label in
+Definition A.3.4.1(3). The real Haar $dy/|y|$ is
+$dt/t$ on **each** ray by Definition A.3.2.2(1), p. 560, with
+Lebesgue self-dual for the real character (Example A.3.1.5, p. 557,
+and Remark A.3.4.2, p. 562). Its norm-one measure gives each of
+$\pm1$ mass one. Quotienting by **counting**, rather than probability
+Haar, on $U$ gives $dt/t$ on $J_{F,S}$, and hence
+$V=\overline\mu_{S,1}(J_{F,S}^1)=1$. The radial band on a single
+representative ray has measure $\log(\lambda\lambda')-\log|w|$.
+The $E_{S,0}$ of (A.2.4.5), p. 554, is a **norm-one** domain;
+the band calculation uses its radial extension (A.4.1.7), p. 563;
+see the [project scalar calculation](trace-scalar.md).
+Evaluating (12.4.1.24) as printed does not validate (12.4.1.23) with
+its domain literally restricted to $E_{S,0}$.
+
+**Scalar route.** Set $h(y)=f(\log|y|)$ and
+$\widetilde\varphi(y)=\mathbf{1}_{y>0}h(y)$. Its counting periodization
+is $h$, as required by (12.4.1.4), p. 515. In (12.4.1.17)–(21),
+p. 518, $c_S=1$ and
+$\eta_\xi(z)=|1+z|^{-1/2}\widetilde\varphi(\xi/(1+z))$.
+Sum over **both** signs, each once. The resulting additive test is
+$U_*(z)=|1+z|^{-1/2}h((1+z)^{-1})$, extended by zero near $-1$.
+It is smooth, compactly supported, and vanishes near $0$, as does
+each summand. Thus its Fourier transform is Schwartz with
+$\int\widehat U_*(w)\,dw=U_*(0)=0$. For $L=\lambda\lambda'$, the
+term $\log L\int_{|w|\le L}\widehat U_*\,dw$ tends to zero by rapid
+decay on the omitted tail. The log pairing converges absolutely,
+including at $w=0$. Therefore the sum of (12.4.1.24) tends to
+
+$$
+-V\int_{\mathbb R}\log|w|\widehat U_*(w)\,dw
+=\frac V2\int_{\mathbb R}\frac{U_*(z)}{|z|}\,dz
+=\frac{VR(f)}2.
+$$
+
+The middle equality uses the accepted `Masullo.real_log_fourier_off_zero`
+with the checked smoothness, compact support, and gap. Reversal of
+the Fourier sign would reflect $w$ and leave these even-weight
+integrals unchanged. For the last equality, set $y=1+z$ and invert
+$y\mapsto y^{-1}$, which preserves $dy/|y|$ and
+$|y|^{1/2}/|1-y|$. Inversion is not an assumption that $h$ itself is
+inversion invariant. This scalar and inversion calculation also works
+for any smooth compactly supported profile on the positive norm
+coordinate vanishing near norm one. The short band and the two unit
+masses are only for the common, nonzero, finite-term-free witness.
+
+**Two readings of the printed next step.** The rendered (12.4.1.25)
+uses $V\cdot\frac12\int'_{F_v^\times,\alpha_{v,0}}$ on the inverted
+restriction. Definition B.4.4.1, (B.4.4.1)–(2), pp. 619–620,
+identifies that prime with the same negative Fourier pairing on
+$U_*$. It is $R(f)/2$ *before* the exterior $1/2$. Substituting the
+right side of (B.4.3.13), p. 619, instead gives $-R(f)$ for the
+pairing and thus $+R(f)$ for the prime before the exterior $1/2$.
+The cited Lemmas B.4.4.3 and B.4.4.5, pp. 620 and 622, concern
+non-Archimedean places. Proposition B.4.3.2, p. 619, is the remaining
+cited dependency and contains the disputed display. Neither the
+norm-one quotient volume, inversion, nor a contact term supplies
+another factor of two here.
+
+The normalized (12.4.1.1), p. 514, and the geometric left side
+(12.5.1.1), p. 519, both retain $\frac12\int'$ with the uninverted
+restriction; neither display writes the character subscript. In the
+route from (12.4.1.25) the values are thus $R(f)/4$ with the definition
+and $R(f)/2$ with the kernel substitution. The reading $R(f)/2$ can
+be written as the **defined prime once** on this class; deleting the
+extra $1/2$ would repair this scalar comparison if the defined prime
+is used. This is not the Appendix B printed $\mathrm{PF}_0$ sign
+prescription. The no-extra-divisor (13.3.1.4), p. 522, agrees locally
+with this scalar on a definition-first reading, but this does not
+license subtracting the printed trace and explicit formulas. The
+claim on p. 520 after (12.5.1.1)–(3) about the global $S$-diagonal
+and two Mellin terms is a separate, still unproved identification.
+
+**Evidence and review.** The Chapter 12 displays and relevant
+normalization references were checked in rendered PDF crops of the
+pinned edition. Independent reader `tDvKqpX` separately checked the
+scalar via the integrated Laplace kernel
+$\int_0^\infty 2\,da/(a^2+4\pi^2z^2)=1/(2|z|)$, checked applicability
+of the accepted Lean endpoint to the defining prime at source base
+`958d16563bf172c9989f9270ac688c6c707bb0c6`, and checked the printed
+kernel substitution from rendered pp. 619–620. The three findings
+agree with the calculations above and do not identify the defining
+pairing with the printed right side. The reviewer also confirmed
+the quotient volume, statement hypotheses, and exterior halves on
+pp. 514 and 519. The earlier Chapter 13 domain and Appendix B sign
+findings above are inherited from their accepted notes. The scalar
+limit and test transport are informal; no Lean changed.
+
+**Next bounded check:** Extend the [accepted modulus-three witness](hecke-right-line-majorant.md#ramified-local-conductor-power-the-modulus-three-test)
+to the primitive $p^n$ unit shell $|p^n y|_p=1$ over $\mathbb Q_p$.
+At lower frequencies, use cancellation under the last reduction
+kernel; on the shell, use unit transport and finite Fourier
+inversion for nonvanishing. This would test whether conductor-shell
+scaling forces the power $p^{n(s-1/2)}$ in the local Mellin quotient
+beyond the single modulus-three case.
