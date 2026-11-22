@@ -100,8 +100,8 @@ writing $s=\sigma+it$.
   The proof uses the explicit Dirichlet product, not (B.6.1.35) or
   (B.6.1.45), and no bound on derivatives of $1/D$ is needed.
 
-For each $N\ge0$, the rapid decay of $\Phi$ on the closed strip gives
-one constant $C_N$ bounding $|s^N B(s)|$ on the two vertical edges
+For each $N\ge0$, the [converse target's uniform strip bounds](isotypic-good-heights-q-sqrt-minus-five.md#numerator-decay-from-the-converse-target)
+give one constant $C_N$ bounding $|s^N B(s)|$ on the two vertical edges
 and both horizontal edges at all sufficiently large good heights.
 On these edges use $s^N B=s^{N+1}\Phi/D$, so the extra power from
 regularization and the polynomial reciprocal bound are both absorbed
@@ -131,9 +131,11 @@ any bounded-width strip. Joining these estimates gives rapid decay
 on each closed strip strictly inside $\Re s<1$ as well. In either
 half-plane the estimates for values give estimates for every
 holomorphic derivative by Cauchy on fixed-radius circles in a
-slightly wider interior strip. This is the interior-strip Schwartz
-condition of Definition D.3.1.3, pp. 800–801 (provisional text
-reading), not a bound uniform up to $s=0$ or $s=1$.
+slightly wider interior strip. This uses the [rendered membership
+condition](isotypic-good-heights-q-sqrt-minus-five.md#rendered-source-and-scope)
+of Definition D.3.1.3, pp. 800–801, and Lemma D.3.1.2, p. 799, not a
+bound uniform up to the half-plane boundary or a claim about the
+sampled topology.
 
 Theorem 5.4.1.1(1), pp. 265–266, takes a pair in
 $AS(\mathbb C_{>0})\times AS(\mathbb C_{<1})$ and gives the exact
@@ -181,5 +183,4 @@ supplies the $m=0$ good-height estimate. The separate
 now bounds reciprocal derivatives in Lean at the same height and all
 centers of the closed segment. The reflected identity and the
 archimedean image criterion still need a formal model. The latter and the exact
-completed/local normalizations and Schwartz convention above still
-use provisional source readings.
+completed/local normalizations above still use provisional source readings.

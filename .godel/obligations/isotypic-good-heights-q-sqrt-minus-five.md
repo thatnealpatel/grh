@@ -266,7 +266,9 @@ bounds at arbitrary heights, on either full vertical line, through
 zeros, or for general Hecke characters. The all-prime identification
 on $\Re s>1$ is a separate accepted result, not a premise here.
 
-**Operator priority for the next Companion selection:** First [audit the numerator hypothesis](../frontier.md#one-cycle-operator-handoff-main-trace-test-and-companion-numerator-audit). Check the strip on which the manuscript imposes seminorms against the actual segment needed, including its ends. Preserve the following conditional calculation for after that audit.
+The [one-cycle numerator audit](#numerator-decay-from-the-converse-target)
+now supplies the rapid-decay premise on the whole closed segment.
+The following quotient step remains separate and was not executed.
 
 **Conditional successor:** For an entire numerator whose derivatives have
 uniform rapid decay on the closed strip, use the iterated Leibniz
@@ -282,6 +284,109 @@ the selected heights, not derive them from the printed test space.
 image criterion are not formalized here. The
 [inverse-range realization](isotypic-inverse-range-q-sqrt-minus-five.md)
 still uses provisional readings of the completed and complex local
-normalizations (pp. 123 and 129), the interior-strip Schwartz
-convention (pp. 800–801, Definition D.3.1.3), and the local image
-criterion (pp. 265–266, Theorem 5.4.1.1(1), (5.4.1.3)).
+normalizations (pp. 123 and 129) and the local image criterion
+(pp. 265–266, Theorem 5.4.1.1(1), (5.4.1.3)).
+
+## Numerator decay from the converse target
+
+**Result (ordinary mathematics, not Lean):** Masullo's stated
+underlying test space supplies uniform rapid decay of every numerator
+derivative on the full closed segment $[-1/2,2]+iT$, including both
+endpoint centers. It holds at **all** ordinates, so uses the same $T$
+as the reciprocal endpoint without changing its witness.
+
+### Rendered source and scope
+
+- Theorem 6.3.2.1(1), p. 304, (6.3.2.3), gives the nontrivial
+  $\chi|_{C_F^1}$ branch with target range
+  $L(s,\chi)\mathscr O(\mathbb C)\cap A\mathcal S(\mathbb C)$. The
+  converse input on p. 308, §6.3.2, likewise starts with
+  $\phi\in A\mathcal S(\mathbb C)$, with the $L$-divisibility condition.
+  It does not use either half-plane space as the input. The
+  [norm-one character check](isotypic-exhaustiveness-q-sqrt-minus-five.md#the-missing-valuations-and-the-target-character)
+  applies here: Adjusting a uniformizer idèle at the prime over $2$
+  to norm one at infinity preserves its character value $-1$.
+- Definition D.3.1.3, pp. 800–801, specifies the **underlying vector
+  space** $\mathcal S(\mathbb C_I)$ of holomorphic functions uniformly
+  Schwartz on bounded-width strips inside $\mathbb C_I$. The statement
+  of Lemma D.3.1.2, p. 799, spells out the condition: For each integer
+  $N\ge0$ and open interval $J$ with $\overline J\subset I$,
+  $s^N\phi(s)$ is bounded on $\mathbb C_J$ (here only bounded $J$ are
+  needed). For the full plane $I=\mathbb R$, every bounded closed
+  real-part interval lies strictly inside such a $J$.
+- The definition then **topologizes that space** by
+  $p_{m,N}(\phi)=\|(a_m+ix)^N\phi(a_m+ix)\|_{L^p(\mathbb R,dx)}$
+  for $1<p<\infty$ and $m,N\ge0$. Each such norm is finite by the
+  strip bounds at orders $N$ and $N+1$: On $|x|\le1$ use order $N$,
+  and on $|x|\ge1$ use order $N+1$ and $|a_m+ix|\ge |x|$.
+  These sampled norms are not a strip membership condition in place
+  of the stated one. Lemma D.3.1.2 states its topology comparison
+  for real sample lines accumulating at **both** ends of $I$; its
+  proof starts with $I=(0,+\infty)$ and positive rational samples.
+  The definition's literal “positive rational numbers as in Lemma
+  D.3.1.2” does not meet the left endpoint requirement for $I=\mathbb R$.
+  This is a mismatch in the topology prescription, not missing
+  negative-strip membership. The deduction below does not assert
+  the printed topology equivalence or require any sample sequence.
+
+### Fixed-radius check and quantifiers
+
+Fix any $\Phi\in A\mathcal S(\mathbb C)$, any $k\in\mathbb N$, and
+any real $P\ge0$. Put $N=\lceil P\rceil$ and
+$M_j=\sup_{-2<\Re z<4}|z^j\Phi(z)|$ for $j=0,N$. These are finite
+by membership on $J=(-2,4)$. For every real $T$ and
+$-1/2\le\sigma\le2$, the full closed radius-one disk about
+$s=\sigma+iT$ has real parts in $[-3/2,3]\subset J$. On its circle,
+$1+|T|\le2+|z|\le3\max(1,|z|)$. Cauchy's derivative estimate gives
+
+$$
+\sup_{-1/2\le\sigma\le2}|\Phi^{(k)}(\sigma+iT)|
+\le k!\,3^N\max(M_0,M_N)(1+|T|)^{-P}.
+$$
+
+The constant is fixed before $H$, $T$, and $\sigma$, and also works
+with $T^{-P}$ for the common selected $T\in(H,H+1)$, $H\ge1$.
+This includes $k=0$ and $P=0$. The argument works for any compact
+real-part interval by enlarging $J$, and for any holomorphic
+function with the value bounds on such a wider strip. It needs
+neither the global $L$-divisibility nor reciprocal bounds. A
+half-plane condition confined to the half-plane in question would
+not allow these full disks at every center of this segment.
+
+### Printed and corrected routes
+
+The printed p. 308 converse uses the full-plane input before making
+its separate principalizing choice of $S$. At $S=S_\infty$ the
+class group here is nontrivial, so that proof's choice cannot simply
+be made at the archimedean stage. The
+[inherited rendered denominator review](isotypic-inverse-range-q-sqrt-minus-five.md#printed-versus-corrected-denominators)
+identifies $L_S$ in (6.3.2.16)–(17), p. 309, as the retained product,
+not the omitted $L_f$ needed at $S_\infty$. The numerator estimate
+is a consequence of the stated target and applies before either
+choice of denominator. The [accepted Euler identity](isotypic-euler-factorization-q-sqrt-minus-five.md#checked-all-prime-grouped-identity)
+identifies $L_f$ on $\Re s>1$ with the explicit Dirichlet product
+used by the Lean reciprocal theorem. Its continuation is the
+**corrected** forward denominator, not the printed retained factor.
+This closes the numerator input for the repaired horizontal estimate
+and justifies the value premise used by the inverse-range repair.
+It does not check the literal quotient estimate, prove the topological
+embedding, or establish the local inverse-image criterion.
+
+**Review:** The worker and independent reviewer `zVHwESB` (transcript
+in Yah `01a20424-a50e-7585-9e51-357702c52d6b`) separately checked the
+rendered source in the pinned edition on pp. 304, 308, and 799–801,
+using grayscale pixel crops, not just extraction. The review
+confirmed the full-plane input, both endpoint conditions on the
+sample sequence, the proof's positive-half-plane specialization,
+and the separation of membership from topology. It also checked
+the applicability of the character and inherited denominator
+readings, the accepted Lean reciprocal signature, and the all-height
+Cauchy estimate. The reviewer did not reread the denominator
+formulas or reprove their identification. No reading needed for
+this scoped numerator verdict remains provisional.
+
+Selector Yah `01a20423-6e6f-75ec-b8da-7f06ab05ec1d`; worker Yah
+`01a20424-a50e-7585-9e51-357702c52d6b`.
+
+The one-cycle Companion assignment is complete. The conditional
+Leibniz successor above is parked, not executed in this audit.
