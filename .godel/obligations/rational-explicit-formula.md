@@ -1367,21 +1367,74 @@ Chapter 12 global geometric trace follows from this finite sum.
 Audit scope: `Theorems.RationalLocalRadialSum`, endpoints
 `rationalLocalRadialFourier` and `rationalLocalRadialFourier_tsum_eq_vonMangoldt`.
 
-### Next: Assemble the rational radial idelic explicit formula
+## Checked rational radial idelic explicit formula
 
-For smooth compact $F$, use $g(t)=e^{-t/2}F(t)$ in
-`completedZeta_contour_finite_places`. Replace the finite sample series
-by the canonical local Fourier sum and the reflected Gamma integral by
-minus the real local Fourier term via `real_log_profile_fourier_eq_neg_gamma`.
-Move both pole terms to the local side. Check that the Mellin pole values
-are the two log moments with weights $e^{\mp t/2}$, and transport them
-by `integral_rationalIdeleClass_logNorm` to the normalized idelic Haar
-measure. Retain the full open-strip analytic zero orders. State the
-identity with the exact real
-Fourier pairing and the finite terms, their convergence, and no further
-factor of $1/2$ on the real additive pairing. This gives the scalar
-rational, trivial-character case of (B.4.4.16), not the general
-number-field formula or a distribution-topology limit.
+[`rationalIdeleRadial_explicit_formula`](../../Proofs/Theorems/RationalIdeleRadialExplicitFormula.lean)
+proves the scalar rational, trivial-compact-character case of
+(B.4.4.16), p. 623, for smooth compact log profiles. With
+$\phi(c)=F(\log|c|)$ and $M_F(s)=\int\phi(c)|c|^{s-1/2}\,d\mu(c)$ on the
+actual rational idele class group, it proves
+
+$$
+\sum_{\rho}\operatorname{ord}_{\rho}(\zeta)M_F(\rho)
+ =M_F(0)+M_F(1)-D_{\infty}(F)-\sum_v D_v(F).
+$$
+
+The open-strip zero sum is absolutely summable, the normalized finite
+local values have finite support, and the real additive pairing is
+absolutely integrable. The per-place finite integrability statement is
+`rationalLocalRadialFourier_eq_primeSamples`. Both polar moments and
+all the zero pairings are integrals against `rationalIdeleClassHaar`.
+`rationalIdeleRadialMellin_eq_compactLogMellin` uses the checked log-norm
+pushforward to prove integrability and translate each pairing to
+$\Phi_g(s)$ with $g(t)=e^{-t/2}F(t)$, by (B.2.1.29), p. 598, and the
+norm-one volume convention (A.3.2.1), p. 560.
+
+Masullo gives both poles and prescribes counting zeros by order before
+(B.4.2.2), p. 614, but (B.4.4.16) does not display the order factor.
+Footnote 27, p. 625, asks for the passage between these formulas.
+Lean starts with `completedZeta_contour_finite_places`, substitutes
+`rationalLocalRadialFourier_tsum_eq_vonMangoldt` for the finite sum, and
+uses `real_log_profile_fourier_eq_neg_gamma` for the real term. The
+latter supplies the Fourier contact normalization and identifies the
+negative additive pairing with the normalized principal value. As
+extracted, (B.4.3.13), p. 619, purports to compute the positive
+logarithmic pairing but uses full Haar. Negating its right side gives
+twice the negative additive pairing of (B.4.4.1)–(2), including twice
+the contact term. Footnote 16 asks to recheck these coefficients.
+For the identification invoked in (B.4.4.20), p. 625, apply $1/2$
+to the sign-adjusted **full multiplicative Haar** expression, not to
+the already normalized additive pairing. The different correction of
+(B.4.4.21) is zero over $\mathbb Q$.
+
+Independent Yah `idelic-statement-review` checked this repaired scalar
+comparison, the sign and weights, and the scope against the
+digest-verified text extraction and accepted Lean dependencies.
+Audit scope: `Theorems.RationalIdeleRadialExplicitFormula`, with
+endpoints `rationalIdeleRadialMellin`,
+`rationalIdeleRadialMellin_eq_compactLogMellin`, and
+`rationalIdeleRadial_explicit_formula`.
+
+This checks scalar equality, not strong-dual convergence on
+$\mathcal D(C_F)$, ramified local terms, nontrivial compact characters,
+or the global geometric trace. Source locators are from the pinned text
+extraction; rendered-page verification remains open.
+
+### Next: Compare the actual global geometric contribution
+
+The rational radial comparison with (B.4.4.16) is no longer a premise
+for the [above-one control](trace-to-zeros.md#first-unmatched-geometric-evaluation-and-a-positive-log-control).
+At a common positive width and allowed Sobolev degree, take the
+profile $F=b'$ supported in $(0,\log 2)$ specified there. The idelic
+formula gives $M_F(0)+M_F(1)-D_\infty(F)$ on this support; the finite
+local sum vanishes by the support bound. For the **actual** globally
+lifted diagonal, justify the shell split of (11.3.1.4), p. 494, on this
+control and test the identification invoked on p. 520: With an
+independently justified zero orbital contribution it requires the
+$S$-piece to be $D_\infty(F)-M_F(0)-M_F(1)$. The checked scalar formula
+cannot supply that operator identification or its cutoff limits. In
+particular, it does not turn vanishing of finite local values into
+vanishing of orbital traces.
 
 ### Separate open obligation: Ramified calibration
 
