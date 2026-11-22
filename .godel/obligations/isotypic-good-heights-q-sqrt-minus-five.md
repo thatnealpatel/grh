@@ -220,6 +220,16 @@ checked the quantifier order, full closed disks, reuse of the height,
 and applicability of the inherited reading. No unverified manuscript
 normalization is used in the disk proof.
 
+Recovery session `01a203d3-a354-7089-ae50-bcb5f1d71d4d` adopted
+`edca34eca146e3f6340c7a7f05d8cf5a0a4308b3` after its exact-candidate
+`audit-local` passed the warning-as-error `Proofs` build, joint import,
+and kernel replay of `Theorems.IdealClassGoodHeightDisks`. The built
+`qSqrtNegFiveDirichletProduct_good_height_disks` matched the reviewed
+statement and used only `propext`, `Classical.choice`, and `Quot.sound`.
+A separate fresh import in the integration workspace applied it with
+both Dirichlet factors written out. Neither check assumes or proves a
+bound for higher derivatives.
+
 **Next check:** Apply the disk Cauchy estimate to $D^{-1}$ at each
 center. With the same $T$ and constants, the target for every natural
 $m$ is $|(D^{-1})^{(m)}(s)|\le m!\,C c^{-m} T^{A+Bm}$. The disk

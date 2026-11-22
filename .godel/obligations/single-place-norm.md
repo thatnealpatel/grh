@@ -918,8 +918,11 @@ unitary Hecke character and any fixed finite set `T`. Ramification
 coverage is needed for the Euler pairing, not for the estimate.
 
 This is the corrected fixed-Gaussian case of Theorem 2.2.3.4(1), p. 83,
-and the absolute-sum argument (2.2.3.8)–(13), pp. 83–84. The reading is
-provisional (pinned Markdown and numbered PDF layout, not rendered pages).
+and the absolute-sum argument (2.2.3.8)–(13), pp. 83–84. The printed
+endpoint bounds the absolute value of the periodization for a broader
+class of tests, not the sum of norms for this fixed test. Recovery
+reviewer `biWMteQ` checked this distinction and the scalar dilation on
+rendered crops of pp. 83–84 and 547; the original writer used PDF layout.
 The compact cover and uniform denominator replace the finite-radius
 prescription of Lemma 2.2.2.1(3), pp. 77–80. The scalar section of
 Lemma A.2.2.4, p. 547, gives radius `t^(1/[K:ℚ])`, not the `t` dilation
@@ -936,12 +939,20 @@ Independent Yah statement review: Session
 `01a2035d-857a-7830-b586-e74c4e7a0366`, child `review-rapid`
 (`STjFuEh`, read-only output `eaa6bc1c0085ead1a3feaec7a97ccf5ffe01bc89`).
 The review covers the endpoint, the weighted Gaussian bound, and the
-compact-coordinate bound. Replay on the integration candidate with:
+compact-coordinate bound. Recovery session `01a203d3-a354-7089-ae50-bcb5f1d71d4d`
+reviewed the final three-file assembly (`biWMteQ`) and adopted
+`c18f5d2f78a8d8df37b6c69129c8c021dcd10fca` after its `audit-local`
+passed: Warning-as-error `Proofs` build, joint import, and separate
+kernel replays of all three modules. The five built signatures matched
+the reviewed statements and used only `propext`, `Classical.choice`,
+and `Quot.sound`. To repeat on that proof revision:
 
 ```sh
 go run ./cmd/godel audit-local "$CANDIDATE" \
   Lemmas.IdeleHeckeGaussianDecay Lemmas.IdeleScalarArchimedeanBound \
   Theorems.IdeleClassGaussianRapidDecay -- \
+  Masullo.norm_finiteHeckeGaussian_le_one \
+  Masullo.exists_archimedeanHeckeGaussian_norm_mul_pow_le \
   Masullo.exists_ideleHeckeGaussian_norm_mul_pow_le \
   Masullo.exists_infinite_coordinate_ge_scaled_mixedEmbedding \
   Masullo.ideleHeckeGaussian_periodization_rapidDecay
