@@ -1487,34 +1487,76 @@ finite-idele quantifier, canonical Borel convention, finite support,
 inverse-ideal sign, and cancellation of the complex-place factors.
 The candidate was adopted without a restack (`stale: false`).
 
-**Next: Compute the finite Fourier factors of a translated box.** For
-$a\in\mathbf A_{K,f}$, $g\in\mathbf A_{K,f}^{\times}$ and $y\in K$,
-identify the actual local integral
+The [translated-box Fourier product](#checked-finite-fourier-product-of-a-translated-box)
+now uses this mass normalization.
+
+#### Checked finite Fourier product of a translated box
+
+For any number field $K$, center $a\in\mathbf A_{K,f}$, radius
+$g\in\mathbf A_{K,f}^{\times}$, and diagonal frequency $y\in K$, put
+$I=I(g)$ and let $x_0\in K$ lie in the box. Define the actual local integral
+$J_v(y)=\int_{a_v+g_v\mathcal O_v}\chi_v(y_vt)\,d\nu_v(t)$, using the
+positive finite kernel and the canonical Borel additive Haar measure.
+[`finiteBox_fourier_finprod`](../../Proofs/Theorems/FiniteBoxFourier.lean)
+proves that $J_v(y)=1$ away from finitely many places for **every** $y$, and
 
 $$
-\int_{a_v+g_v\mathcal O_v}\chi_v(y_vt)\,d\nu_v(t)
-= \chi_v(y_va_v)\,m_v(g)\,
-  1_{\{z:\,\chi_v(zg_v\mathcal O_v)=1\}}(y_v),
+\prod_{v<\infty}J_v(y)=
+\begin{cases}
+e^{2\pi i\operatorname{Tr}_{K/\mathbf Q}(x_0y)}
+/\operatorname{covol}_{\nu_\infty}(L_I), & y\in I^\vee,\\
+0, & y\notin I^\vee.
+\end{cases}
 $$
 
-where the set on the right is the local annihilator and the sign is
-positive by the corrected pairing used in the finite factors. Use
-translation invariance and the character integral over the measurable
-additive subgroup $g_v\mathcal O_v$. Example A.3.1.10, (A.3.1.8),
-p. 558 gives the centered integer-ring support, not this arbitrary
-translated and dilated integral. For diagonal $y$ the actual local
-integrals must equal one off finitely many places, **also** off the
-trace-dual support, to take a `finprod` without silently using its
-infinite-support default. Cofinite integrality of the diagonal $y$ and
-of the center, the finite-idele norm support, and the different support
-provide a candidate exceptional set. Then use
-`mem_traceDual_finiteIdeleIdeal_iff`, `finiteBox_tracePhase_eq_diagonal`,
-and the mass identity to evaluate the product as zero off $I^\vee$,
-or as the positive shift phase times the reciprocal trace-measure
-covolume on $I^\vee$.
+`exists_finiteBox_diagonalCoset` supplies a center representative satisfying
+this hypothesis. There is no restriction to principal ideals, unramified
+places, or integral radii. In particular the theorem includes the zero mode.
 
-The scalar product proved here is not a restricted-product measure or
-a global Fourier integral. Identifying that integral with the product,
-matching ordinary-volume Poisson to the trace-measure Archimedean
-Fourier integral, and applying the resulting inversion to the ramified
-Gaussian remain open.
+Masullo gives the centered local transform in Example A.3.1.10, (A.3.1.8),
+PDF p. 558, and the translated rational prime-power example in A.3.1.6,
+PDF p. 557. The product of local integrals appears in (2.2.4.32), p. 92;
+Theorem 2.2.3.2, p. 82, instead invokes adelic Riemann–Roch. The
+[corrected pairing](finite-diagonal-phase.md) uses the positive finite
+factors in the Fourier kernel. The arbitrary local box calculation
+needed here is `finiteCompletion_box_fourier`: Translate the set integral
+by Haar invariance, factor off the positive phase at the center, and apply
+character orthogonality on the measurable subgroup $g_v\mathcal O_v$.
+This gives phase times centered real Haar mass if the character is trivial
+on that subgroup, and zero otherwise. These readings are provisional:
+Pinned Markdown and numbered PDF layout, not rendered-page inspection.
+
+For finite multiplicative support, the proof uses cofinite integrality of
+$y_v$, $a_v$, and $g_v$ and cofinite unit mass. The local trace character
+of any completion integer is one by `finiteCompletion_traceChar_eq_one_of_integral`
+(trace commutes with localization). Thus one can use an actual zero factor
+to evaluate the product off $I^\vee$, rather than invoking `finprod`'s
+infinite-support default. On $I^\vee$, the checked trace-dual support, phase
+product, and centered-mass product give the formula.
+
+Replay at the landing for Yah session `01a20473-41ea-784a-b041-316d86880af7`
+(Lean `v4.36.0`, Mathlib `fc4f59e577feb1a4956671bc04ac18aaaf8cd842`):
+Build `+Lemmas.FiniteCompletionDiagonalSupport +Lemmas.FiniteCompletionBoxIntegral
++Theorems.FiniteBoxFourier` with `lake build --wfail`. In a fresh joint import
+of these modules, `#check @` and `#print axioms` the three named declarations.
+The session records the exact integration candidate, checks, and independent
+review `box-integral-review` (`QMraDyh`).
+
+**Next: Match the Archimedean Fourier normalization, then combine the box
+products with shifted lattice Poisson.** For $E$ the Euclidean mixed space,
+$\phi\in\mathcal S(E)$, and $y\in E$, prove that integrating
+$\phi(x)e^{-2\pi i\langle x,T_K y\rangle}$ in `archimedeanTraceMeasure K`
+gives $2^{r_2}\mathcal F_{\mathrm{vol}}\phi(T_K y)$, with
+$T_K=$ `archimedeanTraceFrequency K`. The source interface is Definition
+A.3.1.2(1)–(2), p. 556, and Example A.3.1.5, p. 557 (provisional).
+Use `inner_archimedeanTraceFrequency`, `Real.fourier_eq`, and
+`MeasureTheory.integral_smul_measure` in pinned Mathlib. Show the same
+factor converts the volume covolume to the trace covolume. Then apply
+`archimedeanIdeal_poisson` at the embedding of $x_0$, reindex the spatial
+series using `exists_finiteBox_diagonalCoset`, and use the finite product
+above to extend the dual series from $I^\vee$ by zero to $K$. Require
+absolute summability of both full diagonal series, with zero retained.
+This would identify the diagonal sums for one box tensor with the indicated
+product of Fourier integrals. A restricted-product additive measure and
+identification of the product with the actual **global** Fourier integral
+remain separate obligations, as does inversion for the ramified Gaussian.
