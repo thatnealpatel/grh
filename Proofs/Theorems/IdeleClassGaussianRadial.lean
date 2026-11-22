@@ -1,6 +1,7 @@
 module
 
 public import Theorems.DiscriminantNormalizedIdeleHeckeGaussian
+public import Theorems.IdeleClassGaussianRapidDecay
 public import Theorems.IdeleClassRadialMellin
 import all Theorems.IdeleClassRadialMellin -- For unfolding the norm-one pairing.
 import Lemmas.IdeleHeckeGaussianMeasurable
@@ -15,8 +16,14 @@ identifies the two Haar witnesses by the stage restrictions of (A.3.2.5),
 p. 560, and `measurable_ideleHeckeGaussian` supplies the pointwise Borel
 premise of the checked Weil integral. The raw discriminant factor is
 retained; the norm-one Haar is counting-normalized, not a probability.
-No continuation or decay estimate for the norm-one average is used. Source reading:
-Provisional, from pinned Markdown and numbered PDF layout.
+For the large-norm half of Theorem 2.2.5.4(2), (2.2.5.9), pp. 97–98,
+Masullo integrates the unaveraged bound against the finite norm-one Haar.
+Here `ideleHeckeGaussian_periodization_rapidDecay` supplies the repaired
+fixed-Gaussian unaveraged bound. The Borel periodization and that bound
+make each nonnegative-log slice integrable and bound its average using
+the same section and the exact mass from (A.3.2.1), pp. 559–560.
+This does not use small-norm inversion or prove continuation. Source
+reading: Provisional, from pinned Markdown and numbered PDF layout.
 -/
 
 open IsDedekindDomain MeasureTheory NumberField
@@ -75,6 +82,55 @@ private theorem twist_normOne (χ : HeckeCharacter (𝓞 K) K) (s : ℂ) (h : C�
   change χ (h : C) * (ideleClassNorm (h : C) : ℂ) ^ s = χ (h : C)
   rw [(mem_ideleClassNormOne (h : C)).mp h.property, Complex.ofReal_one, Complex.one_cpow, mul_one]
 
+section LargeNorm
+
+variable [∀ v : InfinitePlace K, MeasurableSpace v.Completionˣ]
+  [∀ v : InfinitePlace K, BorelSpace v.Completionˣ]
+  [MeasurableSpace (IdeleClassGroup (𝓞 K) K)] [BorelSpace (IdeleClassGroup (𝓞 K) K)]
+  [MeasurableSpace (ideleNormOne (K := K))]
+  [MeasurableSpace (ideleClassNormOne (K := K))] [BorelSpace (ideleClassNormOne (K := K))]
+
+/-- At every nonnegative log radius the fixed Gaussian slice is integrable
+for the counting-normalized norm-one Haar. Its pairing satisfies (2.2.5.9)
+with the uniform unaveraged majorant times the actual quotient mass. -/
+public theorem ideleHeckeGaussian_radialPairing_rapidDecay
+    (χ : HeckeCharacter (𝓞 K) K) (hχ : ∀ a : C, ‖χ a‖ = 1)
+    (T : Finset V) (ν : Measure I₁) (v : InfinitePlace K) (r : ClassGroup (𝓞 K) → I₁)
+    (hη₁ : (η₁ ν v r).IsHaarMeasure) {F : C → ℂ} (hF : Measurable F)
+    (hperiod : ∀ g : I, F (q g) = ∑' a : Kˣ, ideleHeckeGaussian χ hχ T (d a * g))
+    (N : ℕ) :
+    ∃ A : ℝ, 0 < A ∧ ∀ u : Multiplicative ℝ, 0 ≤ u.toAdd →
+      Integrable (fun h : C₁ ↦ F (τ (u, h)) * χ (h : C)) (η₁ ν v r) ∧
+      ‖ideleClassRadialPairing (η₁ ν v r) F χ.toMonoidHom u‖ ≤
+        A * Real.exp (-(N : ℝ) * u.toAdd) * (η₁ ν v r).real Set.univ := by
+  let : CompactSpace C₁ := (compactHausdorff_ideleClassNormOne (K := K)).1
+  let : (η₁ ν v r).IsHaarMeasure := hη₁
+  obtain ⟨A, hA, hbound⟩ := ideleHeckeGaussian_periodization_rapidDecay χ hχ T N
+  refine ⟨A, hA, ?_⟩
+  intro u hu
+  have hslice : Measurable (fun h : C₁ ↦ F (τ (u, h)) * χ (h : C)) :=
+    (hF.comp ((τ).continuous.measurable.comp (measurable_const.prodMk measurable_id))).mul
+      (χ.continuous.comp continuous_subtype_val).measurable
+  -- The original section gives norm `exp u`; unitary weighting costs nothing.
+  have hmajor (h : C₁) : ‖F (τ (u, h)) * χ (h : C)‖ ≤ A * Real.exp (-(N : ℝ) * u.toAdd) := by
+    obtain ⟨g, hg⟩ := (QuotientGroup.mk_surjective : Function.Surjective (q : I → C)) (τ (u, h))
+    have hnorm : ideleNorm g = Real.exp u.toAdd := by
+      rw [← ideleClassNorm_mk g, show QuotientGroup.mk g = τ (u, h) from hg,
+        ideleClassLogSplit_apply, map_mul, ideleClassNorm_logSection,
+        (mem_ideleClassNormOne (h : C)).mp h.property, mul_one]
+    obtain ⟨hsum, hsumBound⟩ := hbound g (hnorm ▸ Real.one_le_exp_iff.mpr hu)
+    rw [norm_mul, hχ, mul_one, ← hg]
+    change ‖F (q g)‖ ≤ _
+    rw [hperiod]
+    refine (norm_tsum_le_tsum_norm hsum).trans ?_
+    simpa only [hnorm, zpow_neg, zpow_natCast, ← Real.exp_nat_mul, neg_mul, Real.exp_neg]
+      using hsumBound
+  -- Integrate on the compact norm-one group without changing its scale.
+  refine ⟨Integrable.of_bound hslice.aestronglyMeasurable _ (Filter.Eventually.of_forall hmajor), ?_⟩
+  exact norm_integral_le_of_norm_le_const (Filter.Eventually.of_forall hmajor)
+
+end LargeNorm
+
 variable [∀ v : InfinitePlace K, MeasurableSpace v.Completionˣ]
   [∀ v : HeightOneSpectrum (𝓞 K), MeasurableSpace (v.adicCompletion K)ˣ]
   [∀ v : HeightOneSpectrum (𝓞 K), MeasurableSpace (v.adicCompletionIntegers K)ˣ]
@@ -89,7 +145,8 @@ variable [∀ v : InfinitePlace K, MeasurableSpace v.Completionˣ]
 /-- One corrected Gaussian and one counting-normalized periodization realize
  the completed Euler product (with the raw discriminant factor) by radial
  Mellin integration for every `Re s > 1`. The restriction of the twist to
- norm-one classes is independent of `s`. -/
+ norm-one classes is independent of `s`. The same slice is integrable at
+ every nonnegative log radius, with a bound using the exact mass below. -/
 public theorem exists_discriminantNormalizedIdeleHeckeGaussian_radialMellin
     (χ : HeckeCharacter (𝓞 K) K) (hχ : ∀ a : C, ‖χ a‖ = 1)
     (v : InfinitePlace K) (r : ClassGroup (𝓞 K) → I₁)
@@ -111,6 +168,10 @@ public theorem exists_discriminantNormalizedIdeleHeckeGaussian_radialMellin
       (η ν v r).IsHaarMeasure ∧
       Measurable F ∧ (∀ x, F (q x) = ∑' a : Kˣ, ideleHeckeGaussian χ hχ T (d a * x)) ∧
       (∀ᵐ u ∂logVolume, Integrable (fun h : C₁ ↦ F (τ (u, h)) * χ (h : C)) (η₁ ν v r)) ∧
+      (∀ N : ℕ, ∃ A : ℝ, 0 < A ∧ ∀ u : Multiplicative ℝ, 0 ≤ u.toAdd →
+        Integrable (fun h : C₁ ↦ F (τ (u, h)) * χ (h : C)) (η₁ ν v r) ∧
+        ‖ideleClassRadialPairing (η₁ ν v r) F χ.toMonoidHom u‖ ≤
+          A * Real.exp (-(N : ℝ) * u.toAdd) * (η₁ ν v r).real Set.univ) ∧
       ∀ s : ℂ, 1 < s.re →
         Integrable (fun g ↦ F g * (χ g * (ideleClassNorm g : ℂ) ^ s)) (η ν v r) ∧
         let M (u : Multiplicative ℝ) := (χ (τ (u, 1)) * Complex.exp ((u.toAdd : ℂ) * s)) *
@@ -177,7 +238,8 @@ public theorem exists_discriminantNormalizedIdeleHeckeGaussian_radialMellin
     exact ⟨F, hF, hperiod, hslice, hFi, hM, hInt.trans hval⟩
   -- The Borel periodization is determined at every class, independent of `s`.
   obtain ⟨F, hF, hperiod, hslice, _⟩ := hpair 2 (by norm_num)
-  refine ⟨T, μ, ν, F, hT, hμ, hstage, hν, hsplit, hη₁, hmass, hη, hF, hperiod, hslice, ?_⟩
+  have hlarge := ideleHeckeGaussian_radialPairing_rapidDecay χ hχ T ν v r hη₁ hF hperiod
+  refine ⟨T, μ, ν, F, hT, hμ, hstage, hν, hsplit, hη₁, hmass, hη, hF, hperiod, hslice, hlarge, ?_⟩
   intro s hs
   obtain ⟨G, _, hG, _, hGi, hM, hInt⟩ := hpair s hs
   have heq : G = F := by

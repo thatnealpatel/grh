@@ -839,8 +839,10 @@ implements (3.2.2.5), pp. 125, 127, for the corrected Gaussian tensor
 of Definition 3.4.3.2, p. 152. One exceptional set, one upstairs Haar,
 one norm-one Haar, and one Borel principal periodization work for all
 `Re s > 1`. The principal formula holds as a totalized `tsum` at every
-representative, while norm-one slice integrability holds almost
-everywhere. This does not assert everywhere absolute summability.
+representative. Norm-one slice integrability holds almost everywhere on
+the full log line and at every nonnegative log radius by the
+[large-norm slice bound](#checked-pointwise-large-norm-gaussian-slices).
+This does not assert everywhere absolute summability below norm one.
 
 At (3.2.2.11), p. 127, the upstairs measure in Weil must be the one in
 the Euler calculation. `exists_discriminantNormalizedIdeleHaar`
@@ -958,21 +960,66 @@ go run ./cmd/godel audit-local "$CANDIDATE" \
   Masullo.ideleHeckeGaussian_periodization_rapidDecay
 ```
 
-**Next Lean obligation:** Use the existing Borel periodization and the
-finite norm-one quotient mass to turn the uniform bound into integrable
-slices at every log radius `x ≥ 0`, not just almost everywhere. Bound the
-absolute norm-one pairing by the uniform majorant times the exact quotient
-mass, using the unchanged section and measures of the radial identity.
-The relevant manuscript passage is Theorem 2.2.5.4(2), (2.2.5.9), PDF p. 97,
-and its proof on p. 98, which explicitly uses compact Radon mass with the
-unaveraged bound.
+### Checked pointwise large-norm Gaussian slices
 
-**Small-norm obligation:** On the provisional text reading, the use of
+[`ideleHeckeGaussian_radialPairing_rapidDecay`](../../Proofs/Theorems/IdeleClassGaussianRadial.lean)
+implements the large-norm half of Theorem 2.2.5.4(2), (2.2.5.9), PDF
+p. 97. Masullo's proof on p. 98 uses compactness, finite Radon Haar,
+and the unaveraged estimate. Here the repaired Gaussian estimate
+applies at every idele representing `τ (u, h)` because its norm is
+`exp u.toAdd` for every norm-one class `h`. Borel measurability and the
+unit norm of the unbarred character give an integrable slice at every
+`u.toAdd ≥ 0`, including zero. Integration bounds the norm of the
+pairing by the same unaveraged majorant `A * exp (-N * u.toAdd)` times
+`(η₁ ν v r).real Set.univ`, not by a probability mass. The proof uses
+no new argument for the compact representative cover or rapid decay.
+
+The strengthened `exists_discriminantNormalizedIdeleHeckeGaussian_radialMellin`
+instantiates the result on the *same* `T`, Borel periodization, and
+counting-normalized quotient Haar as the radial formula for `Re s > 1`.
+Its adjacent exact mass equality (A.3.2.1), pp. 559–560, gives the real
+mass in the bound by applying `ENNReal.toReal`. The single-place section
+(A.2.2.10), p. 547, the upstairs measure, the unrestricted a.e. slice
+statement, and the Mellin formula (3.2.2.5), pp. 125, 127, are unchanged.
+
+Independent Yah statement review: Session
+`01a203dd-16b9-7deb-9524-c06e0a30dbeb`, child `review-large-slice`
+(`gRGHhfq`, read-only output `ac3e56b6368c94fbc0dfed705d91074aec021ef2`).
+The review confirmed both endpoint statements, the finite-mass premise,
+and the scope of the zero-mode issue. Both readers used pinned Markdown
+and numbered PDF layout, not rendered pages; the reading is provisional.
+Exact-candidate replay:
+
+```sh
+go run ./cmd/godel audit-local "$CANDIDATE" \
+  Theorems.IdeleClassGaussianRadial -- \
+  Masullo.ideleHeckeGaussian_radialPairing_rapidDecay \
+  Masullo.exists_discriminantNormalizedIdeleHeckeGaussian_radialMellin
+```
+
+### Next: Pointwise theta inversion before small-norm averaging
+
+Neither the large-norm bound nor the above-one Mellin identity proves
+continuation, RH, or GRH. On the provisional text reading, the use of
 Theorem 2.2.3.4(3), p. 83, on pp. 126–127 requires both zero modes to
 vanish. A nontrivial norm-one character cannot suppress the term
 `t⁻¹ f̂(0)` in the absolute value of the *unaveraged* class integrand.
-Prove inversion with both zero modes and show that they cancel after
-integration against a nontrivial norm-one character, as required by
-Theorem 2.2.5.4(2), (4), pp. 97–98. For a trivial norm-one restriction,
-retain the two terms and compute their Mellin contributions instead.
-Analytic agreement must start on the common domain `Re s > 1`.
+Prove the actual pointwise inversion (2.2.3.2), p. 82, for the corrected
+Gaussian with a compatible Fourier normalization, retaining
+`t⁻¹ f̂(0) - f(0)`. Then integrate against the norm-one character; only
+there do both terms cancel for a nontrivial restriction, as required
+by (2.2.5.10), (2.2.5.12), pp. 97–98. For a trivial restriction, retain
+the two terms and compute their Mellin contributions instead. Analytic
+agreement must start on the common domain `Re s > 1`.
+
+A runnable Fourier prerequisite is the local integral-ball annihilator
+in Example A.3.1.10, (A.3.1.8), p. 558 (provisional Markdown and layout).
+For each actual finite completion `Kᵥ`, define the continuous additive
+character by composing the checked `ℚₚ` phase, with the finite sign
+from the [rational diagonal test](theta-inversion-q.md#rendered-sign-check-a-translated-box-breaks-the-printed-theta-identity),
+with the local trace. Show `ψᵥ(x * y) = 1` for every `y ∈ Oᵥ` iff `x`
+is in the local trace dual, using the exact `ℤₚ` kernel and
+`finiteCompletion_traceDual_eq_span_globalCodifferent`. This supplies
+the support and orthogonality input for the integral-ball transform;
+it does not compute the transform, normalize additive Haar, or supply
+global Poisson summation.
