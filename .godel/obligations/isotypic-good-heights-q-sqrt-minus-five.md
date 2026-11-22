@@ -178,10 +178,13 @@ The upper-growth premise is discharged for the explicit product:
   applies the conditional endpoint at $H_0=1$ with this bound.
 
 There is no growth hypothesis left for the explicit product. The
-next separate check needed to transfer it to the actual Hecke
-function in Lean is the [grouped local polynomial identity](isotypic-euler-factorization-q-sqrt-minus-five.md)
-for the constructed class character at **every** rational prime,
-including the field-ramified primes $2$ and $5$. This result is only
+transfer to the actual Hecke function in Lean still requires the
+[grouped local polynomial identity](isotypic-euler-factorization-q-sqrt-minus-five.md)
+for the constructed class character at **every** rational prime. The
+[split-prime sign](../../Proofs/Theorems/IdealClassSplitPrimeSign.lean)
+is now checked given the class-group inputs. The next separate check
+is to identify the places over $2$ and $5$ and show that their local
+factors survive for the idelic character. This result is only
 for the reciprocal itself, not its derivatives. The [inverse-range realization](isotypic-inverse-range-q-sqrt-minus-five.md)
 still uses provisional readings of the completed and complex local
 normalizations (pp. 123 and 129), the interior-strip Schwartz

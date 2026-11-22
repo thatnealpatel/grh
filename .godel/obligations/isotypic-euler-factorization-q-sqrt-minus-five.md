@@ -15,8 +15,12 @@ The digest-matched [edition](../sources/masullo/README.md), Definition
 $\prod_{v\in\Sigma_{F,f}-S_\chi}(1-\chi(\mathfrak p_v)(N\mathfrak p_v)^{-s})^{-1}$.
 In §3.2.1, p. 122, $S_\chi$ is the set of finite places where **$\chi$**
 is ramified, and $\chi(\mathfrak p_v)$ is evaluation at a local
-uniformizer when unramified. The product and the character-ramification wording were inspected
-in rendered pixel crops. Since a local unit has
+uniformizer when unramified. The earlier source review inspected both the
+product and the character-ramification wording in rendered pixel crops.
+The split-sign review independently confirmed (3.2.1.7), p. 124, and the
+retained $L_S$ in (6.3.2.16)–(17), p. 309, on the rendered pages.
+The sign computation below concerns the finite product in the repair, not
+the retained product in those two fractions. Since a local unit has
 zero finite ideal valuation, the ideal-class character is trivial on
 all local units, including those above $2$ and $5$. Thus $S_\chi$ is
 empty. The single-place uniformizer has ideal class $[\mathfrak p_v]$
@@ -84,10 +88,26 @@ meromorphic continuation of $L_f(s,\chi)$ from that half-plane.
 
 ## Lean scope and next check
 
-The modular arithmetic and class-group argument above are ordinary
-mathematics. The grouped local polynomial identity for the actual
-quadratic class character, including its construction on idèle classes,
-is still a Lean premise. [`HeckeDirichletFactorization`](../../Proofs/Theorems/HeckeDirichletFactorization.lean)
+The split-prime class sign is now proved for the actual ring of
+integers in [`IdealClassSplitPrimeSign`](../../Proofs/Theorems/IdealClassSplitPrimeSign.lean).
+`Masullo.qSqrtNegFiveIntegersEquiv` identifies the full ring of integers
+with the order of discriminant $-20$, and
+`Masullo.qSqrtNegFive_split_isPrincipal_iff` proves the norm test above.
+It takes the two-class dichotomy and a norm-two prime representative as
+inputs. It derives the ideal norm $p$ from residue degree one, and
+obtains integral generators of norm $p$ and $2p$ in the two branches
+from principality and multiplicativity of the ideal norm. The
+congruences then give $1$ and $3$ modulo $4$, respectively.
+`Masullo.qSqrtNegFive_split_classCharacter` evaluates any class-group
+character normalized to be $-1$ on the representative as the existing
+`dirichletNegFour` at each odd degree-one place, in particular at both
+places of an odd split prime. At $5$ this would apply once its degree-one
+place is identified; the lemma does not prove that identification or the
+local factor.
+
+The grouped local polynomial identity for the actual quadratic class
+character, including its construction on idèle classes, is still open
+in Lean. [`HeckeDirichletFactorization`](../../Proofs/Theorems/HeckeDirichletFactorization.lean)
 proves `Masullo.finiteHeckeCharacterEulerProduct_eq_dirichlet_of_local`
 by regrouping the convergent product over the finite fibers of
 contraction to $\mathbb Z$ and evaluating the local polynomials at
@@ -112,9 +132,12 @@ provisional completed and complex local normalizations on pp. 123 and
 129, and the compact-strip Schwartz convention, Definition D.3.1.3,
 pp. 800–801, identified in its [holomorphy section](isotypic-inverse-range-q-sqrt-minus-five.md#holomorphy-and-overlap).
 
-**Open Lean premise for the Hecke transfer:** Construct the actual
-class character on idèle classes and instantiate the all-prime grouped
-polynomial identity using the norm test above. Start with the split-prime
-sign from the norm congruences and check the two ramified factors
-separately. The explicit product's circle growth and common-height
-estimate are already unconditional in Lean.
+**Open Lean premise for the Hecke transfer:** Instantiate the all-prime
+grouped polynomial identity for a constructed idèle-class character.
+The split sign is available under the stated class-group inputs. Next,
+identify the unique primes and residue norms above $2$ and $5$ and check
+their surviving local factors, including triviality on local units for
+the idelic realization. The class-group inputs, the split/inert relation
+to the Dirichlet signs, and the inert case also remain to be discharged.
+The explicit product's circle growth and common-height estimate are
+already unconditional in Lean.

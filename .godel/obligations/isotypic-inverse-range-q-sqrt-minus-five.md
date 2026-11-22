@@ -170,8 +170,12 @@ The [finite Euler factorization](isotypic-euler-factorization-q-sqrt-minus-five.
 identifies $D=L(\cdot,\chi_{-4})L(\cdot,\chi_5)$ by a prime-by-prime
 class-norm proof in ordinary mathematics. Lean proves the entire
 Dirichlet product and the comparison with the accepted Hecke product
-conditional on the grouped local polynomial identity. The actual
-class-character specialization of that identity is not yet in Lean.
+conditional on the grouped local polynomial identity. The
+[split-prime sign theorem](../../Proofs/Theorems/IdealClassSplitPrimeSign.lean)
+now checks the ideal-level norm test given the two-class dichotomy and
+norm-two representative. The full class-character specialization is
+not yet in Lean. Next, identify the places over $2$ and $5$ and check
+their factors for the idelic realization.
 
 The [horizontal reciprocal estimate](isotypic-good-heights-q-sqrt-minus-five.md)
 is now unconditional in Lean for the explicit denominator $D$. Five
