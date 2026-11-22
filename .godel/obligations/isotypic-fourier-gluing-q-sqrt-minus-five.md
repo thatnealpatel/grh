@@ -150,7 +150,7 @@ U_{S,\chi}=0$ on the projected quotient: Keep the printed forward
 multiplier and multiply the printed reflected multiplier by $E(s)$.
 This change preserves the half-plane Schwartz spaces and the
 multiplier's image topology, since $E$, $E^{-1}$, and their derivatives
-are bounded on each bounded-width vertical strip. It repairs the
+are bounded on each bounded-width vertical strip. This check repairs the
 Mellin gluing step; it does not on its own identify the converse range.
 
 The proof chooses $S$ with trivial localized Picard group and $\chi$
@@ -162,13 +162,10 @@ the proof's large-stage choice. The smaller stage, despite the forward
 isomorphism, requires the corrected multiplier. This does not disprove
 the theorem or rule out its proof at a sufficiently large stage.
 
-**Next:** Test the inverse range lift on pp. 308–309, not the forward
-insertion again. For a target $\Phi\in L(s,\chi)\mathcal O(\mathbb C)
-\cap AS(\mathbb C)$, the small-stage candidate pair is
-$\Phi(s)/L_f(s,\chi)$ and $\Phi(s)/(E(s)L_f(1-s,\chi))$. Check the
-half-plane Schwartz bounds for these quotients (especially division
-near zeros), and then the exact image criterion in Theorem 5.4.1.1.
-The candidate need only be holomorphic in the respective open
-half-planes; continuation may have the local poles at $0,1$. This is
-separate from assuming both local moments zero or importing the
-principalizing-stage inverse lift unchanged.
+**Follow-up:** The [corrected inverse-range proof](isotypic-inverse-range-q-sqrt-minus-five.md)
+uses these two multipliers to lift every target in the claimed range
+at $S_\infty$. It propagates rapid decay through zeros by maximum
+modulus at separated heights, and applies (5.4.1.3) to the resulting
+pair. It also checks the omitted-to-retained denominator switch in
+the rendered pp. 308–309, separately from the provisional source
+reading in this note.

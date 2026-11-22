@@ -207,5 +207,8 @@ insertion factor does not suffice for the reflected leg: The Fourier
 transforms of the omitted unit balls over $2$ and $5$ contribute
 $20^{1/2-s}$. The continued finite factors cancel the local poles at
 $s=0,1$ without local moment vanishing, but the printed uncorrected pair
-does not glue. The repaired small-stage inverse range lift is the next
-obligation.
+does not glue. The [inverse-range repair](isotypic-inverse-range-q-sqrt-minus-five.md)
+now proves the arbitrary-target lift at this stage by using separated
+heights and the local image criterion. The endpoint regularization
+multiplies the forward quotient by $s$ for the estimate only; the test
+lift does not impose local zero-mode vanishing.
