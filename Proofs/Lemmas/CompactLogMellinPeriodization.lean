@@ -14,7 +14,7 @@ removal or identify an adelic lift.
 -/
 
 open ContinuousMap Function MeasureTheory Set TopologicalSpace
-open scoped FourierTransform
+open scoped ContDiff FourierTransform
 
 namespace Masullo
 
@@ -133,6 +133,20 @@ private theorem logDifferencePrimitive_eqOn_finset {L : ℝ} (hL : 0 < L) {g : �
   refine ⟨hf.toFinset, fun x hx ↦ tsum_eq_sum (fun k hk ↦ ?_)⟩
   by_contra h
   exact hk (hf.mem_toFinset.mpr ⟨x, hx, by simpa only [Int.cast_natCast] using h⟩)
+
+/-- For a compactly supported profile, the forward translate sum preserves
+`C^n` regularity, independently of whether the periodization vanishes. -/
+public theorem contDiff_logDifferencePrimitive {L : ℝ} (hL : 0 < L) {g : ℝ → ℂ}
+    {n : ℕ∞ω} (hg : ContDiff ℝ n g) (hc : HasCompactSupport g) :
+    ContDiff ℝ n (logDifferencePrimitive L g) := by
+  refine contDiff_iff_contDiffAt.mpr fun x ↦ ?_
+  obtain ⟨s, heq⟩ := logDifferencePrimitive_eqOn_finset hL hc
+    (isCompact_Icc (α := ℝ) (a := x - 1) (b := x + 1))
+  have hsum : ContDiff ℝ n (fun y : ℝ ↦ ∑ k ∈ s, g (y + (k : ℝ) * L)) :=
+    ContDiff.sum fun k _ ↦ hg.comp (contDiff_id.add contDiff_const)
+  apply hsum.contDiffAt.congr_of_eventuallyEq
+  filter_upwards [Icc_mem_nhds (show x - 1 < x by linarith) (show x < x + 1 by linarith)]
+    with y hy using heq hy
 
 /-- Zero periodization makes the forward translate sum a continuous, compactly
 supported primitive for the difference with its translate by `L`. -/

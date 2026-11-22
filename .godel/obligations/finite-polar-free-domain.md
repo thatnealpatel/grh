@@ -400,19 +400,43 @@ elaboration. The same owning transcript records the integrated candidate,
 warning-free build, fresh joint-import signature and axiom checks, and
 the $\log 3$ composition.
 
-**Next bounded check (formalization only).** Prove smoothness of the
-same primitive for smooth compactly supported $g$. The private
-`logDifferencePrimitive_eqOn_finset` already identifies $q$ with a
-finite sum on each compact interval, under $L>0$ and compact support
-alone. In the same module, reuse this equality on a neighborhood of
-each point and check the smoothness of the translated finite sum and
-its transfer to $q$. Neither zero periodization nor the stronger
-`LogWeightedSchwartz` hypotheses of `logPeriodization_smooth` are
-needed for that step. This is the smoothness argument in the
-[compact-log difference calculation](trace-orbital-q.md#which-quotient-is-closed),
-with no new numbered manuscript dependency. Transport to the positive
-ray, assembly of the adelic lift, and the residue and pole-removal
-identifications remain separate Lean obligations.
+**Checked regularity of the compact-log primitive (Lean).**
+[`Masullo.contDiff_logDifferencePrimitive`](../../Proofs/Lemmas/CompactLogMellinPeriodization.lean)
+shows that $q$ is $C^n$ whenever $g$ is $C^n$ and compactly supported,
+for every $L>0$ and every Lean order `n : ℕ∞ω`, including `∞`. There
+is no periodization hypothesis. On $[x-1,x+1]$ the existing finite-sum
+lemma identifies $q$ with a finite sum of translates, so local
+congruence transfers regularity at $x$. At $L=\log 3$, the owning
+check composes with `logDifferencePrimitive_spec` to prove that the
+same $q$ is smooth, compactly supported, and satisfies the signed
+difference equation, both from zero periodization and from vanishing
+Mellin samples via Fourier uniqueness. This is a formalization of the
+repair above, not a new reading or a proof of the printed reverse
+inference.
+
+**Regularity evidence.** `compact-log-smooth-review` (`gZvhKby`,
+transcript Yah `01a20575-1bb8-74c4-a403-13019610c816`) checked the
+statement, finite-sum reduction at arbitrary order, and applicability
+of the specification at $\log 3$ against accepted source
+`f756d0d91416bdec74ebae6e327d7f8fb50de81f` and pinned Mathlib.
+This was exact-source review, not elaboration. The owning checks are
+in the same Yah session: Integrated build, fresh joint-import
+signatures and axioms, and the two $\log 3$ compositions.
+
+**Next bounded check (formalization only).** Transport a smooth,
+compactly supported $q$ to the real test $b(t)=q(\log t)$ for $t>0$
+and zero otherwise. Prove smoothness and bound its support in
+$[e^u,e^v]\subset(0,\infty)$ for a log support interval $[u,v]$.
+`RealLogProfileHaar.additive_test` has the corresponding local proof
+for the translated, even, weighted profile; its proof-local support
+bounds provide the positive-ray calculation after undoing the
+translation and dropping the negative ray and weight, but that
+public endpoint does not establish this unweighted one-sided test.
+For the difference equation, substitute $x=\log t$ into the checked
+log equation and use $\log(3t)=\log t+\log 3$, the same change of
+variables as in `logPeriodization_eq_monogenic`. No new numbered
+manuscript dependency enters this transport. Assembly of the adelic
+lift and identification and removal of poles remain separate.
 
 ## The finite-only repair is not projectively continuous
 
