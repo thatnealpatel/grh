@@ -77,3 +77,35 @@ a build when a concurrent move is plausible. For the optional cache,
 require successful `--name-only` and empty output on unchanged tracked
 inputs, not empty `--stat`. No polling, new executable, relaxation of
 the required checks, or live A/B test.
+
+## Live follow-up: Symmetric horizontal edges
+
+Run `01a2058c-622b-7dd6-830a-9684582e56e2` matches Yah
+`01a2058c-63bf-78c1-bd98-d2a8c5468afc` by stdin and stdout (seqs. 3,
+105). The launch archive and starting tip were both
+`b22f627f46435575506d7f23195a469516f80312`. This work used the
+intervening improvement's local derivative estimate instead of proving
+it again, then counted zeros in two fixed disks and selected one height
+for both edges. The first three draft builds (seqs. 42, 52, 59) failed on
+local Lean syntax, inequality orientation, and a division rewrite. The
+unchanged endpoint built at seq. 66. Agent `fRYEhwf` independently reviewed
+the endpoint and manuscript (seq. 45) and the two added helpers (seq. 75);
+its output snapshots are read-only reviews, not competing patches.
+
+On the first integrated candidate `96d07fdcaf9c4599fc2684bb77cd409ecb0cae26`,
+input validation passed, but the optional writer-cache lookup at seq. 81
+found no `lib` or `ir` after direct output finalization. The status
+preflight at seq. 88 found its base superseded by the prime-two cut.
+The worker did **not** build or try to adopt the superseded candidate.
+It restacked the same output `e155a20a02e063adf29f4451dbd22b322e079280`;
+the new base-to-candidate diff was byte-identical. The replacement built
+without the writer cache, passed the fresh three-name joint import and
+axiom report (seq. 102), and landed at
+`472d6bb6d44e9fedd5e69e7a9f8825d250414f09` (seq. 104).
+
+The missing-cache pattern recurred, but the worker recovered without
+repeating the failed copy or adding a gate. Unlike the Jensen builds,
+the optional preflight prevented an already-stale build in live work.
+Keep both fallbacks and the current routing; no new replay or program
+change is needed. Assessment Yah `01a20593-ad37-7739-b876-c8b63a19730e`
+advanced the [right edge](../../obligations/single-place-norm.md#checked-right-vertical-line).

@@ -2765,15 +2765,61 @@ and helper review snapshot `bb6831f8b7244a783cd160e86c6758714a77e6dc`.
 Owning check session `01a2058c-63bf-78c1-bd98-d2a8c5468afc` records the candidate and
 base, both module builds, signatures, axiom checks, and adoption status.
 
-**Next Lean obligation:** Bound the same continued $L'/L$ on the right
-vertical line $2+it$ by $A(1+|t|)$ for all real $t$, and retain nonvanishing
-there. Use the Euler agreement as a neighborhood equality above one,
-`completedHeckeEulerProduct_logDeriv` for (B.4.2.5)–(7), p. 615, the summable
-`finiteHecke_right_line_majorant`, and integrate `norm_archimedeanGammaKernel_le`
-in the checked scalar Gamma formula for the finitely many infinite places.
-This gives right-line integrability for Schwartz tests; left-line control
-still needs the reflection germ of this same continuation (or a direct
-left-half-plane formula). The chain-rule sign repair in
-`completed_logDeriv_reflection` does not supply that germ. Signed residues,
-contour exhaustion, and the all-height zero sum in (B.4.2.2) are separate
-obligations. The trace comparison, RH, and GRH remain open.
+### Checked right vertical line
+
+[`completedHecke_rightLine_nonzero_logDeriv_bound`](../../Proofs/Theorems/CompletedHeckeRightLineGrowth.lean)
+applies to any unitary Hecke character of a number field and any fixed
+$a>1$. For any $L$ agreeing with the completed Euler product on the
+**open half-plane** $\Re s>1$, it gives a constant $C>0$ such that for
+all real $t$,
+
+$$
+L(a+it)\ne0,\qquad |L'(a+it)/L(a+it)|\le C(1+|t|).
+$$
+
+In particular set $a=2$, $\chi=1$, and use the Euler agreement clause of
+the horizontal theorem to cover its **same** $L$, not a new witness.
+No continuation, global Borel structure, or ideal-class representatives
+are assumed by this right-line theorem; the application to the horizontal
+witness still uses the hypotheses of that theorem.
+
+**Source and repair:** Theorem B.3.2.1, pp. 605–606, needs control on the
+actual vertical sides. Section B.4.2.1, p. 614, invokes slow growth for
+(B.4.2.2); (B.4.2.5)–(7), p. 615, supply the intended local expansion,
+and (B.4.2.12), pp. 615–616, gives the schematic local Gamma derivative.
+`completedHeckeEulerProduct_logDeriv` justifies the split, and
+`finiteHecke_right_line_majorant` bounds the summed finite-place terms
+uniformly. The new `archimedeanGammaFactor_rightLine_logDeriv_bound`
+integrates the subtracted Gauss kernel for each actual infinite-place
+factor. The dominating integral is fixed on the line, but its coefficient
+includes $|t+\tau|$ from first-order phase cancellation at zero; discarding
+this factor would not give the needed estimate. This uses the checked
+positive bases $\pi$ and $2\pi$ and includes the real parity or complex
+angular shift. Neighborhood equality supplies equality of derivatives;
+pointwise agreement only on the contour line was not used.
+
+**Review:** Provisional source reading from the pinned Markdown and numbered
+PDF layout, not rendered pages. Independent Yah agent `dFPOPMQ` reviewed
+both exact statements, source correspondence, and the corrected linear
+estimate in snapshots `62174c3dc86522187ecbcd036dc1ae2b6bd989c0` and
+`41d4ee53a449b8fec1f4db2db2daa6569ca39f42`. The second report corrects
+the first report's uniform-bound and real-prefactor claims. Owning check
+session `01a20593-ad37-7739-b876-c8b63a19730e` records the exact candidate
+and base, scoped build, joint signatures, axiom checks, and adoption.
+
+**Next Lean obligation:** For the trivial character, prove the reflection
+germ for the same $L$ used at $a=2$ and on the horizontal edges. The
+unscaled completed Euler product needs
+$L(1-s)=\exp(\log |\operatorname{disc}K|\,(s-1/2))L(s)$
+as germs at $s=-1+it$. In (3.2.1.6), p. 123, Masullo states an entire
+nonvanishing epsilon factor and refers out for the local factors. The
+consuming step (B.4.2.3), p. 614 and footnote 13, invokes a conductor
+power, and its printed derivative misses the reflection sign. Use
+`ideleHeckeGaussian_one_radial_theta_inversion` and normalize
+the norm-one average, keeping the different translation, its log-norm
+shift, and both zero terms. If working with a separately constructed
+reflection witness, transfer to the horizontal witness by equality of
+continuations, not equality at a point. The right-line nonvanishing and
+`completed_logDeriv_reflection` then give the corresponding left-line
+input. Signed residues, contour exhaustion, the all-height zero sum in
+(B.4.2.2), and the global trace comparison remain open.
