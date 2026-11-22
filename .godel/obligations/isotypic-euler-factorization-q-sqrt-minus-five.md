@@ -619,15 +619,18 @@ ramification. The pullback is trivial on local units by the
 using the inherited definition after (3.1.2.6), p. 121. No new visual
 reading was needed.
 
-### Remaining grouped identity
+### Checked all-prime grouped identity
 
-The all-prime grouped local polynomial identity for the
-[constructed quadratic class character](#checked-normalized-class-character)
-is still open in Lean. The [split row](#checked-grouped-split-prime-denominator),
-[inert row](#checked-grouped-inert-prime-denominator),
-[row at $5$](#checked-grouped-denominator-at-five), and
-[row at $2$](#checked-grouped-denominator-at-two) are complete.
-The remaining step is to assemble these cases in Lean.
+[`IdealClassEulerFactorization`](../../Proofs/Theorems/IdealClassEulerFactorization.lean)
+proves `Masullo.qSqrtNegFive_heckeRationalDenominator`: For every
+`p : Nat.Primes`, the actual grouped denominator of
+`idealClassHeckeCharacter qSqrtNegFiveClassCharacter` is
+$(1-\chi_{-4}(p)X)(1-\chi_5(p)X)$ in $\mathbb C[X]$, with no extra
+hypotheses. Bundled-prime equality first gives the [row at $2$](#checked-grouped-denominator-at-two)
+and the [row at $5$](#checked-grouped-denominator-at-five). Elsewhere
+`IsSquare (-5 : ZMod p.val)` supplies the root for the
+[split row](#checked-grouped-split-prime-denominator); its negation
+supplies the [inert row](#checked-grouped-inert-prime-denominator).
 [`HeckeDirichletFactorization`](../../Proofs/Theorems/HeckeDirichletFactorization.lean)
 proves `Masullo.finiteHeckeCharacterEulerProduct_eq_dirichlet_of_local`
 by regrouping the convergent product over the finite fibers of
@@ -638,7 +641,24 @@ uses the explicit quadratic characters modulo $4$ and $5$;
 `Masullo.differentiable_qSqrtNegFiveDirichletProduct` proves their
 product entire without any Hecke hypothesis. The local premise
 ranges over **every** rational prime; it cannot omit $2$ or $5$.
-The endpoint does not instantiate that premise for the number field.
+With the all-prime theorem as `hlocal` and the existing norm-one proof,
+`Masullo.qSqrtNegFive_finiteHeckeCharacterEulerProduct_eq_dirichletProduct`
+now identifies the actual finite Hecke product with
+$L(s,\chi_{-4})L(s,\chi_5)$ for $\Re s>1$. A fresh import applies
+both the conditional transfer with this `hlocal` and the specialized
+endpoint directly to the equality with the product of the two `LFunction`s.
+Independent review `GwSDldw` (transcript Yah
+`01a20346-e5a6-7d8f-acda-e44b8addaf60`) checked both statements, the four
+case reductions, direct use as `hlocal` with the norm-one proof, and
+applicability of the inherited source reading.
+
+The manuscript interface is inherited from the [rendered reading](#manuscript-interface)
+of Masullo, PDF p. 122, (3.2.1.1), and p. 124, Definition 3.2.1.4,
+(3.2.1.7): The character is trivial on all finite local units, so the
+places above $2$ and $5$ are retained despite field ramification. This
+is an identification of the finite function on its right half-plane
+with an entire continuation, not a repair of the p. 309 product switch
+or a product-convergence assertion outside that half-plane.
 
 For p. 309's analytic argument, the denominator to estimate on
 $-1/2\le\Re s\le2$ is precisely the entire Dirichlet product above.
@@ -653,11 +673,8 @@ provisional completed and complex local normalizations on pp. 123 and
 129, and the compact-strip Schwartz convention, Definition D.3.1.3,
 pp. 800–801, identified in its [holomorphy section](isotypic-inverse-range-q-sqrt-minus-five.md#holomorphy-and-overlap).
 
-**Open Lean premise for the Hecke transfer:** Instantiate the all-prime
-grouped polynomial identity for the constructed idèle-class character.
-**Next arithmetic check:** Prove the all-prime identity by checking
-$p=2$ and $p=5$ first, then branching on whether $-5$ is a square
-in $\mathbb F_p$ to apply the split or inert row. This would supply
-`hlocal` for the existing Hecke transfer.
 The explicit product's circle growth and common-height estimate are
-already unconditional in Lean.
+unconditional in Lean. A separate analytic check is to thicken the
+common good segment to a polynomial-width neighborhood with a
+polynomial reciprocal bound, as input to Cauchy derivative estimates.
+The local inverse-image criterion is a separate obligation.

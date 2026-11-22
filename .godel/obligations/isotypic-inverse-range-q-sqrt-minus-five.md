@@ -166,26 +166,18 @@ separate `#check` confirmed the endpoint type. The only axioms are
 `propext`, `Classical.choice`, and `Quot.sound`; the changed Lean source
 has no placeholders or unsafe substitutes.
 
-The [finite Euler factorization](isotypic-euler-factorization-q-sqrt-minus-five.md)
-identifies $D=L(\cdot,\chi_{-4})L(\cdot,\chi_5)$ by a prime-by-prime
-class-norm proof in ordinary mathematics. Lean proves the entire
-Dirichlet product and the comparison with the accepted Hecke product
-conditional on the grouped local polynomial identity. The
-[split-prime sign theorem](../../Proofs/Theorems/IdealClassSplitPrimeSign.lean)
-checks the ideal-level norm test given the two-class dichotomy and
-norm-two representative. The [arithmetic at two](isotypic-euler-factorization-q-sqrt-minus-five.md#checked-arithmetic-at-two)
-now supplies that representative and its nonidentity class in Lean.
-The [arithmetic at five](isotypic-euler-factorization-q-sqrt-minus-five.md#checked-arithmetic-at-five)
-now supplies the unique prime above $5$, its residue norm $5$, and
-its identity class. The idelic character and its local factors
-remain separate.
+The [finite Euler factorization](isotypic-euler-factorization-q-sqrt-minus-five.md#checked-all-prime-grouped-identity)
+now identifies $D=L(\cdot,\chi_{-4})L(\cdot,\chi_5)$ in Lean with
+the actual finite Hecke product of the constructed class character
+on $\Re s>1$. The unconditional identification on that half-plane
+uses all grouped local factors, including those at $2$ and $5$.
 
 The [horizontal reciprocal estimate](isotypic-good-heights-q-sqrt-minus-five.md)
 is now unconditional in Lean for the explicit denominator $D$. Five
 centered periodic primitives give $|D(z)|\le C_0 H^{12}$ on the
 radius-six circle about $2+i(H+1/2)$ for every real $H\ge1$. This
 supplies the $m=0$ good-height estimate, not bounds on reciprocal
-derivatives or a formal identification with the Hecke denominator. The reflected identity and the archimedean image
+derivatives. The reflected identity and the archimedean image
 criterion still need a formal model. The latter and the exact
 completed/local normalizations and Schwartz convention above still
 use provisional source readings.

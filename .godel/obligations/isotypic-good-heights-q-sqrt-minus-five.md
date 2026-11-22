@@ -178,18 +178,16 @@ The upper-growth premise is discharged for the explicit product:
   applies the conditional endpoint at $H_0=1$ with this bound.
 
 There is no growth hypothesis left for the explicit product. The
-transfer to the actual Hecke function in Lean still requires the
-[grouped local polynomial identity](isotypic-euler-factorization-q-sqrt-minus-five.md)
-for the constructed class character at **every** rational prime. The
-[split-prime sign](../../Proofs/Theorems/IdealClassSplitPrimeSign.lean)
-is checked under the two-class dichotomy and norm-two input. The
-[arithmetic at two](isotypic-euler-factorization-q-sqrt-minus-five.md#checked-arithmetic-at-two)
-now supplies the norm-two place with nonidentity class. The
-[arithmetic at five](isotypic-euler-factorization-q-sqrt-minus-five.md#checked-arithmetic-at-five)
-now gives the unique place above $5$ of norm $5$ and identity class.
-Neither the idelic realization nor the surviving local factors follow from
-those arithmetic results alone. The good-height estimate is only
-for the reciprocal itself, not its derivatives. The [inverse-range realization](isotypic-inverse-range-q-sqrt-minus-five.md)
+[all-prime grouped identity](isotypic-euler-factorization-q-sqrt-minus-five.md#checked-all-prime-grouped-identity)
+now identifies it in Lean with the actual finite Hecke product on
+$\Re s>1$ for the constructed class character. The good-height
+estimate on the continued function is only for the reciprocal itself,
+not its derivatives. A bounded next check is to extend the estimate to
+polynomially small disks around the same good segment. The total log
+loss bounds each zero's vertical distance from below; on a disk of
+radius at most half that lower bound, each zero factor loses at most
+another factor of two. With $N=O(\log H)$, this still costs a polynomial
+and would supply the neighborhood required by Cauchy estimates. The [inverse-range realization](isotypic-inverse-range-q-sqrt-minus-five.md)
 still uses provisional readings of the completed and complex local
 normalizations (pp. 123 and 129), the interior-strip Schwartz
 convention (pp. 800–801, Definition D.3.1.3), and the local image
