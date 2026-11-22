@@ -1533,10 +1533,11 @@ $\mathcal O_K/p\mathcal O_K$ because $\mathbb Z_p/p\mathbb Z_p$ is
 $\mathbb Z/p\mathbb Z$. Both sides of the base-change map are finite
 free over $\mathbb Z_p$; lift the invertible reduction over the local
 ring (for surjectivity, see
-`LinearMap.surjective_of_surjective_comp_mkQ`). After this comparison, transport the trace
-dual through base change and the product projections; for passage from
-the local integer rings to their fraction fields, pinned Mathlib has
-`Algebra.trace_localization` and `Algebra.discr_localizationLocalization`.
+`LinearMap.surjective_of_surjective_comp_mkQ`). After this comparison,
+transport the trace dual through base change and the product projections;
+pinned Mathlib has `Algebra.trace_localization` and
+`Algebra.discr_localizationLocalization` to pass from the local integer
+rings to their fraction fields.
 This is a proposed route, not a checked comparison. The local identity
 is not a consequence of equality of the aggregate products. Once it is
 checked, construct or identify the local Haar scales, then use the exact
