@@ -905,73 +905,56 @@ go run ./cmd/godel audit-local "$CANDIDATE" Theorems.IdeleScalarLogSection -- \
   Masullo.ideleLogNorm_scalarSection
 ```
 
-### Next: Uniform large-norm bound for the Gaussian periodization
+The preceding compact-support audit remains a checked prerequisite: `exists_compact_cover_ideleClassNormOne_gaussian_denominator` and the associated uniform-denominator lemmas were audited on accepted revision `00d93f83469610f817c3727f8e386b8f7ef278b5`; the five reviewed signatures and kernel replay passed, using only the permitted axioms.
 
-Theorem 2.2.3.4(1), (2.2.3.4), p. 83, calls for a bound uniform
-over classes. For the corrected Gaussian and its fixed finite set `T`,
-aim to prove absolute summability of `a ↦ f(d a * x)` for `ideleNorm x ≥ 1`
-and, for each `N : ℕ`, a constant `C > 0` independent of `x` such that
-`∑' a : Kˣ, ‖f(d a * x)‖ ≤ C * ideleNorm x ^ (-(N : ℤ))` there.
-Use any representative after reindexing by the principal group. This
-will bound the norm-one average by that majorant times the finite
-quotient mass. It is not yet a small-norm estimate.
+### Checked uniform large-norm bound for the Gaussian periodization
 
-The compact support step is supplied by
-[`exists_compact_cover_ideleClassNormOne_gaussian_denominator`](../../Proofs/Theorems/IdeleClassGaussianSupport.lean)
-(the exact-module proof was first checked at writer output
-`99bc23d445178a1d76c08405429bb43e52521528`). One positive integer `m`
-clears all indices `a` with `f(d a * b) ≠ 0` for `b` in a compact set
-of actual norm-one ideles covering every norm-one class. Since the
-scalar section has finite part `1`, the same denominator applies
-when `f(d a * σ(x) * b) ≠ 0`: First use
-`norm_finite_le_one_of_ideleHeckeGaussian_ne_zero`, then the finite
-coordinate version `exists_compact_cover_ideleClassNormOne_uniform_denominator`.
+[`ideleHeckeGaussian_periodization_rapidDecay`](../../Proofs/Theorems/IdeleClassGaussianRapidDecay.lean)
+proves absolute summability of the principal Gaussian series for every
+actual idele of norm at least one, over every number field. For each
+`N : ℕ` a positive constant, independent of the idele `g`, bounds the
+sum of norms by `C * ideleNorm g ^ (-(N : ℤ))`. The test uses a fixed
+unitary Hecke character and any fixed finite set `T`. Ramification
+coverage is needed for the Euler pairing, not for the estimate.
 
-Masullo supplies the fractional-ideal support reduction in Lemma
-2.2.2.1(3) and (2.2.2.3), pp. 77–78. The uniformizer prescription on
-pp. 79–80 does not bound radii greater than one with nonnegative
-powers. `exists_uniform_denominator_of_isCompact` replaces it by the
-finite image of the idele-to-ideal map on a compact set and one
-integer clearing all inverse ideals. The compact representative set
-is lifted by a finite open cover; no choice of a continuous section
-of the principal quotient is asserted. Independent exact-statement
-review: Child `ItiKqaM`, output `bfcab7af98deab3f567a5d4ca5aaf101ea9c8f47`,
-in Yah session `01a20350-96e4-7bfd-a9ef-8a2f45d5a914`. The source reading
-is provisional (Markdown and numbered PDF layout, not rendered pages).
+This is the corrected fixed-Gaussian case of Theorem 2.2.3.4(1), p. 83,
+and the absolute-sum argument (2.2.3.8)–(13), pp. 83–84. The reading is
+provisional (pinned Markdown and numbered PDF layout, not rendered pages).
+The compact cover and uniform denominator replace the finite-radius
+prescription of Lemma 2.2.2.1(3), pp. 77–80. The scalar section of
+Lemma A.2.2.4, p. 547, gives radius `t^(1/[K:ℚ])`, not the `t` dilation
+used in (2.2.3.10). The new Archimedean bound gives a coordinate at least
+a fixed positive multiple of this radius times the norm of the
+integral-lattice vector. The weighted Gaussian bound controls that
+coordinate to any fixed power `p`. Taking `p` greater than the lattice
+rank and at least `[K:ℚ] * N` gives both summability and the rate.
+Only nonzero terms enter the lattice injection. Principal reindexing
+returns the estimate to the original idele, with no change to Haar,
+discriminant mass, or the single-place section in the radial identity.
 
-`audit-local` passed on accepted proof revision
-`00d93f83469610f817c3727f8e386b8f7ef278b5` (log
-`/tmp/grh-audit-00d93f83.log`): A full `Proofs` build, joint import,
-and kernel replay of `Lemmas.IdeleCompactDenominators` and
-`Theorems.IdeleClassGaussianSupport`. The five built signatures matched
-review, including `exists_compact_cover_ideleClassNormOne` and the four
-names cited above. Each uses only `propext`, `Classical.choice`, and
-`Quot.sound`.
+Independent Yah statement review: Session
+`01a2035d-857a-7830-b586-e74c4e7a0366`, child `review-rapid`
+(`STjFuEh`, read-only output `eaa6bc1c0085ead1a3feaec7a97ccf5ffe01bc89`).
+The review covers the endpoint, the weighted Gaussian bound, and the
+compact-coordinate bound. Replay on the integration candidate with:
 
-**Next Lean obligation:** For the fixed `χ`, `T`, and for each `N : ℕ`,
-choose `C > 0` and a natural `k > Module.finrank ℤ (mixedEmbedding.integerLattice K)`.
-Show that on the compact representatives `b`, for `x.toAdd ≥ 0` and
-contributing indices `a`,
-
-```text
-‖f(d a * σ(x) * b)‖ ≤
-  C * Real.exp (-(N : ℝ) * x.toAdd) * ‖mixedEmbedding K ((m : K) * ↑a)‖⁻¹ ^ k.
+```sh
+go run ./cmd/godel audit-local "$CANDIDATE" \
+  Lemmas.IdeleHeckeGaussianDecay Lemmas.IdeleScalarArchimedeanBound \
+  Theorems.IdeleClassGaussianRapidDecay -- \
+  Masullo.exists_ideleHeckeGaussian_norm_mul_pow_le \
+  Masullo.exists_infinite_coordinate_ge_scaled_mixedEmbedding \
+  Masullo.ideleHeckeGaussian_periodization_rapidDecay
 ```
 
-Here `σ := ideleScalarLogSection`. Bound the finite test factors by one
-using `‖χ‖ = 1`; derive polynomial decay for the product of local Gaussian
-monomials in the maximum ordinary infinite-place radius. Obtain a positive
-uniform lower bound on the ordinary radius of each `b` coordinate by
-compactness (or bound the norms of the inverse coordinates from above).
-This gives a lower bound by a positive constant times
-`exp(x.toAdd/[K:ℚ]) * ‖mixedEmbedding K ((m : K) * ↑a)‖`. Take the decay
-power at least `[K:ℚ] * N` plus the lattice exponent, using a weight
-`1 + ‖·‖` before separating the factors, or take it at least the maximum
-of the two and use the lattice minimum. Apply
-`ZLattice.summable_norm_rpow` to the injection of contributing indices
-into the nonzero points of `mixedEmbedding.integerLattice K`. The bound
-reindexes by the principal group, so it does not replace the single-place
-section used for the Haar identity.
+**Next Lean obligation:** Use the existing Borel periodization and the
+finite norm-one quotient mass to turn the uniform bound into integrable
+slices at every log radius `x ≥ 0`, not just almost everywhere. Bound the
+absolute norm-one pairing by the uniform majorant times the exact quotient
+mass, using the unchanged section and measures of the radial identity.
+The relevant manuscript passage is Theorem 2.2.5.4(2), (2.2.5.9), PDF p. 97,
+and its proof on p. 98, which explicitly uses compact Radon mass with the
+unaveraged bound.
 
 **Small-norm obligation:** On the provisional text reading, the use of
 Theorem 2.2.3.4(3), p. 83, on pp. 126–127 requires both zero modes to
