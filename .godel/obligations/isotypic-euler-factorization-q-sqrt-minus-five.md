@@ -487,11 +487,43 @@ on the finite local unit groups. The construction is arithmetic input,
 not a manuscript claim. No new rendered reading or p. 309
 cross-reference was needed for it.
 
+### Checked grouped split-prime denominator
+
+[`IdealClassSplitPrimeFactor`](../../Proofs/Theorems/IdealClassSplitPrimeFactor.lean)
+proves `Masullo.qSqrtNegFive_heckeRationalDenominator_of_split_root`.
+For a rational prime $p\ne 2,5$ and $r\in\mathbb F_p$ with $r^2=-5$,
+let $\chi$ be `idealClassHeckeCharacter qSqrtNegFiveClassCharacter`.
+Then the actual `heckeRationalDenominator χ p` is
+$(1-\chi_{-4}(p)X)(1-\chi_5(p)X)$ in $\mathbb C[X]$. No additional
+class-character, unramifiedness, or unitarity hypothesis is assumed.
+
+Distinctness and exhaustion reduce the fiber product to exactly two
+factors. At each place the residue degree is one, and unramifiedness
+and the positive prime-class convention identify the factor as
+$1-\chi_{-4}(p)X$ by the normalized split sign theorem. Quadratic
+reciprocity gives $\chi_5(p)=\chi_{-4}(p)$ for the same square root.
+Fresh-import checks use the theorem with an `IsSquare` premise and
+verify $(1+X)^2$ at $p=3$, $r=1$.
+
+Independent statement and applicability review: `wxfcsBa` (transcript
+Yah `01a20315-a48f-73fd-86ab-b7e7c70dd9a1`). The reviewer checked the
+actual fiber product, both degree-one substitutions, the character
+normalization and positive prime-class value, and the roles of the
+two exclusions and the root. The reviewer also checked the use of the
+[accepted rendered reading](#manuscript-interface) and the
+[finite local-unit criterion](#checked-idelic-realization-and-local-factors)
+for Masullo, PDF p. 122, §3.2.1, (3.2.1.1), and p. 124, Definition
+3.2.1.4, (3.2.1.7): Both places contribute because the pullback is
+trivial on finite local units. This is checked arithmetic input, not
+a printed split-prime theorem or a claim about p. 309. No new visual
+reading was needed.
+
 ### Remaining grouped identity
 
-The grouped local polynomial identity for the
+The all-prime grouped local polynomial identity for the
 [constructed quadratic class character](#checked-normalized-class-character)
-is still open in Lean.
+is still open in Lean; the [split row](#checked-grouped-split-prime-denominator)
+is complete.
 [`HeckeDirichletFactorization`](../../Proofs/Theorems/HeckeDirichletFactorization.lean)
 proves `Masullo.finiteHeckeCharacterEulerProduct_eq_dirichlet_of_local`
 by regrouping the convergent product over the finite fibers of
@@ -519,10 +551,11 @@ pp. 800–801, identified in its [holomorphy section](isotypic-inverse-range-q-s
 
 **Open Lean premise for the Hecke transfer:** Instantiate the all-prime
 grouped polynomial identity for the constructed idèle-class character.
-**Next arithmetic check:** For $p\nmid 10$ with $-5$ square modulo $p$,
-rewrite the rational denominator as a product over the two distinct
-places of residue degree one. Use the normalized class sign at each
-place and the equality of the Dirichlet signs to prove the split row.
-The inert and both field-ramified grouped comparisons remain separate.
+**Next arithmetic check:** For $p\ne2$ with $-5$ nonsquare modulo $p$,
+use the [inertness criterion](#checked-reduction-and-inertness-criterion)
+and [Hecke-side inert factor](#checked-inert-prime-fiber-and-grouped-factor)
+to give $1-X^2$. Match it with the two Dirichlet factors using
+opposite signs and $\chi_{-4}(p)^2=1$. The grouped comparisons at $2$
+and $5$, and the all-prime assembly, remain separate.
 The explicit product's circle growth and common-height estimate are
 already unconditional in Lean.
