@@ -910,28 +910,75 @@ go run ./cmd/godel audit-local "$CANDIDATE" \
   Theorems.IdeleFiniteStageExhaustion -- Masullo.ideleFiniteStage_exhaust
 ```
 
-### Next: Supply the right-half-plane Euler inputs
+### Finite-place absolute mass and positive Euler-tail bound
 
-For pure tensors (including at infinity), use `ideleFiniteStage_integral`
-to compute the complex and real absolute stage integrals from the local
-factors. A concrete next step is to prove the norm integral of the
-integral-ring local test in `finiteHeckeLocalZeta_unramified`: At $s$ it
-is the integral of the nonnegative trivial-character test at $\Re s$,
-and hence the real Euler factor there times the local unit mass.
-`Complex.norm_cpow_eq_rpow_re_of_pos` applies on completion units.
-Use `finiteHeckeEulerFactor_hasProdLocallyUniformlyOn` with coefficients
-one off the initial stage and zero on it to bound the absolute stage
-products. Keep the unit mass factors in the initial stage and verify the
-two stage limits in the inclusion order of `ideleFiniteStage_exhaust`.
-For the manuscript's general joint Archimedean test, a grouped
-Archimedean factor should replace the product across infinite places.
+[The two Lean endpoints](../../Proofs/Theorems/FiniteHeckeAbsoluteZeta.lean)
+fill the finite-place input to the absolute product in (3.2.2.6), p. 126,
+and to the above-one argument for (3.4.1.6), pp. 143–144. Masullo invokes
+Euler-product convergence and uses $1_{\mathcal O_v}$ on the standard
+places; the cited convergence alone does not evaluate the local absolute
+integral or bound all finite stages with their given Haar measures.
+The readings here are provisional (Markdown and PDF layout).
 
-The remaining pointwise input is the actual global density's tensor
-identity on stages containing all Haar, test, and ramification
-exceptions. This includes splitting the global character over local
-insertions and splitting the norm power. Neither quotient normalization
-nor evaluation of the exceptional mass product by the discriminant follows
-from exhaustion.
+- `Masullo.finiteHeckeLocalZeta_norm`: For any actual unitary Hecke
+  character, the standard $1_{\mathcal O_v}$ density at $s$ is integrable
+  for $\Re s>0$ and its absolute mass is
+  $\mu_v(\mathcal O_v^\times)/(1-q_v^{-\Re s})$. There is no unramified
+  hypothesis for this test. Lean identifies the modulus with the trivial
+  character test at $\Re s$ and uses the local shell evaluation. The
+  auxiliary `Masullo.continuous_finiteHeckeRestriction` verifies continuity
+  on the completion units of the restriction (3.1.2.4), p. 121, for the
+  actual Mathlib single-place insertion. This is not the ramified
+  inverse-character test used to recognize a complex Euler factor.
+- `Masullo.finiteHeckeRealEulerTail_hasProd`: For $\sigma>1$, the real
+  factors $(1-q_v^{-\sigma})^{-1}$ off any finite $E$ and $1$ on $E$
+  have a full finite-subset product limit. Every partial product is
+  bounded by that limit. Lean passes to real parts in the checked
+  complex Euler product with coefficients $0$ on $E$ and $1$ off $E$,
+  then uses that every real factor is at least $1$.
+
+Independent Yah statement review: Session
+`01a201ac-2b60-76c9-bb56-a3e9f24caae6`, agent `YyMfvwr`, output
+`9a48075cd271ef997cf9fe8f927a79fae5eda46e`. Replay in the candidate
+workspace:
+
+```sh
+go run ./cmd/godel audit-local "$CANDIDATE" \
+  Lemmas.FiniteHeckeRestriction Theorems.FiniteHeckeAbsoluteZeta -- \
+  Masullo.continuous_finiteHeckeRestriction \
+  Masullo.finiteHeckeLocalZeta_norm Masullo.finiteHeckeRealEulerTail_hasProd
+```
+
+### Next: Factor the actual density on the open stages
+
+First prove the pointwise character splitting on `IdeleFiniteStage K S`
+for a unitary `χ` with `χ.IsUnramifiedAt v` off `S`. The value of `χ` on
+the class of `ideleFiniteStageEmbedding K S x` must be the product of
+its Archimedean restrictions at `x.1` and the active finite restrictions
+at `x.2.1`. In particular, the whole inactive tuple `x.2.2` must map to
+one: The finitely supported unit tuples map to one by local
+unramifiedness, and they are dense in the inactive product topology.
+Taking a closure in the continuous character's kernel is essential;
+a product over active places does not algebraically remove an arbitrary
+inactive tuple. Use the coordinate lemmas for `ideleFiniteStageEmbedding`
+and the actual insertion maps used by the local restrictions.
+
+For the norm splitting, `AdeleRing.norm_apply_of_isUnit` and those same
+coordinate lemmas give the local norms, with exponent `v.mult` at
+infinity and finite unit norms equal to one off `S`. Split the complex
+power using `Complex.mul_cpow_ofReal_nonneg`. On stages containing all
+Haar, test, and ramification exceptions `E`, this should give the tensor
+identity consumed by `ideleFiniteStage_integral` for pure tests. For the
+joint Archimedean Schwartz test a grouped factor is still needed.
+
+Then multiply the fixed local absolute masses on `E` by the bound above
+for the outside factors, whose Haar unit masses are one. Use
+`ideleFiniteStage_exhaust` on stages containing `E` and identify the
+complex limit by the corresponding tail `HasProd`. This is a corrected
+right-half-plane identity with the actual test on `E`, not the printed
+admissible-set independence of (3.4.1.5)–(6). Neither quotient
+normalization nor evaluation of the exceptional mass product by the
+discriminant follows from exhaustion.
 
 **Still open:** Meromorphic continuation, divisor data, and contour
 growth in (B.4.2.1)–(4), the broader test class, ramified Fourier terms,
