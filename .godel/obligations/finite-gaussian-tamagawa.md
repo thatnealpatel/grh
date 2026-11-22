@@ -117,13 +117,12 @@ in the [branch note](hecke-right-line-majorant.md#finite-local-zeta-pairings-wit
 The explicit arithmetic, numerical pairing, and rendered-source verdict
 here are not new Lean endpoints.
 
-**Next bounded check (mapped, not verified):** Extend the witness to
-the weight-zero Gaussian at $c=|\cdot|_F^2$ over $\mathbb Q(i)$. Compare
-$S=S_\infty$ with $S=S_\infty\cup\{v\}$ in the rendered (3.4.1.5)–(6),
-p. 143. Check (3.4.1.3) and the definitions of the $S_0$ pairing and
-omitted Euler product: Does enlarging $S$ multiply the right side by
-$M_v=1/2$ with no compensating change? This tests the printed finite-set
-independence without waiting for a general Lean construction.
+**Checked follow-up:** The [two-set audit](weil-admissible-set.md)
+uses the same place in the weight-zero global Gaussian at $s=2$.
+Adjoining $v$ to $S_\infty$ halves both printed right-hand sides of
+(3.4.1.5)–(6), p. 143, while their left-hand sides are fixed. This
+uses the unit-shell mass, not the raw local zeta value, and does not
+identify the globally normalized integral.
 
 Separate open premises: General-field finite-stage Haar, the comparison
 of the raw Gaussian and completed Euler products, the local conductor
