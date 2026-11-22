@@ -950,7 +950,7 @@ workspace with:
 ```sh
 go run ./cmd/godel audit-local "$CANDIDATE" \
   Lemmas.IdeleFiniteStageMeasure Theorems.IdeleFiniteStageIntegral -- \
-  Masullo.ideleFiniteStageProduct_tensor Masullo.ideleFiniteStage_integral
+  Masullo.ideleFiniteStage_integral
 ```
 
 ### Checked cofinal exhaustion of the stage integrals
@@ -1094,28 +1094,68 @@ go run ./cmd/godel audit-local "$CANDIDATE" \
   Masullo.ideleFiniteStage_norm Masullo.ideleFiniteStage_zetaDensity
 ```
 
-### Next: Integrate the grouped Archimedean density on each stage
+### Checked grouped zeta integrals on each stage
 
-Generalize `ideleFiniteStageProduct_tensor` to an integrable function on the
-full Archimedean product with measure `Measure.pi μa`. Do not require it to
-be a tensor over infinite places. Use `integral_prod_mul` for the two blocks,
-`integral_fintype_prod_eq_prod` for the finite block, and
-`inactiveHaar_probability` to integrate the inactive tuple. Transport via
-`ideleFiniteStage_integral`'s open-embedding `map_comap` argument to get
-stage integrability, the complex integral, and the integral of its norm.
-The hypotheses are integrability of the grouped factor and each active
-factor, the existing stage comap identity, and mass one *only* off $S$.
-Use `ideleFiniteStage_zetaDensity` to supply the exact pullback identity. The
-inactive pointwise factors being one does not supply the measure hypothesis.
+[`Masullo.ideleFiniteStage_zetaIntegral`](../../Proofs/Theorems/IdeleFiniteStageIntegral.lean)
+proves integrability of the actual raw zeta density on the open stage $U_S$.
+Its complex integral equals the single Archimedean integral times the
+product of the active finite integrals. Its absolute integral is the same
+product with the norm taken **inside** every local integral. The test is
+arbitrary on the finite exceptional set $E$ and is $1_{\mathcal O_v}$ off
+$E$. The hypotheses are $E\subseteq S$, unramifiedness and measure mass one
+only off $S$, the exact stage comap identity, and integrability of the grouped
+Archimedean density and each active local density. There is no unitarity or
+half-plane restriction in this finite-stage theorem. The active measures,
+including any exceptional unit masses, are unchanged.
 
-Then multiply the fixed local absolute masses on $E$ by the positive
-Euler-tail bound for the outside factors, whose Haar unit masses are one.
-Use `ideleFiniteStage_exhaust` on stages containing $E$ and identify the
-complex limit by the corresponding tail `HasProd`. This would give a
-corrected right-half-plane identity with the actual test on $E$, not the
-printed admissible-set independence of (3.4.1.5)–(6). Neither quotient
-normalization nor evaluation of the exceptional mass product by the
-discriminant follows from exhaustion.
+**Source and repair (provisional):** The raw density is from (3.2.2.1),
+p. 124, and the grouped factor is from (3.4.1.2), p. 143. The right-half-plane
+assertion of (3.4.1.6) in the proof of Theorem 3.4.1.1, p. 144 (footnote 3),
+does not justify the actual stage integrals or the passage to their limit.
+Using the stage measures for (A.3.2.5), p. 560, Lean uses Fubini with the
+whole infinite block and integrates the inactive probability out. It then
+uses the pointwise `ideleFiniteStage_zetaDensity` on the actual embedding.
+This supplies the stage integrals of the raw density, not the corrected
+local factors in (3.4.1.3), the global limit, or the convergence of the
+local factors for the full Schwartz–Bruhat class. The Markdown and
+numbered PDF layout were read, not the rendered pages.
+
+Independent Yah statement review: Session
+`01a201ca-3e36-73bc-9843-c3a0773cff61`, child `review-grouped-zeta-stage`
+(agent `cFpbJXV`). This also checked the unchanged pure-tensor endpoint.
+
+Replay in the candidate workspace:
+
+```sh
+go run ./cmd/godel audit-local "$CANDIDATE" \
+  Lemmas.IdeleFiniteStageMeasure Theorems.IdeleFiniteStageIntegral -- \
+  Masullo.archimedeanHaar_sigmaFinite Masullo.ideleFiniteStageProduct_groupedTensor \
+  Masullo.ideleFiniteStage_integral_grouped Masullo.ideleFiniteStage_integral \
+  Masullo.ideleFiniteStage_zetaIntegral
+```
+
+### Next: Exhaust the raw zeta integral above one
+
+Fix a finite base $T$ containing $E$, all ramification, and the finite
+unit-mass exceptions of the given local measures. For $\Re s>1$ and an
+actual unitary Hecke character, split each stage product on $T\cup S$
+into the fixed factors on $T$ and the tail on $S\setminus T$. Assume the
+grouped Archimedean density and densities on $T$ integrable. Outside $T$,
+`finiteHeckeLocalZeta_unramified` and `finiteHeckeLocalZeta_norm` give the
+complex and absolute factors for $1_{\mathcal O_v}$; identify
+`finiteLocalUnitSet` with the range in `finiteCompletionUnitMass` via
+`finiteLocalUnitSet_eq_range` and use mass one there. Match the `if v ∈ T`
+padding (one on $T$) in the real and complex tail products. Multiply the
+fixed absolute integrals by `finiteHeckeRealEulerTail_hasProd`'s bound and
+feed it to `ideleFiniteStage_exhaust`. For the value, identify the complex
+limit via the Euler `HasProd` with coefficient zero on $T$ and the actual
+Hecke coefficient elsewhere. The Haar construction provides the stage
+comap for every stage containing $T$.
+
+The target is a corrected raw right-half-plane identity with the actual
+densities on $T$, not the printed admissible-set independence of
+(3.4.1.5)–(6). Neither quotient normalization nor evaluation of the
+exceptional mass product by the discriminant follows from exhaustion.
 
 **Still open:** Meromorphic continuation, divisor data, and contour
 growth in (B.4.2.1)–(4), the broader test class, general ramified Fourier terms,
