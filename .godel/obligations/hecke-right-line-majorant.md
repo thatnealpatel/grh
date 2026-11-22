@@ -771,6 +771,38 @@ go run ./cmd/godel audit-local "$CANDIDATE" \
   Masullo.iUnion_range_ideleFiniteStageEmbedding
 ```
 
+### Checked compact open local integer units
+
+[`Lemmas.FiniteCompletionCompact`](../../Proofs/Lemmas/FiniteCompletionCompact.lean)
+identifies $\mathcal O_K/\mathfrak p_v$ canonically with the residue
+field of $\mathcal O_v$. A global integer reduces to zero precisely
+when its valuation at $v$ is less than one. For surjectivity, approximate
+an element of $\mathcal O_v$ first by a field element and then by a global
+integer, both with valuation of the difference less than one. The first
+approximant is integral at $v$ by the ultrametric inequality; the second
+approximation uses the pinned Mathlib lemma for $v$-integral field elements.
+The resulting residue field is finite. Completeness of the closed
+valuation subring and its discrete valuation ring structure give
+compactness; the units are compact in their value-and-inverse topology.
+The unit map into $K_v^\times$ is an open embedding since its range tests
+integrality of both the value and its inverse.
+
+These are checked prerequisites, not a Haar comparison. Masullo assumes
+compact open restricted-product factors on p. 556 and uses the residue
+size in (A.3.2.4), p. 560; those passages do not provide these local
+constructions. The manuscript correspondence is provisional (based on
+pinned Markdown and PDF layout). The results use no local Haar scale.
+Independent Yah statement review: `xWEXXXF` (output
+`af715a5c9cc024ddceae6ee10b9ae870cf791577`). Reproduce the endpoint audit:
+
+```sh
+go run ./cmd/godel audit-local "$CANDIDATE" Lemmas.FiniteCompletionCompact -- \
+  Masullo.finiteCompletionResidueEquiv Masullo.finiteCompletionResidueEquiv_mk \
+  Masullo.compactSpace_finiteCompletionIntegers \
+  Masullo.compactSpace_finiteCompletionIntegralUnits \
+  Masullo.isOpenEmbedding_finiteCompletionIntegralUnits
+```
+
 ### Next: Identify the restricted-product zeta pairing
 
 Construct the Haar measure with the exact stage restrictions prescribed
@@ -786,8 +818,13 @@ Archimedean mass. This factor is independent of $S$. This suggests
 scaling upstairs Haar by one common positive compact box and applying
 `Measure.IsHaarMeasure.comap` and `Measure.haarMeasure_eq_iff` on each
 stage, rather than gluing measures. `RationalIdeleFiniteStageHaar` is a
-comparison pattern, not the general-field result. Establishing the
-actual discriminant masses and their finite exceptional support for
+comparison pattern, not the general-field result. Use the compact open
+local integer units as a compact neighborhood of $1$ to obtain local
+compactness of the full finite-place unit groups. For the inactive factor,
+test `Measure.infinitePi_map_restrict` and `Measure.eq_infinitePi` on finite
+cylinders to prove left invariance of the product of local Haar
+probabilities. Establishing the actual discriminant masses and their
+finite exceptional support for
 (A.3.2.2), and identifying the product with the separate quotient
 normalization (A.3.2.1), are distinct obligations. Character ramification
 is not the exceptional set for these masses.
