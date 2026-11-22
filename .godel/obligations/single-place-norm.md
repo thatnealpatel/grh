@@ -465,27 +465,46 @@ go run ./cmd/godel audit-local "$CANDIDATE" Theorems.RegulatorBox -- \
   Masullo.existsUnique_unitLattice_vadd_mem_regulatorBox Masullo.volume_regulatorBox
 ```
 
-### Next normalization step: Prove the angular torsion slice
+## Archimedean torsion sector and angular mass
 
-Definition A.2.3.6, (A.2.3.13), p. 549, and Lemma A.2.3.8(2),
-pp. 550–551, choose the positive sign at a real $v_0$ or the half-open
-sector $[0,2\pi/w_F)$ at a complex $v_0$. For `v₀ := w₀`, prove that
-for **each** `g : archimedeanNormOne` there is a unique
-`ζ : NumberField.Units.torsion K` such that `archimedeanDiagonalUnit ζ.val * g`
-satisfies that condition. Prove separately that the corresponding cylinder
-in `Measure.pi archimedeanAngularMeasure` has mass $1/w_F$ times the
-whole angular mass. This adds no constraint on the other places. The
-pointwise statement must include input on the negative-real ray at a
-complex place, although that ray has zero angular measure.
+Definition A.2.3.6, (A.2.3.13), PDF p. 549, and (A.2.3.20)–(21),
+pp. 550–551, specify a positive sign or a half-open sector at one place.
+The proof of Lemma A.2.3.8(2), p. 551, invokes this as a pointwise torsion
+fundamental domain. Lean supplies the reduction in
+[`Lemmas.ArchimedeanTorsionOrbit`](../../Proofs/Lemmas/ArchimedeanTorsionOrbit.lean):
+at a real place torsion embeds injectively into the two signs, and at a
+complex embedding it maps onto the $w_F$-th roots of unity. The complex
+proof shifts by an integer number of sector widths, checks the reduced
+angle in the principal range, and proves uniqueness by comparing the
+two scaled angles in $[0,2\pi)$. It includes the negative-real ray and
+keeps the upper endpoint excluded.
 
-For the complex case, `NumberField.Units.map_complexEmbedding_torsion`
-identifies the embedded group with all complex $w_F$-th roots, and
-`even_torsionOrder` and `torsionOrder_pos` give $w_F\ge 2$. Reduce the
-argument modulo $2\pi/w_F$ using its real floor; the reducing rotation
-is a $w_F$-th root, and `Complex.exp_eq_exp_iff_exists_int` tests uniqueness.
-The interval lies inside the measure chart $(-\pi,\pi)$ and has length
-$2\pi/w_F$. In the real case use the two signs and the fact that a real
-embedding is injective and maps torsion units into $\{\pm1\}$. Then use
-`NumberField.Units.logEmbedding_ker`, the checked pointwise box theorem,
-and the torsion slice to obtain (A.2.3.17). The global Borel domain and
-quotient measure comparison remain open.
+[`Theorems.ArchimedeanTorsionOrbit`](../../Proofs/Theorems/ArchimedeanTorsionOrbit.lean)
+then gives, for every norm-one Archimedean unit and every chosen place,
+`existsUnique_archimedeanTorsion_translate` for the raw completion-unit
+condition. [`Theorems.ArchimedeanTorsionMass`](../../Proofs/Theorems/ArchimedeanTorsionMass.lean)
+identifies that condition pointwise with a measurable angular cylinder
+and proves `measure_archimedeanAngularTorsionSlice`: Its product angular
+mass is $\omega(\mathrm{univ})/w_F$, where
+$\omega=\bigotimes_v\mathrm{archimedeanAngularMeasure}(v)$. This computes
+the angular share in the Archimedean product for Lemma A.3.2.4,
+(A.3.2.5), p. 560, used towards (A.3.2.1), pp. 559–560. It does not
+identify the Haar measure on the global quotient.
+
+Independent Yah statement review: Session
+`01a202df-79e7-7751-a8af-ca4e1bab8ed7`, child `review-torsion-slice`
+(`JmaKYxE`). Source readings are provisional: Pinned Markdown and
+numbered PDF layout, not rendered-page inspection.
+
+### Next normalization step: Combine unit-log and torsion reduction
+
+For every `g : archimedeanNormOne (K := K)`, prove
+`∃! ε : (𝓞 K)ˣ` such that `archimedeanDiagonalUnit ε * g` has retained
+weighted log in `regulatorBox K` and satisfies the torsion sector at
+the chosen place. Lift the unique lattice translation to an actual
+integral unit, use `NumberField.Units.logEmbedding_ker` to characterize
+the remaining ambiguity, and use the pointwise torsion theorem to
+remove it. Prove that the combined Borel domain has mass
+$R_F\,\omega(\mathrm{univ})/w_F$ in the retained-log and angular product
+coordinates. The global Borel domain and quotient measure comparison
+remain open.
