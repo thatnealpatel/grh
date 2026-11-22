@@ -832,31 +832,88 @@ go run ./cmd/godel audit-local "$CANDIDATE" \
   Masullo.integral_ideleClass_Weil_radial
 ```
 
-### Next: Identify the normalized Gaussian radial integral above one
+### Normalized Gaussian radial integral above one
 
-Use `exists_discriminantNormalizedIdeleHeckeGaussian_zetaIntegral` and
-`exists_discriminantNormalizedIdeleClassNormOneHaar` on the **same**
-upstairs measure. Both witnesses have the exact stage restrictions in
-(A.3.2.5), p. 560; `exists_discriminantNormalizedIdeleHaar` gives
-uniqueness among all Borel measures with those comaps. Bundle the
-quasi-character `g ↦ χ g * (ideleClassNorm g : ℂ) ^ s`, using positivity
-of the norm and `ideleClassNorm_mk` for the upstairs comparison. Check
-Borel measurability of the fixed Gaussian tensor and apply
-`integral_ideleClass_Weil_radial`. The target is one exceptional set and
-one pair of normalized Haar measures for all `Re s > 1`, with the radial
-integral equal to the completed Euler value times `|disc K|⁻¹ᐟ²`.
-Keep that raw factor and the distinct arithmetic norm-one volume; do
-not divide the latter to get probability measure. This links (3.2.2.5),
-pp. 125, 127, to the corrected test in Definition 3.4.3.2, p. 152; it is
-not a claim of convergence for all Schwartz–Bruhat tests.
+[`exists_discriminantNormalizedIdeleHeckeGaussian_radialMellin`](../../Proofs/Theorems/IdeleClassGaussianRadial.lean)
+implements (3.2.2.5), pp. 125, 127, for the corrected Gaussian tensor
+of Definition 3.4.3.2, p. 152. One exceptional set, one upstairs Haar,
+one norm-one Haar, and one Borel principal periodization work for all
+`Re s > 1`. The principal formula holds as a totalized `tsum` at every
+representative, while norm-one slice integrability holds almost
+everywhere. This does not assert everywhere absolute summability.
 
-**Continuation gap:** On the provisional text reading, the use of
+At (3.2.2.11), p. 127, the upstairs measure in Weil must be the one in
+the Euler calculation. `exists_discriminantNormalizedIdeleHaar`
+identifies the two witnesses by their exact stage comaps, using the
+local normalization of (A.3.2.5), p. 560. The proof retains the exact
+arithmetic quotient mass of (A.3.2.1), pp. 559–560, and separately
+carries the factor `|disc K|⁻¹ᐟ²` on the raw Euler evaluation. The
+complex Gaussian uses the opposite angular weight to (3.4.3.5)–(6),
+p. 152, as required by the bilinear pairing (3.3.1.7), p. 130.
+`measurable_ideleHeckeGaussian` proves the actual tensor Borel, not just
+an a.e. representative of the weighted density. The continuous norm
+twist reduces to the original character on norm-one classes. Its
+section factor is `χ(τ(u,1)) * exp(u.toAdd * s)`; the unitary hypothesis
+does not make `χ(τ(u,1))` trivial. The measure in the inner pairing is
+the counting-normalized quotient Haar, and the character in (2.2.5.2),
+p. 95, is unbarred.
+
+Independent Yah statement review: Session
+`01a20347-5831-7f22-8938-a9ad4bd56a26`, child `review-gaussian-radial`
+(`vROsXvP`, read-only output `44afca6f261a5ef5a2aa234f5709e7267f100aab`).
+The source comparison used pinned Markdown and numbered PDF layout;
+no rendered pages were independently inspected, so it is provisional.
+Exact-candidate replay:
+
+```sh
+go run ./cmd/godel audit-local "$CANDIDATE" \
+  Lemmas.IdeleHeckeGaussianMeasurable Theorems.IdeleClassGaussianRadial -- \
+  Masullo.measurable_ideleHeckeGaussian \
+  Masullo.exists_discriminantNormalizedIdeleHeckeGaussian_radialMellin
+```
+
+### Next: Uniform large-norm bound for the Gaussian periodization
+
+Theorem 2.2.3.4(1), (2.2.3.4), p. 83, calls for a bound uniform
+over classes. For the corrected Gaussian and its fixed finite set `T`,
+aim to prove absolute summability of `a ↦ f(d a * x)` for `ideleNorm x ≥ 1`
+and, for each `N : ℕ`, a constant `C > 0` independent of `x` such that
+`∑' a : Kˣ, ‖f(d a * x)‖ ≤ C * ideleNorm x ^ (-(N : ℤ))` there.
+Use any representative after reindexing by the principal group. This
+will bound the norm-one average by that majorant times the finite
+quotient mass. It is not yet a small-norm estimate.
+
+A first concrete Lean obligation is to exhibit a compact set of ideles
+mapping onto the norm-one classes, with a uniform denominator bound
+for the finite support conditions of `f(d a * b)` on that set: Some
+positive integer `m` has `(m : K) * (a : K) ∈ Set.range (algebraMap (𝓞 K) K)`
+whenever `b` is in the compact set and `f(d a * b) ≠ 0`. The compact
+lift construction is already inside
+`compactSpace_ideleClassNormOne_of_archimedean_cover`; the compact
+quotient assertion alone does not expose that lift. This isolates the
+fractional-ideal reduction of Lemma 2.2.2.1(3), (2.2.2.3), pp. 77–78,
+for the Gaussian's bounded finite factors, without assuming the lemma
+for arbitrary Schwartz–Bruhat tests. Pinned Mathlib supplies
+`mixedEmbedding.integerLattice` and `ZLattice.summable_norm_rpow` for
+the subsequent archimedean majorant after clearing denominators.
+
+For the archimedean bound do not use the literal scaling in (2.2.3.10),
+p. 84: In the ordinary sup norm specified on pp. 83–84, the coordinates
+of (A.2.2.11), p. 547, expand by `t^(1/(w.mult * (r₁+r₂)))`, not by `t`.
+A local repair is to use the uniform lower expansion
+`t^(1/(2*(r₁+r₂)))` for `t ≥ 1`, and take the decay exponent large enough
+to absorb that loss as well as the lattice rank. Alternatively the
+uniform scalar section of Lemma A.2.2.4, p. 547, gives exact dilation
+`t^(1/[K:ℚ])`. The estimate is class-invariant, so it need not use the
+single-place section of the integration theorem. These comparisons
+are provisional readings from Markdown and numbered PDF layout.
+
+**Small-norm obligation:** On the provisional text reading, the use of
 Theorem 2.2.3.4(3), p. 83, on pp. 126–127 requires both zero modes to
-vanish. A nontrivial norm-one character cannot suppress the small-norm
-term `t⁻¹ f̂(0)` in the absolute value of the *unaveraged* class
-integrand, since its norm is one. Theorem 2.2.5.4(2), (4), pp. 97–98,
-places the cancellation in the norm-one average instead. To continue
-(3.2.2.5) beyond the common integrability domain, prove decay for that
-average and analytic agreement from the common domain. The radial
-Fubini theorem neither supplies these bounds nor licenses absolute
-convergence of the unaveraged class integral there.
+vanish. A nontrivial norm-one character cannot suppress the term
+`t⁻¹ f̂(0)` in the absolute value of the *unaveraged* class integrand.
+Prove inversion with both zero modes and show that they cancel after
+integration against a nontrivial norm-one character, as required by
+Theorem 2.2.5.4(2), (4), pp. 97–98. For a trivial norm-one restriction,
+retain the two terms and compute their Mellin contributions instead.
+Analytic agreement must start on the common domain `Re s > 1`.
