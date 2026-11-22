@@ -1799,30 +1799,68 @@ Replay: `lake build --wfail +Theorems.AdeleTraceCharacter
 and the Archimedean endpoints above. Exact-candidate checks and statement
 review are in Yah session `01a204c2-4f2b-73b9-ad63-5fdca6cd4879`.
 
-**Next: Identify the actual global Fourier integral for one translated
-finite box.** Use this $\mu$, a finite adele $a$, a finite idele $g$, a
-complex Schwartz Archimedean factor $\phi$, and any diagonal $y\in K$,
-including zero. For $F$ the tensor of $\phi$ and the indicator of
-$a+g\prod_v\mathcal O_v$, prove integrability and
+### Global Fourier integral for a translated finite box
+
+[`adeleBox_fourier_integral`](../../Proofs/Theorems/AdeleBoxFourier.lean)
+works over every number field $K$, on the actual adeles. Let $a$ be a
+finite adele, $g$ a finite idele, $\phi$ a complex Schwartz factor at
+infinity, and $y\in K$ any diagonal frequency, including zero. With
+$F=\phi\otimes 1_{a+g\prod_v\mathcal O_v}$ and $\psi$ the checked global
+character, the theorem proves integrability and
 $$
 \int_{\mathbf A_K}F(z)\,\overline{\psi(zy)}\,d\mu(z)
   = \widehat\phi_{\rm tr}(\iota y)
-    \prod_{v<\infty}\operatorname{finiteBoxLocalFourier}(a,g,y,v).
+    \prod_{v<\infty}\operatorname{finiteBoxLocalFourier}(a,g,y,v)
 $$
-Here $\psi$ must be the continuous global character from the positive
-Archimedean phase and the product of conjugates of the positive finite
-trace phases. Use the checked `numberFieldAdeleAddChar` and its
-Archimedean factor above.
-Masullo's (2.2.4.32), p. 92,
-supplies the conjugated Fourier kernel and tensor shape, but the finite
-integrand must use the integration variable. Use the corrected sign so
-its finite factors are precisely `finiteBoxLocalFourier`.
+for every Borel measure $\mu$ with the prescribed stage comaps on a
+cofinal set of stages. `exists_adeleBox_fourier_integral` obtains one
+regular additive Haar measure with those comaps that works simultaneously
+for all $a$, $g$, $\phi$, and $y$.
 
-For the factorization choose $S\supseteq E$ with $a$, $g$, $g^{-1}$, and
-$y$ integral off $S$. There the finite box is $\mathcal O_v$ and the
-phase and integral are both one. Transfer the support-restricted
-integral with `MeasurableEmbedding.map_comap`, then use finite-product
-Fubini, the probability tail, and the transported Archimedean integral.
-This yields the existing right-hand summand of `finiteBox_diagonal_poisson`
-without a new convergence hypothesis. Quotient normalization, inversion
-for the ramified Gaussian, and GRH remain separate open obligations.
+Masullo's (2.2.4.32), PDF p. 92, supplies the conjugated Fourier kernel
+and tensor shape for compact-open local tests and a compactly supported
+Archimedean factor. The printed local indicator uses the frequency;
+`adeleBoxTensor` evaluates it at the integration variable. The Lean result
+is for translated finite boxes, not arbitrary compact-open test families.
+It proves the integral split without compact support at infinity by
+transporting Schwartz integrability. The restricted-product prescription
+before Definition A.3.1.2, p. 556, provides the stage shape and local
+scales. The proof uses the cofinal stages containing the mass exceptions,
+with the signs from `AdeleTraceCharacter`. The comparison with (2.2.4.32)
+is provisional (pinned Markdown and numbered PDF layout).
+
+Choose $S$ containing the mass exceptions and all nonintegral coordinates
+of $a$, $g$, $g^{-1}$, and the diagonal $y$. The full integrand vanishes
+outside the stage image. Transfer its integral using the comap, split the
+conjugated kernel, and apply Fubini. `finiteAdeleBox_stage_fourier` proves
+that the omitted boxes are integer rings, the phases are trivial there,
+and the omitted mass is one. This identifies the existing right-hand
+summand of `finiteBox_diagonal_poisson` as an actual Fourier integral,
+without adding a convergence hypothesis or dropping the zero mode.
+
+Replay: `lake build --wfail +Lemmas.FiniteBoxStageFourier
++Theorems.AdeleBoxFourier +Theorems.FiniteBoxPoisson`. Jointly import
+these modules and `Theorems.AdeleTraceCharacter`; check the binders and
+axioms of `adeleBoxTensor`, `adeleBoxFourierIntegrand`,
+`finiteAdeleBox_stage_fourier`, and the two global endpoints above. See
+Yah session `01a204cc-1b12-7aec-9ee7-3bcbcd0c5b7f` for the exact-candidate
+checks and independent statement review.
+
+**Next: Identify this product Haar with the counting-quotient
+normalization.** Use the same $\mu$ and diagonal $K\subset\mathbf A_K$.
+Construct a Borel fundamental domain $D=P\times\prod_v\mathcal O_v$,
+where $P$ is the image of $[0,1)^{[K:\mathbb Q]}$ under a full integral
+basis in the Archimedean coordinates. Show each adele has a unique
+translate by diagonal $K$ in $D$, first using
+`exists_finiteBox_diagonalCoset` at unit scale to make its finite part
+integral, then reducing by $\mathcal O_K$ at infinity. Compute
+$\mu(D)=1$ using the rectangle identity in
+`exists_adeleRestrictedProductHaar`: The Archimedean trace covolume is
+$\sqrt{|D_K|}$, and the finite mass product is its reciprocal. For the
+counting-quotient integration identity, use the restriction-pushforward
+and periodization construction in `RationalAdeleFundamentalDomain` and
+`FundamentalDomainQuotientMeasure` as the model. This is the missing
+bridge from the local scales, Definition A.3.1.2 and Lemma A.3.1.3,
+PDF p. 556, to Definition A.3.1.1, PDF p. 555, not an $S$-local
+normalization assertion. Inversion for the ramified Gaussian and GRH
+remain separate open obligations.

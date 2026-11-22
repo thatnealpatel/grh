@@ -86,40 +86,20 @@ $$
    $\overline{\prod_v\overline{a_v(x)}}=\prod_v a_v(x)$.
    By `inner_archimedeanEuclideanEmbedding_traceFrequency`, the positive
    finite product on $xy$ is the positive shift phase in
-   `archimedeanIdeal_poisson` at $a=e(x)$ and frequency $T(e(y))$. For a
-   translated box one still needs a diagonal representative and the
-   equality of its phases with those of the local translation centers
-   on the dual support.
+   `archimedeanIdeal_poisson` at $a=e(x)$ and frequency $T(e(y))$.
 
-This proves diagonal phase compatibility only, independently of any
-finite-box approximation theorem. It proves neither an off-diagonal
-continuous global character nor the full diagonal annihilator, Fourier
-formula, theta inversion, or GRH. A next use is to substitute the positive
-finite phase for the conjugate of the corrected finite character on a
-diagonal product $xy$, for $x,y\in K$, in the finite-box Fourier
-formula. The identification of the finite frequency support with the
-actual fractional-ideal trace dual, and comparison of the Haar and
-lattice factors in the shifted Poisson formula, are separate obligations.
-A testable next comparison is for a box with nonzero scaled local
-integer lattices $I_v=c_v\mathcal{O}_{K_v}$, equal to $\mathcal{O}_{K_v}$
-away from finitely many $v$, and fractional ideal
-$I=\{x\in K: x_v\in I_v\text{ for every }v\}$. For every $y\in K$, prove
-$$
-y\in I^\vee \quad\Longleftrightarrow\quad
-\forall v\ \forall b\in I_v,\quad
-\operatorname{padicStdAddChar}_{p(v)}
-\bigl(\operatorname{Tr}_{K_v/\mathbb Q_{p(v)}}(b\,y_v)\bigr)=1.
-$$
-This needs the actual completed lattice $I_v$ at each place. For
-$I_v=g_v\mathcal O_v$, the local codifferent annihilator rewrites the
-right side as $y_v g_v\in\mathfrak D_v^{-1}$. A direct count proof is to
-choose a finite idele $\delta_f$ of ideal $\mathfrak D_K$ using
-`finiteIdeleIdeal_surjective`. The local exponent identification in
-`finiteCompletionDifferentExponent_eq_global_multiplicity` should give
-$\mathfrak D_v=\delta_{f,v}\mathcal O_v$. Thus the local condition is
-membership in the homogeneous box for $(\delta_f g)^{-1}$; apply
-`mem_finiteIdeleIdeal_iff` and `fractionalIdeal_traceDual_eq`. This is a
-proof route, not yet a checked bridge for an arbitrary box.
+This module proves diagonal phase compatibility only. Subsequent work
+uses `exists_finiteBox_diagonalCoset` for the diagonal representative,
+`mem_traceDual_finiteIdeleIdeal_iff` for the equivalence between local
+annihilation on $g_v\mathcal O_v$ and membership in $I(g)^\vee$, and
+`finiteBox_tracePhase_eq_diagonal` to identify the translated phases with
+the diagonal phase on this support. See the [checked support and phase
+bridge](single-place-norm.md#checked-finite-box-fourier-support-and-phase)
+and the [actual global Fourier integral](single-place-norm.md#global-fourier-integral-for-a-translated-finite-box).
+The global character is built separately; the Fourier comparison here
+samples diagonal frequencies, not arbitrary off-diagonal frequencies.
+Counting-quotient normalization, ramified Gaussian inversion, and GRH
+remain open.
 
 ## Local checks and integration replay
 
