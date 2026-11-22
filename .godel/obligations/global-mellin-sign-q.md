@@ -146,17 +146,13 @@ value, or the analytic continuation argument. Recheck with
 `go run ./cmd/godel audit-local <candidate> Theorems.RationalAdeleSameSignMellin -- Masullo.integral_rationalAdeleSameSignFourier_mul_char`
 and a fresh import and `#check` of the same declaration.
 
-## Next bounded check
+## Successor checks
 
-Check the rendered complex standard Gaussian (3.4.3.5)–(6), p. 152,
-and its character argument in (3.4.3.12)–(13), p. 153, against the
-bilinear local integral (3.3.1.7), p. 130, and the scalar factor
-(3.2.1.5), p. 123. On weight one, radial frequency zero, and $s=2$,
-rotation by $i$ separates the same-weight zero from the nonzero
-opposite-weight Gamma value. This would decide whether the printed test
-needs the angular conjugation in the [checked scalar repair](hecke-right-line-majorant.md#checked-complex-gaussian-recognition-with-the-opposite-angular-weight).
-The source reading for that test is still provisional. General-field
-Haar/discriminant calibration, conductor assembly, completed-product
-identification, reflected right-line integrability, and contour
-exhaustion are separate. The [unadopted modulus-three local proof](hecke-right-line-majorant.md#open-ramified-local-conductor-power-in-the-general-reflection)
-remains a separate recovery item, not an input to this sign check.
+The [rendered complex Gaussian check](complex-gaussian-angular.md)
+confirms the same-weight zero against the nonzero Gamma value and
+separates the opposite-weight scalar repair from the pullback action.
+The [finite normalization check](finite-gaussian-tamagawa.md) then
+compares the local Tamagawa pairing with the Euler convention at the
+place over 2 of $\mathbb Q(i)$. The
+[unadopted modulus-three local proof](hecke-right-line-majorant.md#open-ramified-local-conductor-power-in-the-general-reflection)
+remains a separate recovery item, not an input to either check.

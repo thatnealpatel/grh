@@ -550,19 +550,13 @@ in Yah session `01a2012a-2b95-7bce-8dcc-d7ca7b125aa6`.
 
 ## Checked complex Gaussian recognition with the opposite angular weight
 
-The local zeta integral in (3.3.1.7), p. 130, is bilinear in the
-integrand factors $f$ and $c$: It integrates $f(z)c(z)$, not
-$f(z)c(z)^{-1}$ or $f(z)\overline{c(z)}$. The global integral in
-(3.2.2.1), §3.2.2, uses the same orientation. On the provisional
-Markdown and layout reading, the test in (3.4.3.5)–(6), p. 152, has
-angular weight $m$ for the input angular character of weight $m$.
-But (3.4.3.12)–(13), p. 153, would evaluate that test at the *same*
-character to give the nonzero factor (3.2.1.5). For a direct control,
-take $m=1$, $s=2$, and $\tau=0$. Rotation by $i$ multiplies the
-integrand by $-1$, so Haar invariance forces its absolutely convergent
-integral to vanish. The scalar factor on p. 123 does not vanish there.
-This is a text-based mathematical mismatch, not a rendered-page
-finding or a checked Lean counterexample.
+The [earlier rendered angular check](complex-gaussian-angular.md)
+confirms that the bilinear integral of (3.3.1.7), p. 130, pairs the
+printed angular weight $m$ with the same input weight in
+(3.4.3.5)–(6), p. 152, and (3.4.3.12)–(13), p. 153. At $m=1$,
+$s=2$, and radial frequency zero the absolutely convergent integral
+vanishes by rotation, while the Gamma factor is positive. This is a
+source check in ordinary mathematics, not a Lean counterexample.
 
 **Checked local repair:** `Masullo.complexGaussianZetaDensity_integral`
 in [`ComplexGaussianMellin.lean`](../../Proofs/Theorems/ComplexGaussianMellin.lean)
@@ -689,19 +683,21 @@ and obtain the same mass on each shell by left invariance. The existing
 uniformizer norm and local coefficient lemmas identify the geometric
 ratio, so no Euler factor or convergence premise is added to the statement.
 
-In the provisional Markdown and PDF-layout reading, (3.4.3.7)–(8),
-p. 152, supply the two tests, and (3.3.1.7), p. 130, uses the local
-multiplicative Tamagawa measure in the bilinear pairing. But
-(A.3.2.2), p. 560, sets its unit mass to the local discriminant factor,
-which need not be one even for an unramified **character**. Combining
-(3.4.3.10)–(11) with (3.4.3.13), p. 153, would instead give the Euler
-factor without this scalar. The repair at the checked pairings is to
-retain the mass, or divide the test by it if the desired value is the
-Euler factor. This local result does not construct the Tamagawa measure,
-evaluate its discriminant mass in Lean, or establish the meromorphic
-eigendistribution identity. Independent Yah statement review: `mlDzIRC`
-(output `f48eaa338965ce0b79cba685588b9017d0f07526`). No rendered-page
-verification is claimed.
+The [rendered finite normalization check](finite-gaussian-tamagawa.md)
+settles the unramified-character test at $\mathbb Q_2(i)$: Under the
+printed Tamagawa measure the norm-square pairing is $2/3$, whereas the
+Euler factor is $4/3$, as also seen by the unit-mass control over
+$\mathbb Q_2$. Reading (3.4.3.13) with the mass-weighted factor from a
+raw Gaussian pairing removes this local scalar mismatch, but does not
+identify the factor with the Euler convention of (3.2.1.1)–(2). Keep
+the mass when assembling the restricted product, or rescale the test
+if the desired value is the Euler factor. The separate ramified-character
+Lean pairing above likewise retains the mass; this source check tests
+the unramified-character branch of Theorem 3.4.3.3(1). Neither Lean
+endpoint constructs the Tamagawa measure, evaluates its discriminant
+mass, or establishes a meromorphic eigendistribution identity.
+Independent Yah statement review of the Lean endpoints: `mlDzIRC`
+(output `f48eaa338965ce0b79cba685588b9017d0f07526`).
 
 ## Archimedean Gaussian pairings on the completion-unit Haar measures
 
@@ -725,16 +721,16 @@ multiplication by $a\ne0$ is $\|a\|^2$, canceled by the inverse squared
 norm. The completion-unit measure is then left-invariant and gives a
 compact neighborhood of the identity finite positive mass.
 
-The real tests of (3.4.3.3)–(4), p. 152, need no change. The provisional
-same-weight reading of (3.4.3.5)–(6), p. 152, would give zero in the complex
-weight-one control, not the nonzero value required by (3.4.3.12)–(13),
-p. 153. At the scalar evaluation, `complexGaussianZetaDensity_integral`
-uses the opposite angular weight in the same coordinate as the character.
+The real tests of (3.4.3.3)–(4), p. 152, need no change in this scalar
+evaluation. As confirmed by the [prior angular audit](complex-gaussian-angular.md),
+`complexGaussianZetaDensity_integral` uses the opposite angular weight
+in the same coordinate as the character, unlike the printed complex test.
 The transferred result is pointwise in $s$ on the open half-plane, not
 uniform down to $\Re s=0$ and not a distribution-valued continuation.
 Independent Yah statement and text review: `ZTZcZfz` (output
-`28497fba430c60d17edeb89e1d7540dbe164c462`). The pinned Markdown and PDF
-layout were checked, but no rendered-page verification is claimed.
+`28497fba430c60d17edeb89e1d7540dbe164c462`), which used the pinned
+Markdown and PDF layout. The rendered source evidence is in the
+separate angular audit.
 
 ### Checked topology for the number-field stages
 
@@ -804,11 +800,11 @@ with the product of those masses or with the corresponding scaled tests.
 growth in (B.4.2.1)–(4), the broader test class, ramified Fourier terms,
 and global trace. The [local conductor obligation](#open-ramified-local-conductor-power-in-the-general-reflection)
 remains upstream of the checked reflection. Before using the eigenspace
-claim, reconcile the provisional pullback action $T(f\circ m_g)$ in
-(3.4.3.1), p. 151, with (3.3.1.7), p. 130: Left invariance makes the
-bilinear pairing transform by $c(g)^{-1}$ under this pullback. Replacing
-$m_g$ by $m_{g^{-1}}$ changes the action, so later uses must be checked
-with the same convention.
+claim, reconcile the [rendered pullback action](complex-gaussian-angular.md#the-weight-one-control-and-its-scope)
+$T(f\circ m_g)$ in (3.4.3.1), p. 151, with (3.3.1.7), p. 130:
+Left invariance makes the bilinear pairing transform by $c(g)^{-1}$,
+not the printed $c(g)$. Replacing $m_g$ by $m_{g^{-1}}$ changes the
+action, so later uses must be checked with the same convention.
 
 ## Reproduce the endpoint audit
 
