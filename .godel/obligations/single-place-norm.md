@@ -496,15 +496,63 @@ Independent Yah statement review: Session
 (`JmaKYxE`). Source readings are provisional: Pinned Markdown and
 numbered PDF layout, not rendered-page inspection.
 
-### Next normalization step: Combine unit-log and torsion reduction
+## Checked Archimedean unit fundamental domain
 
-For every `g : archimedeanNormOne (K := K)`, prove
-`∃! ε : (𝓞 K)ˣ` such that `archimedeanDiagonalUnit ε * g` has retained
-weighted log in `regulatorBox K` and satisfies the torsion sector at
-the chosen place. Lift the unique lattice translation to an actual
-integral unit, use `NumberField.Units.logEmbedding_ker` to characterize
-the remaining ambiguity, and use the pointwise torsion theorem to
-remove it. Prove that the combined Borel domain has mass
-$R_F\,\omega(\mathrm{univ})/w_F$ in the retained-log and angular product
-coordinates. The global Borel domain and quotient measure comparison
-remain open.
+[`Theorems.ArchimedeanUnitDomain`](../../Proofs/Theorems/ArchimedeanUnitDomain.lean)
+defines Masullo's $E_0$ from (A.2.3.13), PDF p. 549, on the actual
+norm-one Archimedean units. The domain is Borel, and every element has
+exactly one left multiplier in $(\mathcal O_F)^\times$ sending it into
+$E_0$. This is the pointwise cover and disjointness of Lemma A.2.3.8(2),
+(A.2.3.17), p. 550. The proof on p. 551 uses lattice reduction and torsion
+reduction, then splits off torsion. Lean instead lifts the unique lattice
+translation arbitrarily. `logEmbedding_eq_zero_iff` puts the ratio of
+any competing lift to the chosen lift in torsion, and the pointwise
+sector result identifies the two multipliers. The chosen sector place
+need not be the place omitted in the regulator coordinates.
+
+Membership in $E_0$ is pointwise equivalent to membership in the
+rectangle in retained-log and angular coordinates. Lean supplies its
+mass $R_F(\omega(\mathrm{univ})/w_F)$ in the product coordinate measure,
+including unit rank zero. This uses the separate box and angular
+calculations and `measurePreserving_infiniteAdeleHaarCoordinates` for
+the logarithmic and angular coordinates of the Archimedean product.
+The global restricted product identity (A.3.2.5), p. 560, is separate.
+This gives the Archimedean factors needed in (A.3.2.1), pp. 559–560.
+It is not a restriction of full Haar to a null norm-one fiber and does
+not yet identify the quotient measure.
+
+Independent Yah statement review: Session
+`01a202ea-d804-7798-a956-9f29875456f6`, child `review-e0` (`nUVrgjW`).
+Source readings are provisional: Pinned Markdown and numbered PDF text,
+not rendered pages.
+
+```sh
+go run ./cmd/godel audit-local "$CANDIDATE" Theorems.ArchimedeanUnitDomain -- \
+  Masullo.archimedeanUnitDomain Masullo.existsUnique_archimedeanUnit_translate \
+  Masullo.archimedeanUnitDomainCoordinates Masullo.mem_archimedeanUnitDomain_iff_coordinates \
+  Masullo.measurableSet_archimedeanUnitDomain Masullo.measure_archimedeanUnitDomainCoordinates
+```
+
+### Next normalization step: Construct the global disjoint domain
+
+For a section `r` of `ideleIdealClassNormOne`, use the union of `r p`
+translates of the empty finite stage with infinite component in $E_0$,
+as in (A.2.3.12)–(16), pp. 549–550. Prove Borel measurability on the
+actual norm-one subgroup and, for every norm-one idele `g`, prove
+exactly one `a : Kˣ` sends `g` into this union. This is Proposition
+A.2.3.10(2), (A.2.3.25)–(26), p. 552. Reuse the residual norm-one
+factorization from `ideleIdealClass_normOne_eq_one_iff` and the
+compact-cover proof in `Theorems.IdeleClassCompact` for existence. For
+uniqueness, the class map forces the same `p`. A diagonal principal
+idele relating the two residuals has integral units everywhere at
+finite places. Apply `finiteIdeleIdeal_unitEmbedding` to that field
+multiplier and its inverse. `FractionalIdeal.mem_spanSingleton_self`
+and `FractionalIdeal.mem_one_iff` then lift both elements to the ring of
+integers, where injectivity of the fraction-ring map shows that the two
+lifts multiply to one. Apply the pointwise
+`existsUnique_archimedeanUnit_translate` to finish uniqueness. The
+resulting Borel domain and pointwise uniqueness give the hypotheses of
+`MeasureTheory.IsFundamentalDomain.mk'` for the diagonal action.
+Keep the quotient measure comparison separate: It still needs agreement
+of the checked local product with log-norm and norm-one quotient Haar,
+including the finite-place discriminant and ideal-class factors.
