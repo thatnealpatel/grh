@@ -2195,22 +2195,106 @@ build of `Lemmas.AdeleStageBalls`, `Theorems.AdeleHeckeTest`, and
 `Theorems.AdeleBoxThetaInversion`, the joint-import signatures and
 axiom check, and the adoption decision.
 
-**Next: construct the corrected Archimedean Schwartz factor.** For a
-unitary Hecke character $\chi$ and the existing `hχ`, produce
-$\phi_\chi:\mathcal S(E_\infty,\mathbb C)$ whose evaluation at
-$e_\infty^{-1}((a:\mathbf A_K)_\infty)$ equals
-`∏ v, archimedeanHeckeGaussian χ hχ v (ideleInfiniteCoordinates K a v)`
-for every actual idele $a$. Use the *same* chosen parity and opposite
-angular weight as `archimedeanHeckeGaussian`, not just the existence of
-some Gaussian with the right Mellin value. The coordinates are related
-by `archimedeanEuclideanToAdele_symm_mixed`. The scalar functions to
-assemble are polynomial times positive-width Gaussians, using the
-extension embedding at each completion as in `archimedeanHeckeGaussian`.
-Compare (3.4.3.3)–(6), p. 152, and the angular correction in
-`Theorems.ArchimedeanCompletionGaussian`. Once the Archimedean equality
-is proved, the checked restriction identifies the assembled additive
-tensor with `ideleHeckeGaussian` on ideles; apply
-`adeleBoxSpan_theta_inversion` with the same cofinal additive Haar and
-both zero terms. The Archimedean identification, continuity on the
-number-field idele classes, full Schwartz–Bruhat inversion, and GRH
-are not proved here.
+#### Corrected Archimedean Schwartz factor and pointwise Hecke theta inversion
+
+[`AdeleHeckeGaussianTheta`](../../Proofs/Theorems/AdeleHeckeGaussianTheta.lean)
+constructs `archimedeanHeckeSchwartz χ hχ` in
+$\mathcal S(E_\infty,\mathbb C)$ for any number field and unitary Hecke
+character, with the existing completion-unit measurable/Borel
+instances. `archimedeanHeckeSchwartz_idele` evaluates it at
+$e_\infty^{-1}((a:\mathbf A_K)_\infty)$ for **every actual idele** $a$:
+It is the product of the existing `archimedeanHeckeGaussian` factors
+using `ideleInfiniteCoordinates`. The construction uses the same
+`.choose` terms in `realCompletionGaussianPair` and
+`complexCompletionGaussianPair`, not a new pair with the same Mellin
+value. `archimedeanEuclideanToAdele_symm_mixed` and the completion
+extension embeddings give the coordinate equality.
+
+- **Manuscript input and repair.** Definition 3.4.3.2(1)–(3),
+  (3.4.3.3)–(9), PDF p. 152, gives the parity, Gaussian widths and
+  complex prefactor, and the restricted tensor. The printed complex
+  branches are $z^m$ for $m\ge0$ and $\bar z^{-m}$ otherwise. The
+  [opposite-weight repair](complex-gaussian-angular.md) for the
+  bilinear pairing (3.3.1.7), p. 130, conjugates those monomials and
+  leaves their degrees and widths unchanged. To use the checked
+  box-span Poisson argument we need a Schwartz map realizing exactly
+  these repaired factors on the chosen Euclidean mixed space.
+  `mixedSchwartzGaussian` composes an isotropic Schwartz Gaussian with
+  the invertible block scaling $(\sqrt\pi,\sqrt{2\pi})$ and multiplies
+  it by the temperate monomial product in the *unscaled* coordinates.
+  Its formula holds at zero coordinates as well. The supporting
+  `schwartzGaussian` factors each iterated derivative as the Gaussian
+  times a temperate multilinear coefficient and requires neither
+  finite dimension nor completeness of its real inner product space.
+- **Pointwise specialization.** `adeleHeckeTest_archimedeanHeckeSchwartz_coe_idele`
+  discharges the previous Archimedean equality premise in
+  `adeleHeckeTest_coe_idele`. For its additive test $f$,
+  `adeleHeckeGaussian_theta_inversion` substitutes the actual idelic
+  Gaussian in the $K^\times$ sum of Theorem 2.2.3.2, (2.2.3.2), PDF
+  p. 82. Unlike Masullo's appeal to Tate's formula, this specialization
+  uses the proved membership of $f$ in `adeleBoxSpan K` and the checked
+  inversion there. It assumes the same additive Haar $\mu$ and
+  cofinal stage comaps, keeps absolute summability of **both full**
+  diagonal series over $K$, and retains $|a|_K^{-1}\widehat f(0)-f(0)$.
+  The finite stage $S$ is arbitrary; it need not contain the Haar
+  exceptional set or the character's ramification set for this
+  fixed-stage identity. To compare different stages, use the earlier
+  stage-independence theorem with its unramifiedness premise.
+
+**Writer evidence.** Base `7f60e40bea1cec5e1210f71b004b763d68d34126`;
+Yah `01a20522-cddb-7b0c-a62a-3ee14581e0f1`, writer `eJBiCkP`,
+`check-arch-schwartz-final`. The writer read pinned Markdown and
+numbered PDF layout, not rendered pages. Independent Yah reviewer
+`GjxnVNh` inspected rendered pixel crops of pp. 152 and 82, and
+then verified the three exact Lean files, including the existing
+choices, both zero terms and the full diagonal domains (read-only
+output `7b2f1edfb28dc0b2c4a122c8ac9a6ddf07ecd8c9`). For the separate
+rendered pp. 130 and 153 angular audit see the linked angular handoff.
+The review and build are tied to these source hashes:
+
+| Lean target | SHA-256 of source |
+| --- | --- |
+| `Lemmas.SchwartzGaussian` | `2d6f0bdb73a476af4900b4a02c00f1a17037175f039cab992934b0d38d222a97` |
+| `Lemmas.MixedSchwartzGaussian` | `d577cc70dfa022c76f2a6d563e52bd76a5d01964332c2d6405396156638acf61` |
+| `Theorems.AdeleHeckeGaussianTheta` | `50aa8cbd0870cf42cb64aead37b957f13e9821e6da18f60fa9c6db3d023eac10` |
+
+The writer ran `lake build --wfail` on these three targets and
+`+Theorems.AdeleHeckeTest +Theorems.AdeleBoxThetaInversion` with Lean
+4.36.0 and Mathlib `fc4f59e577feb1a4956671bc04ac18aaaf8cd842`.
+A fresh joint import checked all eight new public declarations with
+`#check @...` and `#print axioms`; each uses exactly `propext`,
+`Classical.choice`, and `Quot.sound`. See the writer session for
+complete built signatures. This is a writer check, not an integrated
+candidate or adoption check.
+
+**Next: bound the reflected theta term before averaging.** Masullo's
+Theorem 2.2.3.4(2), (2.2.3.7), PDF p. 83, applies the large-norm
+bound to $\widehat f$, not to $f$. The proof of Theorem 2.2.5.4(2),
+(2.2.5.10), pp. 97–98, then averages on the compact norm-one group.
+This successor reading is provisional (Markdown and numbered layout).
+The existing arbitrary-character Gaussian large-norm estimate applies
+to the *spatial* Gaussian, not to the integral `adeleFourier μ f`.
+At the same $\mu$ and fixed $S$, the next bound to prove is: For each
+$N\in\mathbb N$ there is a finite constant $C_N$ such that for every
+actual idele $b$ of norm at least one,
+\[
+\sum_{t\in K^\times}|\widehat f(b\,t)|\le C_N |b|_K^{-N}.
+\]
+One route is to upgrade the single-box factorization
+`adeleBox_fourier_integral` from diagonal to arbitrary adelic
+frequencies: The finite part of a transformed box is the trace-dual
+box indicator times a translated phase and a Haar mass, and
+`archimedeanTraceFourier_eq` gives the Euclidean Schwartz factor
+with the trace frequency and measure. For the bound, domination by
+such a box suffices; expansion of the phase into smaller boxes is
+not necessary. Extend the fixed lattice majorant to these finitely
+many boxes, with compact norm-one representatives. Alternatively,
+an explicit Fourier formula for this Gaussian must match the same
+additive integral at the idelic diagonal samples, not just at bare
+diagonal frequencies. Use $N+1$ for the reflected estimate to absorb
+the prefactor $|a|_K^{-1}$. Integrability/measurability of the class
+slices and cancellation by the norm-one character are separate:
+Retain both zero modes until the weighted Haar average; for the
+trivial restriction multiply them by the actual Haar mass. This
+writer result does not prove class continuity, continuation, full
+Schwartz–Bruhat inversion, RH, or GRH.
