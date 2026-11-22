@@ -518,12 +518,41 @@ trivial on finite local units. This is checked arithmetic input, not
 a printed split-prime theorem or a claim about p. 309. No new visual
 reading was needed.
 
+### Checked grouped inert-prime denominator
+
+[`IdealClassInertPrimeComparison`](../../Proofs/Theorems/IdealClassInertPrimeComparison.lean)
+proves `Masullo.qSqrtNegFive_heckeRationalDenominator_of_not_isSquare`.
+For every rational prime $p\ne2$ with $-5$ nonsquare in $\mathbb F_p$,
+the grouped denominator of
+`idealClassHeckeCharacter qSqrtNegFiveClassCharacter` is
+$(1-\chi_{-4}(p)X)(1-\chi_5(p)X)$ in $\mathbb C[X]$. No separate
+$p\ne5$ or character hypothesis is needed: At $5$, $-5$ is the square
+zero, and the inert Hecke-side theorem already works for every class
+character.
+
+The [criterion](#checked-reduction-and-inertness-criterion) makes
+$(p)$ prime, so the [inert fiber result](#checked-inert-prime-fiber-and-grouped-factor)
+gives $1-X^2$. The [Dirichlet comparison](#checked-dirichlet-sign-comparison)
+gives $\chi_5(p)=-\chi_{-4}(p)$ and the coefficient product $-1$,
+whence $\chi_{-4}(p)^2=1$. A fresh Lean import applies the endpoint
+at $11$, checks the actual coefficients $(-1,1)$, and verifies that
+the two Dirichlet factors and the grouped Hecke denominator both give
+$1-X^2$.
+
+This is arithmetic input to Masullo's printed product, using the
+[accepted rendered reading](#manuscript-interface) of PDF p. 122,
+§3.2.1, (3.2.1.1), and p. 124, Definition 3.2.1.4, (3.2.1.7). The
+single inert place is retained by the
+[local-unit criterion](#checked-idelic-realization-and-local-factors):
+Its class pullback is trivial on finite local units. This is not a
+new visual reading or a claim about p. 309.
+
 ### Remaining grouped identity
 
 The all-prime grouped local polynomial identity for the
 [constructed quadratic class character](#checked-normalized-class-character)
-is still open in Lean; the [split row](#checked-grouped-split-prime-denominator)
-is complete.
+is still open in Lean. The [split row](#checked-grouped-split-prime-denominator)
+and the [inert row](#checked-grouped-inert-prime-denominator) are complete.
 [`HeckeDirichletFactorization`](../../Proofs/Theorems/HeckeDirichletFactorization.lean)
 proves `Masullo.finiteHeckeCharacterEulerProduct_eq_dirichlet_of_local`
 by regrouping the convergent product over the finite fibers of
@@ -551,11 +580,10 @@ pp. 800–801, identified in its [holomorphy section](isotypic-inverse-range-q-s
 
 **Open Lean premise for the Hecke transfer:** Instantiate the all-prime
 grouped polynomial identity for the constructed idèle-class character.
-**Next arithmetic check:** For $p\ne2$ with $-5$ nonsquare modulo $p$,
-use the [inertness criterion](#checked-reduction-and-inertness-criterion)
-and [Hecke-side inert factor](#checked-inert-prime-fiber-and-grouped-factor)
-to give $1-X^2$. Match it with the two Dirichlet factors using
-opposite signs and $\chi_{-4}(p)^2=1$. The grouped comparisons at $2$
-and $5$, and the all-prime assembly, remain separate.
+**Next arithmetic check:** At $5$, use [prime uniqueness and the residue
+norm](#checked-arithmetic-at-five) to reduce the grouped product to
+one degree-one factor. Match its principal-class value $1-X$ with
+the Dirichlet coefficients $(1,0)$. The grouped comparison at $2$
+and the all-prime assembly remain separate.
 The explicit product's circle growth and common-height estimate are
 already unconditional in Lean.
