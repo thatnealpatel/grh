@@ -42,41 +42,14 @@ func Enter(ctx context.Context, command string) (err error) {
 	if err != nil {
 		return err
 	}
-	jj := func(args ...string) (string, error) {
-		// Don't even merge divergent jj operations during this read.
-		return stageOutput(ctx, cwd, "jj", append([]string{"--ignore-working-copy", "--at-op=@"}, args...)...)
-	}
-	root, err := jj("workspace", "root")
+	accepted, err := Resolve(ctx, cwd, os.Getenv("YAH_CAMPAIGN_TARGET"))
 	if err != nil {
 		return err
 	}
+	root, gitDir, target, rev := accepted.Root, accepted.GitDir, accepted.Target, accepted.Revision
 	source := filepath.Join(root, "cmd", command)
 	if cwd != root && cwd != source {
 		return fmt.Errorf("launch from the durable GRH workspace root or its cmd/%s directory", command)
-	}
-	target := os.Getenv("YAH_CAMPAIGN_TARGET")
-	if target == "" {
-		target = "main"
-	}
-	// Only a single, unconflicted local target is eligible. In particular neither
-	// a revset nor a matching remote bookmark is a local bookmark.
-	rev, err := jj("bookmark", "list", "-T", `if(!remote && normal_target && !normal_target.conflict(), normal_target.commit_id() ++ "\n")`, "--", "exact:"+strconv.Quote(target))
-	if err != nil {
-		return err
-	}
-	if (len(rev) != 40 && len(rev) != 64) || strings.Trim(rev, "0123456789abcdef") != "" {
-		return fmt.Errorf("no unambiguous local accepted commit for bookmark %q", target)
-	}
-	gitDir, err := jj("git", "root")
-	if err != nil {
-		return err
-	}
-	branch, err := stageOutput(ctx, root, "git", "--git-dir", gitDir, "rev-parse", "--verify", "refs/heads/"+target)
-	if err != nil {
-		return err
-	}
-	if branch != rev {
-		return fmt.Errorf("accepted target %q disagrees: jj %s, Git %s", target, rev, branch)
 	}
 
 	dir, err := os.MkdirTemp("", "grh-accepted-*")
@@ -126,6 +99,50 @@ func Enter(ctx context.Context, command string) (err error) {
 		return err
 	}
 	return fmt.Errorf("exec accepted %s: %w", rev, syscall.Exec(fmt.Sprintf("/proc/self/fd/%d", entry.Fd()), os.Args, os.Environ()))
+}
+
+// Snapshot identifies the accepted commit
+// and the repository holding its objects.
+type Snapshot struct {
+	Root, GitDir, Target, Revision string
+}
+
+// Resolve pins the exact local accepted bookmark without updating the
+// checkout or the graph. An empty target means main.
+func Resolve(ctx context.Context, cwd, target string) (Snapshot, error) {
+	jj := func(args ...string) (string, error) {
+		// Don't even merge divergent jj operations during this read.
+		return stageOutput(ctx, cwd, "jj", append([]string{"--ignore-working-copy", "--at-op=@"}, args...)...)
+	}
+	root, err := jj("workspace", "root")
+	if err != nil {
+		return Snapshot{}, err
+	}
+	if target == "" {
+		target = "main"
+	}
+	// Only a single, unconflicted local target is eligible. In particular neither
+	// a revset nor a matching remote bookmark is a local bookmark.
+	rev, err := jj("bookmark", "list", "-T", `if(!remote && normal_target && !normal_target.conflict(), normal_target.commit_id() ++ "\n")`, "--", "exact:"+strconv.Quote(target))
+	if err != nil {
+		return Snapshot{}, err
+	}
+	if (len(rev) != 40 && len(rev) != 64) || strings.Trim(rev, "0123456789abcdef") != "" {
+		return Snapshot{}, fmt.Errorf("no unambiguous local accepted commit for bookmark %q", target)
+	}
+	gitDir, err := jj("git", "root")
+	if err != nil {
+		return Snapshot{}, err
+	}
+	branch, err := stageOutput(ctx, root, "git", "--no-replace-objects", "--git-dir", gitDir, "rev-parse", "--verify", "refs/heads/"+target+"^{commit}")
+	if err != nil {
+		return Snapshot{}, err
+	}
+	if branch != rev {
+		return Snapshot{}, fmt.Errorf("accepted target %q disagrees: jj %s, Git %s", target, rev, branch)
+	}
+
+	return Snapshot{Root: root, GitDir: gitDir, Target: target, Revision: rev}, nil
 }
 
 func stageOutput(ctx context.Context, dir, name string, args ...string) (string, error) {
