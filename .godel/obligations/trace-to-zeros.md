@@ -106,26 +106,32 @@ full zero orders, normalized local pairings, and actual quotient Haar.
 It does not identify a trace operator. The remaining global comparison
 is not an assumption about zero location.
 
-**Runnable next check:** Take $S=\{\infty\}$, $0<\alpha<1/2$, and degree
-$s=2r\ge4$. Choose a nonzero nonnegative bump $b\in C_c^\infty((0,\log 2))$
-and put $f=b'$. Then $\int f=0$ but
+**1. Identify the operators at fixed cutoffs.** Work over $\mathbb Q$ with
+$S=\{\infty\}$ in the trivial compact isotype. Write the global $S$-piece
+of (11.3.1.4), p. 494, and the local level operator of (11.2.1.6),
+pp. 488–489, on their stated spaces. Specify the integration measures,
+the lift used to split off the shell, and the right orbital cutoff in
+(11.3.2.3), pp. 495–496. Retain the terminal geometric projection in the
+global composition. If the source does not determine one of these choices,
+name the missing datum and test a specified replacement as a repair. The
+unsplit Gram operator and the section collar do not identify the source shell.
+
+**2. Test the identified operators on one bump.** Fix one common admissible
+width $0<\alpha<1/2$ and even degree $s\ge4$. Take $f=b'$ for a nonzero
+nonnegative $b\in C_c^\infty((0,\log 2))$. Then $\int f=0$ but
 $\widehat f_\mathrm{M}(1/2)=-\tfrac12\int e^{x/2}b(x)\,dx\ne0$. Choose
-$T<2$ above the norm support so the omitted finite-place *linear* terms
-vanish. For the specific joint cutoff family of the
+$T<2$ above the norm support. This kills omitted finite-place *linear*
+terms; justify vanishing of the actual orbital contribution separately.
+Take the global level limit at fixed position support before exhausting
+position. For the specified joint cutoff family in the
 [real-place calculation](trace-joint-local-q.md#above-norm-one-the-defect-is-a-single-mellin-moment),
-the normalized raw multiplier gives $J_f=\int Hf$, and the actual
-**local model** projection gives $J_f-\widehat f_\mathrm{M}(-1/2)$.
-The geometric equality required by p. 520 instead gives
-$J_f-\widehat f_\mathrm{M}(-1/2)-\widehat f_\mathrm{M}(1/2)$, if the orbital
-terms vanish as claimed. Thus for this control a proposed global-to-local
-bridge must account for the remaining $-\widehat f_\mathrm{M}(1/2)$.
-Compare the traced global $S$-piece from (11.3.1.4) to the actual local
-level from (11.2.1.6), not just to its multiplier. Work at fixed cutoffs
-first, then justify the limit order in the bridge. In particular, shell
-support for the linear local distribution is not a proof of the orbital
-trace identification in (11.3.2.1). This is a falsification test for an
-uncorrected identification, not a disproof of the global trace or a test
-class sufficient by itself for uniqueness.
+the normalized multiplier gives $J_f=\int Hf$ and the local projection
+gives $J_f-\widehat f_\mathrm{M}(-1/2)$. Justify comparing those cutoff
+limits rather than interchanging them. With the claimed orbital vanishing,
+the global $S$-trace minus that local projection limit must equal
+$-\widehat f_\mathrm{M}(1/2)$. A different value rules out the proposed
+comparison; agreement warrants testing a larger class, not a conclusion
+about all tests or arbitrarily small widths.
 
 The [fixed-band transport control](trace-level-transport-q.md) audits the
 topology of one possible bridge: Matching uncut local and global generators
