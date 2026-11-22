@@ -33,7 +33,7 @@ public noncomputable def complexZetaGaussian (n : ℤ) (z : ℂ) : ℂ :=
 /-- The bilinear zeta integrand against additive Lebesgue measure on `ℂ`.
 Definitions A.3.1.2(2), p. 556, and A.3.2.2(1), p. 560, give the
 multiplicative density `2 / ‖z‖²` off zero. The integrand is zero at the origin. -/
-public noncomputable def complexGaussianZetaDensity (n : ℤ) (τ : ℝ) (s z : ℂ) : ℂ :=
+@[expose] public noncomputable def complexGaussianZetaDensity (n : ℤ) (τ : ℝ) (s z : ℂ) : ℂ :=
   complexZetaGaussian n z * (z / (‖z‖ : ℂ)) ^ n *
     ((‖z‖ ^ 2 : ℝ) : ℂ) ^ (s + (τ : ℂ) * I) * (2 / ‖z‖ ^ 2 : ℝ)
 

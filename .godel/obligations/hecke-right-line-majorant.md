@@ -703,31 +703,77 @@ eigendistribution identity. Independent Yah statement review: `mlDzIRC`
 (output `f48eaa338965ce0b79cba685588b9017d0f07526`). No rendered-page
 verification is claimed.
 
-### Next: Transport the Archimedean pairings to completion units
+## Archimedean Gaussian pairings on the completion-unit Haar measures
 
-In (3.3.1.7), p. 130, the domain is $F_v^\times$, not the entire additive
-coordinate field. Use Definition A.3.1.2(1)–(2), p. 556, and Definition
-A.3.2.2(1), p. 560: Transport $dx/|x|$ off zero and
-$2\,dx\,dy/|z|^2$ off zero along the real and complex completion
-coordinates used by the checked character restrictions. The runnable
-endpoint is a pair of absolutely integrable local pairings on
-`v.Completionˣ` for $\Re s>0$, with value the actual local Gamma factor
-of `Theorems.CompletedHeckeEulerProduct` and the opposite-angular
-complex Gaussian. Use `map_realMultiplicativeHaar_val` on the real side
-and prove the analogous pushforward of the complex density; zero is
-null for the original additive measure. Do not change the complex
-orientation between the character restriction and its Gaussian test.
+`Theorems.ArchimedeanCompletionGaussian` proves
+`Masullo.realCompletionGaussianPair` and `Masullo.complexCompletionGaussianPair`.
+For a unitary Mathlib Hecke character, choose one real parity or complex
+angular weight at the place, independently of $s$. At each $\Re s>0$
+the bilinear pairing of the Gaussian with the actual local restriction
+of the character times the normalized norm to the power $s$ is absolutely
+integrable on `v.Completionˣ`. Its value is `localHeckeGammaFactor χ hχ v s`,
+the factor already used by `Theorems.CompletedHeckeEulerProduct`.
 
-**Still open:** The corrected global zeta integral identification must
-apply (A.3.2.5), p. 560, with the accumulated finite unit mass (or scaled
-tests at the finitely many exceptional places), rather than silently
-switching to unit-mass factors. Meromorphic continuation, divisor data,
-and contour growth in (B.4.2.1)–(4), the broader test class, ramified
-Fourier terms, and global trace remain open. The
-[local conductor obligation](#open-ramified-local-conductor-power-in-the-general-reflection)
-remains upstream of the checked reflection.
+The domain and bilinear pairing come from (3.3.1.7), p. 130. Definitions
+A.3.1.2(1)–(2), p. 556, and A.3.2.2(1), p. 560, give $dx/|x|$ and
+$2\,dx\,dy/\|z\|^2$ off zero. `Lemmas.ArchimedeanCompletionHaar`
+transports both densities, retaining both real signs and the complex
+factor of two. Its real Haar instance transports the checked real-unit
+measure without changing its scale. In the complex case,
+`complexTamagawaDensity_map_mul` checks that the real Jacobian of
+multiplication by $a\ne0$ is $\|a\|^2$, canceled by the inverse squared
+norm. The completion-unit measure is then left-invariant and gives a
+compact neighborhood of the identity finite positive mass.
+
+The real tests of (3.4.3.3)–(4), p. 152, need no change. The provisional
+same-weight reading of (3.4.3.5)–(6), p. 152, would give zero in the complex
+weight-one control, not the nonzero value required by (3.4.3.12)–(13),
+p. 153. At the scalar evaluation, `complexGaussianZetaDensity_integral`
+uses the opposite angular weight in the same coordinate as the character.
+The transferred result is pointwise in $s$ on the open half-plane, not
+uniform down to $\Re s=0$ and not a distribution-valued continuation.
+Independent Yah statement and text review: `ZTZcZfz` (output
+`28497fba430c60d17edeb89e1d7540dbe164c462`). The pinned Markdown and PDF
+layout were checked, but no rendered-page verification is claimed.
+
+### Next: Identify the restricted-product zeta pairing
+
+First prove the exact restriction of the idele Haar measure of (A.3.2.5),
+p. 560, to each open finite stage containing the exceptional finite
+places. In stage coordinates the Archimedean factors above and the
+finite local Haar measures on the active places are full factors; the
+other finite factors are restricted to unit groups of mass one.
+`RationalIdeleFiniteStageHaar` supplies the rational comparison pattern,
+not the general-field result. The new comparison must keep the finite
+unit masses of (A.3.2.2), p. 560, on the active places. Then use the
+local pairings on a tensor test, increasing the stage, to identify the
+absolutely integrable global zeta pairing for $\Re s>1$, with the product
+of those masses or with the corresponding scaled tests.
+
+**Still open:** Meromorphic continuation, divisor data, and contour
+growth in (B.4.2.1)–(4), the broader test class, ramified Fourier terms,
+and global trace. The [local conductor obligation](#open-ramified-local-conductor-power-in-the-general-reflection)
+remains upstream of the checked reflection. Before using the eigenspace
+claim, reconcile the provisional pullback action $T(f\circ m_g)$ in
+(3.4.3.1), p. 151, with (3.3.1.7), p. 130: Left invariance makes the
+bilinear pairing transform by $c(g)^{-1}$ under this pullback. Replacing
+$m_g$ by $m_{g^{-1}}$ changes the action, so later uses must be checked
+with the same convention.
 
 ## Reproduce the endpoint audit
+
+For the completion Haar transports and actual Gaussian pairings:
+
+```sh
+go run ./cmd/godel audit-local "$CANDIDATE" \
+  Lemmas.ArchimedeanCompletionHaar Theorems.RealGaussianMellin Theorems.ComplexGaussianMellin \
+  Theorems.ArchimedeanCompletionGaussian -- \
+  Masullo.complexTamagawaDensity_map_mul \
+  Masullo.realCompletionHaar_map Masullo.complexCompletionHaar_map \
+  Masullo.realCompletionHaar_isHaarMeasure Masullo.complexCompletionHaar_isHaarMeasure \
+  Masullo.realCompletionGaussianPair Masullo.complexCompletionGaussianPair
+```
+
 
 From the integration workspace, use the
 [local audit workflow](../../cmd/godel/README.md#checking-a-proof-candidate)

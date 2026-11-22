@@ -28,7 +28,7 @@ public noncomputable def realZetaGaussian (b : ℕ) (x : ℝ) : ℂ :=
 Definitions A.3.1.2(1), p. 556, and A.3.2.2(1), p. 560, give density
 `|x|⁻¹` on the units. The totalized density at zero makes the integrand
 zero there. The choice of sign at zero does not matter. -/
-public noncomputable def realGaussianZetaDensity (b : ℕ) (τ : ℝ) (s : ℂ) (x : ℝ) : ℂ :=
+@[expose] public noncomputable def realGaussianZetaDensity (b : ℕ) (τ : ℝ) (s : ℂ) (x : ℝ) : ℂ :=
   realZetaGaussian b x * (if 0 < x then (1 : ℂ) else -1) ^ b *
     ((|x| : ℝ) : ℂ) ^ (s + (τ : ℂ) * I) * (|x|⁻¹ : ℝ)
 
