@@ -2725,21 +2725,55 @@ and source review: Agent `NuAdkiV`, snapshot
 `01a20582-0a3f-7ec6-ad1e-619d261b4720`. That session records the exact
 integrated revision and build, signatures, and axiom checks.
 
-**Next Lean obligation:** Select common heights $\pm T_n$, $n<T_n<n+1$,
-$n\ge1$, that give uniform quadratic growth of $L'/L$ on the two
-closed segments of real parts in $[-1,2]$. Count zeros (including
-boundary zeros) in the two **fixed** radius-five disks centered at
-$2\pm i(n+\tfrac12)$. Every point of either actual segment lies at
-distance at most $3+\tfrac12$ from its corresponding fixed center.
-Thus even zeros in a moving disk but outside the fixed disk are more
-than $3/2$ away. In the fixed disks, exclude ordinate intervals of
-radius $\delta=1/(8(C(1+|n+\tfrac12|)+1))$, reflecting the lower
-ordinates for the common positive height. The combined bad length
-is at most $1/2$, since each distinct zero contributes at least one
-to the full divisor mass. Apply the smaller-disk estimate and transfer
-locally using $L'/L=H'/H-1/z-1/(z-1)$, off $0$, $1$, and the zeros.
-This would supply the horizontal premise for Theorem B.3.2.1,
-pp. 605–606. It would not give integrability on the actual vertical
-sides (as opposed to some inset pair), global reflection, signed
-residues, or the all-height summation in (B.4.2.2). The trace comparison,
-RH, and GRH remain open.
+The [symmetric horizontal estimate](#checked-symmetric-horizontal-heights)
+now selects the separated ordinates and transfers this estimate to $L'/L$.
+
+### Checked symmetric horizontal heights
+
+[`exists_completedHeckeEulerProduct_one_gaussianContinuation_horizontal`](../../Proofs/Theorems/IdeleClassGaussianHorizontal.lean)
+uses the same continued completed trivial Hecke product $L$ and its entire
+numerator $H=(s-1)sL$, with the continuation's Borel and ideal-class
+representative hypotheses. There is a single $B>0$ such that for each
+integer $n\ge1$ one can choose $n<T_n<n+1$ with
+
+$$
+L(z)\ne 0,\qquad |L'(z)/L(z)|\le B(1+|\Im z|)^2
+\quad (-1\le\Re z\le2,\ |\Im z|=T_n).
+$$
+
+`exists_symmetric_horizontal_separation` counts distinct zeros using the
+full divisor mass in the two **fixed** closed disks of radius five centered
+at $2\pm i(n+\tfrac12)$. Reflect the lower ordinates and exclude the union
+of intervals of radius $1/(16(C+1)(1+n))$ from $(n,n+1)$, where $C$ is the
+Jensen constant. The union has length at most $1/2$. An edge point lies at
+most $3.5$ from its fixed center, so even zeros outside that disk are
+separated. Use the moving radius-three disk centered at $2+i\Im z$ for the
+previous derivative estimate. The locally valid pole-clearing identity
+subtracts $1/z$ and $1/(z-1)$, each of norm at most one on both edges.
+
+**Source and review:** Masullo cites slow growth for (B.4.2.1), §B.4.2.1,
+PDF p. 614. This proof replaces the horizontal part of Definition B.3.1.1
+(1)–(2), p. 604, as used in Lemma B.3.1.2, pp. 604–605. The bound is in
+the actual height on both segments, so multiplying by a uniformly Schwartz
+test gives decay there without inferring a lower bound on height from a
+polynomial upper bound. The vertical hypothesis of Theorem B.3.2.1,
+pp. 605–606, and (B.4.2.2) itself are not proved by this step. The reading
+is provisional (pinned Markdown and numbered PDF layout, not rendered
+pages). Independent fixed-statement and source review: Agent `fRYEhwf`,
+endpoint review snapshot `7880549eb89014705fc05619ac3f1ecdd59ae324`,
+and helper review snapshot `bb6831f8b7244a783cd160e86c6758714a77e6dc`.
+Owning check session `01a2058c-63bf-78c1-bd98-d2a8c5468afc` records the candidate and
+base, both module builds, signatures, axiom checks, and adoption status.
+
+**Next Lean obligation:** Bound the same continued $L'/L$ on the right
+vertical line $2+it$ by $A(1+|t|)$ for all real $t$, and retain nonvanishing
+there. Use the Euler agreement as a neighborhood equality above one,
+`completedHeckeEulerProduct_logDeriv` for (B.4.2.5)–(7), p. 615, the summable
+`finiteHecke_right_line_majorant`, and integrate `norm_archimedeanGammaKernel_le`
+in the checked scalar Gamma formula for the finitely many infinite places.
+This gives right-line integrability for Schwartz tests; left-line control
+still needs the reflection germ of this same continuation (or a direct
+left-half-plane formula). The chain-rule sign repair in
+`completed_logDeriv_reflection` does not supply that germ. Signed residues,
+contour exhaustion, and the all-height zero sum in (B.4.2.2) are separate
+obligations. The trace comparison, RH, and GRH remain open.
