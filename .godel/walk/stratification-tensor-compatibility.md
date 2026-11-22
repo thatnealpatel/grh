@@ -32,10 +32,14 @@ images or a preservation statement for the two zero moments.
 calculation above is the reviewer’s application of it. Applying it
 uniformly to representatives of the printed global norm-one isotype
 requires [one fixed S supplying all the representatives][fixed], not
-merely an S for each individual test. Applying it to the announced
-strata uses the identification of the later cuts (1.3.2.2) with the
-products of the coordinate unit indicators. Neither dependency is
-resolved by the indicator identity. No Lean declaration is used.
+merely an S for each individual test. For the later cuts (1.3.2.2),
+the [primary-stratum audit][primary] checks the coordinate description
+and separates it from the norm preimage. The latter gives the same
+cut on this supplied tensor when the selected fibers are disjoint
+from S, but is generally larger on ambient idèles. Neither result
+supplies the fixed-stage premise or an orbit sum. No Lean declaration
+is used.
 
 [source]: ../sources/masullo/README.md
 [fixed]: fixed-stage-theta-representatives.md
+[primary]: primary-divisorial-norm-preimage.md
