@@ -916,25 +916,53 @@ Use any representative after reindexing by the principal group. This
 will bound the norm-one average by that majorant times the finite
 quotient mass. It is not yet a small-norm estimate.
 
-A first concrete Lean obligation is to exhibit a compact set of ideles
-mapping onto the norm-one classes, with a uniform denominator bound
-for the finite support conditions of `f(d a * b)` on that set: Some
-positive integer `m` has `(m : K) * (a : K) ∈ Set.range (algebraMap (𝓞 K) K)`
-whenever `b` is in the compact set and `f(d a * b) ≠ 0`. The compact
-lift construction is already inside
-`compactSpace_ideleClassNormOne_of_archimedean_cover`; the compact
-quotient assertion alone does not expose that lift. This isolates the
-fractional-ideal reduction of Lemma 2.2.2.1(3), (2.2.2.3), pp. 77–78,
-for the Gaussian's bounded finite factors, without assuming the lemma
-for arbitrary Schwartz–Bruhat tests. Pinned Mathlib supplies
-`mixedEmbedding.integerLattice` and `ZLattice.summable_norm_rpow` for
-the subsequent archimedean majorant after clearing denominators.
+The compact support step is supplied by
+[`exists_compact_cover_ideleClassNormOne_gaussian_denominator`](../../Proofs/Theorems/IdeleClassGaussianSupport.lean)
+(the exact-module proof was first checked at writer output
+`99bc23d445178a1d76c08405429bb43e52521528`). One positive integer `m`
+clears all indices `a` with `f(d a * b) ≠ 0` for `b` in a compact set
+of actual norm-one ideles covering every norm-one class. Since the
+scalar section has finite part `1`, the same denominator applies
+when `f(d a * σ(x) * b) ≠ 0`: First use
+`norm_finite_le_one_of_ideleHeckeGaussian_ne_zero`, then the finite
+coordinate version `exists_compact_cover_ideleClassNormOne_uniform_denominator`.
 
-The scalar section above supplies the exact ordinary dilation for
-the repaired bound. Use a Schwartz exponent large enough to absorb
-the loss from `t` to `t^(1/[K:ℚ])` and to sum over the lattice. The
-estimate is class-invariant, so it need not use the single-place
-section of the integration theorem.
+Masullo supplies the fractional-ideal support reduction in Lemma
+2.2.2.1(3) and (2.2.2.3), pp. 77–78. The uniformizer prescription on
+pp. 79–80 does not bound radii greater than one with nonnegative
+powers. `exists_uniform_denominator_of_isCompact` replaces it by the
+finite image of the idele-to-ideal map on a compact set and one
+integer clearing all inverse ideals. The compact representative set
+is lifted by a finite open cover; no choice of a continuous section
+of the principal quotient is asserted. Independent exact-statement
+review: Child `ItiKqaM`, output `bfcab7af98deab3f567a5d4ca5aaf101ea9c8f47`,
+in Yah session `01a20350-96e4-7bfd-a9ef-8a2f45d5a914`. The source reading
+is provisional (Markdown and numbered PDF layout, not rendered pages).
+
+**Next Lean obligation:** For the fixed `χ`, `T`, and for each `N : ℕ`,
+choose `C > 0` and a natural `k > Module.finrank ℤ (mixedEmbedding.integerLattice K)`.
+Show that on the compact representatives `b`, for `x.toAdd ≥ 0` and
+contributing indices `a`,
+
+```text
+‖f(d a * σ(x) * b)‖ ≤
+  C * Real.exp (-(N : ℝ) * x.toAdd) * ‖mixedEmbedding K ((m : K) * ↑a)‖⁻¹ ^ k.
+```
+
+Here `σ := ideleScalarLogSection`. Bound the finite test factors by one
+using `‖χ‖ = 1`; derive polynomial decay for the product of local Gaussian
+monomials in the maximum ordinary infinite-place radius. Obtain a positive
+uniform lower bound on the ordinary radius of each `b` coordinate by
+compactness (or bound the norms of the inverse coordinates from above).
+This gives a lower bound by a positive constant times
+`exp(x.toAdd/[K:ℚ]) * ‖mixedEmbedding K ((m : K) * ↑a)‖`. Take the decay
+power at least `[K:ℚ] * N` plus the lattice exponent, using a weight
+`1 + ‖·‖` before separating the factors, or take it at least the maximum
+of the two and use the lattice minimum. Apply
+`ZLattice.summable_norm_rpow` to the injection of contributing indices
+into the nonzero points of `mixedEmbedding.integerLattice K`. The bound
+reindexes by the principal group, so it does not replace the single-place
+section used for the Haar identity.
 
 **Small-norm obligation:** On the provisional text reading, the use of
 Theorem 2.2.3.4(3), p. 83, on pp. 126–127 requires both zero modes to
