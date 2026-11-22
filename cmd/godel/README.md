@@ -52,7 +52,12 @@ tool's separate `on` and Change-Id rules.
 
 ### Recovering a checked but unadopted proof
 
-On conflict, stale adoption, or an ambiguous error, inspect `tool_campaign status` to distinguish what landed from what still needs recovery. A stale adoption means the target moved, not that the proof failed. Reconcile any unlanded patch with the accepted tree. If it is still needed, integrate the registered output against the fresh base. If the base moves again before integration resolves it, refresh status before choosing the base. A commit readable in jj is not necessarily a registered output in this campaign. If the prior output is not in `status` with `verbose=true`, inspect the old candidate's patch against its parent and restore only the needed changes in a new direct workspace on the current base. Compare the resulting patch with the reviewed one; do not overwrite later work or change the graph manually.
+After a conflict, stale adoption, or ambiguous error, inspect `tool_campaign status` and the current accepted source. Recover only what is still needed.
+
+- **Stale adoption:** The target moved; the proof did not fail. If the output is still registered in this campaign (`status` with `verbose=true`), integrate it against the current accepted base. If the base moves again, refresh status. If the output is readable in jj but no longer registered, restore the needed changes from its clean patch in a fresh direct workspace.
+- **Content conflict:** Replaying the same outputs on the same base will not resolve the conflict. Even if the outputs are registered, open a fresh direct workspace on current accepted source. Compare the clean saved outputs with their original bases and reconcile the intended changes with intervening work. Do not use the conflicted integration tree as the source of the patch.
+
+Compare the new integration candidate with the reviewed work. Have any changed statement independently reviewed and audit the exact new candidate before adoption.
 
 For a restack with identical Lean build inputs, reuse the trusted project build cache from the finished audit rather than starting cold. From the repository root, use the full old and new candidate IDs and the workspace paths returned by integration:
 
