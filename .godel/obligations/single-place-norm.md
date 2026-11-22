@@ -2391,20 +2391,87 @@ and adoption decision. Source reading is provisional from pinned
 Markdown and numbered PDF layout unless a rendered check is identified
 in the review.
 
-**Next: Average the same corrected Gaussian.** Keep the Borel
-periodization `F` and the counting-normalized norm-one Haar `η₁ ν v r`
-from `exists_discriminantNormalizedIdeleHeckeGaussian_radialMellin`.
-For its fixed stage, use `adeleHeckeTest_mem_adeleBoxSpan` and
-`adeleHeckeTest_archimedeanHeckeSchwartz_coe_idele` to apply the new
-bound at each representative of the radial slice. The existing `F`
-is already measurable for that Gaussian; do not make a generic
-box-span measurability or continuity theorem a prerequisite for this
-bound. Subtract $t^{-1}\widehat f(0)-f(0)$ before integrating the error
-with the unitary weight. Prove that the *integrated* constant is
-$(t^{-1}\widehat f(0)-f(0))\,\eta_1(C_K^1)\,\delta_\omega$, using
-translation invariance for a nontrivial restriction and actual Haar
-mass for a trivial one. Bound the weighted error by $C t^N$ times this
-Haar mass, without the indicator. This is the missing Gaussian
-small-norm half of (2.2.5.10), PDF p. 97 and proof p. 98. A reflected
-weighted identity would also send the character to its inverse.
-Continuation, RH, and GRH remain open.
+The next inference is the [counting-normalized Gaussian
+average](#weighted-gaussian-decay-at-small-norm), not a generic box-span
+measurability theorem.
+
+### Weighted Gaussian decay at small norm
+
+[`ideleHeckeGaussian_radialPairing_smallNorm_decay`](../../Proofs/Theorems/IdeleClassGaussianSmallNorm.lean)
+implements the fixed-stage Gaussian case of (2.2.5.10), PDF pp. 97–98,
+on the radial section, for all $t=e^u$ with $u\le 0$. Use the same
+stage, measurable principal periodization $F$, and counting-normalized
+norm-one Haar $m$ from
+`exists_discriminantNormalizedIdeleHeckeGaussian_radialMellin`.
+It supplies $m$ but not the **additive** Fourier measure: Its idele Haar
+is multiplicative. Obtain the independent additive cofinal-stage Haar
+from `exists_finiteCompletionIntegerMass_exceptions` and
+`exists_adeleRestrictedProductHaar`, taking the comap condition from
+that theorem with $\nu=\mu$. Neither Haar construction constrains the
+Gaussian's choice of stage beyond the existing hypotheses. Write $P(u)$
+for the norm-one pairing with the **unbarred**
+restriction $\omega$ of $\chi$, and set $z_u=t^{-1}\widehat f(0)-f(0)$
+for this Gaussian's additive realization $f$. Lean proves slice
+integrability at **every** $u\le 0$ and, for each $N\in\mathbb N$,
+$$
+|P(u)-z_u\,m(C_K^1)\,\delta_\omega|
+\le B_N e^{Nu}\,m(C_K^1),\qquad B_N>0.
+$$
+
+- Definition 2.2.5.1, (2.2.5.2), p. 95, gives the weighted average,
+  with counting Haar specified there and in (2.2.5.7), p. 96. The
+  log splitting in `ideleClassRadialPairing` implements the product of
+  the section point with a norm-one class. The same product is used
+  in the radial Mellin pairing (3.2.2.5), p. 125, and in the change of
+  variables on p. 97 proving Lemma 2.2.5.2(1). The prose on p. 96
+  interpreting $hg$ in (2.2.5.2) instead says to translate by $h^{-1}$.
+  Read literally, that convention switches $\omega$ to $\omega^{-1}$
+  by Haar invariance under inversion and leaves $\delta_\omega$ and the
+  bound unchanged. Lean uses ordinary multiplication and the weight
+  in the unfolded zeta integral; no quotient probability rescaling or
+  conjugate character is used.
+- The proof of Theorem 2.2.5.4(2), p. 98, uses finite Haar to preserve
+  the bound (2.2.3.5), p. 83. For this inference Lean uses the existing
+  Borel $F$ and checks the bound at every representative of each slice.
+  `adeleHeckeTest_mem_adeleBoxSpan` and
+  `adeleHeckeTest_archimedeanHeckeSchwartz_coe_idele` match the corrected
+  Gaussian with `adeleBoxSpan_theta_smallNorm_decay` for the same
+  additive Fourier integral. This uses the convention repair of
+  `AdeleBoxThetaInversion`: The conjugated global trace kernel with
+  corrected finite signs, not the literal positive finite phases of
+  Examples A.3.1.5–9, pp. 557–558. No continuity assumption on $F$ or
+  general Schwartz–Bruhat measurability result is needed.
+- The printed estimate includes $\delta_\omega$; the proof here
+  computes it explicitly. Integrate $(F-z_u)\omega$ using the pointwise
+  bound and $|\omega|=1$. Left translation by $k$ multiplies the
+  character integral by $\omega(k)$; it must vanish when some
+  $\omega(k)\ne 1$. Otherwise the character is identically one and the
+  integral is $m(C_K^1)$. The error bound has no triviality indicator.
+  This is a result on radial slices, not continuity, all-class
+  estimates, or bounds on families of tests.
+
+**Evidence:** Owning Yah session `01a20546-ebfe-7af6-b8e4-93c438e74314`,
+independent fixed-statement/source review `gaussian-small-norm-review`
+(`VDZDFkA`). It confirms the signs, the restriction criterion, the
+finite Haar scaling, and the radial scope, with the separate additive
+measure and translation convention noted above.
+See this session for the exact candidate and base, warning-failing
+build, fresh joint signatures and axiom reports, and adoption. Source
+reading is provisional from pinned Markdown and numbered PDF layout
+unless a rendered check is identified in the review.
+
+**Next: Continue the Gaussian radial Mellin integral.** Combine the
+above bound with `ideleHeckeGaussian_radialPairing_rapidDecay`. Prove the
+bilateral Laplace integral of the Borel profile
+$\chi(\tau(e^u))\,[P(u)-1_{u<0}z_u m(C_K^1)\delta_\omega]$ is entire by
+an exponential majorant on compact sets of $s$ (and the same majorant
+with a log moment for differentiation). This is the radial continuation
+inference of (3.2.2.5), p. 125, and (3.2.2.7)–(10), pp. 126–127, with
+the bound **after** averaging: Do not infer absolute convergence of the
+unaveraged class integral by using character cancellation inside an
+absolute value. Evaluate the removed terms on $\Re s>1$ and add their
+meromorphic expressions to match the completed Euler product there.
+The unitary section factor is not assumed trivial: If it is written as
+$e^{i\lambda u}$, the two denominators are $s+i\lambda-1$ and
+$s+i\lambda$. The functional equation, continuation, RH, and GRH are
+not established by the slice estimate.
