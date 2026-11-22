@@ -1,18 +1,21 @@
 module
 
 public import Theorems.IdeleClassGaussianContinuation
+public import Mathlib.Analysis.Calculus.LogDeriv
 public import Mathlib.Analysis.Meromorphic.Divisor
 import Theorems.CompletedHeckeEulerProductRightLine
+import Lemmas.AnalyticGoodHeightDisk
 import Lemmas.OneParameterCharacter
 import Mathlib.Analysis.Complex.JensenFormula
 
-/-! # Moving-disk zero count for the completed trivial Hecke product
+/-! # Moving-disk estimates for the completed trivial Hecke product
 
 Section B.4.2.1, p. 614, invokes Lang for slow growth of the completed
-logarithmic derivative in (B.4.2.1), as needed for (B.4.2.2). The count below
-is an input to a replacement for the horizontal estimate required by
-Definition B.3.1.1, p. 604, and used by Theorem B.3.2.1, pp. 605–606. It is
-not itself an estimate of that derivative or a contour exhaustion.
+logarithmic derivative in (B.4.2.1), as needed for (B.4.2.2). We use the
+entire pole-cleared numerator for a replacement input to the horizontal
+estimate in Definition B.3.1.1, p. 604, used by Lemma B.3.1.2, pp. 604–605.
+These local bounds are not a near-pole growth condition for the completed
+logarithmic derivative and do not give separated heights or a contour limit.
 
 The repaired fixed-Gaussian continuation provides the entire numerator and
 its quadratic strip bound. The section phase in (3.2.2.4)–(5), p. 125, in the
@@ -155,5 +158,49 @@ public theorem exists_completedHeckeEulerProduct_one_gaussianContinuation_zeroCo
       _ ≤ Real.log (M / ‖H c‖) / d := hj
       _ ≤ B₀ * (1 + |t|) / d := div_le_div_of_nonneg_right hcost' hd.le
       _ = (B₀ / d) * (1 + |t|) := by ring
+
+/-- Keep the same continued product and numerator as in the moving-disk
+Jensen bound. Off the zeros by `δ > 0`, the logarithmic derivative of the
+numerator is bounded by an affine height budget times `1 + 1 / δ`. -/
+public theorem exists_completedHeckeEulerProduct_one_gaussianContinuation_logDeriv
+    (v : InfinitePlace K) (r : ClassGroup (𝓞 K) → ideleNormOne (K := K))
+    (hr : ∀ p, ideleIdealClassNormOne (r p) = p) :
+    ∃ L H : ℂ → ℂ, Meromorphic L ∧
+      (∀ s, s ≠ 0 → s ≠ 1 → DifferentiableAt ℂ L s) ∧
+      (∀ s, 1 < s.re → L s = completedHeckeEulerProduct χ₀ (fun _ ↦ norm_one) s) ∧
+      Differentiable ℂ H ∧ (∀ s, s ≠ 0 → s ≠ 1 → H s = (s - 1) * s * L s) ∧
+      (∀ a b : ℝ, ∃ M : ℝ, 0 ≤ M ∧ ∀ s : ℂ, a ≤ s.re → s.re ≤ b →
+        ‖H s‖ ≤ M * (1 + |s.im|)^2) ∧
+      (∃ C₀ C : ℝ, 1 ≤ C₀ ∧ 0 < C ∧ ∀ t : ℝ,
+        let c : ℂ := 2 + (t : ℂ) * I
+        let M := C₀ * (1 + |t|)^2
+        H c ≠ 0 ∧ (∀ z ∈ sphere c 6, ‖H z‖ ≤ M) ∧
+          Real.log (M / ‖H c‖) ≤ C * (1 + |t|) ∧
+          ((∑ᶠ z, divisor H (closedBall c 5) z : ℤ) : ℝ) ≤ C * (1 + |t|)) ∧
+      ∃ D K₀ : ℝ, 0 < D ∧ 0 < K₀ ∧ ∀ t : ℝ,
+        ∀ z ∈ closedBall (2 + (t : ℂ) * I) 3, ∀ δ : ℝ, 0 < δ →
+          (∀ ρ ∈ closedBall (2 + (t : ℂ) * I) 5, H ρ = 0 → δ ≤ ‖z - ρ‖) →
+          ‖logDeriv H z‖ ≤ D * (1 + |t|) + K₀ * (1 + |t|) / δ := by
+  obtain ⟨L, H, hmero, hdiffL, hEuler, hdiffH, hclear, hstrip, hJ⟩ :=
+    exists_completedHeckeEulerProduct_one_gaussianContinuation_zeroCount v r hr
+  refine ⟨L, H, hmero, hdiffL, hEuler, hdiffH, hclear, hstrip, hJ, ?_⟩
+  obtain ⟨C₀, C, hC₀, hC, hJ⟩ := hJ
+  let D := 8 * (C + C * Real.log 5 + 1)
+  have hlog5 : 0 ≤ Real.log 5 := Real.log_nonneg (by norm_num)
+  have hD : 0 < D := by dsimp [D]; positivity
+  refine ⟨D, C, hD, hC, fun t z hz δ hδ hsep ↦ ?_⟩
+  obtain ⟨hc, hbd, hloss, hcount⟩ := hJ t
+  have hY : 1 ≤ 1 + |t| := le_add_of_nonneg_right (abs_nonneg t)
+  have hM : 0 < C₀ * (1 + |t|)^2 :=
+    mul_pos (zero_lt_one.trans_le hC₀) (pow_pos (zero_lt_one.trans_le hY) _)
+  -- The finite divisor costs its mass divided by δ; the remaining part
+  -- costs only the Jensen center loss and the same mass times log 5.
+  calc
+    _ ≤ 8 * (C * (1 + |t|) + (C * (1 + |t|)) * Real.log 5 + 1) + C * (1 + |t|) / δ :=
+      norm_logDeriv_le_of_moving_disk_bounds (fun w _ ↦ hdiffH.analyticAt w) hc hM
+        hbd hloss hcount hz hδ hsep
+    _ ≤ D * (1 + |t|) + C * (1 + |t|) / δ := by
+      dsimp [D]
+      linarith only [hY]
 
 end Masullo

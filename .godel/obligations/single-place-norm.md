@@ -2680,14 +2680,66 @@ layout. Owning check session `01a20579-fd7d-77f1-98d5-746c75b548e4`
 records the exact candidate, Borel binders, build, and axiom results.
 Independent statement and manuscript review: `XRCTwYR` in that session.
 
-**Next:** On $\overline B(c_t,3)$ at distance at least $\delta>0$ from
-all zeros of $H$ in $\overline B(c_t,5)$, prove a uniform bound
-$D(1+|t|)+C(1+|t|)/\delta$ for $|H'/H|$. Reuse the
-[rational disk argument](rational-explicit-formula.md#checked-logarithmic-derivative-bound-on-the-moving-disk):
-remove the full radius-five divisor, use the sphere envelope and center
-cost to bound the zero-free quotient's logarithmic derivative via
-`norm_logDeriv_le_on_inner_ball`, and sum the derivatives of the removed
-factors using the count. This estimate would be used on separated
-horizontal segments $[-1,2]+iT$. A left-line estimate and global
-reflection for the trivial character over general fields remain separate,
-as do the trace comparison and RH or GRH.
+The next step, the [local logarithmic derivative bound](#moving-disk-logarithmic-derivative),
+uses this count on the same numerator.
+
+### Moving-disk logarithmic derivative
+
+[`exists_completedHeckeEulerProduct_one_gaussianContinuation_logDeriv`](../../Proofs/Theorems/IdeleClassGaussianZeroCount.lean)
+keeps the same $L,H$ and every preceding clause of the Jensen endpoint.
+It gives constants $D,K_0>0$ such that for every real $t$, every
+$z\in\overline B(2+it,3)$, and every $\delta>0$ with $\delta\le\|z-\rho\|$
+for each zero $\rho$ of $H$ in $\overline B(2+it,5)$,
+
+$$
+\left|\frac{H'}{H}(z)\right|
+  \le D(1+|t|)+\frac{K_0(1+|t|)}{\delta}.
+$$
+
+`norm_logDeriv_le_of_moving_disk_bounds` supplies the general estimate
+$8(U+N\log 5+1)+N/\delta$ for an entire function with the radius-six
+sphere envelope $M>0$, a nonzero center, logarithmic center cost at
+most $U$, and full closed radius-five divisor mass at most $N$. Remove
+all of that divisor, including boundary zeros, with the exact orders.
+Every removed distance on the radius-six sphere is at least one, so
+the entire zero-free-on-the-inner-disk quotient inherits $M$ there
+and inside. At the center the added logarithmic cost is at most
+$N\log 5$. Apply `norm_logDeriv_le_on_inner_ball` to the quotient, then
+add back the logarithmic derivatives of the factors, whose total
+norm is bounded by $N/\delta$. The specialization sets $U=N=C(1+|t|)$
+with the same Jensen constant $C$.
+
+**Source and review:** Section B.4.2.1 / (B.4.2.1), PDF p. 614, invokes
+Lang for slow growth of the completed $L'/L$. This is a replacement
+for part of that input, initially for the pole-cleared numerator of
+the trivial Hecke character. Definition B.3.1.1, p. 604, requires
+polynomial control and pole avoidance on selected horizontal sides,
+and Lemma B.3.1.2, pp. 604–605, uses that control with Schwartz decay.
+The displayed argument in the latter uses a polynomial lower bound
+on height not supplied by the definition's upper bound and divergence;
+working directly with a bound in the actual height suffices. This
+reading of the pinned Markdown and numbered PDF layout is provisional:
+The rendered pages were not inspected. Independent fixed-statement
+and source review: Agent `NuAdkiV`, snapshot
+`2f884c15f27fc83dfa96354ce95faa1fceffaef0`, in owning check session
+`01a20582-0a3f-7ec6-ad1e-619d261b4720`. That session records the exact
+integrated revision and build, signatures, and axiom checks.
+
+**Next Lean obligation:** Select common heights $\pm T_n$, $n<T_n<n+1$,
+$n\ge1$, that give uniform quadratic growth of $L'/L$ on the two
+closed segments of real parts in $[-1,2]$. Count zeros (including
+boundary zeros) in the two **fixed** radius-five disks centered at
+$2\pm i(n+\tfrac12)$. Every point of either actual segment lies at
+distance at most $3+\tfrac12$ from its corresponding fixed center.
+Thus even zeros in a moving disk but outside the fixed disk are more
+than $3/2$ away. In the fixed disks, exclude ordinate intervals of
+radius $\delta=1/(8(C(1+|n+\tfrac12|)+1))$, reflecting the lower
+ordinates for the common positive height. The combined bad length
+is at most $1/2$, since each distinct zero contributes at least one
+to the full divisor mass. Apply the smaller-disk estimate and transfer
+locally using $L'/L=H'/H-1/z-1/(z-1)$, off $0$, $1$, and the zeros.
+This would supply the horizontal premise for Theorem B.3.2.1,
+pp. 605–606. It would not give integrability on the actual vertical
+sides (as opposed to some inset pair), global reflection, signed
+residues, or the all-height summation in (B.4.2.2). The trace comparison,
+RH, and GRH remain open.

@@ -1,8 +1,11 @@
 module
 
 public import Mathlib.Analysis.Analytic.Basic
+public import Mathlib.Analysis.Calculus.LogDeriv
+public import Mathlib.Analysis.Meromorphic.Divisor
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 import Lemmas.EntireFiniteFactors
+import Lemmas.ZeroFreeDiskLogDeriv
 import Mathlib.Analysis.Complex.AbsMax
 import Mathlib.Analysis.Complex.BorelCaratheodory
 import Mathlib.Analysis.Complex.BranchLogRoot
@@ -102,18 +105,17 @@ private theorem log_norm_lower_on_inner_disk {g : ℂ → ℂ} {c : ℂ} {M : �
   exact sub_le_comm.mp (by simpa only [B, neg_sub] using hre :
     Real.log ‖g c‖ - Real.log ‖g z‖ ≤ 8 * (Real.log M - Real.log ‖g c‖ + 1))
 
-/-- Factor out every zero in the closed disk of radius `5`, with its full order.
-An upper bound on the radius-`6` circle controls both the sum of the orders
-and the lower logarithmic modulus of the quotient on the closed radius-`3` disk. -/
-public theorem exists_goodHeight_disk_factorization {f : ℂ → ℂ} {c : ℂ} {M : ℝ}
-    (hf : AnalyticOnNhd ℂ f Set.univ) (hc : f c ≠ 0) (hM : 1 ≤ M)
-    (hbd : ∀ z ∈ Metric.sphere c 6, ‖f z‖ ≤ M) :
+private theorem exists_goodHeight_disk_factors {f : ℂ → ℂ} {c : ℂ} {M : ℝ}
+    (hf : AnalyticOnNhd ℂ f Set.univ) (hc : f c ≠ 0)
+    (hbd : ∀ z ∈ sphere c 6, ‖f z‖ ≤ M) :
     ∃ (A : Finset ℂ) (n : ℂ → ℕ) (g : ℂ → ℂ),
       (∀ z, f z = (∏ ρ ∈ A, (z - ρ) ^ n ρ) * g z) ∧
-      (∑ ρ ∈ A, (n ρ : ℝ)) ≤ Real.log (M / ‖f c‖) / Real.log (6 / 5 : ℝ) ∧
-      (∀ z ∈ Metric.closedBall c 3, g z ≠ 0 ∧
-        Real.log ‖f c‖ - 8 - (8 + 9 * (Real.log 5 / Real.log (6 / 5 : ℝ))) *
-          Real.log (M / ‖f c‖) ≤ Real.log ‖g z‖) := by
+      (∀ ρ, ρ ∈ A ↔ ρ ∈ closedBall c 5 ∧ f ρ = 0) ∧
+      AnalyticOnNhd ℂ g univ ∧
+      (∀ z ∈ closedBall c 5, g z ≠ 0) ∧
+      (∀ z ∈ closedBall c 6, ‖g z‖ ≤ M) ∧
+      (∑ ρ ∈ A, (n ρ : ℝ)) = ((∑ᶠ ρ, divisor f (closedBall c 5) ρ : ℤ) : ℝ) ∧
+      Real.log ‖f c‖ ≤ (∑ ρ ∈ A, (n ρ : ℝ)) * Real.log 5 + Real.log ‖g c‖ := by
   classical
   have htop (z : ℂ) : analyticOrderAt f z ≠ ⊤ :=
     hf.analyticOrderAt_ne_top_of_isPreconnected isPreconnected_univ trivial trivial
@@ -147,16 +149,10 @@ public theorem exists_goodHeight_disk_factorization {f : ℂ → ℂ} {c : ℂ} 
     simpa [dist_eq_norm] using ((hA ρ).mp hρ).1
   let N : ℕ := ∑ ρ ∈ A, n ρ
   have hsum : (N : ℝ) = ∑ ρ ∈ A, (n ρ : ℝ) := by simp [N]
-  have hcount : (N : ℝ) ≤ Real.log (M / ‖f c‖) / Real.log (6 / 5 : ℝ) := by
-    have hj := AnalyticOnNhd.sum_divisor_le (f := f) (c := c) (r := 5) (R := 6)
-      (by norm_num) (by norm_num) hM (hf.mono (subset_univ _)) hc (by simpa using hbd)
-    rw [abs_of_pos (by norm_num : (0 : ℝ) < 5)] at hj
-    have hsumD : (∑ᶠ ρ, D ρ) = (N : ℤ) := by
-      rw [finsum_eq_sum_of_support_subset _ (fun _ hρ ↦ hfin.mem_toFinset.mpr hρ)]
-      push_cast [N]
-      exact Finset.sum_congr rfl fun ρ hρ ↦ hD ρ ((hA ρ).mp hρ).1
-    change ((∑ᶠ ρ, D ρ : ℤ) : ℝ) ≤ _ at hj
-    simpa only [hsumD, Int.cast_natCast] using hj
+  have hsumD : (∑ᶠ ρ, D ρ) = (N : ℤ) := by
+    rw [finsum_eq_sum_of_support_subset _ (fun _ hρ ↦ hfin.mem_toFinset.mpr hρ)]
+    push_cast [N]
+    exact Finset.sum_congr rfl fun ρ hρ ↦ hD ρ ((hA ρ).mp hρ).1
   obtain ⟨g, hg, hgn, hfac⟩ := entire_extract_finset_factors hf A n fun ρ _ ↦ (horder ρ).symm
   have hn (z : ℂ) (hz : z ∈ closedBall c 5) : g z ≠ 0 := by
     intro hgz
@@ -195,21 +191,104 @@ public theorem exists_goodHeight_disk_factorization {f : ℂ → ℂ} {c : ℂ} 
   have hlogCenter : Real.log ‖f c‖ ≤ (N : ℝ) * Real.log 5 + Real.log ‖g c‖ := by
     have hlog := Real.log_le_log hfpos hcenter
     rwa [Real.log_mul (by positivity) hgc.ne', Real.log_pow] at hlog
-  have hMpos : 0 < M := by linarith
+  refine ⟨A, n, g, hfac, hA, hg, hn, hgbd, ?_, hsum ▸ hlogCenter⟩
+  change _ = ((∑ᶠ ρ, D ρ : ℤ) : ℝ)
+  rw [hsumD, Int.cast_natCast, hsum]
+
+/-- Factor out every zero in the closed disk of radius `5`, with its full order.
+An upper bound on the radius-`6` circle controls both the sum of the orders
+and the lower logarithmic modulus of the quotient on the closed radius-`3` disk. -/
+public theorem exists_goodHeight_disk_factorization {f : ℂ → ℂ} {c : ℂ} {M : ℝ}
+    (hf : AnalyticOnNhd ℂ f Set.univ) (hc : f c ≠ 0) (hM : 1 ≤ M)
+    (hbd : ∀ z ∈ Metric.sphere c 6, ‖f z‖ ≤ M) :
+    ∃ (A : Finset ℂ) (n : ℂ → ℕ) (g : ℂ → ℂ),
+      (∀ z, f z = (∏ ρ ∈ A, (z - ρ) ^ n ρ) * g z) ∧
+      (∑ ρ ∈ A, (n ρ : ℝ)) ≤ Real.log (M / ‖f c‖) / Real.log (6 / 5 : ℝ) ∧
+      (∀ z ∈ Metric.closedBall c 3, g z ≠ 0 ∧
+        Real.log ‖f c‖ - 8 - (8 + 9 * (Real.log 5 / Real.log (6 / 5 : ℝ))) *
+          Real.log (M / ‖f c‖) ≤ Real.log ‖g z‖) := by
+  classical
+  obtain ⟨A, n, g, hfac, _, hg, hn, hgbd, hsum, hlogCenter⟩ :=
+    exists_goodHeight_disk_factors hf hc hbd
+  have hcount : (∑ ρ ∈ A, (n ρ : ℝ)) ≤ Real.log (M / ‖f c‖) / Real.log (6 / 5 : ℝ) := by
+    have hj := AnalyticOnNhd.sum_divisor_le (f := f) (c := c) (r := 5) (R := 6)
+      (by norm_num) (by norm_num) hM (hf.mono (subset_univ _)) hc (by simpa using hbd)
+    rw [abs_of_pos (by norm_num : (0 : ℝ) < 5)] at hj
+    rw [hsum]
+    exact hj
+  have hgc := norm_pos_iff.mpr (hn c (mem_closedBall_self (by norm_num)))
+  have hMpos : 0 < M := zero_lt_one.trans_le hM
   have hlogRatio : Real.log (M / ‖f c‖) = Real.log M - Real.log ‖f c‖ :=
-    Real.log_div hMpos.ne' hfpos.ne'
-  refine ⟨A, n, g, hfac, hsum ▸ hcount, fun z hz ↦ ⟨?_, ?_⟩⟩
+    Real.log_div hMpos.ne' (norm_ne_zero_iff.mpr hc)
+  refine ⟨A, n, g, hfac, hcount, fun z hz ↦ ⟨?_, ?_⟩⟩
   · exact hn z (closedBall_subset_closedBall (by norm_num) hz)
   · have hlower := log_norm_lower_on_inner_disk (hg.mono (subset_univ _))
       (fun w hw ↦ hn w (ball_subset_closedBall hw))
       (fun w hw ↦ hgbd w (closedBall_subset_closedBall (by norm_num) (ball_subset_closedBall hw)))
       (closedBall_subset_closedBall (by norm_num : (3 : ℝ) ≤ 4) hz)
     have hcost := mul_le_mul_of_nonneg_right hcount (Real.log_nonneg (by norm_num : (1 : ℝ) ≤ 5))
-    have hcost' : (N : ℝ) * Real.log 5 ≤
+    have hcost' : (∑ ρ ∈ A, (n ρ : ℝ)) * Real.log 5 ≤
         (Real.log 5 / Real.log (6 / 5 : ℝ)) * Real.log (M / ‖f c‖) := by
       rw [div_mul_eq_mul_div, mul_comm (Real.log 5), ← div_mul_eq_mul_div]
       exact hcost
     rw [hlogRatio] at hcost' ⊢
     linarith
+
+/-- The logarithmic derivative on the closed radius-`3` disk is controlled by
+the center loss and the full closed radius-`5` divisor mass. The quotient costs
+at most eight times its logarithmic center loss plus eight. Each removed zero
+contributes its multiplicity divided by its distance from the evaluation point. -/
+public theorem norm_logDeriv_le_of_moving_disk_bounds {f : ℂ → ℂ} {c : ℂ} {M U N : ℝ}
+    (hf : AnalyticOnNhd ℂ f univ) (hc : f c ≠ 0) (hM : 0 < M)
+    (hbd : ∀ w ∈ sphere c 6, ‖f w‖ ≤ M) (hloss : Real.log (M / ‖f c‖) ≤ U)
+    (hcount : ((∑ᶠ ρ, divisor f (closedBall c 5) ρ : ℤ) : ℝ) ≤ N)
+    {z : ℂ} (hz : z ∈ closedBall c 3) {δ : ℝ} (hδ : 0 < δ)
+    (hsep : ∀ ρ ∈ closedBall c 5, f ρ = 0 → δ ≤ ‖z - ρ‖) :
+    ‖logDeriv f z‖ ≤ 8 * (U + N * Real.log 5 + 1) + N / δ := by
+  classical
+  obtain ⟨A, n, g, hfac, hA, hg, hgn, hgbd, hsum, hcenter⟩ :=
+    exists_goodHeight_disk_factors hf hc hbd
+  have hN : (∑ ρ ∈ A, (n ρ : ℝ)) ≤ N := hsum.trans_le hcount
+  have hgc : g c ≠ 0 := hgn c (mem_closedBall_self (by norm_num))
+  have hcost : Real.log (M / ‖g c‖) ≤ U + N * Real.log 5 := by
+    rw [Real.log_div hM.ne' (norm_ne_zero_iff.mpr hgc)]
+    rw [Real.log_div hM.ne' (norm_ne_zero_iff.mpr hc)] at hloss
+    linarith [mul_le_mul_of_nonneg_right hN (Real.log_nonneg (by norm_num : (1 : ℝ) ≤ 5))]
+  have hgderiv : ‖logDeriv g z‖ ≤ 8 * (U + N * Real.log 5 + 1) := by
+    refine (norm_logDeriv_le_on_inner_ball (hg.mono (subset_univ _))
+      (fun w hw ↦ hgn w (ball_subset_closedBall hw))
+      (fun w hw ↦ hgbd w (closedBall_subset_closedBall (by norm_num) (ball_subset_closedBall hw)))
+      hz).trans ?_
+    linarith
+  have hdist (ρ : ℂ) (hρ : ρ ∈ A) : δ ≤ ‖z - ρ‖ :=
+    hsep ρ ((hA ρ).mp hρ).1 ((hA ρ).mp hρ).2
+  have hzρ (ρ : ℂ) (hρ : ρ ∈ A) : (z - ρ) ^ n ρ ≠ 0 :=
+    pow_ne_zero _ (norm_pos_iff.mp (hδ.trans_le (hdist ρ hρ)))
+  -- The factorization holds everywhere, so it differentiates even on the inner boundary.
+  have hderiv : logDeriv f z = (∑ ρ ∈ A, (n ρ : ℂ) * (1 / (z - ρ))) + logDeriv g z := by
+    rw [show f = _ from funext hfac, logDeriv_fun_mul]
+    · rw [logDeriv_fun_prod hzρ (fun ρ _ ↦ by fun_prop)]
+      congr 1
+      apply Finset.sum_congr rfl
+      intro ρ _
+      rw [logDeriv_fun_pow (by fun_prop), logDeriv_apply, show
+        deriv (fun w : ℂ ↦ w - ρ) z = 1 by simp]
+    · exact Finset.prod_ne_zero_iff.mpr hzρ
+    · exact hgn z (closedBall_subset_closedBall (by norm_num) hz)
+    · exact DifferentiableAt.fun_finsetProd fun ρ _ ↦ by fun_prop
+    · exact (hg z trivial).differentiableAt
+  have hs : ‖∑ ρ ∈ A, (n ρ : ℂ) * (1 / (z - ρ))‖ ≤ N / δ := by
+    refine (norm_sum_le _ _).trans ?_
+    calc
+      _ ≤ ∑ ρ ∈ A, (n ρ : ℝ) / δ := by
+        apply Finset.sum_le_sum
+        intro ρ hρ
+        rw [norm_mul, norm_div, norm_one, Complex.norm_natCast, mul_one_div]
+        exact div_le_div_of_nonneg_left (Nat.cast_nonneg _) hδ (hdist ρ hρ)
+      _ ≤ N / δ := by
+        rw [← Finset.sum_div]
+        exact div_le_div_of_nonneg_right hN hδ.le
+  rw [hderiv]
+  exact (norm_add_le _ _).trans ((add_le_add hs hgderiv).trans_eq (add_comm _ _))
 
 end Masullo
