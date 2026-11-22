@@ -2014,19 +2014,69 @@ go run ./cmd/godel audit-local "$CANDIDATE" \
   Masullo.exists_discriminantNormalizedIdeleHaar
 ```
 
-**Next:** Use `exists_discriminantNormalizedIdeleHaar` and
-`prod_finiteCompletionMultiplicativeHaar_unitMass` in
-`ideleHeckeGaussian_zetaIntegral` to put the raw Gaussian pairing on
-this Haar and obtain the factor $|\operatorname{disc}K|^{-1/2}$ on
-$\Re s>1$. A finite stage $T$ must contain both the different support
-and the ramification of $\chi$. The current Gaussian theorem takes
-unramifiedness off $T$ as a hypothesis. To remove the stage hypothesis
-for an arbitrary unitary Hecke character, prove its finite ramification:
-Pull back a small identity neighborhood of the unit circle along the
-character on the product of finite integral units. A product neighborhood
-contains every single-coordinate subgroup outside a finite set, and the
-circle neighborhood can be chosen to contain no nontrivial subgroup.
-The quotient-volume comparison in (A.3.2.1) remains separate.
+### Checked discriminant-normalized Gaussian pairing above one
+
+[`FiniteHeckeRamification.lean`](../../Proofs/Theorems/FiniteHeckeRamification.lean)
+proves `exists_finset_isUnramifiedAt` for every continuous Mathlib
+Hecke character, not just unitary ones. Appendix B.6.1.2, PDF p. 636,
+recalls finite ramification without proving it there. Definition
+3.4.3.2(3), (3.4.3.8), p. 152, uses it. The project proof restricts the
+character to the empty stage's product of integral units, with
+Archimedean coordinates one. A basic product neighborhood inside the
+preimage of the complex disk of radius $1/2$ about one contains every
+single-coordinate subgroup outside finitely many places. Iterating
+squaring shows that no nontrivial subgroup can remain in that disk.
+
+[`DiscriminantNormalizedIdeleHeckeGaussian.lean`](../../Proofs/Theorems/DiscriminantNormalizedIdeleHeckeGaussian.lean)
+uses the finite union of ramification and different support and the
+constructed Haar above. One $T$ and one regular Haar measure work for
+all $s$ with $\Re s>1$. The exact stage restrictions hold whenever $S$
+contains the different support, independently of the ramification.
+The actual raw pairing (3.2.2.1), p. 124, with the Gaussian of Definition
+3.4.3.2, p. 152, is absolutely integrable and equals the completed Euler
+product (3.2.1.1)–(5), pp. 122–123, times $|\operatorname{disc}K|^{-1/2}$.
+This comparison uses the [opposite angular weight](complex-gaussian-angular.md)
+and retains the finite unit masses (A.3.2.2), p. 560. It is not the
+ramified eigendistribution normalization (3.4.3.11), p. 153, and does not
+identify the measure defined by the quotient volume (A.3.2.1), pp. 559–560.
+These new locators were checked in Markdown and numbered PDF layout only;
+the readings are provisional.
+
+Independent Yah statement review: Session
+`01a2026c-66a3-70b3-8159-55693cdc85b0`, child `review-normalized-gaussian`
+(agent `PoPVArY`, read-only output `de40e5837b3f1c4810ff05a8b1c16b1fd29d08fe`).
+Review confirmed the unrestricted ramification theorem, the fixed stage
+and measure, the Borel hypotheses and comaps, and the correctly signed
+angular weight and discriminant scalar for the raw comparison.
+
+```sh
+go run ./cmd/godel audit-local "$CANDIDATE" \
+  Lemmas.ComplexMultiplicativeNeighborhood Theorems.FiniteHeckeRamification \
+  Theorems.DiscriminantNormalizedIdeleHeckeGaussian -- \
+  Masullo.complex_eq_one_of_norm_pow_sub_one_lt \
+  Masullo.exists_finset_isUnramifiedAt \
+  Masullo.exists_discriminantNormalizedIdeleHeckeGaussian_zetaIntegral
+```
+
+**Next shared normalization input:** Formalize the single-place norm
+section of (A.2.2.10), Lemma A.2.2.6, PDF p. 547, in logarithmic
+coordinates. For each `v : InfinitePlace K`, construct a continuous
+monoid homomorphism `sᵥ : Multiplicative ℝ →ₜ* IdeleGroup (𝓞 K) K`
+inserting the positive real scalar $\exp(x/v.\mathrm{mult})$ into
+$v$ and one elsewhere, and prove `ideleNorm (sᵥ x) = Real.exp x.toAdd`.
+Descend via `QuotientGroup.mk'` and use `ideleClassNorm_mk` to obtain
+an actual section on classes, with no supplied splitting. This is
+(A.1.3.6), p. 542, and supplies the radial coordinate for (A.2.2.12),
+p. 547. The source statement and proof were read in Markdown and layout,
+not checked visually. Existing inputs are
+`continuous_ideleClassGroup_ofCompletion`, the real/complex ring and
+isometry equivalences in Mathlib's `Completion/InfinitePlace.lean`,
+`ideleFiniteStageEmbedding_single_infinite`, and `ideleNorm` and
+`ideleClassNorm` in `Lemmas.FinitePlaceSupport`. Use
+`Theorems.RationalIdeleLogSection` as an implementation control, not a
+substitute for either complex or general-field coordinates. The general
+norm-one compactness theorem A.1.4.3(1), p. 542, and the quotient Haar
+calibration remain separate obligations.
 
 **Still open:** Meromorphic continuation, divisor data, and contour
 growth in (B.4.2.1)–(4), the broader test class, general ramified Fourier terms,
