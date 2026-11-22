@@ -1,0 +1,29 @@
+{
+  "key": "46f190df665a53e689d723da789d392de21c39138e2dad9ba3b1c5c58d10626f",
+  "revision": "d75138886cfe3053184ce3a0ff3815d2fb65d0f08fc53a18d9e9e7b37c24fb9e",
+  "outcome": "landed",
+  "source": "Masullo, The Music of the Primes, edition SHA-256 e039d3f6cf0a4b14f03c7edb85097752dd65c0a2fe543c76fe992be234f97bf5. Chapter 1, §1.1.4 first bullet, printed p. 12, one-based PDF ordinal 12: unnumbered S-unit theta-sum display and quotient-topology/strict LF sentences immediately below. In this edition the further printed pages also match their one-based PDF ordinals: Definition 2.3.1.1 pp. 99–100, (2.3.1.1)–(2.3.1.2); Proposition 2.3.1.2(1) pp. 100–102; Definition 5.1.1.1(3) p. 223, (5.1.1.3); Theorem 5.1.1.3(1) pp. 223–224 and proof p. 229; Theorem 5.2.1.1(1) p. 230 and proof p. 231. See rational-real-theta-quotient.md for the source comparison and rerunnable client.",
+  "finding": "Partial: the printed definition takes the actual Schwartz–Bruhat quotient by the kernel of the sum over O_{F,S}^× evaluated on GL₁(A_{F,S}); the text gives it the quotient topology and asserts strict LF for each fixed S. The Lean specialization F = ℚ, S = {∞} uses the canonical identifications A_{ℚ,S} = ℝ, GL₁(A_{ℚ,S}) = ℝˣ and O_{ℚ,S}^× = ℤˣ. It proves convergence uniformly on every subset, absolute summability at each idele and unit-invariance of the continuous theta function. Density of ℝ minus zero identifies the actual local kernel with the closed kernel of full-line symmetrization. On the actual topological module quotient the unnormalized sum is a continuous complex linear equivalence to the closed even Schwartz subspace, with inverse the class of half the included even function. Using Masullo.completeSpace_schwartzLine in Proofs/Lemmas/SchwartzLineComplete.lean, the quotient is complete for its canonical additive uniformity, Hausdorff, metrizable and locally convex (over the underlying real field). It has a closed surjective stage, giving a constant Fréchet presentation by identity maps. This does not formalize nuclearity, nor construct the general fixed-S sum, closed kernel or strict quotient presentation. The printed proof on p. 231 passes to Fréchet quotients but does not show that the induced fixed-S quotient-stage maps are topological embeddings with closed image; the enlargement-S argument in (2) is not that check. This is a missing justification, not a counterexample to the adelic assertion.",
+  "retry": "For general F and fixed finite S containing the Archimedean places, provide the compatible Schwartz–Bruhat stage model, compact-uniform summability of the S-unit operator (e.g. formalized finite-place support and fractional-ideal lattice majorants) and its closed kernel. Then exhibit the closed induced embeddings of the quotient stages, for instance by continuous compatible retractions preserving the theta kernel, or an alternative countable strict presentation with the actual quotient topology. For the nuclear Fréchet version, including this real specialization, supply a formal nuclearity theorem for the relevant Schwartz stages and the required permanence under the indicated closed subspaces or quotients.",
+  "evidence": [
+    {
+      "path": "Proofs/Theorems/RationalRealThetaQuotient.lean",
+      "declarations": [
+        "Masullo.rationalRealTheta",
+        "Masullo.rationalRealTheta_apply",
+        "Masullo.rationalRealTheta_hasSumUniformlyOn",
+        "Masullo.rationalRealTheta_summable_norm",
+        "Masullo.rationalRealTheta_mul_unit",
+        "Masullo.rationalRealTheta_ker",
+        "Masullo.isClosed_rationalRealTheta_ker",
+        "Masullo.RationalRealThetaQuotient",
+        "Masullo.rationalRealThetaEquiv",
+        "Masullo.rationalRealThetaEquiv_mkQ_apply",
+        "Masullo.rationalRealThetaEquiv_mkQ_apply_unit",
+        "Masullo.rationalRealThetaEquiv_symm_apply",
+        "Masullo.rationalRealThetaQuotient_frechet",
+        "Masullo.rationalRealThetaQuotient_closedStage"
+      ]
+    }
+  ]
+}
