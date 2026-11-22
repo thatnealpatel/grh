@@ -2606,13 +2606,52 @@ and manuscript review is by agent `bSxnAsU` in the same session. Source
 correspondence is provisional from pinned Markdown and numbered PDF
 layout, with the already reviewed scalar signs as in the linked handoff.
 
-**Next toward the contour:** Bound $H$ by $C(1+|\Im s|)^2$ on any
-fixed closed real-part strip. Use the sum of the two endpoint absolute
-Mellin integrands as an integrable majorant for $G$ on the strip, then
-use the displayed pole-clearing formula. For the trivial character,
-$\lambda=0$, and `completedHeckeEulerProduct_one_rightLine_lower_bound`
-already supplies the anchor at $2+it$ for applying the rational
-moving-disk/Jensen method to this $H$. This step does not supply the
-reflection used for the left contour. General reflection, absolute
-convergence of the unaveraged class integral outside the starting
-half-plane, and any conclusion about RH or GRH are separate.
+**Checked strip input for §B.4.2.1 / (B.4.2.1), PDF p. 614.** Masullo
+supplies the radial identity (3.2.2.4)–(5), p. 125, and the two weighted
+tails (2.2.5.9)–(10), pp. 97–98. The corrected Gaussian construction
+uses these after averaging and restores the removed modes for the
+Euler identity. On p. 614 Masullo invokes Lang for slow growth of
+$L'/L$; the strip estimate here is an input to a replacement argument,
+not that cited conclusion. The bound needed on the full moving circle
+is not just compact-uniform convergence of the radial integral. Lean uses the
+absolute integrability from `ideleHeckeGaussian_correctedRadialMellin_entire`
+for the same witnesses: the sum of the two endpoint integrand norms
+majorizes the integrand on the strip, giving a uniform bound for $G$.
+The polynomial formula for $H$ then gives the new conjunct, on the
+**same** witness:
+
+```lean
+∀ a b : ℝ, ∃ M : ℝ, 0 ≤ M ∧ ∀ s : ℂ, a ≤ s.re → s.re ≤ b →
+  ‖H s‖ ≤ M * (1 + |s.im|)^2
+```
+
+No ordering hypothesis on the endpoints or exclusion of either pole is
+needed; all previous hypotheses and clauses are retained. Source status
+is provisional from pinned Markdown and numbered PDF layout (including
+p. 614); the rendered page was not inspected. Owning acceptance-check
+session: `01a2056f-8344-7f8c-ab83-1ef134597ce8`. See that session for the
+writer's scoped build and fresh signature/axiom checks; candidate
+integration and independent statement review are separate.
+
+**Next bounded Jensen step:** Specialize to the trivial character
+(identify $\lambda=0$ by uniqueness of the section phase), and prove,
+for the actual same $H$, $H(c_t)\ne0$ for $c_t=2+it$ and
+\[
+\exists C>0\ \forall t\in\mathbb R,\qquad
+\sum_{z\in\overline B(c_t,5),\ H(z)=0}\operatorname{ord}_z(H)
+  \le C(1+|t|).
+\]
+Use the divisor on the closed inner disk to count full multiplicities,
+including boundary zeros. On the radius-six sphere use $-4\le\Re s\le8$
+and $|\Im s|\le |t|+6$ to obtain an envelope $M_t=C_0(1+|t|)^2$ with
+$C_0\ge1$. At the center the continuation agrees with the completed
+Euler product after pole clearing; use
+`completedHeckeEulerProduct_one_rightLine_lower_bound` for nonvanishing
+and `log_div_norm_poleCleared_completedHeckeEulerProduct_one_rightLine`
+for the Jensen cost $\log(M_t/\|H(c_t)\|)$, then apply
+`AnalyticOnNhd.sum_divisor_le` with radii $5$ and $6$ as in the
+[rational moving-disk count](rational-explicit-formula.md#checked-multiplicity-count-in-the-moving-disk).
+The checked strip estimate itself gives no zero count, slow growth of
+$L'/L$, left-contour reflection, or (B.4.2.2). General reflection,
+absolute convergence of the unaveraged class integral outside the
+starting half-plane, and any conclusion about RH or GRH are separate.

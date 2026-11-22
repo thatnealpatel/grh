@@ -5,6 +5,7 @@ public import Mathlib.Analysis.Meromorphic.Basic
 import all Theorems.IdeleClassGaussianCorrectedMellin -- For unfolding the corrected profile.
 import Theorems.IdeleClassMellinZeroModes
 import Lemmas.OneParameterCharacter
+import Lemmas.LogMellinStripBounds
 import Mathlib.Analysis.Complex.CauchyIntegral
 
 /-! # Meromorphic continuation of the completed fixed-Gaussian Euler product
@@ -17,6 +18,13 @@ removed modes give a continuation directly for this Gaussian. The Euler
 identity above one carries an inverse square root discriminant, so the
 completed product and its polar coefficients are rescaled together.
 Source reading: Provisional, from pinned Markdown and numbered PDF layout.
+
+For the growth input to §B.4.2.1, p. 614, we use the absolute Mellin
+integrability from the two corrected/averaged tails (2.2.5.9)–(10),
+pp. 97–98. Comparing with the two real endpoints gives a bound uniform
+in height for the corrected integral, hence quadratic growth for the
+pole-cleared numerator. This is an input to a moving-disk argument,
+not a logarithmic derivative bound or the residue identity (B.4.2.2).
 -/
 
 open IsDedekindDomain MeasureTheory NumberField
@@ -57,7 +65,8 @@ variable [∀ v : InfinitePlace K, MeasurableSpace v.Completionˣ]
 /-- The entire corrected integral plus the two removed modes, on the same
 Gaussian and Haar witnesses, extends the completed Euler product. The
 entire pole-cleared numerator encodes at most simple poles and their
-residues using only the values of `L` off the possible poles. -/
+residues using only the values of `L` off the possible poles, and grows
+at most quadratically in absolute height on each fixed closed vertical strip. -/
 public theorem exists_completedHeckeEulerProduct_gaussianContinuation
     (χ : HeckeCharacter (𝓞 K) K) (hχ : ∀ a : C, ‖χ a‖ = 1)
     (v : InfinitePlace K) (r : ClassGroup (𝓞 K) → I₁)
@@ -92,7 +101,9 @@ public theorem exists_completedHeckeEulerProduct_gaussianContinuation
       ((∃ h : C₁, χ (h : C) ≠ 1) → Differentiable ℂ L) ∧
       (∀ s, 1 < s.re → L s = completedHeckeEulerProduct χ hχ s) ∧
       ∃ H : ℂ → ℂ, Differentiable ℂ H ∧ H z₁ = D₀ * a₁ ∧ H z₀ = D₀ * a₀ ∧
-        ∀ s, s ≠ z₁ → s ≠ z₀ → H s = (s - z₁) * (s - z₀) * L s := by
+        (∀ s, s ≠ z₁ → s ≠ z₀ → H s = (s - z₁) * (s - z₀) * L s) ∧
+        ∀ a b : ℝ, ∃ M : ℝ, 0 ≤ M ∧ ∀ s : ℂ, a ≤ s.re → s.re ≤ b →
+          ‖H s‖ ≤ M * (1 + |s.im|)^2 := by
   classical
   let ψ := χ.comp (ideleClassLogSection W)
   have hsection (x : ℝ) : χ (τ (Multiplicative.ofAdd x, 1)) = ψ (Multiplicative.ofAdd x) := by
@@ -124,8 +135,14 @@ public theorem exists_completedHeckeEulerProduct_gaussianContinuation
     ((∃ h : C₁, χ (h : C) ≠ 1) → Differentiable ℂ L) ∧
     (∀ s, 1 < s.re → L s = _) ∧
     ∃ H : ℂ → ℂ, Differentiable ℂ H ∧ H z₁ = D₀ * a₁ ∧ H z₀ = D₀ * a₀ ∧
-      ∀ s, s ≠ z₁ → s ≠ z₀ → H s = (s - z₁) * (s - z₀) * L s
+      (∀ s, s ≠ z₁ → s ≠ z₀ → H s = (s - z₁) * (s - z₀) * L s) ∧
+      ∀ a b : ℝ, ∃ M : ℝ, 0 ≤ M ∧ ∀ s : ℂ, a ≤ s.re → s.re ≤ b →
+        ‖H s‖ ≤ M * (1 + |s.im|)^2
   have hG : Differentiable ℂ G := hentire
+  let : μ.IsAddHaarMeasure := hμ
+  have htail := ideleHeckeGaussian_correctedRadialMellin_entire χ hχ T μ E hstage ν v r
+    hm hF hperiod
+  have hGp (s : ℂ) : Integrable (fun x : ℝ ↦ p x * Complex.exp (s * x)) := (htail.2.2.2 s).1
   refine ⟨?_, ?_, ?_, ?_, ?_⟩
   · intro s
     have hGm := (hG.analyticAt (z := s)).meromorphicAt
@@ -143,10 +160,6 @@ public theorem exists_completedHeckeEulerProduct_gaussianContinuation
     simpa [L, a₁, a₀, hb] using hG.const_mul D₀
   · intro s hs
     -- Add back the integrable removed modes on the original half-plane.
-    let : μ.IsAddHaarMeasure := hμ
-    have htail := ideleHeckeGaussian_correctedRadialMellin_entire χ hχ T μ E hstage ν v r
-      hm hF hperiod
-    have hGp : Integrable (fun x : ℝ ↦ p x * Complex.exp (s * x)) := (htail.2.2.2 s).1
     let Q (x : ℝ) := (if x < 0 then Real.exp (-x) • a₁ - a₀ else 0) *
       (Complex.exp (((lam * x : ℝ) : ℂ) * Complex.I) * Complex.exp (s * x))
     obtain ⟨hQi, hQ⟩ := integral_logMellin_zeroModes a₁ a₀ lam s hs
@@ -164,7 +177,7 @@ public theorem exists_completedHeckeEulerProduct_gaussianContinuation
         ring
     have hval := (hEuler s hs).2
     rw [← show (fun x ↦ _) = (fun x ↦ _) from funext hsum] at hval
-    rw [integral_add hGp hQi, hQ, hz₁, hz₀] at hval
+    rw [integral_add (hGp s) hQi, hQ, hz₁, hz₀] at hval
     have hD : D₀ ≠ 0 := Complex.ofReal_ne_zero.mpr (Real.sqrt_pos.2 (by
       exact_mod_cast Int.natAbs_pos.mpr (discr_ne_zero K))).ne'
     change G s + (a₁ / (s - z₁) - a₀ / (s - z₀)) = _ at hval
@@ -175,7 +188,7 @@ public theorem exists_completedHeckeEulerProduct_gaussianContinuation
     rw [← mul_assoc, hinv, one_mul]
   · -- Clearing the two distinct linear poles gives an entire numerator.
     let H (s : ℂ) := D₀ * ((s - z₁) * (s - z₀) * G s + (s - z₀) * a₁ - (s - z₁) * a₀)
-    refine ⟨H, ?_, ?_, ?_, ?_⟩
+    refine ⟨H, ?_, ?_, ?_, ?_, ?_⟩
     · dsimp only [H]; fun_prop
     · have hz : z₁ - z₀ = 1 := by dsimp [z₁]; ring
       simp only [H, sub_self, zero_mul, zero_add, sub_zero, hz, one_mul]
@@ -184,5 +197,39 @@ public theorem exists_completedHeckeEulerProduct_gaussianContinuation
     · intro s h₁ h₀
       dsimp only [H, L]
       field_simp [sub_ne_zero.mpr h₁, sub_ne_zero.mpr h₀]
+    · intro a b
+      -- Use both endpoint integrands as one integrable majorant for the strip.
+      let B := ∫ x : ℝ, ‖p x * Complex.exp ((a : ℂ) * x)‖ + ‖p x * Complex.exp ((b : ℂ) * x)‖
+      have hB : 0 ≤ B := integral_nonneg fun _ ↦ by positivity
+      have hGB (s : ℂ) (ha : a ≤ s.re) (hb : s.re ≤ b) : ‖G s‖ ≤ B :=
+        (norm_integral_le_integral_norm _).trans
+          (integral_mono (hGp s).norm ((hGp a).norm.add (hGp b).norm)
+            (norm_logMellinIntegrand_le_endpoints p ha hb))
+      let Cz (z : ℂ) := 1 + |a| + |b| + ‖z‖
+      have hC (z : ℂ) : 0 ≤ Cz z := by dsimp [Cz]; positivity
+      refine ⟨‖D₀‖ * (Cz z₁ * Cz z₀ * B + Cz z₀ * ‖a₁‖ + Cz z₁ * ‖a₀‖),
+        by positivity, ?_⟩
+      intro s ha hb
+      let Y := 1 + |s.im|
+      have hY : Y ≤ Y^2 := by dsimp [Y]; nlinarith [abs_nonneg s.im]
+      have hlin (z : ℂ) : ‖s - z‖ ≤ Cz z * Y := norm_sub_le_verticalStrip z ha hb
+      -- Estimate the polynomial formula directly, including at both possible poles.
+      change ‖D₀ * ((s - z₁) * (s - z₀) * G s + (s - z₀) * a₁ - (s - z₁) * a₀)‖ ≤ _
+      rw [Complex.norm_mul]
+      calc
+        _ ≤ ‖D₀‖ * (‖(s - z₁) * (s - z₀) * G s‖ + ‖(s - z₀) * a₁‖ + ‖(s - z₁) * a₀‖) :=
+          mul_le_mul_of_nonneg_left ((norm_sub_le _ _).trans
+            (add_le_add (norm_add_le _ _) le_rfl)) (norm_nonneg _)
+        _ ≤ ‖D₀‖ * (Cz z₁ * Y * (Cz z₀ * Y) * B + Cz z₀ * Y^2 * ‖a₁‖ + Cz z₁ * Y^2 * ‖a₀‖) := by
+          simp only [Complex.norm_mul]
+          have hlin' (z : ℂ) : ‖s - z‖ ≤ Cz z * Y^2 :=
+            (hlin z).trans (mul_le_mul_of_nonneg_left hY (hC z))
+          gcongr
+          · exact hlin z₁
+          · exact hlin z₀
+          · exact hGB s ha hb
+          · exact hlin' z₀
+          · exact hlin' z₁
+        _ = _ := by change _ = _ * Y^2; ring
 
 end Masullo
