@@ -2460,18 +2460,107 @@ build, fresh joint signatures and axiom reports, and adoption. Source
 reading is provisional from pinned Markdown and numbered PDF layout
 unless a rendered check is identified in the review.
 
-**Next: Continue the Gaussian radial Mellin integral.** Combine the
-above bound with `ideleHeckeGaussian_radialPairing_rapidDecay`. Prove the
-bilateral Laplace integral of the Borel profile
-$\chi(\tau(e^u))\,[P(u)-1_{u<0}z_u m(C_K^1)\delta_\omega]$ is entire by
-an exponential majorant on compact sets of $s$ (and the same majorant
-with a log moment for differentiation). This is the radial continuation
-inference of (3.2.2.5), p. 125, and (3.2.2.7)–(10), pp. 126–127, with
-the bound **after** averaging: Do not infer absolute convergence of the
-unaveraged class integral by using character cancellation inside an
-absolute value. Evaluate the removed terms on $\Re s>1$ and add their
-meromorphic expressions to match the completed Euler product there.
-The unitary section factor is not assumed trivial: If it is written as
-$e^{i\lambda u}$, the two denominators are $s+i\lambda-1$ and
-$s+i\lambda$. The functional equation, continuation, RH, and GRH are
-not established by the slice estimate.
+The next inference is the [entire corrected Gaussian radial Mellin
+transform](#entire-corrected-gaussian-radial-mellin-transform).
+
+### Entire corrected Gaussian radial Mellin transform
+
+[`ideleHeckeGaussian_correctedRadialMellin_entire`](../../Proofs/Theorems/IdeleClassGaussianCorrectedMellin.lean)
+uses the **same** $T,F,m=\overline\mu_1$ and idelic Gaussian as the two
+weighted bounds above. Its additive test is precisely
+`adeleHeckeTest χ T (archimedeanHeckeSchwartz χ hχ)`, with Fourier integral
+`adeleFourier μ` for the separate additive Haar $\mu$ specified by its
+cofinal-stage comaps. With $x=\log t$, write $P(x)$ for the norm-one
+pairing on the section $\tau(e^x)$ and $b=m(C_K^1)\delta_{\chi|C_K^1}$.
+`ideleClassCorrectedLogProfile` is
+$$
+p(x)=\chi(\tau(e^x))\left[P(x)-\mathbf 1_{x<0}
+                (e^{-x}\widehat f(0)-f(0))b\right].
+$$
+Lean proves every weighted norm-one slice is integrable, $p$ is Borel,
+and for every $s\in\mathbb C$ both $p(x)e^{sx}$ and $xp(x)e^{sx}$ are
+absolutely integrable in $dx$. The transform is entire, with complex
+first derivative the integral of the second integrand.
+
+- The norm-one pairing (2.2.5.2), p. 95, and the radial decomposition
+  (3.2.2.4)–(5), p. 125, place $\omega$ on the norm-one factor and
+  $\chi(\tau(t))t^s$ outside it. Use ordinary multiplication as in the
+  quotient computation on p. 97. In `ideleClassCorrectedLogProfile`,
+  `Multiplicative.ofAdd x` tags $x$ itself, not $e^x$; the norm of its
+  section point is $e^x$. The subtracted expression is applied to
+  the pairing first; the phase has norm one but is not discarded.
+- Theorem 2.2.5.4(2), (2.2.5.9)–(10), pp. 97–98, supplies the two
+  weighted bounds used here. The checked fixed-Gaussian versions are
+  `ideleHeckeGaussian_radialPairing_rapidDecay` on $x\ge 0$, including
+  zero where there is no correction, and
+  `ideleHeckeGaussian_radialPairing_smallNorm_decay` on $x<0$, using
+  $e^{-x}=(e^x)^{-1}$ and the actual finite mass in the *subtracted*
+  modes. The earlier correction of the finite Fourier signs is inherited;
+  this step adds no Fourier inversion hypothesis. In particular, no
+  conditions $f(0)=0$ or $\widehat f(0)=0$ are assumed.
+- The proof of Theorem 3.2.2.1 uses the exponential estimate and
+  $dt/t$ in (3.2.2.7)–(10), pp. 126–127. Its unaveraged absolute values
+  cannot exploit cancellation of a nontrivial norm-one character. Use
+  the modulus **after** pairing, with the correction for the trivial
+  restriction even when its zero values do not vanish. The Borel
+  product integrand gives a Borel slice integral by
+  `StronglyMeasurable.integral_prod_right'`, using finite Haar on the
+  compact norm-one group. The profile can jump at the cut. The two-tail
+  helper chooses $N\ge |\Re s|+3$ and bounds $|p(x)e^{sx}|$ by
+  $C_s e^{-3|x|}$. In $|w-s|<1$ changing the parameter costs at most
+  $e^{|x|}$, and inserting the log moment costs at most another
+  $e^{|x|}$. The measurable variant of `hasDerivAt_logMellin_of_decay`
+  uses the resulting integrable majorants for Bochner parametric
+  differentiation (the old continuous-profile interface is unchanged).
+- `exists_discriminantNormalizedIdeleHeckeGaussian_correctedRadialMellin`
+  chooses $T,F$ and the specified $m$ directly from the checked
+  `exists_discriminantNormalizedIdeleHeckeGaussian_radialMellin`, not
+  from a second periodization. The separate $\mu$ is obtained using
+  `exists_finiteCompletionIntegerMass_exceptions` and
+  `exists_adeleRestrictedProductHaar`. The **uncorrected** above-one
+  integral is restated in real log coordinates by
+  `map_toAdd_logVolume` (no scale factor). It equals
+  $|\mathrm{disc}(K)|^{-1/2}$ times `completedHeckeEulerProduct` for
+  the same Gaussian, by the existing above-one evaluation of
+  (3.2.2.5), (3.2.2.11), pp. 125, 127. This is not equality of the
+  corrected integral with that Euler product. The existential exports
+  differentiability, not absolute convergence as a separate conjunct:
+  install its `μ.IsAddHaarMeasure` as a local instance and apply the
+  first endpoint with the **same** $T,\mu,E,\nu,v,r,F$ and the exported
+  cofinal comaps, quotient Haar, measurability and periodization. The
+  existential retains the quotient Haar and its mass, not the auxiliary
+  multiplicative Haar on ideles and its splitting witnesses; those are
+  in the earlier above-one theorem.
+
+**Evidence.** Independent source and fixed-statement review: Yah session
+`01a20550-d5a6-78a3-9def-ba66465b8227`, agent `WigsKzk`, report
+`ac8bf85ae11152a49d5613e0f920ab0930c8eb98`, on frozen signatures SHA256
+`eedd2aae55c97d102533594ce7c8c2d2651bf4dace3111b3e9b538954d494af3`.
+The review confirms the ordinary-product pairing, measure and indicator,
+phase, correct use of the two bounds, and coordinate transport; its
+noted measurability and differentiation implementation obligations are
+filled by the built `hpair` and `hasDerivAt_logMellin_of_measurable_decay`.
+The review is independent of the build; both source readings are
+provisional Markdown/layout readings (not visual inspection).
+Writer `YjLYOPn` built all three changed Lean modules, both fixed Gaussian
+tail modules, and the five direct importers of `LogMellinDerivative` with
+`lake build --wfail`, then jointly imported and checked the six changed
+or new declarations with complete `#print axioms` reports (only
+`propext`, `Classical.choice`, `Quot.sound`). The owning integration
+checks and full candidate identity are recorded by agent `main` in the
+same session; writer verification alone is not an adoption check.
+
+**Next: Evaluate the removed terms on the same witnesses.** Derive
+$\chi(\tau(e^x))=e^{i\lambda x}$ from `Lemmas.OneParameterCharacter`
+for the specific section, with $\lambda\in\mathbb R$. For $\Re s>1$
+prove integrability and evaluate the removed integral as
+$$
+b\left(\frac{\widehat f(0)}{s+i\lambda-1}
+       -\frac{f(0)}{s+i\lambda}\right).
+$$
+Add it to the corrected entire integral, retaining the raw discriminant
+factor in the right-half-plane identity. This is the remaining
+fixed-Gaussian continuation step toward Theorem 3.2.2.1(1a),(3);
+its pole statements require proof. No all-class absolute integrability
+outside the original right half-plane, functional equation, RH or GRH
+is established here.

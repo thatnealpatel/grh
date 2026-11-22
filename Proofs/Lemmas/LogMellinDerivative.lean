@@ -17,7 +17,7 @@ namespace Masullo
 
 /-- Exponential decay of the weighted profile at `z` supplies an integrable
 majorant for differentiation in a complex neighborhood of `z`. -/
-public theorem hasDerivAt_logMellin_of_decay {f : ℝ → ℂ} (hf : Continuous f) (z : ℂ)
+public theorem hasDerivAt_logMellin_of_measurable_decay {f : ℝ → ℂ} (hf : Measurable f) (z : ℂ)
     {r C : ℝ} (hr : 0 < r) (hC : 0 ≤ C)
     (hdecay : ∀ x : ℝ, ‖f x * Complex.exp (z * x)‖ ≤ C * Real.exp (-(3 * r) * |x|)) :
     Integrable (fun x : ℝ ↦ f x * Complex.exp (z * x)) ∧
@@ -26,9 +26,9 @@ public theorem hasDerivAt_logMellin_of_decay {f : ℝ → ℂ} (hf : Continuous 
       (∫ x : ℝ, (x : ℂ) * (f x * Complex.exp (z * x))) z := by
   let F (w : ℂ) (x : ℝ) := f x * Complex.exp (w * x)
   let D (w : ℂ) (x : ℝ) := (x : ℂ) * F w x
-  have hF (w : ℂ) : Continuous (F w) :=
-    hf.mul (Complex.continuous_exp.comp (continuous_const.mul Complex.continuous_ofReal))
-  have hD : Continuous (D z) := Complex.continuous_ofReal.mul (hF z)
+  have hF (w : ℂ) : Measurable (F w) :=
+    hf.mul (Complex.continuous_exp.comp (continuous_const.mul Complex.continuous_ofReal)).measurable
+  have hD : Measurable (D z) := Complex.continuous_ofReal.measurable.mul (hF z)
   have hdec := integrable_exp_neg_mul_abs hr
   have hbase : Integrable (F z) := by
     refine (hdec.const_mul C).mono' (hF z).aestronglyMeasurable (ae_of_all _ fun x ↦ ?_)
@@ -73,5 +73,15 @@ public theorem hasDerivAt_logMellin_of_decay {f : ℝ → ℂ} (hf : Continuous 
       ring
     rw [hval]
     exact hExp.const_mul (f x)
+
+/-- The continuous-profile case of differentiation under the log Mellin integral. -/
+public theorem hasDerivAt_logMellin_of_decay {f : ℝ → ℂ} (hf : Continuous f) (z : ℂ)
+    {r C : ℝ} (hr : 0 < r) (hC : 0 ≤ C)
+    (hdecay : ∀ x : ℝ, ‖f x * Complex.exp (z * x)‖ ≤ C * Real.exp (-(3 * r) * |x|)) :
+    Integrable (fun x : ℝ ↦ f x * Complex.exp (z * x)) ∧
+    Integrable (fun x : ℝ ↦ (x : ℂ) * (f x * Complex.exp (z * x))) ∧
+    HasDerivAt (fun w : ℂ ↦ ∫ x : ℝ, f x * Complex.exp (w * x))
+      (∫ x : ℝ, (x : ℂ) * (f x * Complex.exp (z * x))) z :=
+  hasDerivAt_logMellin_of_measurable_decay hf.measurable z hr hC hdecay
 
 end Masullo
