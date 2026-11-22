@@ -375,22 +375,44 @@ pinned Mathlib, without elaborating. The same owning transcript records
 the integrated candidate, warning-free build, joint-import signatures
 and axioms, and $\log 3$ specialization.
 
-**Next bounded check (formalization only).** From zero periodization,
-formalize the compactly supported continuous difference primitive in the
-physical log coordinate: $q(x)=\sum_{k\ge0}g(x+kL)$ with
-$g(x)=q(x)-q(x+L)$. The coefficient proof's private
-`summable_norm_restrict_int_translate` already proves uniform finite
-support of the restricted integer translates; passing to $k\ge0$ and
-rescaling gives the local finite-sum input for continuity. That support
-fact is proof-local, not an exported finite-support lemma.
-The remaining check is the shift of the one-sided sum and its compact
-support, using zero periodization to identify it with the negative of
-the strictly negative sum on the left tail. The [compact-log difference
-calculation](trace-orbital-q.md#which-quotient-is-closed) already gives
-the smooth construction in ordinary mathematics; no new manuscript
-reading is needed for this check. Smoothness of the primitive for
-smooth input and passage to the adelic lift are separate from the
-continuous endpoint.
+**Checked compact-log difference primitive (Lean).**
+[`Masullo.logDifferencePrimitive_spec`](../../Proofs/Lemmas/CompactLogMellinPeriodization.lean)
+uses the canonical `logDifferencePrimitive L g x = ∑' k : ℕ, g (x + k * L)`.
+For every real $L>0$ and continuous, compactly supported
+$g:\mathbb R\to\mathbb C$ of pointwise zero `logPeriodization L g`, it proves
+that the primitive is continuous, compactly supported, and satisfies
+$g(x)=q(x)-q(x+L)$ at every real $x$. The proof factors out the Fourier
+argument's compact-local finiteness, now in the physical log coordinate.
+The shift removes exactly $k=0$. For compact support, the nonnegative
+sum vanishes beyond the right end of the support interval; the strictly
+negative leg of the full periodization vanishes beyond its left end,
+so zero periodization forces the primitive to vanish there too. The
+owning check composes the theorem with Fourier uniqueness at $L=\log 3$
+from vanishing Mellin samples, without a smoothness or Schwartz premise.
+This is a project repair; source applicability is inherited from the
+reviewed construction above, not a new manuscript reading.
+
+**Primitive evidence.** `compact-log-primitive-review` (`ckBZSur`,
+transcript Yah `01a2056a-a55a-7561-9441-27136d96d4f0`) independently
+checked the exact statements and the scope of the reductions against
+`809ffb4ce75dbd4ea4a10af93a48cdb6bf7438c8` and pinned Mathlib, without
+elaboration. The same owning transcript records the integrated candidate,
+warning-free build, fresh joint-import signature and axiom checks, and
+the $\log 3$ composition.
+
+**Next bounded check (formalization only).** Prove smoothness of the
+same primitive for smooth compactly supported $g$. The private
+`logDifferencePrimitive_eqOn_finset` already identifies $q$ with a
+finite sum on each compact interval, under $L>0$ and compact support
+alone. In the same module, reuse this equality on a neighborhood of
+each point and check the smoothness of the translated finite sum and
+its transfer to $q$. Neither zero periodization nor the stronger
+`LogWeightedSchwartz` hypotheses of `logPeriodization_smooth` are
+needed for that step. This is the smoothness argument in the
+[compact-log difference calculation](trace-orbital-q.md#which-quotient-is-closed),
+with no new numbered manuscript dependency. Transport to the positive
+ray, assembly of the adelic lift, and the residue and pole-removal
+identifications remain separate Lean obligations.
 
 ## The finite-only repair is not projectively continuous
 
