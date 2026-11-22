@@ -110,12 +110,25 @@ y\in I^\vee \quad\Longleftrightarrow\quad
 \operatorname{padicStdAddChar}_{p(v)}
 \bigl(\operatorname{Tr}_{K_v/\mathbb Q_{p(v)}}(b\,y_v)\bigr)=1.
 $$
-This needs the actual completed lattice $I_v$ at each place. The
-codifferent annihilator for the completion integers and the global
-fractional-ideal trace dual supply local and global inputs, not this
-identification for an arbitrary box.
+This needs the actual completed lattice $I_v$ at each place. For
+$I_v=g_v\mathcal O_v$, the local codifferent annihilator rewrites the
+right side as $y_v g_v\in\mathfrak D_v^{-1}$. A direct count proof is to
+choose a finite idele $\delta_f$ of ideal $\mathfrak D_K$ using
+`finiteIdeleIdeal_surjective`. The local exponent identification in
+`finiteCompletionDifferentExponent_eq_global_multiplicity` should give
+$\mathfrak D_v=\delta_{f,v}\mathcal O_v$. Thus the local condition is
+membership in the homogeneous box for $(\delta_f g)^{-1}$; apply
+`mem_finiteIdeleIdeal_iff` and `fractionalIdeal_traceDual_eq`. This is a
+proof route, not yet a checked bridge for an arbitrary box.
 
 ## Local checks and integration replay
+
+The joint integration candidate
+`1ec528e0b9f4fb96d51efb7860b5488171aab606` was adopted after a clean
+exact-candidate audit of the ten changed Lean modules, including this
+branch and the finite-box coset. The ten built signatures here matched
+the declarations inspected at integration; each reported only
+`propext`, `Classical.choice`, and `Quot.sound`.
 
 Writer session `01a20447-557d-705c-895c-7a7e44094b93`, agent `vnbRfBv`.
 Assigned base `61c21936385cf7c570fdb3666c92dc06aa5fe4c3`; comparison with

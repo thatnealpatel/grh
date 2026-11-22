@@ -1009,15 +1009,81 @@ continuation, RH, or GRH. On the provisional text reading, the use of
 Theorem 2.2.3.4(3), p. 83, on pp. 126–127 requires both zero modes to
 vanish. A nontrivial norm-one character cannot suppress the term
 `t⁻¹ f̂(0)` in the absolute value of the *unaveraged* class integrand.
-Prove the actual pointwise inversion (2.2.3.2), p. 82, for the corrected
-Gaussian with a compatible Fourier normalization, retaining
+The [trivial-character Gaussian inversion](#checked-pointwise-inversion-for-the-trivial-character-gaussian)
+is checked at every idele. The broader obligation is actual pointwise
+inversion (2.2.3.2), p. 82, for the corrected Gaussian at arbitrary
+characters with a compatible Fourier normalization, retaining
 `t⁻¹ f̂(0) - f(0)`. Then integrate against the norm-one character; only
 there do both terms cancel for a nontrivial restriction, as required
 by (2.2.5.10), (2.2.5.12), pp. 97–98. For a trivial restriction, retain
 the two terms and compute their Mellin contributions instead. Analytic
 agreement must start on the common domain `Re s > 1`.
 
-**Checked finite-place input:**
+#### Checked pointwise inversion for the trivial-character Gaussian
+
+[`ideleHeckeGaussian_one_theta_inversion`](../../Proofs/Theorems/IdeleGaussianThetaInversion.lean),
+accepted at `1a1110c6f535000491247596f5e9035ec3bde670`, proves a pointwise
+identity for the actual principal periodization
+$P(g)=\sum_{a\in K^\times}\Phi_1(ag)$ at every idele of every number field.
+Here $\Phi_1$ is the existing trivial-character Gaussian. With $\delta$
+the idele with Archimedean part one and finite ideal the different,
+$D=|\operatorname{disc}K|$, and $A=(1/(2\pi))^{r_2}$, the identity is
+
+$$
+P(g)=\frac{P(\delta g^{-1})+A}{\sqrt D\,|g|_K}-A.
+$$
+
+The pointwise statement uses the additive test's value at zero; the
+radial variant evaluates it as $A$ and uses the counting-periodization
+contract to substitute the class function. Euclidean Poisson on the
+scaled ideal gives the trace dual at $\delta g^{-1}$. The factor
+$2^{-r_2}$ in the Gaussian transform cancels the same factor in the
+ordinary Euclidean covolume. Masullo's Theorem 2.2.3.2, (2.2.3.2), PDF
+p. 82, invokes Tate's adelic Riemann–Roch and uses quotient mass one
+(Remark 2.2.3.3). The Lean argument derives this specialized identity
+without assuming or identifying the full adelic Fourier transform.
+The page reading is provisional (Markdown and numbered layout, not
+rendered).
+
+**Next on the trivial isotype:** Let $\eta_1$ be the fixed finite
+norm-one Haar measure of mass $M$, and let $R(t)$ be
+`ideleClassRadialPairing` for the trivial weight at log radius $\log t$.
+Prove that every slice is integrable and that
+
+$$
+R(t)=\frac{R(|\delta|_K/t)+MA}{\sqrt D\,t}-MA
+\qquad(t>0).
+$$
+
+In `ideleClassLogSplit`, reflection has log coordinate
+$\log|\delta|_K-u$ and norm-one action $h\mapsto h_\delta h^{-1}$, where
+$h_\delta$ is the norm-one component of $[\delta]$. This action preserves
+$\eta_1$. Start with the existing integrability bound at nonnegative log
+radius to derive the reflected tail for $0<t\le |\delta|_K$; do not use
+that bound unmodified across the intermediate strip. In
+`ideleHeckeGaussian_periodization_rapidDecay` the radius sign is used
+in `hρ` to compare the two exponential rates. For the missing slice
+integrability, extract the same lattice majorant without the rate
+comparison: Choose one fixed power $p$ exceeding the lattice rank and
+keep the exact factor $\exp(-p u/[K:\mathbb Q])$ in the majorant. This is
+bounded on any compact log interval. Then the slice integrability
+argument in `ideleHeckeGaussian_radialPairing_rapidDecay` applies with
+that majorant.
+For the trivial weight both zero terms survive with the actual quotient
+mass and must be integrated separately on $0<t<1$; compare (2.2.5.10),
+PDF p. 97. This is not the ramified Gaussian or full adelic inversion.
+
+Check the two input modules on the pin with:
+
+```sh
+lake --wfail build +Theorems.IdeleGaussianThetaInversion \
+  +Theorems.IdeleClassGaussianRadial
+```
+
+Their pointwise identity and large-norm slice bound are separate inputs;
+neither proves the averaged identity by itself.
+
+#### Local Fourier input
 [`finiteCompletionIntegers_fourier`](../../Proofs/Theorems/FiniteCompletionIntegersFourier.lean)
 computes the actual local trace-character integral on the integer ring:
 Its negative-sign Fourier transform is the indicator of the inverse local
@@ -1220,24 +1286,19 @@ go run ./cmd/godel audit-local "$CANDIDATE" \
   Masullo.schwartz_lattice_poisson Masullo.archimedeanIdeal_poisson
 ```
 
-**Next finite-to-global obligation:** For one finite box, prove that its
-pullback to the number-field diagonal is a coset of the fractional ideal
-with the prescribed local lattice balls. If a diagonal representative
-$x_0$ exists, identify the pullback explicitly with $x_0+I$; prove that
-representative exists by finite approximation with integrality outside
-the specified places. For a translated box, match the local transform's
+**Next finite-to-global obligation:** The
+[diagonal representative and exact coset](#checked-diagonal-pullback-of-a-finite-box)
+are checked. For a translated box, match the local transform's
 annihilator with $I^\vee$ and show that its product of translation phases
 at $y\in I^\vee$ equals the Archimedean positive phase at $a=e(x_0)$.
-This uses diagonal cancellation for the **positive Archimedean** and
-**conjugated positive finite** trace characters, as required by the
-[rational sign repair](theta-inversion-q.md#rendered-sign-check-a-translated-box-breaks-the-printed-theta-identity).
-An integer-ring indicator at zero cannot check the sign. The finite
-Haar masses must also be proved to multiply to the reciprocal of the
-trace-normalized Archimedean covolume. Then extend by finite linearity
-to the ramified tests, after proving their finite-coset decomposition.
-None of these steps is supplied by the Archimedean result. Retain both
-zero modes in the passage to the nonzero-orbit sums, before norm-one
-averaging.
+The [diagonal trace-phase theorem](finite-diagonal-phase.md) supplies the
+sign and product identity for the centers $x_{0,v}$. To replace the
+original centers $a_v$ by $x_{0,v}$, use $x_{0,v}-a_v\in g_v\mathcal O_v$
+and the local annihilator condition. The centered Haar masses must also
+be proved to multiply to the reciprocal of the trace-normalized
+Archimedean covolume. Then extend by finite linearity to the ramified
+tests, after proving their finite-coset decomposition. Retain both zero
+modes in the passage to the nonzero-orbit sums, before norm-one averaging.
 
 #### Checked diagonal pullback of a finite box
 
@@ -1280,8 +1341,13 @@ Independent Yah statement review: Session
 read-only output `a15d3cbfb4e30bc317f4fb9d8d4301397122252d`) reviewed
 the all-place endpoints, scaling and signs. The integral CRT statements
 were separately reviewed by `box-review` (`AETvkdM`, read-only output
-`b29df76cbc0edf37095dfdff51ba01b86e61a6fd`). Replay from the exact
-integration workspace:
+`b29df76cbc0edf37095dfdff51ba01b86e61a6fd`). The joint exact integration
+candidate `1ec528e0b9f4fb96d51efb7860b5488171aab606` was adopted after
+`audit-local` passed on these seven modules together with the three
+[diagonal-phase modules](finite-diagonal-phase.md#local-checks-and-integration-replay).
+The six built signatures match the review, and each uses only
+`propext`, `Classical.choice`, and `Quot.sound`. To replay just this part
+of the audit from the exact integration workspace:
 
 ```sh
 go run ./cmd/godel audit-local "$CANDIDATE" \
