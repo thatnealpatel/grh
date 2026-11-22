@@ -1473,8 +1473,19 @@ checked `@` signatures and printed axioms for both box endpoints, the
 local dilation theorem, `absNorm_inv_finiteIdeleIdeal`, the extracted
 `measure_eq_relIndex_mul`, and the existing `finiteCompletion_codifferent_measure`.
 Each depended exactly on `propext`, `Classical.choice`, and `Quot.sound`.
-This is writer evidence; exact-candidate checks and independent statement
-review are the owning agent's landing checkpoints.
+
+Exact landing: `140e39ba827eecb7f9e9b7026255fd2779974a8e` on
+`9f10e8ef6104bf715c07054bf7e3c4567f15f687` reproduces the checked writer
+patch from `c764da87ad1dcd29c09ab2c5f85aa1305eec2d7a` byte for byte.
+In Yah session `01a20466-63f1-711c-8351-a29ff9765c84`, the owner verified
+candidate sources and pins, then ran the build above with the additional
+targets `+Theorems.FiniteBoxTraceDual +Theorems.ArchimedeanIdealPoisson`
+(8433 jobs). A fresh joint import checked the same six signatures and
+axiom reports on that candidate. Independent Yah reviewer `gJTKkEO`
+checked the endpoints and promoted helpers, including the arbitrary
+finite-idele quantifier, canonical Borel convention, finite support,
+inverse-ideal sign, and cancellation of the complex-place factors.
+The candidate was adopted without a restack (`stale: false`).
 
 **Next: Compute the finite Fourier factors of a translated box.** For
 $a\in\mathbf A_{K,f}$, $g\in\mathbf A_{K,f}^{\times}$ and $y\in K$,
