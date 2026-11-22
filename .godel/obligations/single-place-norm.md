@@ -2628,10 +2628,20 @@ The polynomial formula for $H$ then gives the new conjunct, on the
 No ordering hypothesis on the endpoints or exclusion of either pole is
 needed; all previous hypotheses and clauses are retained. Source status
 is provisional from pinned Markdown and numbered PDF layout (including
-p. 614); the rendered page was not inspected. Owning acceptance-check
-session: `01a2056f-8344-7f8c-ab83-1ef134597ce8`. See that session for the
-writer's scoped build and fresh signature/axiom checks; candidate
-integration and independent statement review are separate.
+p. 614); the rendered page was not inspected.
+
+**Acceptance evidence.** The proof landed at
+`bd041db358941d519fccde5c2c734aca4dc193ba` on
+`edbd681e6ecdf118e6857f053f43976451ee4328`, with Mathlib
+`fc4f59e577feb1a4956671bc04ac18aaaf8cd842`. In owning Yah session
+`01a2056f-8344-7f8c-ab83-1ef134597ce8`, reviewer `FgDCjGI` checked
+both helper statements, the unchanged witnesses, and the exact new
+same-$H$ conjunct in `a300a22099900c70f8657d8be1ed4377120d72c0`.
+The replacement differs only by an unrelated manuscript note. Its
+`lake build --wfail +Lemmas.LogMellinStripBounds +Theorems.IdeleClassGaussianContinuation`
+and fresh joint signature, provenance, and axiom checks passed. The
+full signature report matched the reviewed candidate's, and the three
+endpoints use only `propext`, `Classical.choice`, and `Quot.sound`.
 
 **Next bounded Jensen step:** Specialize to the trivial character
 (identify $\lambda=0$ by uniqueness of the section phase), and prove,
