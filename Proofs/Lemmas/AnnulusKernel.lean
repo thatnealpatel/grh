@@ -1,5 +1,6 @@
-import WindowKernel
+module
 
+public import Lemmas.WindowKernel
 /-! # Remove the auxiliary period and input window
 
 The two support bounds here are for the original real-line test and cutoff.
@@ -8,7 +9,7 @@ Neither the level projection nor its image needs to be compactly supported. -/
 open MeasureTheory Set InnerProductSpace
 open scoped InnerProductSpace
 
-namespace AdHoc
+namespace Masullo.OperatorTrace
 noncomputable section
 
 variable {L R : ℝ} [Fact (0 < L)] {μ : Measure ℝ}
@@ -16,7 +17,7 @@ local notation "H" => Lp ℂ 2 μ
 
 /-- Identify the right-composed operator with real-line convolution, when the
 window cancels the weight and the periodic test agrees on all differences. -/
-theorem annulus_kernel_ae (p φ : ℝ → ℂ) (hp : MemLp p 2 μ)
+public theorem annulus_kernel_ae (p φ : ℝ → ℂ) (hp : MemLp p 2 μ)
     (hpR : Function.support p ⊆ Icc (-R) R) (hφR : Function.support φ ⊆ Icc (-R) R)
     (q : H) (hq : ∀ F : ℝ → ℂ, (∫ y, F y * star (q y) ∂μ) = ∫ y in Icc (-(2*R)) (2*R), F y)
     (f : C(AddCircle L, ℂ)) (hf : Summable (fourierCoeff f))
@@ -49,4 +50,4 @@ theorem annulus_kernel_ae (p φ : ℝ → ℂ) (hp : MemLp p 2 μ)
       exact hy ⟨by linarith [ht.2], by linarith [ht.1]⟩
 
 end
-end AdHoc
+end Masullo.OperatorTrace

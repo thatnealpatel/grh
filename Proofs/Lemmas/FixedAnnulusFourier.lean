@@ -1,7 +1,8 @@
-import AnnulusKernel
-import CircleSynthesis
-import RealLogLevel
+module
 
+public import Lemmas.AnnulusKernel
+public import Lemmas.CircleSynthesis
+public import Lemmas.RealLogLevel
 /-! # Hilbert trace of the rational fixed-annulus local operator
 
 No period, input window, summability assumption, or multiplier representation of the level is
@@ -11,12 +12,12 @@ required as input. The character modes in the conclusion are Fourier modes of th
 open MeasureTheory Set InnerProductSpace
 open scoped InnerProductSpace
 
-namespace AdHoc.RealLogLevel
+namespace Masullo.OperatorTrace.RealLogLevel
 noncomputable section
 
 /-- The convolution integrals used below are genuine Lebesgue integrals, for every output
 point, rather than just equalities involving Lean's totalized Bochner integral. -/
-theorem integrable_translate (α : ℝ) (r : ℕ) (z : H α r) {φ : ℝ → ℂ}
+public theorem integrable_translate (α : ℝ) (r : ℕ) (z : H α r) {φ : ℝ → ℂ}
     (hφ : Continuous φ) {R : ℝ} (hs : Function.support φ ⊆ Icc (-R) R) (x : ℝ) :
     Integrable (fun y => φ (x - y) * z y) := by
   let D := Icc (x - R) (x + R)
@@ -33,7 +34,7 @@ theorem integrable_translate (α : ℝ) (r : ℕ) (z : H α r) {φ : ℝ → ℂ
 
 /-- At any fixed local bandwidth, the actual projected real-line convolution has an absolutely
 summable rank-one presentation. Every Hilbert basis gives the same explicitly convergent trace. -/
-theorem fixedAnnulus_trace (α : ℝ) (r : ℕ) (Y : ℝ) {p φ : ℝ → ℂ}
+public theorem fixedAnnulus_fourier_presentation (α : ℝ) (r : ℕ) (Y : ℝ) {p φ : ℝ → ℂ}
     (hp : Continuous p) (hpK : HasCompactSupport p)
     (hφ : ContDiff ℝ 2 φ) (hφK : HasCompactSupport φ) :
     ∃ (R : ℝ) (hR : 0 < R),
@@ -79,4 +80,4 @@ theorem fixedAnnulus_trace (α : ℝ) (r : ℕ) (Y : ℝ) {p φ : ℝ → ℂ}
     exact (windowKernel_trace b P qD f hf QY).1
 
 end
-end AdHoc.RealLogLevel
+end Masullo.OperatorTrace.RealLogLevel

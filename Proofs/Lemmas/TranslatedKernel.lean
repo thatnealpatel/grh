@@ -1,10 +1,12 @@
-import Mathlib.Analysis.Fourier.AddCircle
-import Mathlib.MeasureTheory.Integral.DominatedConvergence
+module
+
+public import Mathlib.Analysis.Fourier.AddCircle
+public import Mathlib.MeasureTheory.Integral.DominatedConvergence
 
 open MeasureTheory Filter
 open scoped ComplexConjugate
 
-namespace AdHoc
+namespace Masullo.OperatorTrace
 variable {L : ℝ} [Fact (0 < L)] {μ : Measure ℝ}
 
 omit [Fact (0 < L)] in
@@ -15,7 +17,7 @@ private theorem fourier_difference (n : ℤ) (x y : AddCircle L) :
 
 /-- Integrate the translated periodic kernel against an arbitrary integrable
 complex density. The frequency sign here determines the input Riesz vector. -/
-theorem hasSum_translated_integral (f : C(AddCircle L, ℂ)) (hf : Summable (fourierCoeff f))
+public theorem hasSum_translated_integral (f : C(AddCircle L, ℂ)) (hf : Summable (fourierCoeff f))
     {g : ℝ → ℂ} (hg : Integrable g μ) (x : AddCircle L) :
     HasSum (fun n : ℤ => (fourierCoeff f n * (∫ y, conj (fourier n (y : AddCircle L)) * g y ∂μ)) *
       fourier n x) (∫ y, f (x - (y : AddCircle L)) * g y ∂μ) := by
@@ -38,4 +40,4 @@ theorem hasSum_translated_integral (f : C(AddCircle L, ℂ)) (hf : Summable (fou
   filter_upwards with y
   ring
 
-end AdHoc
+end Masullo.OperatorTrace

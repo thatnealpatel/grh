@@ -1,18 +1,21 @@
-import WindowSynthesis
-import RankOneSeries
-import TranslatedKernel
-import Mathlib.MeasureTheory.Function.L2Space
+module
+
+public import Lemmas.WindowSynthesis
+public import Lemmas.RankOneSeries
+public import Lemmas.TranslatedKernel
+public import Mathlib.Analysis.InnerProductSpace.Adjoint
+public import Mathlib.MeasureTheory.Function.L2Space
 
 open MeasureTheory Filter InnerProductSpace
 open scoped InnerProductSpace ComplexConjugate
 
-namespace AdHoc
+namespace Masullo.OperatorTrace
 noncomputable section
 variable {L : ℝ} [Fact (0 < L)] {μ : Measure ℝ}
 local notation "H" => Lp ℂ 2 μ
 
 /-- Cut off the output character, including its Fourier coefficient. -/
-def outputMode (p : H) (f : C(AddCircle L, ℂ)) (k : ℤ) : H :=
+@[expose] public def outputMode (p : H) (f : C(AddCircle L, ℂ)) (k : ℤ) : H :=
   fourierCoeff f k • W (L := L) p (fourier k)
 
 private theorem mode_sum (p q : H) (f : C(AddCircle L, ℂ)) (hf : Summable (fourierCoeff f)) :
@@ -24,7 +27,7 @@ private theorem mode_sum (p q : H) (f : C(AddCircle L, ℂ)) (hf : Summable (fou
 
 /-- Windowed convolution by a periodic kernel. The separate kernel theorem
 identifies this operator-norm synthesis with its convolution integral. -/
-def windowKernel (p q : H) (f : C(AddCircle L, ℂ)) : H →L[ℂ] H :=
+public def windowKernel (p q : H) (f : C(AddCircle L, ℂ)) : H →L[ℂ] H :=
   ∑' k : ℤ, rankOne ℂ (outputMode p f k) (W q (fourier (T := L) k))
 
 private theorem windowKernel_synthesis (p q : H) (f : C(AddCircle L, ℂ))
@@ -47,7 +50,7 @@ private theorem window_inner (q z : H) (k : ℤ) :
 
 /-- The series computes an actual integral on the real line, including the
 input window, with no pointwise assertion about representatives of `Lp`. -/
-theorem windowKernel_ae (p q : H) (f : C(AddCircle L, ℂ)) (hf : Summable (fourierCoeff f))
+public theorem windowKernel_ae (p q : H) (f : C(AddCircle L, ℂ)) (hf : Summable (fourierCoeff f))
     (z : H) : (windowKernel p q f z : ℝ → ℂ) =ᵐ[μ]
       (fun x : ℝ => p x * ∫ y, f ((x : AddCircle L) - (y : AddCircle L)) * ⟪q y, z y⟫_ℂ ∂μ) := by
   let s (k : ℤ) : C(AddCircle L, ℂ) :=
@@ -70,7 +73,7 @@ theorem windowKernel_ae (p q : H) (f : C(AddCircle L, ℂ)) (hf : Summable (four
 
 /-- Explicit Riesz vectors for the projected operator. The adjoint acts on
 input modes only; when `Q` is an orthogonal projection this adjoint is `Q`. -/
-theorem windowKernel_rankOne {p q : H} {f : C(AddCircle L, ℂ)} (hf : Summable (fourierCoeff f))
+public theorem windowKernel_rankOne {p q : H} {f : C(AddCircle L, ℂ)} (hf : Summable (fourierCoeff f))
     (Q : H →L[ℂ] H) :
     let term := fun k : ℤ => rankOne ℂ (outputMode p f k) (Q.adjoint (W (L := L) q (fourier k)))
     (Summable fun k => ‖term k‖) ∧ HasSum term ((windowKernel p q f).comp Q) := by
@@ -88,7 +91,7 @@ theorem windowKernel_rankOne {p q : H} {f : C(AddCircle L, ℂ)} (hf : Summable 
 
 /-- For any bounded operator on the right, the actual Hilbert diagonal and
 its scalar trace series. No commutation with the convolution is used. -/
-theorem windowKernel_trace {ι : Type*} (b : HilbertBasis ι ℂ H) (p q : H)
+public theorem windowKernel_trace {ι : Type*} (b : HilbertBasis ι ℂ H) (p q : H)
     (f : C(AddCircle L, ℂ)) (hf : Summable (fourierCoeff f)) (Q : H →L[ℂ] H) :
     (Summable fun k : ℤ => ⟪W (L := L) q (fourier k), Q (outputMode p f k)⟫_ℂ) ∧
     HasSum (fun i => ⟪b i, windowKernel p q f (Q (b i))⟫_ℂ)
@@ -99,4 +102,4 @@ theorem windowKernel_trace {ι : Type*} (b : HilbertBasis ι ℂ H) (p q : H)
   · exact windowKernel_synthesis p q f hf
 
 end
-end AdHoc
+end Masullo.OperatorTrace

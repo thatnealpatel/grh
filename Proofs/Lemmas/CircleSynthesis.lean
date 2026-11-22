@@ -1,7 +1,9 @@
-import Mathlib.Analysis.Calculus.ContDiff.Deriv
-import Mathlib.Analysis.Calculus.Deriv.Shift
-import Mathlib.Analysis.Fourier.AddCircle
-import Mathlib.Analysis.PSeries
+module
+
+public import Mathlib.Analysis.Calculus.ContDiff.Deriv
+public import Mathlib.Analysis.Calculus.Deriv.Shift
+public import Mathlib.Analysis.Fourier.AddCircle
+public import Mathlib.Analysis.PSeries
 
 /-!
 # Fourier coefficient bounds for periodized output profiles
@@ -15,10 +17,10 @@ require no information about how the profiles were produced.
 open Set MeasureTheory Complex
 open scoped ContDiff Topology
 
-namespace AdHoc
+namespace Masullo.OperatorTrace
 
 /-- Descend a continuous real-periodic function to the quotient circle. -/
-def periodicProfile {T : ℝ} {f : ℝ → ℂ} (hf : Continuous f)
+public def periodicProfile {T : ℝ} {f : ℝ → ℂ} (hf : Continuous f)
     (hp : Function.Periodic f T) : C(AddCircle T, ℂ) where
   toFun := hp.lift
   continuous_toFun := continuous_coinduced_dom.mpr hf
@@ -28,7 +30,7 @@ def periodicProfile {T : ℝ} {f : ℝ → ℂ} (hf : Continuous f)
   hp.lift_coe x
 
 /-- Pointwise synthesis of a continuous periodic function with absolutely summable coefficients. -/
-theorem hasSum_periodicProfile {T : ℝ} [Fact (0 < T)] {f : ℝ → ℂ} (hf : Continuous f)
+public theorem hasSum_periodicProfile {T : ℝ} [Fact (0 < T)] {f : ℝ → ℂ} (hf : Continuous f)
     (hp : Function.Periodic f T)
     (hs : Summable fun n => ‖fourierCoeff (periodicProfile hf hp) n‖) (x : ℝ) :
     HasSum (fun n => fourierCoeff (periodicProfile hf hp) n * fourier n (x : AddCircle T))
@@ -53,7 +55,7 @@ private theorem norm_fourierCoeffOn_le (hab : a < b) {f : ℝ → ℂ} {M : ℝ}
     _ = M := by field_simp
 
 /-- One integration by parts, with the boundary term canceled by matching endpoint values. -/
-theorem fourierCoeffOn_eq_mul_deriv_of_endpoints (hab : a < b) {f g : ℝ → ℂ}
+public theorem fourierCoeffOn_eq_mul_deriv_of_endpoints (hab : a < b) {f g : ℝ → ℂ}
     (hd : ∀ x ∈ Icc a b, HasDerivAt f (g x) x) (hg : ContinuousOn g (Icc a b))
     (he : f b = f a) {n : ℤ} (hn : n ≠ 0) :
     fourierCoeffOn hab f n = ((b - a : ℝ) : ℂ) / (2 * (Real.pi : ℂ) * I * n) * fourierCoeffOn hab g n := by
@@ -64,7 +66,7 @@ theorem fourierCoeffOn_eq_mul_deriv_of_endpoints (hab : a < b) {f g : ℝ → �
 
 /-- Two integrations by parts give the inverse-square bound. The first derivative
 must also match at the endpoints, so neither integration contributes a boundary term. -/
-theorem norm_fourierCoeffOn_le_inv_sq (hab : a < b) {f g h : ℝ → ℂ}
+public theorem norm_fourierCoeffOn_le_inv_sq (hab : a < b) {f g h : ℝ → ℂ}
     (hd : ∀ x ∈ Icc a b, HasDerivAt f (g x) x)
     (hg : ∀ x ∈ Icc a b, HasDerivAt g (h x) x) (hh : ContinuousOn h (Icc a b))
     (he : f b = f a) (hge : g b = g a) {M : ℝ} (hM : ∀ x ∈ Icc a b, ‖h x‖ ≤ M)
@@ -101,7 +103,7 @@ private theorem fourierCoeffOn_congr_right {c : ℝ} (h : b = c) (hab : a < b) (
   rfl
 
 /-- For a continuous real-periodic profile the interval and circle coefficients agree. -/
-theorem fourierCoeff_periodicProfile_eq {T : ℝ} [hT : Fact (0 < T)] {f : ℝ → ℂ}
+public theorem fourierCoeff_periodicProfile_eq {T : ℝ} [hT : Fact (0 < T)] {f : ℝ → ℂ}
     (hf : Continuous f) (hp : Function.Periodic f T) (n : ℤ) :
     fourierCoeff (periodicProfile hf hp) n = fourierCoeffOn hT.out f n := by
   have h : (periodicProfile hf hp : AddCircle T → ℂ) = AddCircle.liftIoc T 0 f := by
@@ -114,7 +116,7 @@ theorem fourierCoeff_periodicProfile_eq {T : ℝ} [hT : Fact (0 < T)] {f : ℝ �
 
 /-- A `C²` profile with matched endpoint values and first derivatives has absolutely
 summable coefficients on that period. -/
-theorem summable_norm_fourierCoeffOn_of_contDiff (hab : a < b) {f : ℝ → ℂ}
+public theorem summable_norm_fourierCoeffOn_of_contDiff (hab : a < b) {f : ℝ → ℂ}
     (hf : ContDiff ℝ 2 f) (he : f b = f a) (hde : deriv f b = deriv f a) :
     Summable fun n => ‖fourierCoeffOn hab f n‖ := by
   have hfd : ContDiff ℝ 1 (deriv f) := hf.deriv'
@@ -128,7 +130,7 @@ theorem summable_norm_fourierCoeffOn_of_contDiff (hab : a < b) {f : ℝ → ℂ}
     (fun x _ => (hfd.differentiable (by decide) x).hasDerivAt) hdd.continuousOn he hde hM hn
 
 /-- A periodic `C²` profile has absolutely summable Fourier coefficients. -/
-theorem summable_norm_fourierCoeff_periodicProfile {T : ℝ} [hT : Fact (0 < T)] {f : ℝ → ℂ}
+public theorem summable_norm_fourierCoeff_periodicProfile {T : ℝ} [hT : Fact (0 < T)] {f : ℝ → ℂ}
     (hf : ContDiff ℝ 2 f) (hp : Function.Periodic f T) :
     Summable fun n => ‖fourierCoeff (periodicProfile hf.continuous hp) n‖ := by
   have hpd : Function.Periodic (deriv f) T := fun x => by
@@ -138,14 +140,14 @@ theorem summable_norm_fourierCoeff_periodicProfile {T : ℝ} [hT : Fact (0 < T)]
     (by simpa only [zero_add] using hp 0) (by simpa only [zero_add] using hpd 0)
 
 /-- The scalar coefficients of a periodic `C²` profile are summable in `ℂ`. -/
-theorem summable_fourierCoeff_periodicProfile {T : ℝ} [Fact (0 < T)] {f : ℝ → ℂ}
+public theorem summable_fourierCoeff_periodicProfile {T : ℝ} [Fact (0 < T)] {f : ℝ → ℂ}
     (hf : ContDiff ℝ 2 f) (hp : Function.Periodic f T) :
     Summable (fourierCoeff (periodicProfile hf.continuous hp)) :=
   (summable_norm_fourierCoeff_periodicProfile hf hp).of_norm
 
 /-- A `C²` function supported strictly inside one period gives a continuous circle profile
 with absolutely summable coefficients, agreeing with the original function on the cell. -/
-theorem exists_circleProfile_of_support {T a u w : ℝ} [hT : Fact (0 < T)] {f : ℝ → ℂ}
+public theorem exists_circleProfile_of_support {T a u w : ℝ} [hT : Fact (0 < T)] {f : ℝ → ℂ}
     (hf : ContDiff ℝ 2 f) (hs : Function.support f ⊆ Icc u w) (ha : a < u) (hb : w < a + T) :
     ∃ F : C(AddCircle T, ℂ),
       EqOn (fun x : ℝ => F (x : AddCircle T)) f (Icc a (a + T)) ∧
@@ -192,7 +194,7 @@ private theorem norm_fourierCoeff_le (f : C(AddCircle T, ℂ)) (n : ℤ) :
   simpa using norm_integral_le_of_norm_le_const (ae_of_all AddCircle.haarAddCircle h)
 
 /-- Extracting one Fourier coefficient is a continuous linear functional on the circle profiles. -/
-noncomputable def fourierCoeffCLM (n : ℤ) : C(AddCircle T, ℂ) →L[ℂ] ℂ :=
+public noncomputable def fourierCoeffCLM (n : ℤ) : C(AddCircle T, ℂ) →L[ℂ] ℂ :=
   ({ toFun f := fourierCoeff f n
      map_add' f g := by
        have hint (h : C(AddCircle T, ℂ)) : Integrable h AddCircle.haarAddCircle :=
@@ -207,20 +209,20 @@ noncomputable def fourierCoeffCLM (n : ℤ) : C(AddCircle T, ℂ) →L[ℂ] ℂ 
 variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
 
 /-- The coefficient functional of the output of a bounded linear profile operator. -/
-noncomputable def fourierCoeffFunctional (A : E →L[ℂ] C(AddCircle T, ℂ)) (n : ℤ) : E →L[ℂ] ℂ :=
+public noncomputable def fourierCoeffFunctional (A : E →L[ℂ] C(AddCircle T, ℂ)) (n : ℤ) : E →L[ℂ] ℂ :=
   (fourierCoeffCLM n).comp A
 
 @[simp] theorem fourierCoeffFunctional_apply (A : E →L[ℂ] C(AddCircle T, ℂ)) (n : ℤ) (v : E) :
     fourierCoeffFunctional A n v = fourierCoeff (A v) n := rfl
 
 /-- The zero mode is controlled by the profile operator's sup-norm bound. -/
-theorem norm_fourierCoeffFunctional_zero_le (A : E →L[ℂ] C(AddCircle T, ℂ)) :
+public theorem norm_fourierCoeffFunctional_zero_le (A : E →L[ℂ] C(AddCircle T, ℂ)) :
     ‖fourierCoeffFunctional A 0‖ ≤ ‖A‖ := by
   refine ContinuousLinearMap.opNorm_le_bound _ (norm_nonneg _) fun v => ?_
   exact (norm_fourierCoeff_le (A v) 0).trans (A.le_opNorm v)
 
 /-- Norm summability of the coefficient functionals gives synthesis for every input. -/
-theorem hasSum_fourierCoeffFunctional (A : E →L[ℂ] C(AddCircle T, ℂ))
+public theorem hasSum_fourierCoeffFunctional (A : E →L[ℂ] C(AddCircle T, ℂ))
     (h : Summable fun n => ‖fourierCoeffFunctional A n‖) (v : E) (z : AddCircle T) :
     HasSum (fun n => fourierCoeffFunctional A n v * fourier n z) (A v z) := by
   have hv : Summable fun n => ‖fourierCoeff (A v) n‖ :=
@@ -242,14 +244,14 @@ variable [hL : Fact (0 < b - a)]
 
 /-- Periodize a profile specified on one interval. Only the values at the seam must match
 for continuity; derivative matching is handled separately by the decay estimate. -/
-noncomputable def intervalProfile {f : ℝ → ℂ} (hf : ContinuousOn f (Icc a b)) (he : f b = f a) :
+public noncomputable def intervalProfile {f : ℝ → ℂ} (hf : ContinuousOn f (Icc a b)) (he : f b = f a) :
     C(AddCircle (b - a), ℂ) where
   toFun := AddCircle.liftIoc (b - a) a f
   continuous_toFun := AddCircle.liftIoc_continuous
     (by simpa only [add_period_eq_right] using he.symm)
     (by simpa only [add_period_eq_right] using hf)
 
-theorem intervalProfile_apply {f : ℝ → ℂ} (hf : ContinuousOn f (Icc a b)) (he : f b = f a)
+public theorem intervalProfile_apply {f : ℝ → ℂ} (hf : ContinuousOn f (Icc a b)) (he : f b = f a)
     {x : ℝ} (hx : x ∈ Icc a b) : intervalProfile hf he (x : AddCircle (b - a)) = f x := by
   have happly (y : ℝ) (hy : y ∈ Ioc a b) :
       intervalProfile hf he (y : AddCircle (b - a)) = f y :=
@@ -276,7 +278,7 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
 
 /-- A linear family of continuous profiles with matching endpoints and a uniform zeroth-order
 bound gives a bounded linear operator into the continuous functions on the circle. -/
-noncomputable def intervalProfileCLM (F : E →ₗ[ℂ] (ℝ → ℂ))
+public noncomputable def intervalProfileCLM (F : E →ₗ[ℂ] (ℝ → ℂ))
     (hc : ∀ v, ContinuousOn (F v) (Icc a b)) (he : ∀ v, F v b = F v a) {M₀ : ℝ}
     (h₀ : ∀ v x, x ∈ Icc a b → ‖F v x‖ ≤ M₀ * ‖v‖) : E →L[ℂ] C(AddCircle (b - a), ℂ) :=
   ({ toFun v := intervalProfile (hc v) (he v)
@@ -293,7 +295,7 @@ noncomputable def intervalProfileCLM (F : E →ₗ[ℂ] (ℝ → ℂ))
       simpa only [add_period_eq_right] using
         Ioc_subset_Icc_self (AddCircle.equivIoc (b - a) a z).property)
 
-theorem intervalProfileCLM_apply (F : E →ₗ[ℂ] (ℝ → ℂ))
+public theorem intervalProfileCLM_apply (F : E →ₗ[ℂ] (ℝ → ℂ))
     (hc : ∀ v, ContinuousOn (F v) (Icc a b)) (he : ∀ v, F v b = F v a) {M₀ : ℝ}
     (h₀ : ∀ v x, x ∈ Icc a b → ‖F v x‖ ≤ M₀ * ‖v‖) (v : E) {x : ℝ} (hx : x ∈ Icc a b) :
     intervalProfileCLM F hc he h₀ v (x : AddCircle (b - a)) = F v x :=
@@ -302,7 +304,7 @@ theorem intervalProfileCLM_apply (F : E →ₗ[ℂ] (ℝ → ℂ))
 /-- A common second-derivative bound for the output profiles on the input unit ball gives
 inverse-square decay in **operator norm**. The functions `f v` are real-coordinate representatives
 of `A v` on one period. Outside that interval they need not be periodic. -/
-theorem norm_fourierCoeffFunctional_le_inv_sq (A : E →L[ℂ] C(AddCircle (b - a), ℂ))
+public theorem norm_fourierCoeffFunctional_le_inv_sq (A : E →L[ℂ] C(AddCircle (b - a), ℂ))
     {f g h : E → ℝ → ℂ}
     (hf : ∀ v, EqOn (fun x : ℝ => A v (x : AddCircle (b - a))) (f v) (Icc a b))
     (hd : ∀ v, ‖v‖ ≤ 1 → ∀ x ∈ Icc a b, HasDerivAt (f v) (g v x) x)
@@ -326,7 +328,7 @@ theorem norm_fourierCoeffFunctional_le_inv_sq (A : E →L[ℂ] C(AddCircle (b - 
 
 /-- The coefficient functionals are absolutely summable in operator norm, with the zero
 mode handled separately from the inverse-square tail. -/
-theorem summable_norm_fourierCoeffFunctional (A : E →L[ℂ] C(AddCircle (b - a), ℂ))
+public theorem summable_norm_fourierCoeffFunctional (A : E →L[ℂ] C(AddCircle (b - a), ℂ))
     {f g h : E → ℝ → ℂ}
     (hf : ∀ v, EqOn (fun x : ℝ => A v (x : AddCircle (b - a))) (f v) (Icc a b))
     (hd : ∀ v, ‖v‖ ≤ 1 → ∀ x ∈ Icc a b, HasDerivAt (f v) (g v x) x)
@@ -340,4 +342,4 @@ theorem summable_norm_fourierCoeffFunctional (A : E →L[ℂ] C(AddCircle (b - a
 
 end IntervalProfiles
 
-end AdHoc
+end Masullo.OperatorTrace

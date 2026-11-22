@@ -1,15 +1,17 @@
-import Mathlib.Analysis.InnerProductSpace.Dual
-import Mathlib.Analysis.InnerProductSpace.l2Space
+module
+
+public import Mathlib.Analysis.InnerProductSpace.Dual
+public import Mathlib.Analysis.InnerProductSpace.l2Space
 
 open scoped InnerProductSpace
 open InnerProductSpace
 
-namespace AdHoc
+namespace Masullo.OperatorTrace
 
 /-- A Hilbert-basis diagonal for an explicitly summable rank-one presentation.
 The inner product is linear in its second argument. No finite-dimensional
 trace or a priori basis-independence is assumed. -/
-theorem hasSum_diagonal {ι κ H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
+public theorem hasSum_diagonal_of_rankOne {ι κ H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
     (b : HilbertBasis ι ℂ H) (T : H →L[ℂ] H) (u v : κ → H)
     (h : Summable fun n => ‖u n‖ * ‖v n‖)
     (hT : ∀ x, HasSum (fun n => rankOne ℂ (u n) (v n) x) (T x)) :
@@ -41,7 +43,7 @@ theorem hasSum_diagonal {ι κ H : Type*} [NormedAddCommGroup H] [InnerProductSp
 
 /-- Right composition of a pointwise synthesis series gives an operator-norm convergent
 rank-one series. Its second vectors represent the functionals `(a n).comp Q` by Riesz. -/
-theorem hasSum_rankOne_comp {κ H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
+public theorem hasSum_rankOne_comp {κ H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
     [CompleteSpace H] (S Q : H →L[ℂ] H) (u : κ → H) (a : κ → H →L[ℂ] ℂ)
     (h : Summable fun n => ‖u n‖ * ‖a n‖)
     (hS : ∀ x, HasSum (fun n => a n x • u n) (S x)) :
@@ -66,7 +68,7 @@ theorem hasSum_rankOne_comp {κ H : Type*} [NormedAddCommGroup H] [InnerProductS
 
 /-- For any Hilbert basis, the diagonal sum of the right-composed operator is the sum of
 `a n (Q (u n))`. No projection or commutation assumption on `Q` is needed. -/
-theorem hasSum_diagonal_comp {ι κ H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
+public theorem hasSum_diagonal_comp {ι κ H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
     [CompleteSpace H] (b : HilbertBasis ι ℂ H) (S Q : H →L[ℂ] H)
     (u : κ → H) (a : κ → H →L[ℂ] ℂ) (h : Summable fun n => ‖u n‖ * ‖a n‖)
     (hS : ∀ x, HasSum (fun n => a n x • u n) (S x)) :
@@ -80,6 +82,6 @@ theorem hasSum_diagonal_comp {ι κ H : Type*} [NormedAddCommGroup H] [InnerProd
     simpa only [ContinuousLinearMap.apply_apply] using
       hsum.mapL (ContinuousLinearMap.apply ℂ H x)
   simpa only [v, toDual_symm_apply, ContinuousLinearMap.comp_apply] using
-    hasSum_diagonal b (S.comp Q) u v hv hT
+    hasSum_diagonal_of_rankOne b (S.comp Q) u v hv hT
 
-end AdHoc
+end Masullo.OperatorTrace

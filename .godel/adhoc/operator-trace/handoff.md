@@ -2,7 +2,7 @@
 
 **Finding:** The rational additive Schwartz–Bruhat space is implemented. A general nuclear-operator trace for the manuscript's weighted Hilbert spaces is not. There is enough in the pinned Mathlib to check a useful intermediate statement without defining a new operator ideal: For an operator with an explicitly summable rank-one presentation, its Hilbert-basis diagonal sums to the trace of that presentation.
 
-**Scope:** Source inventory at `8cd15730fbc809dcacdf8660885329d3ae1981a2`, Lean 4.36.0, Mathlib `fc4f59e577feb1a4956671bc04ac18aaaf8cd842`. The [standalone Lean check](RankOneSeries.lean) is new to this investigation and is outside `Proofs`. Manuscript locators below are from the [digest-matched edition](../../sources/masullo/README.md), by layout extraction, with an additional OCR check of the rendered statement on p. 697. No full project rebuild or new visual passage review is claimed.
+**Scope:** Source inventory at `8cd15730fbc809dcacdf8660885329d3ae1981a2`, Lean 4.36.0, Mathlib `fc4f59e577feb1a4956671bc04ac18aaaf8cd842`. The [Hilbert trace proposition](../../../Proofs/Props/HilbertRankOneTrace.lean) and [fixed-annulus theorem](../../../Proofs/Theorems/RationalFixedAnnulusTrace.lean) are in `Proofs`; this note records the source comparison. Manuscript locators below are from the [digest-matched edition](../../sources/masullo/README.md), by layout extraction, with an additional OCR check of the rendered statement on p. 697. No full project rebuild or new visual passage review is claimed.
 
 ## Which trace?
 
@@ -12,7 +12,7 @@
 
 ## A checked Hilbert-space bridge
 
-Run `lake env lean .godel/adhoc/operator-trace/RankOneSeries.lean` from the repository root. `AdHoc.hasSum_diagonal` takes vectors $u_n,v_n$ in a complex Hilbert space and a continuous linear $T$ with
+Run `lake build Props.HilbertRankOneTrace` from the repository root. `Masullo.OperatorTrace.hasSum_diagonal` takes vectors $u_n,v_n$ in a complex Hilbert space and a continuous linear $T$ with
 
 $$T x=\sum_n\langle v_n,x\rangle u_n,\qquad \sum_n\|u_n\|\|v_n\|<\infty.$$
 

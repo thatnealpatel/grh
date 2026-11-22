@@ -1,9 +1,11 @@
-import Mathlib.Analysis.Distribution.SchwartzSpace.Fourier
-import Mathlib.Analysis.InnerProductSpace.Projection.Basic
-import Mathlib.Analysis.SpecialFunctions.ImproperIntegrals
-import Mathlib.MeasureTheory.Function.L2Space
-import Mathlib.MeasureTheory.Integral.Bochner.Set
-import Mathlib.MeasureTheory.Function.LocallyIntegrable
+module
+
+public import Mathlib.Analysis.Distribution.SchwartzSpace.Fourier
+public import Mathlib.Analysis.InnerProductSpace.Projection.Basic
+public import Mathlib.Analysis.SpecialFunctions.ImproperIntegrals
+public import Mathlib.MeasureTheory.Function.L2Space
+public import Mathlib.MeasureTheory.Integral.Bochner.Set
+public import Mathlib.MeasureTheory.Function.LocallyIntegrable
 
 /-! # Local rational real level in log coordinates
 
@@ -17,27 +19,27 @@ additive Fourier support constrained before passing to log coordinates.
 open Filter MeasureTheory Set
 open scoped FourierTransform SchwartzMap
 
-namespace AdHoc.RealLogLevel
+namespace Masullo.OperatorTrace.RealLogLevel
 
 noncomputable section
 
 /-- The weight in the log coordinate, with nonnegative integral polynomial exponent. -/
-def weight (α : ℝ) (r : ℕ) (x : ℝ) : ℝ :=
+@[expose] public def weight (α : ℝ) (r : ℕ) (x : ℝ) : ℝ :=
   Real.exp (2 * α * |x|) * (1 + x ^ 2) ^ r
 
-theorem weight_pos (α : ℝ) (r : ℕ) (x : ℝ) : 0 < weight α r x := by
+public theorem weight_pos (α : ℝ) (r : ℕ) (x : ℝ) : 0 < weight α r x := by
   unfold weight
   positivity
 
-theorem continuous_weight (α : ℝ) (r : ℕ) : Continuous (weight α r) := by
+public theorem continuous_weight (α : ℝ) (r : ℕ) : Continuous (weight α r) := by
   unfold weight
   fun_prop
 
 /-- Weighted Lebesgue measure on the log line. -/
-def μ (α : ℝ) (r : ℕ) : Measure ℝ :=
+@[expose] public def μ (α : ℝ) (r : ℕ) : Measure ℝ :=
   volume.withDensity (fun x => ENNReal.ofReal (weight α r x))
 
-instance (α : ℝ) (r : ℕ) : IsFiniteMeasureOnCompacts (μ α r) where
+public instance (α : ℝ) (r : ℕ) : IsFiniteMeasureOnCompacts (μ α r) where
   lt_top_of_isCompact K hK := by
     rw [μ, withDensity_apply _ hK.measurableSet,
       ← ofReal_integral_eq_lintegral_ofReal
@@ -46,10 +48,10 @@ instance (α : ℝ) (r : ℕ) : IsFiniteMeasureOnCompacts (μ α r) where
     exact ENNReal.ofReal_lt_top
 
 /-- Complex weighted log `L²`. -/
-abbrev H (α : ℝ) (r : ℕ) := Lp ℂ 2 (μ α r)
+public abbrev H (α : ℝ) (r : ℕ) := Lp ℂ 2 (μ α r)
 
 /-- The half-weighted rational real profile on the log line. -/
-def profile (f : 𝓢(ℝ, ℂ)) (x : ℝ) : ℂ :=
+@[expose] public def profile (f : 𝓢(ℝ, ℂ)) (x : ℝ) : ℂ :=
   (2 * Real.exp (x / 2) : ℝ) * f (Real.exp x)
 
 private theorem continuous_profile (f : 𝓢(ℝ, ℂ)) : Continuous (profile f) :=
@@ -116,7 +118,7 @@ private theorem integrable_exp_abs {ε : ℝ} (hε : 0 < ε) :
 
 /-- Every Schwartz profile is in weighted `L²` when `α < 1/2`. The
 estimate does not require the four local band constraints. -/
-theorem memLp_profile (α : ℝ) (r : ℕ) (hα : α < 1 / 2) (f : 𝓢(ℝ, ℂ)) :
+public theorem memLp_profile (α : ℝ) (r : ℕ) (hα : α < 1 / 2) (f : 𝓢(ℝ, ℂ)) :
     MemLp (profile f) 2 (μ α r) := by
   apply (memLp_two_iff_integrable_sq_norm (continuous_profile f).aestronglyMeasurable).2
   rw [μ, integrable_withDensity_iff_integrable_smul'
@@ -145,34 +147,34 @@ theorem memLp_profile (α : ℝ) (r : ℕ) (hα : α < 1 / 2) (f : 𝓢(ℝ, ℂ
 
 /-- The four constraints defining a local band witness. Mathlib's real
 Fourier transform uses the additive `2π` convention. -/
-def Admissible (Y : ℝ) (f : 𝓢(ℝ, ℂ)) : Prop :=
+@[expose] public def Admissible (Y : ℝ) (f : 𝓢(ℝ, ℂ)) : Prop :=
   Function.Even f ∧ Function.support (⇑(𝓕 f : 𝓢(ℝ, ℂ))) ⊆ Icc (-Y) Y ∧
     f 0 = 0 ∧ (∫ t, f t) = 0
 
 /-- The concrete profiles that have weighted `L²` representatives. -/
-def generators (α : ℝ) (r : ℕ) (Y : ℝ) : Set (H α r) :=
+@[expose] public def generators (α : ℝ) (r : ℕ) (Y : ℝ) : Set (H α r) :=
   {v | ∃ f : 𝓢(ℝ, ℂ), Admissible Y f ∧ (v : ℝ → ℂ) =ᵐ[μ α r] profile f}
 
 /-- In the admissible weight range every local band witness gives a generator. -/
-theorem toLp_profile_mem_generators (α : ℝ) (r : ℕ) (hα : α < 1 / 2) {Y : ℝ}
+public theorem toLp_profile_mem_generators (α : ℝ) (r : ℕ) (hα : α < 1 / 2) {Y : ℝ}
     {f : 𝓢(ℝ, ℂ)} (hf : Admissible Y f) :
     (memLp_profile α r hα f).toLp (profile f) ∈ generators α r Y :=
   ⟨f, hf, (memLp_profile α r hα f).coeFn_toLp⟩
 
 /-- The closed span of the local band profiles in weighted log `L²`. -/
-def level (α : ℝ) (r : ℕ) (Y : ℝ) : ClosedSubmodule ℂ (H α r) :=
+@[expose] public def level (α : ℝ) (r : ℕ) (Y : ℝ) : ClosedSubmodule ℂ (H α r) :=
   (Submodule.span ℂ (generators α r Y)).closure
 
 /-- Orthogonal projection onto the local real level. -/
-def Q (α : ℝ) (r : ℕ) (Y : ℝ) : H α r →L[ℂ] H α r :=
+@[expose] public def Q (α : ℝ) (r : ℕ) (Y : ℝ) : H α r →L[ℂ] H α r :=
   (level α r Y).toSubmodule.starProjection
 
-theorem range_Q (α : ℝ) (r : ℕ) (Y : ℝ) :
+public theorem range_Q (α : ℝ) (r : ℕ) (Y : ℝ) :
     (Q α r Y).range = (level α r Y).toSubmodule :=
   Submodule.range_starProjection _
 
 /-- The pointwise representative of the reciprocal-weight window. -/
-def window (α : ℝ) (r : ℕ) (a b : ℝ) : ℝ → ℂ :=
+@[expose] public def window (α : ℝ) (r : ℕ) (a b : ℝ) : ℝ → ℂ :=
   (Icc a b).indicator (fun y => ((weight α r y)⁻¹ : ℝ))
 
 private theorem memLp_window (α : ℝ) (r : ℕ) (a b : ℝ) :
@@ -190,11 +192,11 @@ private theorem memLp_window (α : ℝ) (r : ℕ) (a b : ℝ) :
   exact hC (mem_image_of_mem _ hy)
 
 /-- The reciprocal-weight interval window as a vector of the weighted `L²`. -/
-def q (α : ℝ) (r : ℕ) (a b : ℝ) : H α r := (memLp_window α r a b).toLp _
+public def q (α : ℝ) (r : ℕ) (a b : ℝ) : H α r := (memLp_window α r a b).toLp _
 
 /-- The `L²` coercion agrees almost everywhere for the weighted measure with
 `χ_[a,b] / w`, interpreted as a complex-valued function. -/
-theorem coe_q_ae (α : ℝ) (r : ℕ) (a b : ℝ) :
+public theorem coe_q_ae (α : ℝ) (r : ℕ) (a b : ℝ) :
     (q α r a b : ℝ → ℂ) =ᵐ[μ α r] window α r a b :=
   (memLp_window α r a b).coeFn_toLp
 
@@ -210,7 +212,7 @@ private theorem weight_smul_mul_conj_window (α : ℝ) (r : ℕ) (a b : ℝ) (F 
 
 /-- Weighted integrability of the window pairing requires only Lebesgue
 integrability on the interval, not global integrability or an `L²` input. -/
-theorem integrable_mul_conj_q_iff (α : ℝ) (r : ℕ) (a b : ℝ) {F : ℝ → ℂ} :
+public theorem integrable_mul_conj_q_iff (α : ℝ) (r : ℕ) (a b : ℝ) {F : ℝ → ℂ} :
     Integrable (fun y => F y * star (q α r a b y)) (μ α r) ↔
       IntegrableOn F (Icc a b) := by
   have h : (fun y => F y * star (q α r a b y)) =ᵐ[μ α r]
@@ -224,7 +226,7 @@ theorem integrable_mul_conj_q_iff (α : ℝ) (r : ℕ) (a b : ℝ) {F : ℝ → 
 /-- Pairing with `q` cancels the weight and gives the Lebesgue integral over
 `[a,b]`. The Bochner integral equality is unconditional; for integrability,
 see `integrable_mul_conj_q_iff`. -/
-theorem integral_mul_conj_q (α : ℝ) (r : ℕ) (a b : ℝ) {F : ℝ → ℂ} :
+public theorem integral_mul_conj_q (α : ℝ) (r : ℕ) (a b : ℝ) {F : ℝ → ℂ} :
     (∫ y, F y * star (q α r a b y) ∂μ α r) = ∫ y in Icc a b, F y := by
   calc
     _ = ∫ y, F y * star (window α r a b y) ∂μ α r :=
@@ -238,4 +240,4 @@ theorem integral_mul_conj_q (α : ℝ) (r : ℕ) (a b : ℝ) {F : ℝ → ℂ} :
 
 end
 
-end AdHoc.RealLogLevel
+end Masullo.OperatorTrace.RealLogLevel
