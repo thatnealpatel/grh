@@ -150,19 +150,57 @@ Independent exact-source statement and applicability review:
 candidate build and fresh signature and axiom checks. No new rendered
 reading was used for this bridge.
 
-**Next formal check: The two moments.** In the same full-adele
-coordinate, `rationalAdeleBox_stageCell` already identifies the stage
-boxes as cell indicators times real profiles. The new identities reduce
-the cut of the difference of the $C_2$ and $C_0$ tensors to the $C_2$
-tensor. Use `rationalAdeleLFAssembly_fourier` at factorial index $1$
-(level $2$): In `rationalAdeleStageFourier_apply` the zero-frequency
-column has coefficient $1/2$ at both indices. The remaining check is to
-assemble the profiles and prove the zero spatial and Fourier moments
-before the cut and the nonzero Fourier moment after it, for a real
-Schwartz profile $b$ with $b(0)=0$ and $\int b\ne0$. This is a Lean
-continuation of the informal calculation above, not a further source
-verdict. Excluding a different two-moment representative after averaging
-theta, and the separate closedness question, are not part of it.
+## Checked moment loss under the literal prime-two cut
+
+[`Masullo.rationalAdeleLiteralTwoCut_moments`][two-cut] assembles two
+rational adelic LF tests at factorial index $1$ (level $2$). For every
+$b\in\mathcal S(\mathbb R,\mathbb C)$, put
+$B_j(b)(x)=1_{C_j}(x)b(x_\infty)$. The assembled tests satisfy
+$f=B_2(b)-B_0(b)$ and $g=1_U f=B_2(b)$ on the full adeles. The checked
+moments are
+$$
+f(0)=-b(0),\qquad \widehat f(0)=0,\qquad
+\widehat g(0)=\tfrac12\int_{\mathbb R} b(t)\,dt.
+$$
+The boxes use `rationalAdeleBox_stageCell`, and the cut uses the
+cell identities above. In `rationalAdeleLFAssembly_fourier`, the
+output profile at the cell of zero has coefficient $1/2$ for each
+input profile, since its finite character factor is one.
+`Masullo.rationalAdeleLiteralTwoCut_loses_moment` specializes to the
+existing `bandSchwartzBump 2`, that is, a smooth real-valued bump
+centered at real $2$, with $b(0)=0$ and nonzero integral. Both
+endpoints use the Borel measurable-space instances for the normalized
+adelic Fourier integral. Neither assumes evenness, any zero mode
+of the profile, or any quotient topology.
+
+The scope is the literal $P_1=\{2\}$ test cut for $F=\mathbf Q$,
+$S=\{\infty,2\}$, and the trivial character. Source evidence is
+inherited from the rendered readings above (Masullo, §1.3.2,
+pp. 26–27) and in the [fixed-stage note][stage] (p. 25, (1.3.2.1));
+no new manuscript reading was made. The endpoints do not formalize
+that the averaged theta of $g$ has no two-moment representative,
+and do not concern closedness. Independent exact-source statement
+and applicability review: `two-cut-moment-statement` (`fAcdExh`),
+Yah `01a20597-4e49-7616-916c-6623d59bbe85`, which also owns the
+candidate build and fresh signature and axiom checks.
+
+**Next formal check: Detect the Fourier zero mode from averaged
+theta.** In the same rational LF model,
+`rationalAdeleClassTheta_LFFiniteUnitAverage` and
+`rationalAdeleLFFiniteUnitAverage_zero_modes` already reduce the
+project's normalized finite-unit average to class theta of an LF
+test without changing either moment. On that test, the checked
+`rationalAdeleLF_uniform_theta_tails` at $m=0$ on a singleton already
+bounds $\theta(d)-r^{-1}\widehat f(0)+f(0)$ for $r=\|d\|\le1$.
+Along the positive log section, multiply by $r$ and send $r$ to $0$.
+Formalize the resulting limit, so equal averaged theta functions
+force equal Fourier zero modes and the cut output is excluded from
+the project's averaged two-moment range. This reuses the project
+estimate, not a new derivation of the manuscript bounds. The
+[tail note](../obligations/theta-inversion-q.md#checked-uniform-theta-estimates-for-rational-lf-bounded-families)
+maps it to Theorem 2.2.3.4, pp. 82–86, via extraction, not rendered
+inspection. The exact identification of the project average with
+the printed projection and the closedness claim remain separate.
 
 [two-cut]: ../../Proofs/Theorems/RationalAdeleLiteralTwoCut.lean
 [stage]: fixed-stage-theta-representatives.md
