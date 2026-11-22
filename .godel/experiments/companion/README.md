@@ -1,8 +1,21 @@
 # Proof-breadth companion
 
-**Not run; not automatically scheduled.** This independent Gödel loop complements the [main manuscript program](../../../cmd/godel/README.md) without scheduling or editing it. Each iteration chooses one substantive Masullo claim to test, looking for neglected passages and missing cases or generality. The selector returns `AUDIT` or `PRODUCE` and a brief; the selected Yah worker receives that brief in its prompt and the unchanged input on stdin. Invalid selection runs no worker and ends the loop with an error. The worker's handoff, not the improver's report, feeds the next iteration.
+**Not scheduled by `cmd/godel`.** This independent Gödel loop complements the [main manuscript program](../../../cmd/godel/README.md) without scheduling or editing it. Each iteration chooses one substantive Masullo claim to test, looking for neglected passages and missing cases or generality. The selector returns `AUDIT` or `PRODUCE` and a brief; the selected Yah worker receives that brief in its prompt and the unchanged input on stdin. Invalid selection runs no worker and ends the loop with an error. The worker's handoff, not the improver's report, feeds the next iteration.
 
 Both programs share the proof library and notes through the owning campaign. The companion uses the [same local proof checks and stale-candidate recovery](../../../cmd/godel/README.md#checking-a-proof-candidate). Its separate improver reviews its own runs and may change only the companion's selection or procedure.
+
+## Observed run
+
+Run `01a200d1-8d5d-7ebf-8a66-cd9e3fd53be7` (`OutgSBJ`) tested the
+Archimedean inverse-range step for the nontrivial class character of
+$\mathbb Q(\sqrt{-5})$. Revision `cce1bdab150c1b3a16aa615c90da530d161fd964`
+checks the [weighted strip argument](../../obligations/isotypic-inverse-range-q-sqrt-minus-five.md),
+not the reciprocal bounds or the
+local image criterion needed for the full repair. The associated
+improvement (`01a200db-9ddc-7cca-95ec-aba68d12ccbf`) kept the existing
+routing and added prompt provenance at
+`b36fe6b7dbe21a8a3a9635138fe30de540b81c4c`. Its offline archive control
+did not run the new prompts live.
 
 ## Later manual launch
 
