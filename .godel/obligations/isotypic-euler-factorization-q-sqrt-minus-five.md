@@ -314,6 +314,40 @@ criterion supplies a hypothesis for Masullo's finite product, p. 122,
 §3.2.1, (3.2.1.1), and p. 124, Definition 3.2.1.4, (3.2.1.7); it is
 not a criterion printed there, and it does not use the p. 309 formulas.
 
+### Checked split quotient
+
+In [`IdealClassQuadraticReduction`](../../Proofs/Theorems/IdealClassQuadraticReduction.lean),
+`qSqrtNegFiveSplitQuotientEquiv` proves that for a rational prime
+$p\ne2,5$ and a specified $r\in\mathbb F_p$ with $r^2=-5$, evaluation at
+$r$ and $-r$ gives a ring equivalence from the full integer-ring quotient
+$\mathcal O_F/(p)$ to $\mathbb F_p\times\mathbb F_p$.
+`qSqrtNegFiveSplitQuotientEquiv_mk` gives its action on the class of
+$x+y\sqrt{-5}$, using the integral coordinates
+`qSqrtNegFiveIntegersEquiv.symm ⟨x, y⟩`:
+$(\bar x+r\bar y,\bar x-r\bar y)$ with $x,y\in\mathbb Z$.
+
+The equivalence composes `qSqrtNegFiveQuotientSpanNatEquiv` with the
+pair of root maps on the reduced quadratic algebra. The application
+formula uses the reduction's `_mk` lemma. The inverse coordinate
+calculation is $(u,v)\mapsto((u+v)/2,(u-v)/(2r))$. Primality and
+$p\ne2$ give $2\ne0$, and $r=0$ would force $p\mid5$, contradicting
+$p\ne5$. Lean checks both inverse identities and the instance $p=3$,
+$r=1$, where the class of $\sqrt{-5}$ maps to $(1,-1)$.
+
+Independent review `pkZhAFD` (transcript under Yah
+`01a202dc-8ef9-7b90-aae2-ee1f2ace5b0d`, reviewer Yah
+`01a202dc-8ef9-7b61-89e2-ee1f2ace5b0d`) checked the two intended
+signatures, the integral-coordinate convention, both denominators,
+and the modulo-three example mathematically before elaboration. It also
+checked applicability of the [accepted rendered reading](#manuscript-interface)
+of Masullo, p. 122, §3.2.1, (3.2.1.1), and p. 124, Definition 3.2.1.4,
+(3.2.1.7): The ideal-class character is unramified on local units and
+its factors use uniformizer values. The quotient is arithmetic input
+for these factors, not a split criterion printed in the manuscript.
+No new visual reading or p. 309 formula is used. The public scope is
+exactly the split-root case $p\ne2,5$; neither the prime fiber nor the
+Dirichlet comparison is proved by these endpoints.
+
 ### Remaining grouped identity
 
 The grouped local polynomial identity for the actual quadratic class
@@ -345,13 +379,13 @@ pp. 800–801, identified in its [holomorphy section](isotypic-inverse-range-q-s
 
 **Open Lean premise for the Hecke transfer:** Instantiate the all-prime
 grouped polynomial identity for a constructed idèle-class character.
-**Next arithmetic check:** For $p\nmid10$ and a square $-5=r^2$ in
-$\mathbb F_p$, construct the product quotient
-$\mathcal O_F/(p)\cong\mathbb F_p\times\mathbb F_p$ by evaluation at
-$r$ and $-r$. These roots are distinct; the product description would
-supply the two candidate degree-one ideals for the split fiber.
-Enumerating that fiber, comparing the Dirichlet signs, normalizing the
-nontrivial class character, and assembling the all-prime identity are
+**Next arithmetic check:** Use the [split quotient](#checked-split-quotient)
+and `Ideal.ideal_prod_prime` to enumerate `heckePrimeFiber` in the
+split-root case: The two places should be exactly the kernels obtained
+by composing reduction with the two coordinate projections. This would
+identify the places indexed by the split grouped factor. Certifying the
+residue degrees, comparing the Dirichlet signs, normalizing the
+nontrivial class character, and assembling the all-prime identity remain
 separate.
 The explicit product's circle growth and common-height estimate are
 already unconditional in Lean.

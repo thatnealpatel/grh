@@ -10,6 +10,8 @@ import Mathlib.Algebra.QuadraticAlgebra.Discriminant
 The quotient by `(n)` reduces both integral coordinates modulo `n`. For an
 odd rational prime `p`, its discriminant detects when `(p)` is prime, so the
 inert factor of the finite Hecke product (3.2.1.7), p. 124, applies.
+For `p ≠ 2, 5` with a root of `t² = -5`, evaluation at the two opposite
+roots instead identifies the quotient with a product of two fields.
 -/
 
 open NumberField
@@ -97,5 +99,66 @@ example : (Ideal.span {(11 : O)}).IsPrime := by
 example : ¬ (Ideal.span {(3 : O)}).IsPrime := by
   intro h
   exact (qSqrtNegFive_isPrime_span_iff_not_isSquare ⟨3, by decide⟩ (by decide)).mp h ⟨1, by decide⟩
+
+section Split
+
+variable {R : Type*} {a r : R}
+
+private def evaluateRootPair [CommRing R] (hr : r ^ 2 = a) : QuadraticAlgebra R a 0 →+* R × R :=
+  (QuadraticAlgebra.lift ⟨r, by simpa [pow_two] using hr⟩).toRingHom.prod
+    (QuadraticAlgebra.lift ⟨-r, by simpa [pow_two] using hr⟩).toRingHom
+
+private theorem evaluateRootPair_apply [CommRing R] (hr : r ^ 2 = a) (z : QuadraticAlgebra R a 0) :
+    evaluateRootPair hr z = (z.re + r * z.im, z.re - r * z.im) := by
+  simp [evaluateRootPair, QuadraticAlgebra.lift_apply_apply, mul_comm, sub_eq_add_neg]
+
+private theorem evaluateRootPair_bijective [Field R]
+    (hr : r ^ 2 = a) (h₂ : (2 : R) ≠ 0) (hr₀ : r ≠ 0) :
+    Function.Bijective (evaluateRootPair hr) := by
+  have h₂r : 2 * r ≠ 0 := mul_ne_zero h₂ hr₀
+  let recover (uv : R × R) : QuadraticAlgebra R a 0 :=
+    ⟨(uv.1 + uv.2) / 2, (uv.1 - uv.2) / (2 * r)⟩
+  have hleft : Function.LeftInverse recover (evaluateRootPair hr) := by
+    intro z
+    rw [evaluateRootPair_apply]
+    apply QuadraticAlgebra.ext <;> dsimp [recover] <;> field_simp <;> ring
+  have hright : Function.RightInverse recover (evaluateRootPair hr) := by
+    intro uv
+    rw [evaluateRootPair_apply]
+    apply Prod.ext <;> dsimp [recover] <;> field_simp <;> ring
+  exact ⟨hleft.injective, hright.surjective⟩
+
+end Split
+
+/-- For `p ≠ 2, 5`, a root `r` of `t² = -5` gives a product quotient of the full integer
+ring, with evaluations at `r` and `-r` in that order. -/
+public noncomputable def qSqrtNegFiveSplitQuotientEquiv (p : Nat.Primes)
+    (hp₂ : p.val ≠ 2) (hp₅ : p.val ≠ 5) (r : ZMod p.val) (hr : r ^ 2 = -5) :
+    (O ⧸ Ideal.span {(p.val : O)}) ≃+* (ZMod p.val × ZMod p.val) := by
+  let : Fact (Nat.Prime p.val) := ⟨p.2⟩
+  have h₂ : (2 : ZMod p.val) ≠ 0 := fun h ↦
+    ((Nat.dvd_prime Nat.prime_two).mp ((ZMod.natCast_eq_zero_iff 2 p.val).mp h)).elim
+      p.2.ne_one hp₂
+  have hr₀ : r ≠ 0 := by
+    intro h
+    have h₅ : (5 : ZMod p.val) = 0 := by simpa [h, eq_comm] using hr
+    exact ((Nat.dvd_prime Nat.prime_five).mp ((ZMod.natCast_eq_zero_iff 5 p.val).mp h₅)).elim
+      p.2.ne_one hp₅
+  exact (qSqrtNegFiveQuotientSpanNatEquiv p.val).trans
+    (RingEquiv.ofBijective (evaluateRootPair hr) (evaluateRootPair_bijective hr h₂ hr₀))
+
+/-- The class of `x + y√-5` maps to the evaluations of its reduced coordinates. -/
+public theorem qSqrtNegFiveSplitQuotientEquiv_mk (p : Nat.Primes)
+    (hp₂ : p.val ≠ 2) (hp₅ : p.val ≠ 5) (r : ZMod p.val) (hr : r ^ 2 = -5) (x y : ℤ) :
+    qSqrtNegFiveSplitQuotientEquiv p hp₂ hp₅ r hr
+        (Ideal.Quotient.mk _ (qSqrtNegFiveIntegersEquiv.symm ⟨x, y⟩)) =
+      ((x : ZMod p.val) + r * (y : ZMod p.val), (x : ZMod p.val) - r * (y : ZMod p.val)) := by
+  rw [qSqrtNegFiveSplitQuotientEquiv, RingEquiv.trans_apply, RingEquiv.ofBijective_apply,
+    evaluateRootPair_apply, qSqrtNegFiveQuotientSpanNatEquiv_mk, AlgEquiv.apply_symm_apply]
+
+example : qSqrtNegFiveSplitQuotientEquiv ⟨3, by decide⟩ (by decide) (by decide) 1 (by decide)
+    (Ideal.Quotient.mk _ (qSqrtNegFiveIntegersEquiv.symm ⟨0, 1⟩)) = (1, -1) := by
+  simpa only [Int.cast_zero, Int.cast_one, mul_one, zero_add, zero_sub] using
+    qSqrtNegFiveSplitQuotientEquiv_mk ⟨3, by decide⟩ (by decide) (by decide) 1 (by decide) 0 1
 
 end Masullo
