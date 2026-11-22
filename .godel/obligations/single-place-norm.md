@@ -798,17 +798,65 @@ go run ./cmd/godel audit-local "$CANDIDATE" \
   Masullo.integral_ideleClass_Weil Masullo.integral_ideleClass_Weil_weighted
 ```
 
-### Next normalization step: Separate the radial Mellin and norm-one pairing
+### Checked radial Mellin and norm-one pairing
 
-On the same absolutely integrable domain, take the weighted periodization
-`F * c` supplied above. Transport it along `τ` to the product and apply
-Bochner Fubini. For a continuous quasi-character `c`, with `ω` its
-restriction to `C₁`, the factorization
-`c (τ (t,h)) = c (τ (t,1)) * ω h` identifies the inner integral with the
-homogeneous theta pairing of (2.2.5.2), p. 95, wherever the slice is
-integrable. The runnable Borel obligation is a.e. log-slice
-integrability of `h ↦ F (τ (t,h)) * ω h`, integrability of its radial
-pairing with `c (τ (t,1))`, and equality of its iterated integral to the
-upstairs weighted integral. Use that `c` is nonzero on the split
-section; this is not an every-slice convergence or meromorphy claim.
-This is the absolutely integrable part of (3.2.2.5), pp. 125, 127.
+[`Theorems.IdeleClassRadialMellin`](../../Proofs/Theorems/IdeleClassRadialMellin.lean)
+proves the integral identity used in (3.2.2.5), pp. 125, 127, on the
+absolute-integrability domain. The section is the canonical single-place
+choice of (A.2.2.10), p. 547; log Lebesgue represents `dt/t`. The slice
+`ideleClassRadialPairing` uses the unbarred character restriction in
+(2.2.5.2), p. 95. `integral_ideleClass_radial` pulls back the integrable
+class product, factors the character, and applies Bochner Fubini. Since
+the radial scalar is nonzero, the norm-one slice is integrable for
+almost every log radius. The weighted radial integrand is integrable.
+`integral_ideleClass_Weil_radial` composes this with (3.2.2.11) and gives
+both the integrable class product and equality to the upstairs weighted
+integral. It requires Borel `f`, a continuous multiplicative `c`, and
+upstairs weighted `L¹`; it does not prove everywhere convergence of
+the principal sum or the norm-one slice.
+
+Independent Yah statement review: Session
+`01a2033f-4f26-7818-ba40-b5b998cbbbc7`, child `review-radial`
+(`ZwliDlo`, read-only outputs `cf1d6d943de561629bce80aaa975843f3e298a6a`
+and `e772aafd9334e7dd46c2a655dcc2366440961a36`). The review confirms
+that the class-only endpoint needs no separate continuity of the
+character or Borel hypothesis on the unweighted function: The weighted
+product supplies the needed a.e. strong measurability. It used pinned
+Markdown and numbered layout, not rendered pages, so source readings
+remain provisional. Exact-candidate replay:
+
+```sh
+go run ./cmd/godel audit-local "$CANDIDATE" \
+  Theorems.IdeleClassRadialMellin -- \
+  Masullo.ideleClassRadialPairing Masullo.integral_ideleClass_radial \
+  Masullo.integral_ideleClass_Weil_radial
+```
+
+### Next: Identify the normalized Gaussian radial integral above one
+
+Use `exists_discriminantNormalizedIdeleHeckeGaussian_zetaIntegral` and
+`exists_discriminantNormalizedIdeleClassNormOneHaar` on the **same**
+upstairs measure. Both witnesses have the exact stage restrictions in
+(A.3.2.5), p. 560; `exists_discriminantNormalizedIdeleHaar` gives
+uniqueness among all Borel measures with those comaps. Bundle the
+quasi-character `g ↦ χ g * (ideleClassNorm g : ℂ) ^ s`, using positivity
+of the norm and `ideleClassNorm_mk` for the upstairs comparison. Check
+Borel measurability of the fixed Gaussian tensor and apply
+`integral_ideleClass_Weil_radial`. The target is one exceptional set and
+one pair of normalized Haar measures for all `Re s > 1`, with the radial
+integral equal to the completed Euler value times `|disc K|⁻¹ᐟ²`.
+Keep that raw factor and the distinct arithmetic norm-one volume; do
+not divide the latter to get probability measure. This links (3.2.2.5),
+pp. 125, 127, to the corrected test in Definition 3.4.3.2, p. 152; it is
+not a claim of convergence for all Schwartz–Bruhat tests.
+
+**Continuation gap:** On the provisional text reading, the use of
+Theorem 2.2.3.4(3), p. 83, on pp. 126–127 requires both zero modes to
+vanish. A nontrivial norm-one character cannot suppress the small-norm
+term `t⁻¹ f̂(0)` in the absolute value of the *unaveraged* class
+integrand, since its norm is one. Theorem 2.2.5.4(2), (4), pp. 97–98,
+places the cancellation in the norm-one average instead. To continue
+(3.2.2.5) beyond the common integrability domain, prove decay for that
+average and analytic agreement from the common domain. The radial
+Fubini theorem neither supplies these bounds nor licenses absolute
+convergence of the unaveraged class integral there.
