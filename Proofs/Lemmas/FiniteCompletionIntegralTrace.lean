@@ -44,7 +44,8 @@ private theorem productBasis_apply_self (b : ∀ i, Module.Basis (J i) R (S i))
   · have h' : (⟨i, j⟩ : Σ i, J i) ≠ ⟨i, k⟩ := fun e ↦ h (Sigma.mk.inj_iff.mp e).2.eq
     simp [h, h']
 
-private theorem trace_pi [∀ i, Fintype (J i)] (b : ∀ i, Module.Basis (J i) R (S i))
+/-- The trace of multiplication in a finite product is the sum of the block traces. -/
+public theorem algebraTrace_pi [∀ i, Fintype (J i)] (b : ∀ i, Module.Basis (J i) R (S i))
     (x : (i : I) → S i) :
     Algebra.trace R _ x = ∑ i, Algebra.trace R (S i) (x i) := by
   classical
@@ -79,7 +80,7 @@ public theorem finiteCompletionIntegralBaseChange_trace (t : A) :
   let (v : V) : Module.Free ℤ_[p] O[v] := finiteCompletionOverPrime_moduleFree p v
   let (v : V) : Module.Finite ℤ_[p] O[v] := finiteCompletionOverPrime_moduleFinite p v
   rw [← Algebra.trace_eq_of_algEquiv (finiteCompletionIntegralBaseChange p)]
-  exact trace_pi (fun v : V ↦ Module.Free.chooseBasis ℤ_[p] O[v]) _
+  exact algebraTrace_pi (fun v : V ↦ Module.Free.chooseBasis ℤ_[p] O[v]) _
 
 /-- The integral trace of a global integer, cast into `ℤ_[p]`, is the sum
 of its integral traces over the places above `p`. -/

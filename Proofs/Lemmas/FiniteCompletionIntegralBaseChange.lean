@@ -17,7 +17,7 @@ yet compare the trace duals or compute the discriminant.
 -/
 
 open IsDedekindDomain NumberField
-open scoped TensorProduct Pointwise
+open scoped TensorProduct Pointwise nonZeroDivisors
 
 namespace Masullo
 
@@ -107,6 +107,19 @@ public theorem finiteCompletionOverPrime_moduleFree (p : ℕ) [Fact p.Prime] (v 
 public theorem finiteCompletionOverPrime_moduleFinite (p : ℕ) [Fact p.Prime] (v : V[p]) :
     Module.Finite ℤ_[p] O[v] :=
   finite_transportedAlgebra p v.1 (finiteCompletionBasePrime_eq_of_dvd_primeSpan p v)
+
+private theorem isLocalization_transportedAlgebra (p : ℕ) [Fact p.Prime]
+    (v : HeightOneSpectrum (𝓞 K)) (h : (finiteCompletionBasePrime v : ℕ) = p) :
+    letI := transportedAlgebra p v h
+    IsLocalization (Algebra.algebraMapSubmonoid (v.adicCompletionIntegers K) (ℤ_[p])⁰)
+      (v.adicCompletion K) := by
+  subst p
+  exact finiteCompletionIntegers_isLocalization v
+
+/-- The actual local field inverts the nonzero integers of the common base prime. -/
+public theorem finiteCompletionOverPrime_isLocalization (p : ℕ) [Fact p.Prime] (v : V[p]) :
+    IsLocalization (Algebra.algebraMapSubmonoid O[v] (ℤ_[p])⁰) (v.1.adicCompletion K) :=
+  isLocalization_transportedAlgebra p v.1 (finiteCompletionBasePrime_eq_of_dvd_primeSpan p v)
 
 variable (p : ℕ) [hp : Fact p.Prime]
 

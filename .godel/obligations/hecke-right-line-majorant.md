@@ -1611,28 +1611,73 @@ go run ./cmd/godel audit-local "$CANDIDATE" \
   Masullo.finiteCompletionIntegralBaseChange_trace_global
 ```
 
-The trace identity does not yet compare the trace-dual lattices in the
-fraction algebras or identify the local different. The next step is to
-extend $\Phi_p$ to a $\mathbb Q_p$-algebra equivalence
+### Checked fraction splitting and local trace-dual criterion
 
-$$\mathbb Q_p\otimes_{\mathbb Z_p} A_p\;\simeq\;\prod_{v\mid p} K_v,$$
+[`FiniteCompletionFractionBaseChange.lean`](../../Proofs/Lemmas/FiniteCompletionFractionBaseChange.lean)
+extends the integral equivalence $\Phi_p$ for $A_p=\mathbb Z_p\otimes_{\mathbb Z}\mathcal O_K$.
+It proves the $\mathbb Q_p$-algebra equivalence
 
-with $a\otimes t\mapsto (a\,\Phi_p(t)_v)_v$, using the canonical inclusions
-of the completion integer rings. Transport the checked local
-`finiteCompletionIntegers_isLocalization` to the common base prime, and
-use `IsLocalization.iff_map_piEvalRingHom` for the product at the image
-of the nonzero base integers. `Algebra.trace_localization` then compares
-the localized traces, and testing against integral vectors supported in
-one coordinate isolates the local trace-dual condition. To identify
-that coordinate lattice with the extension of the global codifferent,
-carry the globally trace-dual basis through base change and prove that
-its span is the trace dual of the full base-changed integer lattice.
+$$\Psi_p:\mathbb Q_p\otimes_{\mathbb Z_p} A_p\;\simeq\;\prod_{v\mid p} K_v,
+\qquad a\otimes t\longmapsto(a\,\Phi_p(t)_v)_{v\mid p}.$$
 
-The local identity
-is not a consequence of equality of the aggregate products. Once it is
-checked, construct or identify the local Haar scales, then use the exact
-stage restrictions of (A.3.2.5), p. 560, in the raw Gaussian theorem.
-Quotient Haar is still separate.
+The pure-tensor formula uses the actual inclusions of the completion
+integers. The accompanying scalar-map identities compare with the
+checked completed field map and prove its compatibility with the
+integral map. Each completion field localizes its integer lattice at
+the nonzero base integers; tensor commutes with the finite product.
+
+The trace of an arbitrary $x$ in the fraction algebra is the sum of
+the traces of $\Psi_p(x)_v$. The trace against $1\otimes t$ belongs to
+$\mathbb Z_p$ for every $t\in A_p$ if and only if at each $v$ the trace
+of $\Psi_p(x)_v y$ belongs to $\mathbb Z_p$ for every $y\in\mathcal O_{K_v}$.
+The forward implication lifts a test supported in one coordinate via
+$\Phi_p^{-1}$; the reverse takes the finite sum. No caller-supplied
+basis, scalar map, or assertion of separability is needed.
+
+Masullo uses the trace character and inverse different in Example
+A.3.1.10, (A.3.1.8), PDF p. 558, and prescribes the Haar mass in
+(A.3.2.2), p. 560. He supplies neither this fraction comparison nor
+the trace-dual criterion. They are project support. This source
+reading is provisional: Markdown and numbered PDF text, not a
+rendered-page review.
+
+Independent statement review: Yah session
+`01a20221-adf8-791f-a475-b13696c264e4`, child `review-fraction-splitting`
+(agent `KfkbziE`, read-only output
+`a1f71baf9d9136d6d7a4f20d99d2bf40fefacef5`).
+Reproduce the endpoint audit in the integration workspace:
+
+```sh
+go run ./cmd/godel audit-local "$CANDIDATE" \
+  Lemmas.FiniteCompletionIntegralBaseChange Lemmas.FiniteCompletionIntegralTrace \
+  Lemmas.FiniteCompletionFractionBaseChange -- \
+  Masullo.finiteCompletionOverPrime_isLocalization Masullo.algebraTrace_pi \
+  Masullo.finiteCompletionOverPrimeFieldAlgebra \
+  Masullo.finiteCompletionOverPrimeFieldAlgebra_algebraMap \
+  Masullo.finiteCompletionOverPrime_algebraMap_int \
+  Masullo.finiteCompletionFractionBaseChange \
+  Masullo.finiteCompletionFractionBaseChange_tmul \
+  Masullo.finiteCompletionFractionBaseChange_trace \
+  Masullo.finiteCompletionFractionBaseChange_traceDual_iff
+```
+
+**Next:** Identify each local trace dual with the
+$\mathcal O_{K_v}$-span of the image of the global codifferent in $K_v$.
+Use `Algebra.TensorProduct.cancelBaseChange` and localization of
+$\mathcal O_K$ to identify the source of $\Psi_p$ with
+$\mathbb Q_p\otimes_{\mathbb Q} K$ compatibly with integral tensors.
+Then extend an integral basis and its global trace-dual basis. The
+trace-duality relations survive by `LinearMap.trace_baseChange`, and
+the $\mathbb Z_p$-span of the extended dual basis gives the full trace
+dual by the basis-coordinate criterion (see
+`Module.Basis.traceDual_repr_apply` and
+`LinearMap.BilinForm.dualSubmodule_span_of_basis`). Project via the
+checked trace-dual equivalence. This comparison, the resulting local
+different, and the placewise discriminant identity are not yet proved.
+The local identity does not follow from equality of aggregate products.
+After proving it, identify the local Haar scales using the exact stage
+restrictions of (A.3.2.5), p. 560, in the raw Gaussian theorem. Keep
+the actual finite unit masses. Quotient Haar is still separate.
 
 **Still open:** Meromorphic continuation, divisor data, and contour
 growth in (B.4.2.1)–(4), the broader test class, general ramified Fourier terms,
