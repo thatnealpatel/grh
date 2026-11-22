@@ -1460,6 +1460,52 @@ go run ./cmd/godel audit-local "$CANDIDATE" Lemmas.FiniteCompletionPrimePow -- \
   Masullo.finiteCompletionPrimePowQuotientEquiv_mk
 ```
 
+### Checked: Canonical reduction in the product of actual completions
+
+[`FiniteCompletionCRT.lean`](../../Proofs/Lemmas/FiniteCompletionCRT.lean)
+assembles the Dedekind-domain Chinese remainder equivalence on the
+finitely many height-one places dividing a nonzero global ideal $I$.
+In each coordinate it uses the checked prime-power quotient equivalence
+and then rewrites the local prime power as $I\mathcal O_{K_v}$. Thus
+
+$$\mathcal O_K/I\;\simeq\;\prod_{v\mid I}\mathcal O_{K_v}/I\mathcal O_{K_v},
+\qquad [x]\longmapsto([i_v(x)])_v.$$
+
+For a rational prime $p$, `finiteCompletionModPrimeEquiv` specializes
+this to $I=p\mathcal O_K$ with target exactly modulo $p$ in each
+completion. `finitePlace_dvd_primeSpan_iff` identifies the index
+condition with $p\in v$ and `finiteCompletionModPrimeEquiv_mk` records
+the class formula. This retains all $e_v$ layers at a ramified place,
+not just the residue field. The general theorem includes the unit
+ideal: The product over no places and the quotient by the unit ideal
+are both trivial rings.
+
+This is a project result, not a step proved by Masullo: He prescribes
+the discriminant unit mass in (A.3.2.2), p. 560, and recalls the trace
+character and inverse-different Fourier formula in Example A.3.1.10,
+(A.3.1.8), p. 558. The latter locator is the numbered page in both
+Markdown and layout. This source comparison is provisional; no new
+rendered-page inspection. The quotient theorem supplies the reduction
+needed for the integral base change, not the trace-dual lattice or
+Haar scales.
+
+Independent Yah statement review: Session
+`01a20204-cd04-7861-b125-da6e2ed2104b`, child `review-completion-crt`
+(agent `ggvYIbJ`, read-only output
+`be4530c96fc602938a974e32e6be056d66675d21`). The review agreed with the
+divisor-subtype generalization and the canonical class formula. For the
+specialization Lean uses the divisor subtype together with the checked
+membership equivalence; the local cast is the image of the global cast
+by `map_natCast`. Reproduce the endpoint audit:
+
+```sh
+go run ./cmd/godel audit-local "$CANDIDATE" Lemmas.FiniteCompletionCRT -- \
+  Masullo.finiteCompletionIdealQuotientEquiv \
+  Masullo.finiteCompletionIdealQuotientEquiv_mk \
+  Masullo.finitePlace_dvd_primeSpan_iff Masullo.finiteCompletionModPrimeEquiv \
+  Masullo.finiteCompletionModPrimeEquiv_mk
+```
+
 ### Next: Identify the placewise discriminant scales
 
 For $v$ over $p$, in the **actual** completion $K_v$ prove
@@ -1475,23 +1521,19 @@ in $\mathbb Q(i)$ this must give $q_v^{-n_v}=1/4$ and unit mass $1/2$,
 not unit mass one.
 
 The first comparison still needed is the canonical integral base-change
-map at a fixed rational prime $p$,
-$\mathbb Z_p\otimes_{\mathbb Z}\mathcal O_K\to\prod_{v\mid p}\mathcal O_{K_v}$,
-with $a\otimes x\mapsto(a\,x)_v$. Start with its reduction modulo $p$:
-Prove that the canonical map gives
-$\mathcal O_K/p\mathcal O_K\simeq\prod_{v\mid p}\mathcal O_{K_v}/p\mathcal O_{K_v}$.
-The checked ideal-extension theorem applied to $p\mathcal O_K$ gives
-$p\mathcal O_{K_v}=\mathfrak m_v^{e_v}$, with $e_v$ the multiplicity of
-$v$ in $p\mathcal O_K$. Assemble the canonical reduction by factoring
-$p\mathcal O_K$, applying `Ideal.quotientInfRingEquivPiQuotient` to the
-pairwise comaximal powers, and composing with the checked quotient
-equivalence at $n=e_v$ in each coordinate. Retain the computation on
-classes of global integers so the result identifies the reduction of
-the base-change map. Reducing only modulo $\mathfrak m_v$ would lose
-the nilpotent layers at a ramified place. The product comparison is
-still open. Both sides of the base-change
-map are finite free over $\mathbb Z_p$, so an invertible reduction
-suffices for invertibility. After this comparison, transport the trace
+isomorphism at a fixed rational prime $p$,
+$\mathbb Z_p\otimes_{\mathbb Z}\mathcal O_K\simeq\prod_{v\mid p}\mathcal O_{K_v}$,
+with $a\otimes x\mapsto(a\,i_v(x))_v$. At each index, first identify
+`finiteCompletionBasePrime` with $p$ and use that identification to
+transport the checked $\mathbb Z_p$-algebra structure and finite free
+module. Construct the map with `Algebra.TensorProduct.lift`, and use
+`finiteCompletionModPrimeEquiv_mk` to identify its reduction, not just
+an abstract isomorphism of the two quotients. The source reduction is
+$\mathcal O_K/p\mathcal O_K$ because $\mathbb Z_p/p\mathbb Z_p$ is
+$\mathbb Z/p\mathbb Z$. Both sides of the base-change map are finite
+free over $\mathbb Z_p$; lift the invertible reduction over the local
+ring (for surjectivity, see
+`LinearMap.surjective_of_surjective_comp_mkQ`). After this comparison, transport the trace
 dual through base change and the product projections; for passage from
 the local integer rings to their fraction fields, pinned Mathlib has
 `Algebra.trace_localization` and `Algebra.discr_localizationLocalization`.
