@@ -17,7 +17,7 @@ The decisive supporting passages below were checked the same way.
 Independent Yah review `oDkPonw` separately examined the rendered
 p. 522 and the definitions licensing the two tests, and confirmed
 the rank computation. The local-Haar interpretation of (13.3.1.4)
-is separate and not established here.
+is separate; see the [rendered real-prime audit](trace-real-prime-q.md).
 
 The following definitions put the witnesses in that domain:
 
@@ -130,18 +130,10 @@ on all smooth compactly supported positive-log profiles of mass zero.
 No ramified Fourier recovery or Hecke contour statement is needed
 for this rank computation.
 
-**Next bounded source check (mapped):** The p. 522 display of
-(13.3.1.4) has no separate factor $1/2$. Follow the prime through
-(B.4.4.1)–(2), pp. 619–620, and the real Fourier kernel (B.4.3.13),
-p. 619, then compare (B.4.4.4), p. 620, and (B.4.4.16), p. 623.
-Determine whether the prime on the short positive-log radial mass-zero
-tests gives raw real Haar or half Haar. Equation (B.4.4.5), p. 620,
-is only stated for finite places. The short tests vanish near the real
-singularity and restrict identically to zero at finite places by the
-norm band. This isolates the normalization premise
-of the [prior pole test](trace-divisor-uniqueness.md#a-pole-test-for-the-raw-haar-reading)
-without solving the trace comparison. The $s=2$ global singleton
-geometric evaluation, full-versus-capped test agreement, and the
-nontrivial-isotype trace and explicit formula interfaces remain open.
-The [Gaussian global stage evaluation](weil-admissible-set.md#reusable-scope-and-remaining-premises)
-is a separate mapped task, not used here.
+**Follow-up:** The [rendered real-prime audit](trace-real-prime-q.md)
+uses this common radial kernel. The additive definition yields half
+Haar, while substituting the displayed Fourier kernel yields full Haar.
+The $s=2$ global singleton geometric evaluation, full-versus-capped
+test agreement, and the nontrivial-isotype trace and explicit formula
+interfaces remain open. The [Gaussian global stage evaluation](weil-admissible-set.md#reusable-scope-and-remaining-premises)
+is a separate mapped task.

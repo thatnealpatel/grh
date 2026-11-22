@@ -658,6 +658,10 @@ new statement review or proof.
 
 ## Checked real logarithmic Fourier kernel off the identity
 
+See the [rendered real-prime audit](trace-real-prime-q.md) for the
+source check on the common Chapter 13 tests, including the separate
+sign discrepancy in the prose of (B.4.4.20).
+
 In the pinned extraction, (B.4.4.1)–(B.4.4.2), pp. 619–620, define the
 unnormalized-looking real term using the **negative** Fourier pairing
 $-\int_{\mathbb R}\log|\xi|\,\widehat u(\xi)\,d\xi$, with

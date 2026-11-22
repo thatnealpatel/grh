@@ -52,7 +52,7 @@ The [quadratic summability lemma](trace-divisor-summability.md#checked-dyadic-sh
 
 ## A pole test for the raw Haar reading
 
-If (13.3.1.4) uses raw $\mu_v$ and (13.3.1.5) ranges over the same finite places as (B.4.4.16), the two asserted formulas are incompatible on this radial test class. Both finite-place displays have the same extracted index set and over $\mathbb Q$ the unit volumes are one. This leaves exactly one extra real-place term in the difference between the full and capped sums. In fact the real additive Tamagawa measure is Lebesgue (Example A.3.1.5, p. 557), so using both signs in Definition A.3.2.2, p. 560, gives the ordinary kernel
+If (13.3.1.4) uses the full real-Haar kernel and its finite-place terms agree with the ordinary explicit formula, the capped formula and the ordinary full-zero formula are incompatible on this radial test class. The [rendered real-prime audit](trace-real-prime-q.md) gives that full-Haar value only by substituting the printed Fourier kernel; the additive definition gives half Haar. Its short-band witness does not replace the wider tests used by the pole argument. The earlier finite-place comparison used the extracted index sets and the fact that over $\mathbb Q$ the unit volumes are one. The short-band witness does not verify that comparison on the wider tests. This leaves exactly one extra real-place term in the difference between the full and capped sums. In fact the real additive Tamagawa measure is Lebesgue (Example A.3.1.5, p. 557), so using both signs in Definition A.3.2.2, p. 560, gives the ordinary kernel
 
 $$H(x)=\tfrac12 e^{x/2}\left((e^x-1)^{-1}+(e^x+1)^{-1}\right)=\frac{e^{-x/2}}{1-e^{-2x}}\qquad(x>0).$$
 
@@ -64,4 +64,4 @@ initially for $\Re z>1/2$. The subtraction removes the singularity of the integr
 
 **Independent Yah review:** The review independently checked the pinned text and challenged the uniqueness proof and pole test. It confirmed the factor $1/M_v$, the finite sum comparison under the common index convention, and the possibility of hidden central weight. No rendered pages or Lean check were used.
 
-The [cutoff interface](trace-divisor-cutoff.md) and [resolvent handoff](trace-divisor-resolvent.md#assembled-conditional-uniqueness) explain the checked composition. It does not use a capped-trace or geometric-normalization axiom. For the source branch, resolve the local normalization before citing (13.3.1.3) as the comparison premise.
+The [cutoff interface](trace-divisor-cutoff.md) and [resolvent handoff](trace-divisor-resolvent.md#assembled-conditional-uniqueness) explain the checked composition. It does not use a capped-trace or geometric-normalization axiom. For the source branch, the local inconsistency prevents citing (13.3.1.3)–(5) as the comparison premise without a repair and a separate justification of the repaired capped trace.
