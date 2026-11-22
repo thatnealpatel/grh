@@ -12,9 +12,9 @@ Sobolev completion. The display and its continuation were checked
 in rendered pixel crops, separately from the chapter Markdown,
 text extraction, and OCR. The PDF ordinals match the printed pages;
 SHA-256 is `e039d3f6cf0a4b14f03c7edb85097752dd65c0a2fe543c76fe992be234f97bf5`.
-This finding covers the opening claim and the following global
-operator definition, not the $S$-local analogue, the subquotient
-identifications, or the trace formula.
+This audit covers the opening claim, the global operator definition,
+and the immediately following $S$-local operator preview. It does not
+cover the subquotient identifications or the trace formula.
 
 **What the operator argument checks.** For an idele $a$, write
 $T_a f(x)=f(a^{-1}x)$. On adelic tests, $T_a$ fixes evaluation at
@@ -86,3 +86,44 @@ is provisional. The matching statement in Theorem 7.4.2.1(1) was
 checked in a rendered crop; the reading of its proof is from text
 extraction and raster OCR. No Lean statement establishes this
 closed-submodule claim at its printed scope.
+
+## The S-local operator preview
+
+**Printed passage.** Section 1.2.9, printed p. 18, beginning “An analog
+of” and ending “In the $S$-local case we assume $S_p\subset S$,”
+announces an analogue of the principal-value product on
+$\mathrm H_{0,\mathrm{cont}}(\mathcal O_{F,S}^\times,\mathcal S(\mathbf A_{F,S}))$.
+The display uses the full $S$-local test space, not $\mathcal S_0$ and
+not a single norm-one isotype. The sentence, display, and inclusion
+were checked directly in a rendered crop of the pinned PDF, separately
+from the chapter Markdown, PDF text extraction, and raster OCR.
+
+**Descent check.** At a finite stage $S$ containing the Archimedean
+places and $S_p$, every uniformizer at $v\in S_p$ can be placed in the
+$v$-coordinate of an $S$-idele with all other components equal to one.
+Each corresponding translation is continuous on the $S$-local
+Schwartz-Bruhat space. Masullo's Definition 2.3.1.1, pp. 99–100, and
+Proposition 2.3.1.2(1), p. 100, supply the convergent $S$-unit sum
+$\Phi_{F,S}(f)(g)=\sum_{\xi\in\mathcal O_{F,S}^\times} f(\xi g)$.
+Term by term, $\Phi_{F,S}(T_a f)(g)=\Phi_{F,S}(f)(a^{-1}g)$ by
+commutativity. Therefore each $T_a$ preserves its kernel, and the
+product of the literal differences descends continuously by the
+quotient topology of Definition 5.1.1.1(3), p. 223. It commutes with
+translation and preserves norm-one isotypes. The Chapter 2 and
+§5.1 citations here are provisional readings from chapter Markdown
+and PDF extraction. The descent calculation is the reviewer's, using
+those definitions and the stated convergence, not a proof of the
+convergence result.
+
+**Later formulation and scope.** Definition 5.3.1.4(1), pp. 241–242,
+uses the unit-averaged factors $1-T_{\pi_v}U_v$ of Definition 5.3.1.2
+at the selected places and identity factors elsewhere. Its following
+paragraph gives the continuous endomorphism of the full $S$-local
+theta quotient in (5.3.1.9) and states compatibility with norm-one
+isotypes. The display and the isotype line on p. 242 were checked in
+the rendered PDF, separately from the Markdown and text extraction.
+The literal and averaged products agree on isotypes unramified at
+every place in $S_p$, not by the inclusion $S_p\subset S$ alone. This
+passage previews the construction. It states neither closed range
+nor the later local-to-global isomorphism. Descent does not establish
+either, and no Lean declaration is claimed for this preview.
