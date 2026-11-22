@@ -83,6 +83,17 @@ private theorem theta_smul (c : ℂ) (f : E) (d : C) : Θ[c • f] d = c • Θ[
     Pi.smul_apply, smul_eq_mul, tsum_mul_left]
 
 
+/-- Class theta on represented tests, before restriction to the radial sector. -/
+public noncomputable def rationalAdeleClassThetaLFLinear : E →ₗ[ℂ] (C → ℂ) where
+  toFun f := Θ[f]
+  map_add' f g := funext (theta_add f g)
+  map_smul' c f := funext (theta_smul c f)
+
+@[simp] public theorem rationalAdeleClassThetaLFLinear_apply (f : E) :
+    rationalAdeleClassThetaLFLinear f = Θ[f] := by
+  unfold rationalAdeleClassThetaLFLinear
+  rfl
+
 /-- All represented two-mode tests whose theta lies in the trivial norm-one isotype.
 Invariance is imposed on class theta, not on the test itself. -/
 public noncomputable def rationalThetaRadialInputSubmodule : Submodule ℂ E where
@@ -111,6 +122,13 @@ public noncomputable def rationalThetaRadialInputSubmodule : Submodule ℂ E whe
         rationalAdeleLFFourier_eq, hfF, smul_zero]
 
 public abbrev RationalThetaRadialInput := ↥rationalThetaRadialInputSubmodule
+
+public theorem mem_rationalThetaRadialInputSubmodule (f : E) :
+    f ∈ rationalThetaRadialInputSubmodule ↔
+      f.toUnion.val 0 = 0 ∧ rationalAdeleFourier f.toUnion.val 0 = 0 ∧
+        ∀ (k : rationalIdeleClassNormOne) (d : C), Θ[f] ((k : C) * d) = Θ[f] d := by
+  unfold rationalThetaRadialInputSubmodule
+  rfl
 
 /-- Class theta restricted to the canonical log section. -/
 public noncomputable def rationalThetaRadialProfile (f : RationalThetaRadialInput) (x : ℝ) : ℂ :=

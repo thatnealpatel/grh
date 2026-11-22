@@ -76,6 +76,34 @@ private theorem finiteUnitIdele_mul (u w : RationalFiniteUnits) :
   apply Units.ext
   exact Prod.ext (one_mul 1).symm (FiniteAdeleRing.ext ℚ fun _ ↦ rfl)
 
+/-- The idele representative `(1, u)` of a finite unit. -/
+public noncomputable def rationalFiniteUnitIdele : RationalFiniteUnits →* IdeleGroup (𝓞 ℚ) ℚ where
+  toFun := finiteUnitIdele
+  map_one' := Units.ext (Prod.ext rfl (FiniteAdeleRing.ext ℚ fun _ ↦ rfl))
+  map_mul' := finiteUnitIdele_mul
+
+@[simp] public theorem rationalFiniteUnitIdele_fst (u : RationalFiniteUnits) :
+    (rationalFiniteUnitIdele u : AdeleRing (𝓞 ℚ) ℚ).1 = 1 := by
+  unfold rationalFiniteUnitIdele finiteUnitIdele
+  rfl
+
+public theorem rationalFiniteUnitIdele_apply_finite (u : RationalFiniteUnits)
+    (v : HeightOneSpectrum (𝓞 ℚ)) :
+    (rationalFiniteUnitIdele u : AdeleRing (𝓞 ℚ) ℚ).2 v = ((u v).val : v.adicCompletion ℚ) := by
+  unfold rationalFiniteUnitIdele finiteUnitIdele
+  rfl
+
+public theorem rationalFiniteUnitClass_coe (u : RationalFiniteUnits) :
+    (rationalFiniteUnitClass u : IdeleClassGroup (𝓞 ℚ) ℚ) =
+      QuotientGroup.mk (rationalFiniteUnitIdele u) := by
+  unfold rationalFiniteUnitClass rationalFiniteUnitIdele
+  rfl
+
+@[simp] public theorem ideleNorm_rationalFiniteUnitIdele (u : RationalFiniteUnits) :
+    ideleNorm (rationalFiniteUnitIdele u) = 1 := by
+  rw [← ideleClassNorm_mk, ← rationalFiniteUnitClass_coe]
+  exact (mem_rationalIdeleClassNormOne _).mp (rationalFiniteUnitClass u).property
+
 private theorem finiteUnitIdele_injective : Function.Injective finiteUnitIdele := by
   intro u w h
   funext v
