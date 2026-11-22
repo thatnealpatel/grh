@@ -109,10 +109,44 @@ private theorem norm_eulerPerturbation_le {a : ℝ} (ha : 1 ≤ a) {z : Places �
     Real.exp (-a * Real.log q) = (2 * Real.exp (-a * Real.log q)) * (1 / 2) := by ring
     _ ≤ _ := by gcongr
 
-private theorem differentiableAt_eulerPerturbation {z : Places → ℂ} {v : Places} {s : ℂ}
-    (hz : ‖z v‖ ≤ 1) (hs : 0 < s.re) : DifferentiableAt ℂ (eulerPerturbation z v) s := by
-  have h := (hasDerivAt_finiteHeckeMonomial z v s).differentiableAt
-  exact h.div ((differentiableAt_const (1 : ℂ)).sub h) (finiteHecke_denom_ne_zero hz hs)
+/-- A summable majorant for the deviations from one, independent of the argument
+throughout a closed right half-plane. -/
+public theorem finiteHeckeEulerFactor_norm_sub_one_majorant {a : ℝ} (ha : 1 < a)
+    {z : Places → ℂ} (hz : ∀ v, ‖z v‖ ≤ 1) :
+    ∃ M : Places → ℝ, Summable M ∧
+      ∀ v s, a ≤ s.re → ‖finiteHeckeEulerFactor z v s - 1‖ ≤ M v := by
+  refine ⟨_, summable_eulerBound ha, fun v s hs ↦ ?_⟩
+  rw [eulerFactor_eq_one_add (hz v) (zero_lt_one.trans (ha.trans_le hs)), add_sub_cancel_left]
+  exact norm_eulerPerturbation_le ha.le (hz v) hs
+
+/-- The net of finite products converges uniformly on the entire closed half-plane
+`a ≤ Re s` whenever `1 < a`. -/
+public theorem finiteHeckeEulerFactor_hasProdUniformlyOn {a : ℝ} (ha : 1 < a)
+    {z : Places → ℂ} (hz : ∀ v, ‖z v‖ ≤ 1) :
+    HasProdUniformlyOn (finiteHeckeEulerFactor z)
+      (fun s ↦ ∏' v, finiteHeckeEulerFactor z v s) {s : ℂ | a ≤ s.re} := by
+  obtain ⟨M, hM, hbound⟩ := finiteHeckeEulerFactor_norm_sub_one_majorant ha hz
+  let S : Set ℂ := {s | a ≤ s.re}
+  have hn (s : ℂ) (hs : s ∈ S) (v : Places) : finiteHeckeEulerFactor z v s ≠ 0 :=
+    inv_ne_zero (finiteHecke_denom_ne_zero (hz v) (zero_lt_one.trans (ha.trans_le hs)))
+  have hlog : SummableUniformlyOn (fun v s ↦ log (finiteHeckeEulerFactor z v s)) S := by
+    simpa only [add_sub_cancel] using
+      (hM.hasSumUniformlyOn_log_one_add (f := fun v s ↦ finiteHeckeEulerFactor z v s - 1)
+        (K := S) (.of_forall hbound)).summableUniformlyOn
+  -- A common upper bound on the real part lets us exponentiate uniformly.
+  refine hasProdUniformlyOn_of_clog hlog hn ⟨∑' v, M v, ?_⟩
+  rintro _ ⟨s, hs, rfl⟩
+  have hls := hlog.summable hs
+  dsimp only
+  rw [Complex.re_tsum hls]
+  refine (Complex.reCLM.summable hls).tsum_le_tsum (fun v ↦ ?_) hM
+  rw [Complex.log_re]
+  calc
+    Real.log ‖finiteHeckeEulerFactor z v s‖ ≤ ‖finiteHeckeEulerFactor z v s‖ - 1 :=
+      Real.log_le_sub_one_of_pos (norm_pos_iff.mpr (hn s hs v))
+    _ ≤ ‖finiteHeckeEulerFactor z v s - 1‖ := by
+      simpa only [norm_one] using norm_sub_norm_le (finiteHeckeEulerFactor z v s) 1
+    _ ≤ M v := hbound v s hs
 
 /-- The all-place product converges uniformly on compact subsets of `Re s > 1`. -/
 public theorem finiteHeckeEulerFactor_hasProdLocallyUniformlyOn {z : Places → ℂ}
@@ -125,19 +159,7 @@ public theorem finiteHeckeEulerFactor_hasProdLocallyUniformlyOn {z : Places → 
   · rw [h, hasProdUniformlyOn_iff_tendstoUniformlyOn]
     exact tendstoUniformlyOn_empty
   obtain ⟨s₀, hs₀, hmin⟩ := hc.exists_isMinOn h continuous_re.continuousOn
-  have ha : 1 < s₀.re := hS hs₀
-  have hpos (s) (hs : s ∈ S) : 0 < s.re := zero_lt_one.trans (hS hs)
-  have hp := (summable_eulerBound (K := K) ha).hasProdUniformlyOn_one_add
-    (f := eulerPerturbation z) hc
-    (.of_forall fun v s hs ↦ norm_eulerPerturbation_le ha.le (hz v) (hmin hs))
-    (fun v s hs ↦ (differentiableAt_eulerPerturbation (hz v) (hpos s hs)).continuousAt.continuousWithinAt)
-  have hprod (F : Finset Places) : S.EqOn (fun s ↦ ∏ v ∈ F, (1 + eulerPerturbation z v s))
-      (fun s ↦ ∏ v ∈ F, finiteHeckeEulerFactor z v s) := by
-    intro s hs
-    simp only [eulerFactor_eq_one_add (hz _) (hpos s hs)]
-  refine (hp.congr (.of_forall hprod)).congr_right ?_
-  intro s hs
-  simp only [eulerFactor_eq_one_add (hz _) (hpos s hs)]
+  exact (finiteHeckeEulerFactor_hasProdUniformlyOn (hS hs₀) hz).mono fun _ hs ↦ hmin hs
 
 public theorem finiteHeckeEulerProduct_ne_zero {z : Places → ℂ} (hz : ∀ v, ‖z v‖ ≤ 1)
     {s : ℂ} (hs : 1 < s.re) : (∏' v, finiteHeckeEulerFactor z v s) ≠ 0 := by

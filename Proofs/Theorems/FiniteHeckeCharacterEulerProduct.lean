@@ -74,6 +74,29 @@ public theorem finiteHeckeEulerFactor_eq_one_of_ramified (v : Places) (s : ℂ)
   ∏' v : Places,
     ((χ.localPolynomial v).eval (Complex.exp (-s * (Real.log (finitePlaceNorm v) : ℂ))))⁻¹
 
+private theorem finiteHeckeCharacterEulerProduct_eq :
+    finiteHeckeCharacterEulerProduct χ = finiteHeckeEulerProduct (finiteHeckeCoefficient χ) := by
+  funext s
+  unfold finiteHeckeCharacterEulerProduct finiteHeckeEulerProduct
+  exact tprod_congr fun v ↦ finiteHecke_localPolynomial_eval_inv χ v s
+
+/-- The finite product for a unitary Hecke character converges uniformly on each
+closed half-plane `a ≤ Re s` with `1 < a` (B.1.1). The same majorant bounds the
+absolute deviations from one at every argument in that half-plane. -/
+public theorem finiteHeckeCharacterEulerProduct_convergesOn
+    (hχ : ∀ x : IdeleClassGroup (𝓞 K) K, ‖χ x‖ = 1) {a : ℝ} (ha : 1 < a) :
+    HasProdUniformlyOn
+      (fun (v : Places) s ↦
+        ((χ.localPolynomial v).eval (Complex.exp (-s * (Real.log (finitePlaceNorm v) : ℂ))))⁻¹)
+      (finiteHeckeCharacterEulerProduct χ) {s : ℂ | a ≤ s.re} ∧
+    ∃ M : Places → ℝ, Summable M ∧ ∀ v s, a ≤ s.re →
+      ‖((χ.localPolynomial v).eval (Complex.exp (-s * (Real.log (finitePlaceNorm v) : ℂ))))⁻¹
+        - 1‖ ≤ M v := by
+  rw [finiteHeckeCharacterEulerProduct_eq]
+  simp only [finiteHecke_localPolynomial_eval_inv]
+  exact ⟨finiteHeckeEulerFactor_hasProdUniformlyOn ha (norm_finiteHeckeCoefficient_le_one χ hχ),
+    finiteHeckeEulerFactor_norm_sub_one_majorant ha (norm_finiteHeckeCoefficient_le_one χ hχ)⟩
+
 /-- The finite-place part of (B.4.2.5)–(7) for a unitary Hecke character. -/
 public theorem finiteHeckeCharacterEulerProduct_logDeriv
     (hχ : ∀ x : IdeleClassGroup (𝓞 K) K, ‖χ x‖ = 1) {s : ℂ} (hs : 1 < s.re) :
@@ -81,11 +104,7 @@ public theorem finiteHeckeCharacterEulerProduct_logDeriv
     DifferentiableAt ℂ (finiteHeckeCharacterEulerProduct χ) s ∧
     HasSum (finiteHeckeTerm (finiteHeckeCoefficient χ) s)
       (-logDeriv (finiteHeckeCharacterEulerProduct χ) s) := by
-  have hP : finiteHeckeCharacterEulerProduct χ = finiteHeckeEulerProduct (finiteHeckeCoefficient χ) := by
-    funext t
-    unfold finiteHeckeCharacterEulerProduct finiteHeckeEulerProduct
-    exact tprod_congr fun v ↦ finiteHecke_localPolynomial_eval_inv χ v t
-  rw [hP]
+  rw [finiteHeckeCharacterEulerProduct_eq]
   exact finiteHeckeEulerProduct_logDeriv (norm_finiteHeckeCoefficient_le_one χ hχ) hs
 
 end Masullo

@@ -1,0 +1,20 @@
+{
+  "key": "2cf5ab7cb3ca40495d7a98b8585413897566bd2e26b2402de5a920ed986cd57c",
+  "revision": "5548bd9a967e6c8f733782c90afe3491ba6bf4d1cdf273db597e10471850104a",
+  "outcome": "landed",
+  "source": "Masullo, The Music of the Primes, pinned SHA-256 e039d3f6cf0a4b14f03c7edb85097752dd65c0a2fe543c76fe992be234f97bf5. Chapter-01, §1.2 opening, printed p. 12 (one-based PDF ordinal 12): L(s,χ) is completed, and L_f(s,χ) = ∏_{v finite} L_v(χ_v |·|_v^s) for χ ∈ Ĉ_F and Re(s) > 1. Rendered supporting pages (printed page = PDF ordinal): (3.1.1.2), p. 119, abscissa of χ |·|^s; §3.1.2 and §3.1.2.1, p. 120, coordinate insertion and normalized q_v; (3.2.1.1), p. 122, unramified uniformizer value and denominator; Lemma 3.2.1.1, (3.2.1.2)–(5), and Definition 3.2.1.2, p. 123, compact-uniform completed product and Gamma factors; Definition 3.2.1.4, pp. 123–124, especially (3.2.1.7), locally uniform finite-place product; Appendix B.1.1 opening, p. 588, all-prime product with χ(p) = 0 when ramified, absolutely convergent for Re(s) > 1 and uniformly convergent on the entire Re(s) ≥ 1 + ε for every ε > 0.",
+  "finding": "For every number field and actual continuous idele-class character χ with unit norm, the net of partial products of the inverse evaluated χ.localPolynomial factors converges uniformly on each closed half-plane a ≤ Re(s), a > 1, to the existing finiteHeckeCharacterEulerProduct χ. A summable majorant, independent of s in that set, bounds the absolute deviations from 1, giving absolute convergence at every Re(s) > 1. The opening notation gives no proof; Lemma 3.2.1.1 refers to comparison with the Riemann zeta Euler product. The Lean proof uses an existing summable residue-norm bound from ideal counting, uniform summability of the principal logarithms, and a common upper bound on the real parts of their sum to exponentiate uniformly. The existing finiteHecke_localPolynomial_eval_uniformizer and finiteHeckeEulerFactor_eq_one_of_ramified identify the literal local factors, and completedHeckeEulerProduct multiplies the same finite term by the finite Archimedean Gamma product. This is finite-place convergence and its attachment in the defining completed product, not identification with another L-function or convergence of a completed partial-product net uniformly on the unbounded half-plane. It does not assert convergence on the 1-line, continuation, or a zero-location result. Source comparison, normalization remarks and ordinary-import checks: .godel/formalize/finite-hecke-half-plane.md.",
+  "evidence": [
+    {
+      "path": "Proofs/Theorems/FiniteHeckeCharacterEulerProduct.lean",
+      "declarations": ["Masullo.finiteHeckeCharacterEulerProduct_convergesOn"]
+    },
+    {
+      "path": "Proofs/Lemmas/FiniteHeckeEulerBounds.lean",
+      "declarations": [
+        "Masullo.finiteHeckeEulerFactor_norm_sub_one_majorant",
+        "Masullo.finiteHeckeEulerFactor_hasProdUniformlyOn"
+      ]
+    }
+  ]
+}
