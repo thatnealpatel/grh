@@ -97,5 +97,11 @@ func yahPrompt(t *testing.T, node *godel.Node) string {
 	if len(node.Args) != 5 || !slices.Equal(node.Args[:4], []string{"-yolo", "-effort", "high", "-append"}) {
 		t.Fatalf("unexpected Yah arguments: %q", node.Args)
 	}
-	return node.Args[4]
+	prompt := node.Args[4]
+	for _, text := range []string{"~/t/grh as scratch", "outside project history", "self-contained handoffs in accepted history", "Scratch artifacts must not be required evidence"} {
+		if !strings.Contains(prompt, text) {
+			t.Errorf("Yah prompt omits scratch policy: %q", text)
+		}
+	}
+	return prompt
 }

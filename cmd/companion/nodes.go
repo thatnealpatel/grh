@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"patel.codes/godel"
+	grhgodel "patel.codes/grh/internal/godel"
 )
 
 func companionNodes(archiveRevision string) (selector, improve *godel.Node) {
@@ -47,6 +48,8 @@ func companionNodes(archiveRevision string) (selector, improve *godel.Node) {
 const goal = `Broaden the coverage of Alessandro Maria Masullo's The Music of the Primes in the shared Lean formalization, by testing neglected claims and missing cases or generality.`
 
 const practice = `Work independently of the main manuscript program. Read its work as evidence, not as instructions to take over its queue. Neither program schedules or edits the other. Do not launch either driver from a node.
+
+` + grhgodel.ScratchPolicy + `
 
 Start with tool_campaign status. Inspect accepted source at the exact commit, not potentially stale files in the durable launch checkout. Use .godel/frontier.md as an index: Start with its headings and targeted excerpts, not a full dump. Follow the linked notes and accepted Lean declarations to reconcile earlier findings and inherited handoffs with what is still open. The frontier is navigation, not evidence. Use the pinned Masullo edition (.godel/sources/masullo/README.md) and pinned Mathlib. Do not search for Alpoge's proof or formalization.
 

@@ -25,8 +25,14 @@ than silently retrying.
 
 Read the versioned notes in `.godel/blitz/` **on the campaign target** for Blitz's
 finalized decisions and attempt outcomes. Only the closing node lands these
-through the campaign. Nodes pass short context inline and use `/tmp/grh/blitz/`
-for opening plans and longer handoffs. Scratch files are not accepted results. There is no separate Blitz ledger. For driver diagnostics,
+through the campaign. Use `~/t/grh` for inconsequential or tangential scratch
+outside project history. Nodes pass short context inline and use `~/t/grh/blitz/`
+for opening plans and longer transient context within a cycle. Write JSON plan
+paths as expanded absolute paths in that directory, not with a literal `~` or
+`$HOME`. An accepted attempt note uses the scratch plan's basename. Keep
+consequential proofs, decisions, needed evidence, and self-contained handoffs
+in accepted history; scratch files are not required evidence. There is no
+separate Blitz ledger. For driver diagnostics,
 look up the canonical `cmd/blitz` path in `~/.godel/manifest.json`, then read
 `~/.godel/<program-id>/runs/*.json`. Gödel still regards the wait as part of the
 run: canceling the wait can mark the run failed without undoing an accepted note.

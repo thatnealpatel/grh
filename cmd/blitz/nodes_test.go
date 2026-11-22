@@ -14,7 +14,9 @@ import (
 const (
 	blitzTestLaunch   = "1111111111111111111111111111111111111111"
 	blitzTestSnapshot = "2222222222222222222222222222222222222222"
-	blitzTestPlan     = "/tmp/grh/blitz/attempt-fixture.md"
+	blitzTestHome     = "/home/blitz-fixture"
+	blitzTestScratch  = blitzTestHome + "/t/grh/blitz"
+	blitzTestPlan     = blitzTestScratch + "/attempt-fixture.md"
 	blitzTestClosed   = "4444444444444444444444444444444444444444"
 	blitzTestAttempt  = ".godel/blitz/attempt-fixture.md"
 	blitzTestDecision = ".godel/blitz/decision-fixture.md"
@@ -25,7 +27,7 @@ func TestBlitzDecline(t *testing.T) {
 	for _, status := range []string{"CLOSED", "UNCHANGED"} {
 		t.Run(status, func(t *testing.T) {
 			pauses := 0
-			read := blitzNodes(blitzTestLaunch+"\n", func() error { pauses++; return nil })
+			read := newTestBlitz(t, blitzTestLaunch+"\n", func() error { pauses++; return nil })
 			prompt, _ := checkBlitzNode(t, read, "Read evidence")
 			for _, text := range []string{blitzTestLaunch, "~/.godel/manifest.json", "cmd/godel", "cmd/companion", ".godel/blitz/", "exact current accepted commit"} {
 				if !strings.Contains(prompt, text) {
@@ -63,8 +65,8 @@ func TestBlitzEvidenceHandoff(t *testing.T) {
 	// The first live reader produced a valid reply two bytes over the
 	// old limit.
 	const envelope = `{"revision":"` + blitzTestSnapshot + `","evidence":"`
-	for _, evidence := range []string{strings.Repeat("e", 4098-len(envelope)-2), "/tmp/grh/blitz/reader-fixture.md"} {
-		read := blitzNodes(blitzTestLaunch, nil)
+	for _, evidence := range []string{strings.Repeat("e", 4098-len(envelope)-2), blitzTestScratch + "/reader-fixture.md"} {
+		read := newTestBlitz(t, blitzTestLaunch, nil)
 		assess := advanceBlitz(t, read, envelope+evidence+`"}`)
 		_, data := checkBlitzNode(t, assess, "Assess admission")
 		if data.Reading != evidence {
@@ -75,7 +77,7 @@ func TestBlitzEvidenceHandoff(t *testing.T) {
 
 func TestBlitzModeSwitchesSharePassCap(t *testing.T) {
 	pauses := 0
-	read := blitzNodes(blitzTestLaunch, func() error { pauses++; return nil })
+	read := newTestBlitz(t, blitzTestLaunch, func() error { pauses++; return nil })
 	assess := advanceBlitz(t, read, blitzTestReading)
 	plan := advanceBlitz(t, assess, blitzAssessment("RH"))
 	_, data := checkBlitzNode(t, plan, "Plan the admitted attempt")
@@ -83,7 +85,10 @@ func TestBlitzModeSwitchesSharePassCap(t *testing.T) {
 		t.Fatalf("planner lost the selected target or brief: %+v", data)
 	}
 	open := advanceBlitz(t, plan, blitzPlanReply("INFORMAL"))
-	_, data = checkBlitzNode(t, open, "Open the attempt before any pass work")
+	prompt, data := checkBlitzNode(t, open, "Open the attempt before any pass work")
+	if !strings.Contains(prompt, blitzTestScratch+"/attempt-<unique-id>.md") || !strings.Contains(prompt, "expanded absolute path to the scratch plan") {
+		t.Error("opener did not advertise the expanded absolute plan path")
+	}
 	if data.Plan["stop"] != "Stop on the specified counterexample or a checked endpoint" || data.Plan["mode"] != "INFORMAL" || data.Current != nil {
 		t.Fatalf("open node did not receive the plan before any pass: %+v", data)
 	}
@@ -112,7 +117,7 @@ func TestBlitzModeSwitchesSharePassCap(t *testing.T) {
 		pass = advanceBlitz(t, synth, blitzSynthesis(tc.next, tc.report))
 	}
 	close := pass
-	prompt, data := checkBlitzNode(t, close, "Close this cycle")
+	prompt, data = checkBlitzNode(t, close, "Close this cycle")
 	if data.Current != nil || len(data.Passes) != 3 || !strings.Contains(data.Finish, "three-pass cap") || data.ScratchPlan != blitzTestPlan {
 		t.Fatalf("a mode switch at the cap must close the original attempt: %+v", data)
 	}
@@ -128,6 +133,8 @@ func TestBlitzModeSwitchesSharePassCap(t *testing.T) {
 		t.Fatal("paused before recording the final outcome")
 	}
 	rejectBlitz(t, close, blitzHandoff("CLOSED", blitzTestDecision, blitzTestClosed, "Closed a different note."))
+	rejectBlitz(t, close, blitzHandoff("CLOSED", ".godel/blitz/attempt-other.md", blitzTestClosed, "Mismatched basename."))
+	rejectBlitz(t, close, blitzHandoff("CLOSED", ".godel/blitz/../blitz/attempt-fixture.md", blitzTestClosed, "Traversed to the matching note."))
 	rejectBlitz(t, close, blitzHandoff("UNCHANGED", blitzTestAttempt, blitzTestClosed, "Did not close the opened note."))
 	if pauses != 0 {
 		t.Fatal("paused after an unconfirmed attempt outcome")
@@ -138,7 +145,7 @@ func TestBlitzModeSwitchesSharePassCap(t *testing.T) {
 }
 
 func TestBlitzEarlyDoneAndCanceledPause(t *testing.T) {
-	read := blitzNodes("$Format:%H$\n", func() error { return context.Canceled })
+	read := newTestBlitz(t, "$Format:%H$\n", func() error { return context.Canceled })
 	prompt, _ := checkBlitzNode(t, read, "Read evidence")
 	if strings.Contains(prompt, "$Format:%H$") || strings.Contains(prompt, "Gödel launch source commit:") {
 		t.Fatal("unexpanded archive marker is not launch provenance")
@@ -164,7 +171,7 @@ func TestBlitzEarlyDoneAndCanceledPause(t *testing.T) {
 }
 
 func TestBlitzRejectsMalformedTransitions(t *testing.T) {
-	read := blitzNodes(blitzTestLaunch, func() error { t.Fatal("malformed transition reached the pause"); return nil })
+	read := newTestBlitz(t, blitzTestLaunch, func() error { t.Fatal("malformed transition reached the pause"); return nil })
 	assess := advanceBlitz(t, read, blitzTestReading)
 	plan := advanceBlitz(t, assess, blitzAssessment("RH"))
 	open := advanceBlitz(t, plan, blitzPlanReply("INFORMAL"))
@@ -189,7 +196,11 @@ func TestBlitzRejectsMalformedTransitions(t *testing.T) {
 		}},
 		{"open", open, []string{
 			`{"path":".godel/blitz/attempt-fixture.md"}`,
-			`{"path":"/tmp/grh/blitz/attempt-../other.md"}`,
+			`{"path":"~/t/grh/blitz/attempt-fixture.md"}`,
+			`{"path":"$HOME/t/grh/blitz/attempt-fixture.md"}`,
+			`{"path":"/home/other/t/grh/blitz/attempt-fixture.md"}`,
+			`{"path":"` + blitzTestScratch + `/../blitz/attempt-fixture.md"}`,
+			`{"path":"` + blitzTestScratch + `/attempt-../other.md"}`,
 		}},
 		{"pass", pass, []string{`{"report":" \t\n"}`, `{"report":"a report","next":"DONE"}`}},
 		{"synthesis", synth, []string{
@@ -210,6 +221,25 @@ func TestBlitzRejectsMalformedTransitions(t *testing.T) {
 	}
 }
 
+func TestBlitzRequiresAbsoluteHome(t *testing.T) {
+	for _, home := range []string{"", "relative-home"} {
+		t.Setenv("HOME", home)
+		if node, err := blitzNodes(blitzTestLaunch, nil); node != nil || err == nil {
+			t.Errorf("HOME %q: expected a scratch directory error and no node, got %v, %v", home, node, err)
+		}
+	}
+}
+
+func newTestBlitz(t *testing.T, revision string, pause func() error) *godel.Node {
+	t.Helper()
+	t.Setenv("HOME", blitzTestHome)
+	node, err := blitzNodes(revision, pause)
+	if err != nil {
+		t.Fatal(err)
+	}
+	return node
+}
+
 func checkBlitzNode(t *testing.T, node *godel.Node, role string) (string, blitzEvidence) {
 	t.Helper()
 	if node == nil || node.Next == nil || node.Exec != "yah" || node.Directory != "../.." || len(node.Env) != 0 {
@@ -221,6 +251,11 @@ func checkBlitzNode(t *testing.T, node *godel.Node, role string) (string, blitzE
 	prompt := node.Args[4]
 	if !strings.Contains(prompt, role) {
 		t.Fatalf("expected Yah role %q, got prompt:\n%s", role, prompt)
+	}
+	for _, text := range []string{"~/t/grh as scratch", "outside project history", "self-contained handoffs in accepted history", "Scratch artifacts must not be required evidence", blitzTestScratch} {
+		if !strings.Contains(prompt, text) {
+			t.Errorf("role %q omitted scratch guidance: %q", role, text)
+		}
 	}
 	_, raw, ok := strings.Cut(prompt, "\nAttributed cycle data (JSON):\n")
 	var data blitzEvidence

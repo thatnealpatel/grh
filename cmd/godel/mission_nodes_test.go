@@ -30,6 +30,11 @@ func TestMissionNodesUseHeadlessYah(t *testing.T) {
 			if !strings.Contains(n.Args[4], goal) {
 				t.Error("appended instructions omit manuscript goal")
 			}
+			for _, text := range []string{"~/t/grh as scratch", "outside project history", "self-contained handoffs in accepted history", "Scratch artifacts must not be required evidence"} {
+				if !strings.Contains(n.Args[4], text) {
+					t.Errorf("appended instructions omit scratch policy: %q", text)
+				}
+			}
 			if !strings.HasPrefix(n.Args[4], "Gödel launch source commit: "+revision+".") {
 				t.Error("appended instructions omit the exact archive commit")
 			}

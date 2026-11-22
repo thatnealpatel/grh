@@ -37,7 +37,10 @@ func run(ctx context.Context) error {
 	}
 	// Enter leaves us in the durable cmd/blitz directory, which Gödel uses for its
 	// history identity and the next go run .
-	node := blitzNodes(archiveRevision, func() error { return pauseBetweenCycles(ctx) })
+	node, err := blitzNodes(archiveRevision, func() error { return pauseBetweenCycles(ctx) })
+	if err != nil {
+		return err
+	}
 	runner := godel.New("Assess separately whether the accepted formalization supports a bounded attempt at classical RH or full Masullo GRH. " +
 		"Trace how the accepted results fit together and identify the assumptions each route would still require. " +
 		"Do not assume either proof is within reach or treat ordinary lemma work as a blitz.")

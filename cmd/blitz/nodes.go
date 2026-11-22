@@ -5,11 +5,14 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"os"
+	"path/filepath"
 	"slices"
 	"strings"
 	"unicode/utf8"
 
 	"patel.codes/godel"
+	grhgodel "patel.codes/grh/internal/godel"
 )
 
 const blitzMaxPasses = 3
@@ -37,13 +40,21 @@ type blitzPass struct {
 }
 
 type blitzTree struct {
-	launch string
-	pause  func() error
-	data   blitzEvidence
+	launch     string
+	scratchDir string
+	pause      func() error
+	data       blitzEvidence
 }
 
-func blitzNodes(revision string, pause func() error) *godel.Node {
-	b := blitzTree{pause: pause}
+func blitzNodes(revision string, pause func() error) (*godel.Node, error) {
+	home, err := os.UserHomeDir()
+	if err != nil {
+		return nil, fmt.Errorf("blitz scratch directory: %w", err)
+	}
+	if !filepath.IsAbs(home) {
+		return nil, errors.New("blitz scratch directory: expected an absolute home directory")
+	}
+	b := blitzTree{scratchDir: filepath.Join(home, grhgodel.ScratchPath, "blitz"), pause: pause}
 	if revision = strings.TrimSpace(revision); blitzCommit(revision) {
 		b.launch = "Gödel launch source commit: " + revision + ". This identifies the executable archive, not the current accepted evidence.\n\n"
 	}
@@ -58,7 +69,7 @@ func blitzNodes(revision string, pause func() error) *godel.Node {
 		b := b
 		b.data.Snapshot, b.data.Reading = reading["revision"], reading["evidence"]
 		return b.assess(), nil
-	})
+	}), nil
 }
 
 func (b blitzTree) node(role string, next func(godel.Result) (*godel.Node, error)) *godel.Node {
@@ -72,7 +83,7 @@ func (b blitzTree) node(role string, next func(godel.Result) (*godel.Node, error
 	}
 	return &godel.Node{
 		Exec: "yah", Directory: "../..", Next: next,
-		Args: []string{"-yolo", "-effort", "high", "-append", b.launch + blitzPractice + "\n\n" + role + "\n\nAttributed cycle data (JSON):\n" + context.String()},
+		Args: []string{"-yolo", "-effort", "high", "-append", b.launch + fmt.Sprintf(blitzPractice, b.scratchDir) + "\n\n" + role + "\n\nAttributed cycle data (JSON):\n" + context.String()},
 	}
 }
 
@@ -111,13 +122,14 @@ func (b blitzTree) plan() *godel.Node {
 }
 
 func (b blitzTree) open() *godel.Node {
-	return b.node(blitzOpen, func(r godel.Result) (*godel.Node, error) {
+	prefix := filepath.Join(b.scratchDir, "attempt-")
+	return b.node(fmt.Sprintf(blitzOpen, prefix+"<unique-id>.md"), func(r godel.Result) (*godel.Node, error) {
 		opening, err := blitzFields("open attempt", r.Text, "path")
 		if err != nil {
 			return nil, err
 		}
-		if !blitzNote(opening["path"], "/tmp/grh/blitz/attempt-") {
-			return nil, errors.New("blitz open attempt: expected a scratch plan path")
+		if !blitzNote(opening["path"], prefix) {
+			return nil, fmt.Errorf("blitz open attempt: expected an expanded absolute scratch plan path of the form %q", prefix+"<unique-id>.md")
 		}
 		b := b
 		b.data.ScratchPlan = opening["path"]
@@ -178,7 +190,7 @@ func (b blitzTree) close(reason string) *godel.Node {
 		path, rev := closed["path"], closed["revision"]
 		valid := blitzCommit(rev)
 		if plan := b.data.ScratchPlan; plan != "" {
-			valid = valid && closed["status"] == "CLOSED" && path == ".godel/blitz/"+strings.TrimPrefix(plan, "/tmp/grh/blitz/") && rev != b.data.Snapshot
+			valid = valid && closed["status"] == "CLOSED" && path == ".godel/blitz/"+filepath.Base(plan) && rev != b.data.Snapshot
 		} else {
 			valid = valid && blitzNote(path, ".godel/blitz/decision-") && (closed["status"] == "UNCHANGED" || (closed["status"] == "CLOSED" && rev != b.data.Snapshot))
 		}
@@ -258,7 +270,9 @@ Use the pinned edition (.godel/sources/masullo/README.md at the evidence revisio
 
 Only the closing role writes to .godel/blitz/, for finalized decisions and outcomes. Any proof changes must be scoped to this blitz and written in isolated campaign workspaces, never the durable launch checkout. Follow the campaign workflow in cmd/godel/README.md. Do not add top-level directories under Proofs, touch driver code, or make unrelated writes. Do not edit the revision graph directly. If a needed capability, check, or adoption fails, report the blocker; do not fabricate success.
 
-Return exactly one JSON object as specified by your role, with nonblank string values, no extra fields, fences, or surrounding text. Keep short handoffs inline. For long evidence, plans, or pass reports, create a fresh file under /tmp/grh/blitz/ (mkdir -p as needed) and put its absolute path in the corresponding prose field. Keep routing values inline. Read scratch files referenced by this cycle as needed; they are not accepted evidence.`
+` + grhgodel.ScratchPolicy + `
+
+Return exactly one JSON object as specified by your role, with nonblank string values, no extra fields, fences, or surrounding text. Keep short handoffs and routing values inline, except for the opening plan's path. For longer transient context within this cycle, create a fresh file in the Blitz scratch directory %q (create the directory as needed) and put its expanded absolute path in the corresponding prose field. Read referenced scratch files as needed during this cycle. Do not use them in place of accepted evidence or a self-contained final handoff.`
 
 const blitzRead = `Read evidence (read-only; do not plan, open, or attempt work). Start with tool_campaign status and pin the exact current accepted commit. Use jj --ignore-working-copy file list/show at that full commit to inspect applicable Lean declarations, .godel/frontier.md and its linked proof/source notes, the relevant mission and pinned manuscript inputs, and the prior decision and attempt notes in .godel/blitz/ (absent is empty). The frontier is navigation, not proof. Cite what the accepted tree actually contains.
 
@@ -274,9 +288,9 @@ const blitzPlan = `Plan the admitted attempt (read-only; no pass work or note ye
 
 Return {"mode":"INFORMAL or LEAN (one token)","stop":"stopping condition","plan":"bounded plan on the selected target"}.`
 
-const blitzOpen = `Open the attempt before any pass work. Write the pinned evidence revision, target, scope, stopping condition, first mode, and plan to a fresh scratch file /tmp/grh/blitz/attempt-<unique-id>.md (letters, digits, underscores, or hyphens in the ID). Do not adopt it or write in the repository.
+const blitzOpen = `Open the attempt before any pass work. Write the pinned evidence revision, target, scope, stopping condition, first mode, and plan to a fresh scratch file %q (letters, digits, underscores, or hyphens in the ID). Do not adopt it or write in the repository.
 
-Return {"path":"absolute path to the scratch plan you wrote"}.`
+Return {"path":"expanded absolute path to the scratch plan you wrote"}. Do not use a relative path or a literal ~ or $HOME in the path.`
 
 const blitzPassWork = `Coordinate only the numbered current pass for the pinned target and attempt. Before assigning work, read the scratch plan and check it against the pinned target and scope; if missing or inconsistent, do no pass work and report the blocker. If the underlying evidence changed, reconcile it without silently changing the selected target or starting a new attempt. Preserve the original stopping condition, use prior pass evidence to avoid failed routes, and keep the whole pass bounded. Use fresh Yah subagents in parallel (at most two contributors), giving them the same exact target, relevant accepted evidence and PDF locators, and distinct approaches or sub-obligations; do not feed one contributor's answer to the other as a premise. Collect both findings or mark missing checks and cancel unused work. Do not change attempt notes or start another pass.
 
@@ -290,7 +304,7 @@ const blitzSynthesize = `Synthesize the current pass (no note edits or new pass 
 
 Choose INFORMAL or LEAN for a still useful bounded next check on the same target, or DONE if the stopping condition is met or the attempt is exhausted/blocked. The shared cap is three passes across both modes: At pass three report the best supported outcome now, never request a new attempt. Return {"next":"INFORMAL, LEAN, or DONE (one token)","worked":"what advanced","failed":"what did not and why","assumptions":"exact remaining premises or why none remain","evidence":"source, review, check and artifact references with their limits","outcome":"best supported current conclusion, unresolved scope and concrete next check or reopening condition"}.`
 
-const blitzClose = `Close this cycle with a durable, nonempty handoff. Do not do new proof work or start a new attempt. If declined, record NOT_ATTEMPTED, the pinned evidence revision, both assessments, substantive reasons and the reopening condition in a .godel/blitz/decision-<unique-id>.md note. If an already accepted decision covers the same material evidence and reasons, verify and reuse that note; do not commit a heartbeat. If attempted, create a finalized ATTEMPTED report in .godel/blitz/ with the same basename as the scratch plan. Make it self-contained, not dependent on /tmp files. Retain the pinned revision, target and opening plan, and record every pass by number and mode with attributed successes, failures, review/check refs, exact remaining premises, final outcome and reopening condition. Honor the supplied finish reason, even if synthesis proposed another pass. Distinguish actual from conditional, incremental, and unverified outcomes.
+const blitzClose = `Close this cycle with a durable, nonempty handoff. Do not do new proof work or start a new attempt. If declined, record NOT_ATTEMPTED, the pinned evidence revision, both assessments, substantive reasons and the reopening condition in a .godel/blitz/decision-<unique-id>.md note. If an already accepted decision covers the same material evidence and reasons, verify and reuse that note; do not commit a heartbeat. If attempted, create a finalized ATTEMPTED report in .godel/blitz/ with the same basename as the scratch plan. Make it self-contained, not dependent on scratch files. Retain the pinned revision, target and opening plan, and record every pass by number and mode with attributed successes, failures, review/check refs, exact remaining premises, final outcome and reopening condition. Honor the supplied finish reason, even if synthesis proposed another pass. Distinguish actual from conditional, incremental, and unverified outcomes.
 
 Make declined decisions self-contained too. Verify any claimed proof landing at its exact reference. For a changed note, integrate with a subject of the form ".godel: <Capitalized imperative summary>" and verify that the exact candidate contains the intended note and no other changes. Adopt that candidate and report the outcome; if landing fails, report the blocker, not a successful handoff.
 

@@ -13,9 +13,9 @@ Yah reviewer `rlvOLyV` independently approved the statement. A later
 returned the same error. Neither call produced a candidate. The saved
 source then passed warning-as-error elaboration, separate kernel replay,
 and a built signature and axiom check in scratch. That is not a full
-candidate audit. The work artifact and check logs are in
-`/tmp/grh-character.wl9Bxo1P/`; its result and runnable successor are
-recorded in the [proof handoff](../../obligations/hecke-right-line-majorant.md#continuous-one-parameter-character-classification).
+candidate audit. The work artifact and check logs remained in that run's
+scratch directory; the result and runnable successor are recorded in the
+[proof handoff](../../obligations/hecke-right-line-majorant.md#continuous-one-parameter-character-classification).
 
 **Recovery control:** In improvement session
 `01a20114-4aae-7459-b5c8-bb52f9adc5cf`, the accepted base had advanced to
