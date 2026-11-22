@@ -96,21 +96,53 @@ go run ./cmd/godel audit-local "$CANDIDATE" \
   Masullo.ideleLogNorm_section Masullo.ideleClassLogNorm_section Masullo.ideleClassLogSplit_mk
 ```
 
-**Next:** Construct the map from finite ideles to nonzero fractional
-ideals in (A.2.3.23), Proposition A.2.3.9, PDF p. 552. For a finite idele
-$g_f$, its $v$-th ideal exponent should be the negative of the additive
-exponent of the Mathlib valuation of $(g_f)_v$ in `ℤᵐ⁰`. Verify finite
-support from integrality of both $g_f$ and $g_f^{-1}$, check that the
-exponent of the image ideal is exactly this integer at each place, and
-prove that diagonal $a\in K^\times$ maps to $(a)$. The pinned
-`FractionalIdeal.count_finsuppProd`,
-`FractionalIdeal.finprod_heightOneSpectrum_factorization'`, and
-`adicCompletion.valuation` give concrete interfaces for this step.
-A single-place uniformizer will then give surjectivity, and the
-valuation-one test gives the finite integral unit kernel. This is a
-route to the class group fibers and compact cover in Proposition A.2.3.10,
-not a proof of them. The Archimedean fundamental domain, norm-one
-compactness (Theorem A.1.4.3(1), p. 542), and the comparison of the
-constructed product Haar measure with the counting-quotient volume
-(A.3.2.1), pp. 559–560, remain open. The source anchor for this next step
-was checked in Markdown and numbered PDF layout, not rendered pages.
+## Fractional ideal of a finite idele
+
+[`Theorems.FiniteIdeleIdeal`](../../Proofs/Theorems/FiniteIdeleIdeal.lean)
+constructs the algebraic map before the principal quotient in Proposition
+A.2.3.9, (A.2.3.23), PDF p. 552. Masullo states the strict exact sequence
+and invokes the classical quotient description in §A.1.5, pp. 544–545;
+the manuscript does not give the fractional-ideal lift used here. The
+lift is a project proof, not a claim of strict exactness in Lean.
+
+`finiteIdeleIdeal` sends a finite idele to the product of fractional
+prime powers. The exponent at $v$ is the negative of the logarithm
+in Mathlib's value monoid $\mathbb Z^{\mathrm{m},0}$: A uniformizer has
+value $\exp(-1)$ in this monoid and gives exponent $+1$. A finite idele
+and its inverse have integral coordinates away from finitely many places,
+so only finitely many exponents are nonzero. Unique factorization proves
+the exponent law and multiplicativity. The field and local valuations
+agree on diagonal coordinates; writing the diagonal element as a quotient
+of integers then gives its principal fractional ideal. To lift any
+fractional ideal, prescribe its finitely supported exponents by local
+valuation surjectivity, and take the resulting finite idele. The kernel
+before quotienting is the all-valuation-one condition, equivalently an
+integral unit at each place. These source readings are provisional:
+Pinned Markdown and numbered PDF layout, without visual verification.
+
+Independent Yah statement review: Session
+`01a2028c-784f-7239-86c7-e9cadd56ef88`, child `review-finite-ideal`
+(`mDkPtHS`). It checked the sign against the uniformizer, the exact
+five endpoints for arbitrary number fields, and the distinction between
+the finite-idele lift and the manuscript's strict exact sequence.
+
+```sh
+go run ./cmd/godel audit-local "$CANDIDATE" \
+  Lemmas.FiniteIdeleIdealCoordinates Theorems.FiniteIdeleIdeal -- \
+  Masullo.finiteIdeleIdeal Masullo.count_finiteIdeleIdeal \
+  Masullo.finiteIdeleIdeal_unitEmbedding Masullo.finiteIdeleIdeal_eq_one_iff \
+  Masullo.finiteIdeleIdeal_surjective
+```
+
+**Next:** Compose the finite projection and `finiteIdeleIdeal` with
+`ClassGroup.mk K`. Prove that the kernel consists exactly of the principal
+ideles times the subgroup whose finite coordinates are all units, and
+factor through the actual idele class group. For (A.2.3.24), correct a
+representative's norm by `ideleLogSection`, which leaves the finite
+coordinates unchanged, and prove the exact norm-one kernel statement.
+These are the algebraic inputs to the representatives (A.2.3.12), p. 549,
+and to the relatively compact covering in Proposition A.2.3.10, p. 552.
+Continuity and openness to the discrete class group, the Archimedean
+fundamental domain, compactness of norm-one classes (Theorem A.1.4.3(1),
+p. 542), and the quotient Haar volume (A.3.2.1), pp. 559–560, are separate
+obligations.
