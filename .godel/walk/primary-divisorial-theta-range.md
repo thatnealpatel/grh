@@ -128,6 +128,44 @@ principal-value membership, or the general closed range; no Lean
 declaration is added or used to prove the refutation. Owning
 source-review session: `01a2056a-f3ce-7a75-88fb-d796bae9feb5`.
 
+## Lean bridge for the literal cut at 2
+
+[`Masullo.rationalAdeleStageCell_two_eq_primeUnits`][two-cut] has no
+additional hypotheses. On the full rational adeles, with unrestricted
+real coordinate, let $W$ be the integral-finite cylinder, $U$ the unit
+condition at $2$, and $C_j$ the level-$2$ stage cell of index $j$. The
+endpoint gives $C_0=W\setminus U$ and $C_2=W\cap U$. The residue theorem
+applied to $x/2$ covers $W$ by these two cells. Their finite coordinates
+are $2z$ and $1+2z$, respectively, with $z$ integral at every finite
+place. The completion valuation gives $v_2(2z)<1$ and $v_2(1+2z)=1$.
+
+The manuscript mapping inherits the rendered reading above (pp. 26–27,
+§1.3.2) and the [fixed-stage hypotheses][stage] (p. 25, (1.3.2.1)). It
+uses $F=\mathbf Q$, $S=\{\infty,2\}$, the trivial character, and
+$P_1=\{2\}$, not the disjoint-from-$S$ convention of (1.3.2.2). The
+Lean identities do not depend on an isotype or on a theta-range claim.
+Independent exact-source statement and applicability review:
+`two-cell-statement` (`ArgOQLU`), in Yah session
+`01a2058a-1b00-77fb-96bd-3b7e63112704`. The same session owns the
+candidate build and fresh signature and axiom checks. No new rendered
+reading was used for this bridge.
+
+**Next formal check: The two moments.** In the same full-adele
+coordinate, `rationalAdeleBox_stageCell` already identifies the stage
+boxes as cell indicators times real profiles. The new identities reduce
+the cut of the difference of the $C_2$ and $C_0$ tensors to the $C_2$
+tensor. Use `rationalAdeleLFAssembly_fourier` at factorial index $1$
+(level $2$): In `rationalAdeleStageFourier_apply` the zero-frequency
+column has coefficient $1/2$ at both indices. The remaining check is to
+assemble the profiles and prove the zero spatial and Fourier moments
+before the cut and the nonzero Fourier moment after it, for a real
+Schwartz profile $b$ with $b(0)=0$ and $\int b\ne0$. This is a Lean
+continuation of the informal calculation above, not a further source
+verdict. Excluding a different two-moment representative after averaging
+theta, and the separate closedness question, are not part of it.
+
+[two-cut]: ../../Proofs/Theorems/RationalAdeleLiteralTwoCut.lean
+[stage]: fixed-stage-theta-representatives.md
 [source]: ../sources/masullo/README.md
 [closed]: global-orbital-submodule.md
 [step]: primary-divisorial-mellin-step.md
