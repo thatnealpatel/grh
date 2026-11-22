@@ -661,23 +661,111 @@ go run ./cmd/godel audit-local "$CANDIDATE" \
   Masullo.ideleLogSplit_haar Masullo.measure_ideleFundamentalDomain_of_logSplit
 ```
 
-### Next normalization step: Identify the counting-normalized quotient Haar
+### Checked counting-normalized Haar on the norm-one classes
 
-Let `ν` be the Haar factor constructed above. Let
-`D := ideleFundamentalDomain v r`, and let `q₁` be the restriction
-of the principal quotient to `ideleClassNormOne`. Show that
-`Measure.map q₁ (ν.restrict D)` is Haar on the actual quotient and
-satisfies Weil's formula for counting measure on the principal
-subgroup, as in Theorem D.1.2.1, p. 747. Its mass comes from
-`measure_ideleFundamentalDomain_of_logSplit`; expand the angular
-product to $2^{r_1}(2\pi)^{r_2}$ for the numerical form of (A.3.2.1).
-For the immediate next step, construct the actual surjective open map
-`q₁` by restricting `QuotientGroup.isOpenQuotientMap_mk` to the
-preimage of the norm-one classes, identified by `ideleClassLogNorm_mk`,
-and prove its fibres are the principal orbits. The existing
-fundamental-domain API gives integration of sums over translates on
-the restricted pushforward once the periodization descends as a
-Borel function. Discrete-kernel quotient charts give a route to
-measurable descent. Invariance can be proved independently by
-comparing the domain with its translate. This is a separate bridge,
-not a consequence of the strip mass alone.
+[`Theorems.IdeleClassQuotientNormOne`](../../Proofs/Theorems/IdeleClassQuotientNormOne.lean)
+restricts the actual principal quotient to `q₁ : ideleNormOne →*
+ideleClassNormOne` on the inherited subgroup topologies, using the norm
+descent in (A.1.3.6), p. 542. It is surjective and open; a fibre is exactly
+one orbit for `x ↦ d a * x`, `a : Kˣ`, with `d = idelePrincipalNormOne`.
+The diagonal is discrete, so `q₁` is locally injective. This relates the
+pointwise partition of Proposition A.2.3.10(2), (A.2.3.25)–(26), p. 552,
+to the actual class group, without assigning it an auxiliary topology.
+
+[`Theorems.IdeleClassQuotientHaar`](../../Proofs/Theorems/IdeleClassQuotientHaar.lean)
+implements the restriction-pushforward prescription in Remark A.5.2.7,
+p. 571: For an ideal-class section `r` and infinite sector place `v`,
+let `D = ideleFundamentalDomain v r` and `η = (ν.restrict D).map q₁`.
+For `ν` Haar and `ν D < ∞`, `η` is Haar. Its open positivity uses the
+countable principal cover of every saturated preimage, not just the
+invariance of `η`. The nonnegative and complex Borel versions of the
+Weil identity (D.1.2.1), p. 747, fix its scale: Their inner sum is over
+`Kˣ` with one count per element, reindexed by the bijection
+`idelePrincipalIndex` to the opposite principal subgroup acting on the
+fundamental domain. The complex formula assumes a Borel `L¹(ν)` function
+and gives an `L¹(η)` periodization with absolute summability for every
+representative of almost every class. The pointwise Lean `tsum` uses its
+usual convention on exceptional fibres. This is not an implementation of
+the theorem for arbitrary functions measurable only in the completion.
+
+The project supplies the Borel descent needed for these exact formulas:
+[`Lemmas.IdelePrincipalPeriodization`](../../Proofs/Lemmas/IdelePrincipalPeriodization.lean)
+uses the fibre characterization and continuous inverse charts on the
+compact target to prove that every orbit-constant Borel function has a
+Borel lift to the classes. The partition alone does not imply that
+measurability, and the generic periodization lemma takes it as a hypothesis.
+
+`measure_ideleClassNormOne_univ_of_logSplit` computes the mass prescribed
+by Definition A.3.2.1, pp. 559–560, from the upstairs local product
+(A.3.2.5), p. 560, and the length-one strip of §A.3.3.1, p. 561. The
+angular factor is now explicitly $2^{r_1}(2\pi)^{r_2}$, from the two
+normalized local angular masses. Thus the mass is
+$h_K R_K 2^{r_1}(2\pi)^{r_2}/(w_K\sqrt{|d_K|})$.
+`exists_discriminantNormalizedIdeleClassNormOneHaar` discharges the
+upstream existence and normalization premises: It produces the upstairs
+Haar with every admissible stage restriction, its norm-one Haar factor
+in the exact Lebesgue log split, and the Haar predicate and numerical
+mass of `η`. Its parameters are any infinite sector place and any
+ideal-class section (available by `ideleIdealClass_normOne_surjective`).
+This construction does not restrict upstairs Haar to the norm-one fibre
+and does not yet construct counting-normalized Haar on the full classes.
+
+Independent Yah statement review: Session
+`01a20321-beae-7d49-8fe9-5c1015370cb1`, child `review-norm-one-quotient`
+(`uJQsEiS`, read-only output `6633108634fb76da161e26f1ea8a4d70318efb69`).
+Pinned Markdown and numbered PDF layout support the locators; the visual
+reading remains provisional. `lake --wfail build Proofs` and
+`lake env leanchecker Theorems.IdeleClassQuotientHaar` passed in the proof
+workspace. Built signatures and transitive axioms were checked with
+`#check` and `#print axioms`; the endpoints use only `propext`,
+`Classical.choice`, and `Quot.sound`. Exact-candidate replay:
+
+```sh
+go run ./cmd/godel audit-local "$CANDIDATE" \
+  Theorems.IdeleClassQuotientNormOne Lemmas.FundamentalDomainQuotientMeasure \
+  Lemmas.IdelePrincipalPeriodization Lemmas.ArchimedeanAngularMass \
+  Theorems.IdeleClassQuotientHaar -- \
+  Masullo.ideleClassQuotientNormOne Masullo.coe_ideleClassQuotientNormOne \
+  Masullo.isOpenQuotientMap_ideleClassQuotientNormOne Masullo.ideleClassQuotientNormOne_eq_iff \
+  Masullo.exists_open_injOn_ideleClassQuotientNormOne Masullo.idelePrincipalIndex \
+  Masullo.measurable_comp_ideleClassQuotientNormOne_iff \
+  Masullo.exists_measurable_ideleClassQuotientNormOne_lift \
+  Masullo.ideleClassNormOneQuotientMeasure Masullo.ideleClassNormOneQuotientMeasure_univ \
+  Masullo.ideleClassNormOneQuotientMeasure_isHaarMeasure \
+  Masullo.lintegral_ideleClassNormOne_Weil Masullo.integral_ideleClassNormOne_Weil \
+  Masullo.measure_archimedeanAngular_univ Masullo.measure_ideleClassNormOne_univ_of_logSplit \
+  Masullo.exists_discriminantNormalizedIdeleClassNormOneHaar
+```
+
+### Next normalization step: Transport the counting formula to the full classes
+
+Let `μ`, `ν`, `η` be as above, `σ` the canonical log splitting of the
+ideles, and `τ` the matching `ideleClassLogSplit`. Put
+`ηC := (logVolume.prod η).map τ`. Prove Haar and the full-class analogue
+of the counting Weil formulas: For Borel `f : I → ℂ` with `Integrable f μ`,
+produce Borel `F ∈ L¹(ηC)` satisfying `F (QuotientGroup.mk x) =
+∑' a : Kˣ, f (IdeleGroup.unitEmbedding (𝓞 K) K a * x)`, with a.e.
+absolute summability and `∫ F dηC = ∫ f dμ`; also prove the Borel
+nonnegative version. This identifies `ηC` with the full-class scale
+used in Definition A.3.2.1, pp. 559–560.
+
+One route is to apply `ideleClassLogSplit_mk` and the homomorphism laws
+to identify the quotient in split coordinates with `Prod.map id q₁` and
+the diagonal action with the action on just the second coordinate.
+Then `univ ×ˢ D` is a fundamental domain by the pointwise unique
+principal translation. `Measure.prod_restrict` and `Measure.map_prod_map`
+should identify its restriction pushforward with `logVolume.prod η`.
+For measurable descent use `IsOpenQuotientMap.prodMap` with inverse
+charts `univ ×ˢ U` and generalize the finite-subcover proof to a
+Lindelöf target via `isLindelof_univ.elim_countable_subcover`. Apply the
+generic periodization lemmas once on the product; this avoids separate
+measurability in a sliced Fubini argument.
+
+For the Mellin identity (3.2.2.11), p. 127, apply this to the pullback
+weighted integrand `x ↦ f x * c (QuotientGroup.mk x)` when it is Borel
+and `L¹(μ)`. The quotient character is constant on each principal
+orbit, so it factors out of the absolutely summable series a.e.
+This leaves the convergence and continuation claims of Theorem 3.2.2.1,
+pp. 124–127, outside the transport theorem. In particular, it does not
+identify a potentially regularized theta transform with the raw
+periodization outside the latter's absolute-integrability domain.
