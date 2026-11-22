@@ -243,6 +243,44 @@ p_2])=-1$) and $1-X$ above $5$, as well as the existing sign at every
 odd residue-degree-one place. These are per-place checks, not a
 verification of all grouped rational-prime factors.
 
+### Checked inert-prime fiber and grouped factor
+
+[`IdealClassInertPrimeFactor`](../../Proofs/Theorems/IdealClassInertPrimeFactor.lean)
+proves the Hecke side of the inert row. It works over **any number
+field** $K$, for a rational prime $p$ such that $(p)\subset\mathcal O_K$
+is prime, and for every multiplicative class character $\varphi$:
+
+- `heckePrimeFiber_singleton_of_isPrime_span` constructs the place of
+  ideal $(p)$ and proves that every other fiber element equals it.
+  Contraction is $(p)$ in $\mathbb Z$ by maximality there, and every
+  ideal over $p$ contains $(p)$ in $\mathcal O_K$, which is maximal
+  because it is prime and nonzero.
+- `heckePrimeFiber_inertiaDeg_of_asIdeal_eq_span` only assumes that a
+  place in the fiber has ideal $(p)$. Its absolute norm is
+  $p^{[K:\mathbb Q]}$ by the norm of the principal ideal and the rank of
+  $\mathcal O_K$. The residue-degree norm identity gives the same norm
+  as $p^{f_v}$, so $p>1$ forces $f_v=[K:\mathbb Q]$.
+- `heckeRationalDenominator_idealClassHeckeCharacter_of_isPrime_span`
+  reduces the product to that one factor. The character is unramified,
+  and the local coefficient $\varphi([(p)])$ is $1$ because $(p)$ is
+  principal. The local polynomial $1-X$ composed with $X^{f_v}$ gives
+  $1-X^{[K:\mathbb Q]}$. No unitarity or class-character normalization is
+  required.
+- `qSqrtNegFive_heckeRationalDenominator_of_isPrime_span` gives
+  $1-X^2$ using the degree of $\mathbb Q(\sqrt{-5})$.
+
+Independent statement and applicability review: `gPjBGet`, transcript
+Yah `01a202c5-5dd8-7854-8344-5665b2f91f22`. It checked all four
+statements against the fiber, norm, and character definitions, and the
+applicability of the [inherited rendered source](#manuscript-interface)
+and [local-unit and uniformizer interface](#checked-idelic-realization-and-local-factors).
+Masullo's omission is **character** ramification (p. 122, §3.2.1,
+(3.2.1.1)); the retained factor uses the local uniformizer value
+(p. 124, Definition 3.2.1.4, (3.2.1.7)). This is a reuse of the
+accepted rendered reading, not new visual verification. It does not
+use the p. 309 formulas. The decision that a given rational prime is
+inert and the Dirichlet side of the row are not proved by these endpoints.
+
 ### Remaining grouped identity
 
 The grouped local polynomial identity for the actual quadratic class
@@ -274,11 +312,13 @@ pp. 800–801, identified in its [holomorphy section](isotypic-inverse-range-q-s
 
 **Open Lean premise for the Hecke transfer:** Instantiate the all-prime
 grouped polynomial identity for a constructed idèle-class character.
-**Next arithmetic check:** For a rational prime $p$ for which $(p)$ is
-prime in the full integer ring, identify the prime fiber with the single
-principal ideal $(p)$ and prove its residue degree is two. This would
-supply the multiplicity, class sign, and exponent for $1-X^2$ using the
-checked pullback. The splitting criterion and its comparison with the
-Dirichlet signs, and the all-prime grouped equality, remain separate.
+**Next arithmetic check:** For $p\nmid 10$, identify the quotient of
+the full integer ring by $(p)$ with the quadratic algebra over
+$\mathbb F_p$ defined by $T^2+5$, and use its domain criterion to prove
+that $(p)$ is prime exactly when $-5$ is nonsquare modulo $p$. This
+would identify the rational primes to which the checked inert row
+applies. The split-fiber calculation, the Dirichlet-sign comparison,
+normalization of the nontrivial class character, and assembly of the
+all-prime identity remain separate.
 The explicit product's circle growth and common-height estimate are
 already unconditional in Lean.
