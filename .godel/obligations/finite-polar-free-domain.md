@@ -329,22 +329,42 @@ and both directions of the compact-away lift claim. These are
 mathematical and source-applicability checks, not new renderings or
 Lean elaboration.
 
-**Next bounded check (formalization only).** Check the residue input
-$\widehat P(-n)=\operatorname{compactLogMellin}(g)(2\pi i n/L)/L$ in
-Lean for the same compact log profiles, before formalizing any
-meromorphic or quotient-character statement. The accepted
-[`Masullo.compactLogMellin`](../../Proofs/Lemmas/CompactLogMellin.lean)
-uses the same positive exponential, and pinned Mathlib's
-`Real.fourierCoeff_tsum_comp_add` already unfolds the unit-period
-coefficient. For $h(u)=g(Lu)$, the unit periodization at $u$ is $P(Lu)$,
-and at index $-n$ its Euclidean Fourier sample is the displayed
-Mellin sample divided by $L$. The remaining Lean check is the compact
-support implication for local summability of the translated profiles,
-and the rescaling and sign in that specialization. On each compact
-interval only finitely many integer translates of the support meet
-it, so the summability proof can use finite support. It needs no new
-manuscript dependency or Fourier derivation. The analytic pole removal
-and diagonal-unit lift are separate from this proposed endpoint.
+**Checked Fourier coefficient bridge (Lean).**
+[`Masullo.fourierCoeffOn_logPeriodization_neg`](../../Proofs/Lemmas/CompactLogMellinPeriodization.lean)
+proves the normalized coefficient identity on $[0,L]$ for every $L>0$,
+every continuous compactly supported $g:\mathbb R\to\mathbb C$, and
+every $n\in\mathbb Z$. The left side uses the accepted
+`Masullo.logPeriodization L g` in the physical log coordinate; the right
+side is `compactLogMellin g (2 * π * n * I / L) / L`. The proof applies
+`Real.fourierCoeff_tsum_comp_add` at $-n$ to $u\mapsto g(Lu)$, proves
+finite support of the restricted translates on every compact, and
+checks both the interval and whole-line changes of variables. Thus
+$L=\log 3$ needs no separate summability or smoothness premise. This is a
+Lean result for the repair, not a derivation of the adelic residue or of
+the printed reverse inference. The source applicability is inherited
+from the evidence above, not a new manuscript reading.
+
+**Lean evidence.** `compact-log-coeff-review` (`xptOGce`, transcript Yah
+`01a20558-d9d5-7ebe-a54d-daf0713a0cf0`) independently checked the fixed
+statement against accepted source `022676f32fb32118354a025cb57b7c48d5dac9cf`
+and the pinned Mathlib definitions, including the domain, sign, and
+normalization. This was exact-source review, not elaboration. The same
+owning Yah transcript records the candidate build, joint-import
+signature and axiom check, and specialization at $L=\log 3$.
+
+**Next bounded check (formalization only).** On smooth compact log
+profiles, turn simultaneous vanishing of these lattice Mellin samples
+into pointwise vanishing of `logPeriodization L g`. The same-coordinate
+[`logPeriodization_smooth`](../../Proofs/Theorems/MonogenicPeriodizationSection.lean)
+already gives a smooth periodic profile after supplying `LogWeightedSchwartz`
+(the module's proof uses the compact-support specialization internally).
+[`fourierCoeff_periodicProfile_eq` and `hasSum_periodicProfile`](../../Proofs/Lemmas/CircleSynthesis.lean)
+then identify the circle coefficients and recover the profile: If each
+coefficient is zero, summability is automatic. The remaining check is
+this composition in Lean, including the index change $n\mapsto -n$;
+there is no new manuscript dependency. Relating actual poles to the
+samples and constructing a compactly supported difference primitive
+are separate from this step.
 
 ## The finite-only repair is not projectively continuous
 
