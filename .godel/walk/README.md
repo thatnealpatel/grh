@@ -60,8 +60,10 @@ validation stop without retry.
   This replaces the record in place, without advancing or rewinding coverage.
 
 Review one passage per request; land one finding or a short contiguous group
-that another reader can assess without access to the live workspace. An open
-finding may land if it identifies the printed claim, distinguishes the
+that another reader can assess without access to the live workspace. For notes
+under `.godel/walk/`, use `.godel:` followed by a capitalized imperative naming
+the finding, for example, `.godel: Record the global orbital closed-range gap`.
+An open finding may land if it identifies the printed claim, distinguishes the
 rendered and extracted sources, and names the precise missing step (for
 example, the closed-embedding argument for the global theta quotient). Do not
 wait for chapter completion or a proof of the open claim.
