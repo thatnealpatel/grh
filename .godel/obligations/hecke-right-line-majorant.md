@@ -1134,28 +1134,63 @@ go run ./cmd/godel audit-local "$CANDIDATE" \
   Masullo.ideleFiniteStage_zetaIntegral
 ```
 
-### Next: Exhaust the raw zeta integral above one
+### Checked: Exhaust the raw zeta integral above one
 
-Fix a finite base $T$ containing $E$, all ramification, and the finite
-unit-mass exceptions of the given local measures. For $\Re s>1$ and an
-actual unitary Hecke character, split each stage product on $T\cup S$
-into the fixed factors on $T$ and the tail on $S\setminus T$. Assume the
-grouped Archimedean density and densities on $T$ integrable. Outside $T$,
-`finiteHeckeLocalZeta_unramified` and `finiteHeckeLocalZeta_norm` give the
-complex and absolute factors for $1_{\mathcal O_v}$; identify
-`finiteLocalUnitSet` with the range in `finiteCompletionUnitMass` via
-`finiteLocalUnitSet_eq_range` and use mass one there. Match the `if v ∈ T`
-padding (one on $T$) in the real and complex tail products. Multiply the
-fixed absolute integrals by `finiteHeckeRealEulerTail_hasProd`'s bound and
-feed it to `ideleFiniteStage_exhaust`. For the value, identify the complex
-limit via the Euler `HasProd` with coefficient zero on $T$ and the actual
-Hecke coefficient elsewhere. The Haar construction provides the stage
-comap for every stage containing $T$.
+[`Masullo.ideleZetaIntegral_rightHalfPlane`](../../Proofs/Theorems/IdeleZetaIntegral.lean)
+proves global integrability and factors both the complex integral and its
+absolute mass for the grouped test above any number field. The unitary
+Hecke character and the local unit masses are unramified and one,
+respectively, **off** a finite base $T$ containing the test exception set
+$E$. The upstairs measure has the exact stage restrictions for stages
+containing $T$, as furnished by `exists_ideleRestrictedProductHaar`.
+For $\Re s>1$, only the Archimedean block and the local factors on $T$
+need separate integrability assumptions. Each of the two values is
+the grouped Archimedean integral times the finite product of **raw**
+integrals on $T$ times its own Euler tail off $T$. The real formula
+integrates the pointwise norm, not the norm of the complex integral.
 
-The target is a corrected raw right-half-plane identity with the actual
-densities on $T$, not the printed admissible-set independence of
-(3.4.1.5)–(6). Neither quotient normalization nor evaluation of the
-exceptional mass product by the discriminant follows from exhaustion.
+**Source and repair (provisional):** The raw integral and absolute
+product are (3.2.2.1), p. 124, and (3.2.2.6), p. 126. For (3.4.1.6),
+pp. 143–144, Lean bounds every stage mass by the positive Euler tail,
+then uses exhaustion to pass to both limits. The complex factors use
+`finiteHeckeCoefficient χ` off $T$ and zero coefficients on $T$; the
+real factors use the trivial-character Euler factors at $\Re s$ off $T$
+and one on $T$. This supplies the initial restricted-product argument
+requested in footnote 3, p. 144, for the stated input class and raw
+factors. It neither uses nor proves the printed admissible-set identity;
+see the [separate rendered check](weil-admissible-set.md) for the
+normalization defect. The source reading for this result used Markdown
+and numbered PDF layout, not rendered pages.
+
+Independent Yah statement review: Session
+`01a201d2-0f82-7b09-ab55-c40a33b87e28`, child `review-global-raw-zeta`
+(agent `ICDDbhs`, output `29c45b84c29406a1453f581b27009ec895024363`).
+Replay in the candidate workspace:
+
+```sh
+go run ./cmd/godel audit-local "$CANDIDATE" \
+  Lemmas.IdeleFiniteStageMeasure Theorems.IdeleZetaIntegral -- \
+  Masullo.finiteCompletionUnitMass Masullo.ideleZetaIntegral_rightHalfPlane
+```
+
+### Next: Identify the completed Gaussian pairing above one
+
+As a normalization control for (3.4.3.5)–(9), p. 152, build one test
+independent of $s$ with the checked real parity Gaussians and corrected
+complex angular Gaussians, the standard indicator at each unramified
+finite place, and the reciprocal character times the unit indicator
+at ramified ones. Use `realCompletionGaussianPair` and
+`complexCompletionGaussianPair` with their actual transported Haar
+measures, and the finite local pairings with the actual $\mu_v$.
+The product integrability theorem of Mathlib and the local norm-power
+split give the grouped Archimedean input to the global theorem. For
+$\Re s>1$, recombine the factors at $T$ with the complementary Euler
+tail, yielding `completedHeckeEulerProduct χ hχ s` times the finite
+product of unit masses on $T$. Include all mass exceptions in $T$ and
+leave that product explicit: Comparing it to the discriminant and
+identifying quotient Haar are separate obligations. This checks the
+actual Gaussian calibration, not the general Schwartz–Bruhat test class
+or the functional equation.
 
 **Still open:** Meromorphic continuation, divisor data, and contour
 growth in (B.4.2.1)–(4), the broader test class, general ramified Fourier terms,

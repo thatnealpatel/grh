@@ -198,7 +198,7 @@ variable [ma : ∀ v : InfinitePlace K, MeasurableSpace v.Completionˣ]
   (μf : (v : HeightOneSpectrum (𝓞 K)) → Measure (v.adicCompletion K)ˣ)
 
 /-- Exact unit mass of the given finite-place Haar measure; no rescaling. -/
-public noncomputable def finiteCompletionUnitMass (v : V) : ℝ≥0∞ :=
+@[expose] public noncomputable def finiteCompletionUnitMass (v : V) : ℝ≥0∞ :=
   μf v (range (finiteCompletionUnitInclusion K v))
 
 /-- Full Archimedean product, full finite factors in `S`, and restricted local
