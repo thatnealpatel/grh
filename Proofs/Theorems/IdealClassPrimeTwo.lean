@@ -19,6 +19,11 @@ local notation "O" => 𝓞 QSqrtNegFive
 public noncomputable def qSqrtNegFiveSqrt : O :=
   qSqrtNegFiveIntegersEquiv.symm QuadraticAlgebra.omega
 
+/-- In the integral basis, `√-5` is the quadratic generator. -/
+public theorem qSqrtNegFiveIntegersEquiv_sqrt :
+    qSqrtNegFiveIntegersEquiv qSqrtNegFiveSqrt = QuadraticAlgebra.omega :=
+  qSqrtNegFiveIntegersEquiv.apply_symm_apply _
+
 private noncomputable def reductionTwo : O →+* ZMod 2 :=
   ((QuadraticAlgebra.lift ⟨1, by decide⟩).comp qSqrtNegFiveIntegersEquiv.toAlgHom).toRingHom
 

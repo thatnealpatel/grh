@@ -184,9 +184,10 @@ for the constructed class character at **every** rational prime. The
 [split-prime sign](../../Proofs/Theorems/IdealClassSplitPrimeSign.lean)
 is checked under the two-class dichotomy and norm-two input. The
 [arithmetic at two](isotypic-euler-factorization-q-sqrt-minus-five.md#checked-arithmetic-at-two)
-now supplies the norm-two place with nonidentity class. Next, check the
-unique place above $5$, its residue norm, and its principality. Neither
-the idelic realization nor the surviving local factors follow from
+now supplies the norm-two place with nonidentity class. The
+[arithmetic at five](isotypic-euler-factorization-q-sqrt-minus-five.md#checked-arithmetic-at-five)
+now gives the unique place above $5$ of norm $5$ and identity class.
+Neither the idelic realization nor the surviving local factors follow from
 those arithmetic results alone. The good-height estimate is only
 for the reciprocal itself, not its derivatives. The [inverse-range realization](isotypic-inverse-range-q-sqrt-minus-five.md)
 still uses provisional readings of the completed and complex local

@@ -101,9 +101,8 @@ congruences then give $1$ and $3$ modulo $4$, respectively.
 `Masullo.qSqrtNegFive_split_classCharacter` evaluates any class-group
 character normalized to be $-1$ on the representative as the existing
 `dirichletNegFour` at each odd degree-one place, in particular at both
-places of an odd split prime. At $5$ this would apply once its degree-one
-place is identified; the lemma does not prove that identification or the
-local factor.
+places of an odd split prime. The check at $5$ below does not need
+this conditional sign theorem.
 
 ### Checked arithmetic at two
 
@@ -127,6 +126,27 @@ repaired omitted product, not a checked local Euler factor. Triviality
 on local units and the uniformizer evaluation for an actual idelic
 character are separate. It does not justify the switch on p. 309,
 (6.3.2.16)–(18); the visual source readings above are inherited.
+
+### Checked arithmetic at five
+
+[`IdealClassPrimeFive`](../../Proofs/Theorems/IdealClassPrimeFive.lean)
+constructs `Masullo.qSqrtNegFivePrimeFive` in the same full ring of
+integers. The surjective reduction sends $x+ya$ to $x$ in `ZMod 5`.
+Its kernel is $(a)$: If $x=5k$, then $x+ya=a(y-ka)$, and $a$ reduces
+to zero. In any prime ideal containing $5$, the equality $a^2=-5$
+forces $a$ into the ideal. Since the reduction kernel is maximal,
+this proves uniqueness among **all** prime ideals containing $5$.
+The residue quotient is isomorphic as a ring to `ZMod 5`, the
+absolute ideal norm is $5$, the contraction to $\mathbb Z$ is $(5)$,
+and the class of $(a)$ is the identity.
+
+These endpoints are unconditional: Every ideal-class character takes
+value $1$ on the identity class, without any two-class premise. This
+supplies the norm and class for the proposed $1-X$ denominator of the
+repaired omitted product. The actual local-unit and uniformizer
+evaluations still need the idelic realization in Lean. No manuscript
+premise enters the ideal arithmetic, and this does not justify the
+printed switch on p. 309, (6.3.2.16)–(18).
 
 The grouped local polynomial identity for the actual quadratic class
 character, including its construction on idèle classes, is still open
@@ -157,11 +177,12 @@ pp. 800–801, identified in its [holomorphy section](isotypic-inverse-range-q-s
 
 **Open Lean premise for the Hecke transfer:** Instantiate the all-prime
 grouped polynomial identity for a constructed idèle-class character.
-**Next arithmetic check:** Reduce $a$ to zero modulo $5$ to identify
-the unique prime above $5$, and verify that it is $(a)$ of norm $5$.
-This supplies the identity class and residue norm for the proposed
-$1-X$ denominator. The class-group dichotomy, the idelic realization
-(local-unit triviality and uniformizer evaluation), the split/inert
-relation to the Dirichlet signs, and the inert case remain separate.
-The explicit product's circle growth and common-height estimate are
-already unconditional in Lean.
+**Next arithmetic check:** Compute the field discriminant using the
+checked integral basis and specialize Mathlib's class-representative
+bound to $\mathbb Q(\sqrt{-5})$. A bound strictly below $3$ would give
+an integral ideal of norm $1$ or $2$ in each class, reducing the
+class-group dichotomy to these two norms and uniqueness above $2$.
+The idelic realization (local-unit triviality and uniformizer
+evaluation), the split/inert relation to the Dirichlet signs, and the
+inert case remain separate. The explicit product's circle growth and
+common-height estimate are already unconditional in Lean.

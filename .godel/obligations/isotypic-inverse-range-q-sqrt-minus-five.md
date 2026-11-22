@@ -175,8 +175,9 @@ conditional on the grouped local polynomial identity. The
 checks the ideal-level norm test given the two-class dichotomy and
 norm-two representative. The [arithmetic at two](isotypic-euler-factorization-q-sqrt-minus-five.md#checked-arithmetic-at-two)
 now supplies that representative and its nonidentity class in Lean.
-The next arithmetic check is the unique prime above $5$, its residue
-norm, and its principality. The idelic character and its local factors
+The [arithmetic at five](isotypic-euler-factorization-q-sqrt-minus-five.md#checked-arithmetic-at-five)
+now supplies the unique prime above $5$, its residue norm $5$, and
+its identity class. The idelic character and its local factors
 remain separate.
 
 The [horizontal reciprocal estimate](isotypic-good-heights-q-sqrt-minus-five.md)
