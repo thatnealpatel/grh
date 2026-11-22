@@ -97,33 +97,27 @@ private theorem exists_one_goodHeight {f : ℂ → ℂ} (hf : AnalyticOnNhd ℂ 
     rw [hK] at hcount'
     linarith
 
-/-- Conditional common-height estimate for the explicit product. The sole
-extra analytic premise is a polynomial **upper** bound on radius-six
-circles about `2 + (H + 1/2)i`, for all sufficiently large real `H`.
-Neither the conclusion nor the premise uses an identification with a
-Hecke character. The same height works for the entire closed segment. -/
-public theorem qSqrtNegFiveDirichletProduct_good_heights_of_circle_growth
-    {C₀ H₀ : ℝ} {k : ℕ} (hC : 1 ≤ C₀) (hH₀ : 1 ≤ H₀)
+/-- A uniform positive anchor and polynomial growth on moving radius-six
+circles give good heights on the full upper segments. -/
+public theorem analytic_good_heights_of_circle_growth
+    {f : ℂ → ℂ} (hf : AnalyticOnNhd ℂ f univ)
+    {b C₀ H₀ : ℝ} {k : ℕ} (hb : 0 < b) (hC : 1 ≤ C₀) (hH₀ : 1 ≤ H₀)
+    (hanchor : ∀ t : ℝ, b ≤ ‖f (2 + (t : ℂ) * I)‖)
     (hgrowth : ∀ H ≥ H₀, ∀ z ∈ sphere (2 + ((H + 1 / 2 : ℝ) : ℂ) * I) 6,
-      ‖qSqrtNegFiveDirichletProduct z‖ ≤ C₀ * H ^ k) :
+      ‖f z‖ ≤ C₀ * H ^ k) :
     ∃ C A : ℝ, 0 < C ∧ 0 < A ∧ ∀ H ≥ H₀, ∃ T ∈ Ioo H (H + 1),
       ∀ σ ∈ Icc (-1 / 2 : ℝ) 2,
         let s := (σ : ℂ) + (T : ℂ) * I
-        qSqrtNegFiveDirichletProduct s ≠ 0 ∧
-          ‖(qSqrtNegFiveDirichletProduct s)⁻¹‖ ≤ C * T ^ A := by
-  obtain ⟨b, hb, hanchor⟩ := exists_qSqrtNegFiveDirichletProduct_right_anchor
+        f s ≠ 0 ∧ ‖(f s)⁻¹‖ ≤ C * T ^ A := by
   let P := -Real.log b + 8 + lossConstant * Real.log (C₀ / b)
   let A := (lossConstant + 1) * ((k : ℝ) + 1)
   have hK := lossConstant_nonneg
   have hA : 0 < A := by dsimp [A]; positivity
   refine ⟨Real.exp P, A, Real.exp_pos _, hA, fun H hH ↦ ?_⟩
   let c : ℂ := 2 + ((H + 1 / 2 : ℝ) : ℂ) * I
-  let f := qSqrtNegFiveDirichletProduct
   let M := C₀ * H ^ k
   have hbc : b ≤ ‖f c‖ := hanchor (H + 1 / 2)
   have hfc : 0 < ‖f c‖ := hb.trans_le hbc
-  have hf : AnalyticOnNhd ℂ f univ :=
-    fun z _ ↦ differentiable_qSqrtNegFiveDirichletProduct.analyticAt z
   have hH₁ := hH₀.trans hH
   have hHp : 0 < H := by linarith
   have hM : 1 ≤ M := one_le_mul_of_one_le_of_one_le hC (one_le_pow₀ hH₁)
@@ -158,6 +152,22 @@ public theorem qSqrtNegFiveDirichletProduct_good_heights_of_circle_growth
   rw [norm_inv, ← Real.exp_log (norm_pos_iff.mpr hn), ← Real.exp_neg,
     Real.rpow_def_of_pos hTpos, ← Real.exp_add]
   exact Real.exp_le_exp.mpr (by simpa only [mul_comm (Real.log T) A] using hL)
+
+/-- Conditional common-height estimate for the explicit product. The sole
+extra analytic premise is a polynomial upper bound on radius-six circles
+about `2 + (H + 1/2)i`, for all sufficiently large real `H`. -/
+public theorem qSqrtNegFiveDirichletProduct_good_heights_of_circle_growth
+    {C₀ H₀ : ℝ} {k : ℕ} (hC : 1 ≤ C₀) (hH₀ : 1 ≤ H₀)
+    (hgrowth : ∀ H ≥ H₀, ∀ z ∈ sphere (2 + ((H + 1 / 2 : ℝ) : ℂ) * I) 6,
+      ‖qSqrtNegFiveDirichletProduct z‖ ≤ C₀ * H ^ k) :
+    ∃ C A : ℝ, 0 < C ∧ 0 < A ∧ ∀ H ≥ H₀, ∃ T ∈ Ioo H (H + 1),
+      ∀ σ ∈ Icc (-1 / 2 : ℝ) 2,
+        let s := (σ : ℂ) + (T : ℂ) * I
+        qSqrtNegFiveDirichletProduct s ≠ 0 ∧
+          ‖(qSqrtNegFiveDirichletProduct s)⁻¹‖ ≤ C * T ^ A := by
+  obtain ⟨b, hb, hanchor⟩ := exists_qSqrtNegFiveDirichletProduct_right_anchor
+  exact analytic_good_heights_of_circle_growth
+    (fun z _ ↦ differentiable_qSqrtNegFiveDirichletProduct.analyticAt z) hb hC hH₀ hanchor hgrowth
 
 /-- Exponent-twelve upper growth on every outer moving circle, including
 its leftmost point `re z = -4`. The constant is independent of `H`. -/

@@ -103,12 +103,22 @@ public theorem padicRamifiedThree_fourier_at_inv_ne_zero :
 public def padicRamifiedThreeCharacter : DirichletCharacter ℂ (3 ^ 1) :=
   (quadraticChar (ZMod 3)).ringHomComp (Int.castRingHom ℂ)
 
+/-- The complex values of the character are real because they come from integers. -/
+public theorem padicRamifiedThreeCharacter_conj (a : ZMod (3 ^ 1)) :
+    (starRingEnd ℂ) (padicRamifiedThreeCharacter a) = padicRamifiedThreeCharacter a := by
+  simp [padicRamifiedThreeCharacter, MulChar.ringHomComp_apply]
+
 private theorem padicRamifiedThreeCharacter_two : padicRamifiedThreeCharacter 2 = -1 := by
   have h : ¬ IsSquare (2 : ZMod 3) := by
     rintro ⟨b, hb⟩
     fin_cases b <;> revert hb <;> decide
   change (↑(quadraticChar (ZMod 3) 2) : ℂ) = -1
   rw [quadraticChar_neg_one_iff_not_isSquare.mpr h, Int.cast_neg, Int.cast_one]
+
+/-- The quadratic character modulo three is odd. -/
+public theorem padicRamifiedThreeCharacter_odd : padicRamifiedThreeCharacter.Odd := by
+  change padicRamifiedThreeCharacter (-1) = -1
+  rw [show (-1 : ZMod (3 ^ 1)) = 2 by decide, padicRamifiedThreeCharacter_two]
 
 /-- The quadratic character modulo three has conductor three. -/
 public theorem padicRamifiedThreeCharacter_isPrimitive : padicRamifiedThreeCharacter.IsPrimitive := by

@@ -15,7 +15,9 @@ open scoped ComplexConjugate Topology
 
 namespace Masullo
 
-private theorem dirichletLFunction_conj_of_real {N : ℕ} [NeZero N]
+/-- A nontrivial Dirichlet L-function with real coefficients respects complex
+conjugation, first on its Dirichlet series and then by analytic continuation. -/
+public theorem dirichletLFunction_conj_of_real {N : ℕ} [NeZero N]
     (χ : DirichletCharacter ℂ N) (hχ : χ ≠ 1)
     (hreal : ∀ n : ℕ, conj (χ n) = χ n) (s : ℂ) :
     χ.LFunction (conj s) = conj (χ.LFunction s) := by

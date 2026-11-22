@@ -14,7 +14,9 @@ open scoped ArithmeticFunction.Moebius
 
 namespace Masullo
 
-private theorem exists_dirichlet_anchor_at {σ : ℝ} (hσ : 1 < σ) :
+/-- The Möbius series gives a height-independent positive lower bound for
+Dirichlet L-functions on any fixed right half-plane strictly inside `Re s > 1`. -/
+public theorem exists_dirichlet_anchor_at {σ : ℝ} (hσ : 1 < σ) :
     ∃ b : ℝ, 0 < b ∧ ∀ {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
       {s : ℂ}, σ ≤ s.re → b ≤ ‖χ.LFunction s‖ := by
   let F (n : ℕ) := ‖LSeries.term 1 (σ : ℂ) n‖

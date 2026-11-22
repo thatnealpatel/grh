@@ -34,7 +34,9 @@ private theorem abs_real_damping_sub_le (d u : ℝ) {x : ℝ} (hx : 0 < x) :
       mul_le_mul_of_nonneg_left (one_sub_exp_neg_le _) (Real.exp_pos _).le
     _ = _ := by ring
 
-private theorem norm_archimedeanGammaKernel_le {d u v x : ℝ} (hd : 0 < d) (hx : 0 < x) :
+/-- Pointwise domination of the subtracted Gamma kernel by an exponential
+with a first-moment weight. -/
+public theorem norm_archimedeanGammaKernel_le {d u v x : ℝ} (hd : 0 < d) (hx : 0 < x) :
     ‖archimedeanGammaKernel d ((u : ℂ) + (v : ℂ) * I) x‖ ≤
       (|d - u| + |v|) * ((1 / d + x) * Real.exp (-min d u * x)) := by
   let E (q : ℝ) := Real.exp (-q * x)
