@@ -43,7 +43,7 @@ public noncomputable def qSqrtNegFiveIntegersEquiv :
 local notation "Places" => HeightOneSpectrum (𝓞 QSqrtNegFive)
 
 /-- The integral ideal class of a finite place of `ℚ(√-5)`. -/
-public noncomputable def qSqrtNegFivePlaceClass (v : Places) : ClassGroup (𝓞 QSqrtNegFive) :=
+@[expose] public noncomputable def qSqrtNegFivePlaceClass (v : Places) : ClassGroup (𝓞 QSqrtNegFive) :=
   ClassGroup.mk0 ⟨v.asIdeal, mem_nonZeroDivisors_iff_ne_zero.mpr v.ne_bot⟩
 
 /-- The integral class of a place is trivial exactly when its ideal is principal. -/

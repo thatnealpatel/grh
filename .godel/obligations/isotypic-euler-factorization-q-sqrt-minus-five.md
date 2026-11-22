@@ -120,9 +120,10 @@ $x^2+5y^2=2$, then $y=0$, and $x^2=2$ is impossible modulo $4$.
 The place class is consequently nonidentity.
 
 The norm theorem supplies the split-sign representative without a
-further existence hypothesis. The two-class dichotomy itself is not
-proved. This is the arithmetic input to the $1+X$ denominator of the
-repaired omitted product, not a checked local Euler factor. Triviality
+further existence hypothesis. The
+[two-class dichotomy](#checked-two-class-dichotomy) uses the same place.
+This is the arithmetic input to the $1+X$ denominator of the repaired
+omitted product, not a checked local Euler factor. Triviality
 on local units and the uniformizer evaluation for an actual idelic
 character are separate. It does not justify the switch on p. 309,
 (6.3.2.16)–(18); the visual source readings above are inherited.
@@ -170,6 +171,36 @@ integral ideal subtype, with the stated signature and numerical cutoff.
 It did not recheck the manuscript pages; the source findings above are
 inherited.
 
+### Checked two-class dichotomy
+
+[`IdealClassTwoClasses`](../../Proofs/Theorems/IdealClassTwoClasses.lean)
+proves `Masullo.qSqrtNegFive_class_eq_one_or_primeTwo` with no
+hypotheses on the class $c$: Either $c=1$ or $c=[\mathfrak p_2]$, in
+the orientation of `qSqrtNegFivePlaceClass` (the `ClassGroup.mk0` of the
+integral ideal). For the Minkowski representative $I$, absolute norm
+$1$ forces $I$ to be the unit ideal. Absolute norm $2$ is irreducible,
+so $I$ is prime, and the ideal norm belongs to $I$. Thus $I$ contains
+$2$, and the checked uniqueness above identifies it with $\mathfrak p_2$.
+The earlier nonprincipality theorem distinguishes the two classes.
+
+`Masullo.qSqrtNegFive_split_classCharacter_primeTwo` supplies both
+arithmetic inputs of the sign theorem: The representative's norm and
+the class dichotomy. It applies to every finite place of residue degree
+one over an odd rational prime, without a separate splitting premise.
+It still takes a class-group character $\chi$ with $\chi([\mathfrak p_2])=-1$
+and concludes that the place class has sign $\chi_{-4}(p)$. It does not
+realize $\chi$ idelically, decide splitting, or prove the inert factor.
+
+The independent statement review (Yah session
+`01a20218-2637-7b61-89ae-6f579a70250d`, agent `dfQiylA`) checked both
+norm branches, the direct `ClassGroup.mk0` orientation, and the already
+checked distinctness. Separately, it checked that the specialization
+removes exactly the two arithmetic inputs and retains degree one,
+oddness, and character normalization. It did not reread the manuscript.
+The split-sign module exposes the unchanged definition of the place
+class so the norm-two branch can use its `ClassGroup.mk0` body across
+the module boundary.
+
 The grouped local polynomial identity for the actual quadratic class
 character, including its construction on idèle classes, is still open
 in Lean. [`HeckeDirichletFactorization`](../../Proofs/Theorems/HeckeDirichletFactorization.lean)
@@ -199,12 +230,11 @@ pp. 800–801, identified in its [holomorphy section](isotypic-inverse-range-q-s
 
 **Open Lean premise for the Hecke transfer:** Instantiate the all-prime
 grouped polynomial identity for a constructed idèle-class character.
-**Next arithmetic check:** Assemble the two-class dichotomy from the
-checked norm bound and the place above $2$. A norm-one ideal must be
-the unit ideal; a norm-two ideal has quotient of order two and is
-therefore prime and contains $2$, so uniqueness identifies its class.
-This would discharge the class-dichotomy input to the checked split
-sign theorem. The idelic realization (local-unit triviality and
-uniformizer evaluation), the split/inert relation to the Dirichlet
-signs, and the inert case remain separate. The explicit product's circle
-growth and common-height estimate are already unconditional in Lean.
+**Next arithmetic check:** For a rational prime $p$ for which $(p)$ is
+prime in the full integer ring, identify the prime fiber with the single
+principal ideal $(p)$ and prove its residue degree is two. This would
+supply the multiplicity, class sign, and exponent for $1-X^2$, conditional
+on the idelic realization. The splitting criterion and its comparison
+with the Dirichlet signs, and the local-unit and uniformizer evaluations
+for the idelic realization, remain separate. The explicit product's
+circle growth and common-height estimate are already unconditional in Lean.
