@@ -22,6 +22,13 @@ variable {K : Type*} [Field K] [NumberField K] (v : HeightOneSpectrum (𝓞 K))
 public noncomputable def finiteCompletionBasePrime : Nat.Primes :=
   Rat.HeightOneSpectrum.primesEquiv (v.under ℤ)
 
+omit [NumberField K] in
+/-- The base prime is the natural generator of the contracted prime in `ℤ`. -/
+public theorem finiteCompletionBasePrime_val :
+    (finiteCompletionBasePrime v : ℕ) = Rat.HeightOneSpectrum.natGenerator (v.under ℤ) := by
+  unfold finiteCompletionBasePrime
+  rfl
+
 local notation "u" => v.under ℤ
 local notation "Kv" => v.adicCompletion K
 local notation "Ov" => v.adicCompletionIntegers K

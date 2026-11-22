@@ -1506,6 +1506,53 @@ go run ./cmd/godel audit-local "$CANDIDATE" Lemmas.FiniteCompletionCRT -- \
   Masullo.finiteCompletionModPrimeEquiv_mk
 ```
 
+### Checked: Fixed-prime integral base change
+
+[`FiniteCompletionIntegralBaseChange.lean`](../../Proofs/Lemmas/FiniteCompletionIntegralBaseChange.lean)
+constructs the canonical $\mathbb Z_p$-algebra isomorphism
+
+$$\mathbb Z_p\otimes_{\mathbb Z}\mathcal O_K\simeq
+  \prod_{v\mid p}\mathcal O_{K_v},\qquad
+  a\otimes x\longmapsto (a\,i_v(x))_v.$$
+
+The target uses the same divisor subtype as the reduction theorem. The
+base-prime equality and `finiteCompletionOverPrimeAlgebra_algebraMap`
+identify the scalar map with the canonical completed map at each place.
+Reduction of a tensor modulo $p$ comes from a global integer, and CRT
+both lifts target residues and detects zero source residues. Nakayama
+lifts surjectivity on the finite target. The kernel is finite over the
+Noetherian base and equals its $p$-multiple: Modulo-$p$ injectivity gives
+divisibility in the source and $p$-torsion-freeness of each completion
+keeps the divided element in the kernel. Another use of Nakayama
+kills the kernel.
+
+This is project support for the comparison required by (A.3.2.2),
+p. 560, not a theorem attributed to Masullo. Example A.3.1.10,
+(A.3.1.8), p. 558, recalls the standard trace character and its
+inverse-different transform. It does not supply the integral
+base-change map or the global-to-local comparison of differents.
+This reading uses Markdown and numbered layout, not rendered pages,
+and is provisional.
+
+Independent Yah statement review: Session
+`01a2020b-a0bf-7254-897a-c6c8fc79f5d4`, child
+`review-integral-base-change` (agent `VQdUGlv`, read-only output
+`511e38138950387bf13cd97f05536ded4e4b3d63`). The review confirmed
+that the scalar action must be the completed base map transported along
+the prime equality and that the pure tensor must evaluate coordinatewise.
+Reproduce the endpoint audit:
+
+```sh
+go run ./cmd/godel audit-local "$CANDIDATE" \
+  Lemmas.FiniteCompletionPadic Lemmas.FiniteCompletionIntegralBaseChange -- \
+  Masullo.finiteCompletionBasePrime_val \
+  Masullo.finiteCompletionBasePrime_eq_of_dvd_primeSpan \
+  Masullo.finiteCompletionOverPrimeAlgebra \
+  Masullo.finiteCompletionOverPrimeAlgebra_algebraMap \
+  Masullo.finiteCompletionIntegralBaseChange \
+  Masullo.finiteCompletionIntegralBaseChange_tmul
+```
+
 ### Next: Identify the placewise discriminant scales
 
 For $v$ over $p$, in the **actual** completion $K_v$ prove
@@ -1520,25 +1567,26 @@ normalized on-place norm extending a power of it. At the place over $2$
 in $\mathbb Q(i)$ this must give $q_v^{-n_v}=1/4$ and unit mass $1/2$,
 not unit mass one.
 
-The first comparison still needed is the canonical integral base-change
-isomorphism at a fixed rational prime $p$,
-$\mathbb Z_p\otimes_{\mathbb Z}\mathcal O_K\simeq\prod_{v\mid p}\mathcal O_{K_v}$,
-with $a\otimes x\mapsto(a\,i_v(x))_v$. At each index, first identify
-`finiteCompletionBasePrime` with $p$ and use that identification to
-transport the checked $\mathbb Z_p$-algebra structure and finite free
-module. Construct the map with `Algebra.TensorProduct.lift`, and use
-`finiteCompletionModPrimeEquiv_mk` to identify its reduction, not just
-an abstract isomorphism of the two quotients. The source reduction is
-$\mathcal O_K/p\mathcal O_K$ because $\mathbb Z_p/p\mathbb Z_p$ is
-$\mathbb Z/p\mathbb Z$. Both sides of the base-change map are finite
-free over $\mathbb Z_p$; lift the invertible reduction over the local
-ring (for surjectivity, see
-`LinearMap.surjective_of_surjective_comp_mkQ`). After this comparison,
-transport the trace dual through base change and the product projections;
-pinned Mathlib has `Algebra.trace_localization` and
-`Algebra.discr_localizationLocalization` to pass from the local integer
-rings to their fraction fields.
-This is a proposed route, not a checked comparison. The local identity
+The next trace-level obligation at a fixed $p$ is the equality, for
+every $x\in\mathcal O_K$,
+
+$$\sum_{v\mid p}\operatorname{Tr}_{\mathcal O_{K_v}/\mathbb Z_p}(i_v(x))
+  = (\operatorname{Tr}_{\mathcal O_K/\mathbb Z}(x):\mathbb Z_p).$$
+
+Use the checked tensor formula at $1\otimes x$. Transport multiplication
+by this tensor across the integral equivalence, express the trace of
+coordinatewise multiplication as the sum of traces, and use
+`LinearMap.trace_baseChange` on multiplication by $x$. For the product
+trace, use the direct-sum basis obtained from the finite free local
+integer bases. Applying the equality to products gives the trace form
+on global integers; then extend by bilinearity to the whole tensor.
+This is a proposed route, not yet checked. The resulting orthogonal
+blocks are needed to transport the trace dual to individual product
+coordinates. `Algebra.trace_localization` and
+`Algebra.discr_localizationLocalization` connect integral traces and
+determinants to the actual fraction fields.
+
+The local identity
 is not a consequence of equality of the aggregate products. Once it is
 checked, construct or identify the local Haar scales, then use the exact
 stage restrictions of (A.3.2.5), p. 560, in the raw Gaussian theorem.
