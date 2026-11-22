@@ -24,8 +24,9 @@ interrupt it. INT or TERM can cancel the wait. A failure stops the loop rather
 than silently retrying.
 
 Read the versioned notes in `.godel/blitz/` **on the campaign target** for Blitz's
-assessments and outcomes. They are landed through the campaign, not written in
-the launch checkout. There is no separate Blitz ledger. For driver diagnostics,
+finalized decisions and attempt outcomes. Only the closing node lands these
+through the campaign. Nodes pass short context inline and use `/tmp/grh/blitz/`
+for opening plans and longer handoffs. Scratch files are not accepted results. There is no separate Blitz ledger. For driver diagnostics,
 look up the canonical `cmd/blitz` path in `~/.godel/manifest.json`, then read
 `~/.godel/<program-id>/runs/*.json`. Gödel still regards the wait as part of the
 run: canceling the wait can mark the run failed without undoing an accepted note.

@@ -12,24 +12,21 @@ import (
 	"patel.codes/godel"
 )
 
-const (
-	blitzMaxPasses  = 3
-	blitzReplyLimit = 4096
-)
+const blitzMaxPasses = 3
 
 // Each successor gets the original stdin,
 // not the preceding result. Carry the
 // bounded records (never the composed
 // prompts) alongside the next role.
 type blitzEvidence struct {
-	Snapshot   string            `json:"accepted_evidence_revision,omitempty"`
-	Reading    string            `json:"reading,omitempty"`
-	Assessment map[string]string `json:"assessment,omitempty"`
-	Plan       map[string]string `json:"plan,omitempty"`
-	Opening    map[string]string `json:"adopted_opening,omitempty"`
-	Passes     []blitzPass       `json:"completed_passes,omitempty"`
-	Current    *blitzPass        `json:"current_pass,omitempty"`
-	Finish     string            `json:"finish_reason,omitempty"`
+	Snapshot    string            `json:"accepted_evidence_revision,omitempty"`
+	Reading     string            `json:"reading,omitempty"`
+	Assessment  map[string]string `json:"assessment,omitempty"`
+	Plan        map[string]string `json:"plan,omitempty"`
+	ScratchPlan string            `json:"scratch_plan,omitempty"`
+	Passes      []blitzPass       `json:"completed_passes,omitempty"`
+	Current     *blitzPass        `json:"current_pass,omitempty"`
+	Finish      string            `json:"finish_reason,omitempty"`
 }
 
 type blitzPass struct {
@@ -115,15 +112,15 @@ func (b blitzTree) plan() *godel.Node {
 
 func (b blitzTree) open() *godel.Node {
 	return b.node(blitzOpen, func(r godel.Result) (*godel.Node, error) {
-		opening, err := blitzFields("open attempt", r.Text, "status", "path", "revision", "mode")
+		opening, err := blitzFields("open attempt", r.Text, "path")
 		if err != nil {
 			return nil, err
 		}
-		if opening["status"] != "OPENED" || !blitzNote(opening["path"], "attempt") || !blitzCommit(opening["revision"]) || opening["revision"] == b.data.Snapshot || opening["mode"] != b.data.Plan["mode"] {
-			return nil, errors.New("blitz open attempt: expected an adopted opening note and the planned first mode")
+		if !blitzNote(opening["path"], "/tmp/grh/blitz/attempt-") {
+			return nil, errors.New("blitz open attempt: expected a scratch plan path")
 		}
 		b := b
-		b.data.Opening = opening
+		b.data.ScratchPlan = opening["path"]
 		return b.pass(b.data.Plan["mode"]), nil
 	})
 }
@@ -180,10 +177,10 @@ func (b blitzTree) close(reason string) *godel.Node {
 		}
 		path, rev := closed["path"], closed["revision"]
 		valid := blitzCommit(rev)
-		if opened := b.data.Opening; opened != nil {
-			valid = valid && closed["status"] == "CLOSED" && path == opened["path"] && rev != opened["revision"] && rev != b.data.Snapshot
+		if plan := b.data.ScratchPlan; plan != "" {
+			valid = valid && closed["status"] == "CLOSED" && path == ".godel/blitz/"+strings.TrimPrefix(plan, "/tmp/grh/blitz/") && rev != b.data.Snapshot
 		} else {
-			valid = valid && blitzNote(path, "decision") && (closed["status"] == "UNCHANGED" || (closed["status"] == "CLOSED" && rev != b.data.Snapshot))
+			valid = valid && blitzNote(path, ".godel/blitz/decision-") && (closed["status"] == "UNCHANGED" || (closed["status"] == "CLOSED" && rev != b.data.Snapshot))
 		}
 		if !valid {
 			return nil, errors.New("blitz close cycle: expected a confirmed outcome note")
@@ -210,8 +207,8 @@ func blitzMode(s string) bool {
 	return s == "INFORMAL" || s == "LEAN"
 }
 
-func blitzNote(s, kind string) bool {
-	name, ok := strings.CutPrefix(s, ".godel/blitz/"+kind+"-")
+func blitzNote(s, prefix string) bool {
+	name, ok := strings.CutPrefix(s, prefix)
 	stem, md := strings.CutSuffix(name, ".md")
 	return ok && md && stem != "" && strings.Trim(stem, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_") == ""
 }
@@ -219,8 +216,8 @@ func blitzNote(s, kind string) bool {
 // Check the small routing protocol at the actual transition boundary. In
 // particular, do not let duplicate or unknown fields hide a different route.
 func blitzFields(stage, text string, names ...string) (map[string]string, error) {
-	if len(text) > blitzReplyLimit || !utf8.ValidString(text) {
-		return nil, fmt.Errorf("blitz %s: expected a UTF-8 response of at most %d bytes", stage, blitzReplyLimit)
+	if !utf8.ValidString(text) {
+		return nil, fmt.Errorf("blitz %s: expected a UTF-8 response", stage)
 	}
 	d := json.NewDecoder(strings.NewReader(text))
 	if token, err := d.Token(); err != nil || token != json.Delim('{') {
@@ -259,11 +256,11 @@ Once selected, preserve the exact accepted evidence revision, target and scope, 
 
 Use the pinned edition (.godel/sources/masullo/README.md at the evidence revision) and pinned Mathlib. Start manuscript work in ~/d/masullo/ using chapter or appendix Markdown and layout extraction as navigation. Cite only the manuscript PDF, by PDF page and theorem, equation or section number. Inspect the rendered page when readings disagree or depend on exact notation or wording; label any reading without direct rendered-page inspection provisional. Reserve verified visual readings for independent rendered-page inspection and attribute inherited verification to its note. Name decisive premises still provisional and pass the PDF locators to reviewers.
 
-Only the opening and closing roles write decision or attempt notes, in .godel/blitz/ only. Any proof changes must be scoped to this blitz and written in isolated campaign workspaces, never the durable launch checkout. Follow the campaign workflow in cmd/godel/README.md. Do not add top-level directories under Proofs, touch driver code, or make unrelated writes. Do not edit the revision graph directly. If a needed capability, check, or adoption fails, report the blocker; do not fabricate success.
+Only the closing role writes to .godel/blitz/, for finalized decisions and outcomes. Any proof changes must be scoped to this blitz and written in isolated campaign workspaces, never the durable launch checkout. Follow the campaign workflow in cmd/godel/README.md. Do not add top-level directories under Proofs, touch driver code, or make unrelated writes. Do not edit the revision graph directly. If a needed capability, check, or adoption fails, report the blocker; do not fabricate success.
 
-Return exactly one JSON object as specified by your role, with nonblank string values, no extra fields, fences, or surrounding text. Keep the complete response under 4096 bytes using terse summaries and exact references for larger evidence.`
+Return exactly one JSON object as specified by your role, with nonblank string values, no extra fields, fences, or surrounding text. Keep short handoffs inline. For long evidence, plans, or pass reports, create a fresh file under /tmp/grh/blitz/ (mkdir -p as needed) and put its absolute path in the corresponding prose field. Keep routing values inline. Read scratch files referenced by this cycle as needed; they are not accepted evidence.`
 
-const blitzRead = `Read evidence (read-only; do not plan, open, or attempt work). Start with tool_campaign status and pin the exact current accepted commit. Use jj --ignore-working-copy file list/show at that full commit to inspect applicable Lean declarations, .godel/frontier.md and its linked proof/source notes, the relevant mission and pinned manuscript inputs, and the prior decision and attempt notes in .godel/blitz/ (absent is empty). The frontier is navigation, not proof. Reconcile open attempts as potentially interrupted, not completed, and cite what the accepted tree actually contains.
+const blitzRead = `Read evidence (read-only; do not plan, open, or attempt work). Start with tool_campaign status and pin the exact current accepted commit. Use jj --ignore-working-copy file list/show at that full commit to inspect applicable Lean declarations, .godel/frontier.md and its linked proof/source notes, the relevant mission and pinned manuscript inputs, and the prior decision and attempt notes in .godel/blitz/ (absent is empty). The frontier is navigation, not proof. Cite what the accepted tree actually contains.
 
 Read ~/.godel/manifest.json, the map of canonical source paths to program IDs. Locate both this project's durable cmd/godel and cmd/companion sources (normally /home/exedev/p/grh/cmd/godel and /home/exedev/p/grh/cmd/companion) and inspect recent ~/.godel/<id>/runs/*.json for each, including failures and relevant improvement responses. Separate live or recent loop work from accepted results; cite run IDs and distinguish what each loop is doing from what already landed. Report missing or ambiguous histories rather than substituting unrelated sources. Give the assessor a compact packet covering both histories, the blitz notes, accepted evidence for both targets and their unresolved premises, possible overlap, and gaps in provenance.
 
@@ -277,11 +274,11 @@ const blitzPlan = `Plan the admitted attempt (read-only; no pass work or note ye
 
 Return {"mode":"INFORMAL or LEAN (one token)","stop":"stopping condition","plan":"bounded plan on the selected target"}.`
 
-const blitzOpen = `Open the attempt before any pass work. Create exactly one distinct .godel/blitz/attempt-<unique-id>.md note recording OPEN status, the pinned evidence revision, both assessments, target and precise scope, opening plan, stopping condition, and first mode. Check current campaign status and prior notes before choosing the path. Never repurpose, resume, or overwrite another attempt. Write in an isolated campaign workspace, integrate, verify the exact candidate includes only the intended new note, adopt normally, and confirm the adopted reference and contents. If acceptance moved, reconcile the note against current accepted source; preserve the original evidence revision and do not open a duplicate on a retry. Do not start pass work. Never report OPENED if writing, adoption, or confirmation failed.
+const blitzOpen = `Open the attempt before any pass work. Write the pinned evidence revision, target, scope, stopping condition, first mode, and plan to a fresh scratch file /tmp/grh/blitz/attempt-<unique-id>.md (letters, digits, underscores, or hyphens in the ID). Do not adopt it or write in the repository.
 
-Return {"status":"OPENED","path":"relative path to the adopted attempt note; use letters, digits, underscores or hyphens for the unique ID","revision":"full adopted note commit ID","mode":"the planned first mode"} only after confirmation. Otherwise report the blocker without an OPENED response.`
+Return {"path":"absolute path to the scratch plan you wrote"}.`
 
-const blitzPassWork = `Coordinate only the numbered current pass for the pinned target and attempt. Before assigning work, independently check the OPEN note at its adopted reference and that it is still open in the accepted tree; if not confirmed, do no pass work and report the blocker. If the underlying evidence changed, reconcile it without silently changing the selected target or starting a new attempt. Preserve the original stopping condition, use prior pass evidence to avoid failed routes, and keep the whole pass bounded. Use fresh Yah subagents in parallel (at most two contributors), giving them the same exact target, relevant accepted evidence and PDF locators, and distinct approaches or sub-obligations; do not feed one contributor's answer to the other as a premise. Collect both findings or mark missing checks and cancel unused work. Do not change attempt notes or start another pass.
+const blitzPassWork = `Coordinate only the numbered current pass for the pinned target and attempt. Before assigning work, read the scratch plan and check it against the pinned target and scope; if missing or inconsistent, do no pass work and report the blocker. If the underlying evidence changed, reconcile it without silently changing the selected target or starting a new attempt. Preserve the original stopping condition, use prior pass evidence to avoid failed routes, and keep the whole pass bounded. Use fresh Yah subagents in parallel (at most two contributors), giving them the same exact target, relevant accepted evidence and PDF locators, and distinct approaches or sub-obligations; do not feed one contributor's answer to the other as a premise. Collect both findings or mark missing checks and cancel unused work. Do not change attempt notes or start another pass.
 
 Return {"report":"attributed findings and failures, what was independently reviewed or checked, the remaining premises, and exact refs for artifacts and evidence"}.`
 
@@ -293,8 +290,8 @@ const blitzSynthesize = `Synthesize the current pass (no note edits or new pass 
 
 Choose INFORMAL or LEAN for a still useful bounded next check on the same target, or DONE if the stopping condition is met or the attempt is exhausted/blocked. The shared cap is three passes across both modes: At pass three report the best supported outcome now, never request a new attempt. Return {"next":"INFORMAL, LEAN, or DONE (one token)","worked":"what advanced","failed":"what did not and why","assumptions":"exact remaining premises or why none remain","evidence":"source, review, check and artifact references with their limits","outcome":"best supported current conclusion, unresolved scope and concrete next check or reopening condition"}.`
 
-const blitzClose = `Close this cycle with a durable, nonempty handoff. Do not do new proof work or start a new attempt. If declined, record NOT_ATTEMPTED, the pinned evidence revision, both assessments, substantive reasons and the reopening condition in a .godel/blitz/decision-<unique-id>.md note. If an already accepted decision covers the same material evidence and reasons, verify and reuse that note; do not commit a heartbeat. If attempted, update exactly the opened attempt note in place with ATTEMPTED and closed status: retain the pinned revision, target and opening plan, and record every pass by number and mode with attributed successes, failures, review/check refs, exact remaining premises, final outcome and reopening condition. Honor the supplied finish reason, even if synthesis proposed another pass. Distinguish actual from conditional, incremental, and unverified outcomes.
+const blitzClose = `Close this cycle with a durable, nonempty handoff. Do not do new proof work or start a new attempt. If declined, record NOT_ATTEMPTED, the pinned evidence revision, both assessments, substantive reasons and the reopening condition in a .godel/blitz/decision-<unique-id>.md note. If an already accepted decision covers the same material evidence and reasons, verify and reuse that note; do not commit a heartbeat. If attempted, create a finalized ATTEMPTED report in .godel/blitz/ with the same basename as the scratch plan. Make it self-contained, not dependent on /tmp files. Retain the pinned revision, target and opening plan, and record every pass by number and mode with attributed successes, failures, review/check refs, exact remaining premises, final outcome and reopening condition. Honor the supplied finish reason, even if synthesis proposed another pass. Distinguish actual from conditional, incremental, and unverified outcomes.
 
-Read current campaign status and verify the intended note and any claimed proof landing at their exact references. For a changed note, write in an isolated campaign workspace, integrate, verify the exact candidate changes only the intended note, adopt normally, and then confirm the adopted reference and contents. Reconcile changes if the target moved; never silently erase concurrent evidence. If recording/adoption or confirmation fails, report the blocker, not a successful handoff.
+Make declined decisions self-contained too. Read current campaign status and verify the intended note and any claimed proof landing at their exact references. For a changed note, write in an isolated campaign workspace, integrate, verify the exact candidate changes only the intended note, adopt normally, and then confirm the adopted reference and contents. Reconcile changes if the target moved; never silently erase concurrent evidence. If recording/adoption or confirmation fails, report the blocker, not a successful handoff.
 
 Return {"status":"CLOSED after confirmed adoption, or UNCHANGED only for a verified reused decline (one token)","path":"relative path to the accepted note; use letters, digits, underscores or hyphens for the unique ID","revision":"full commit ID of accepted evidence for that note","handoff":"standalone cycle handoff naming the original evidence revision, outcome NOT_ATTEMPTED or ATTEMPTED, exact target or assessed targets, strongest evidence, blockers and reopening condition"}. Do not run a timer; the caller handles the wait after a successful handoff.`

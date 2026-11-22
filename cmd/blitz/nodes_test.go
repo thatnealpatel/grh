@@ -14,7 +14,7 @@ import (
 const (
 	blitzTestLaunch   = "1111111111111111111111111111111111111111"
 	blitzTestSnapshot = "2222222222222222222222222222222222222222"
-	blitzTestOpened   = "3333333333333333333333333333333333333333"
+	blitzTestPlan     = "/tmp/grh/blitz/attempt-fixture.md"
 	blitzTestClosed   = "4444444444444444444444444444444444444444"
 	blitzTestAttempt  = ".godel/blitz/attempt-fixture.md"
 	blitzTestDecision = ".godel/blitz/decision-fixture.md"
@@ -39,7 +39,7 @@ func TestBlitzDecline(t *testing.T) {
 			}
 			close := advanceBlitz(t, assess, blitzAssessment("NOT_YET"))
 			prompt, data = checkBlitzNode(t, close, "Close this cycle")
-			if !strings.Contains(prompt, "NOT_ATTEMPTED") || !strings.HasPrefix(data.Finish, "not attempted") || len(data.Opening) != 0 || len(data.Passes) != 0 {
+			if !strings.Contains(prompt, "NOT_ATTEMPTED") || !strings.HasPrefix(data.Finish, "not attempted") || data.ScratchPlan != "" || len(data.Passes) != 0 {
 				t.Fatalf("decline must close without an attempt: %+v", data)
 			}
 			if data.Assessment["rh"] != "RH reason" || data.Assessment["grh"] != "GRH reason" || data.Assessment["reopening"] != "New evidence on the missing premise" {
@@ -59,6 +59,20 @@ func TestBlitzDecline(t *testing.T) {
 	}
 }
 
+func TestBlitzEvidenceHandoff(t *testing.T) {
+	// The first live reader produced a valid reply two bytes over the
+	// old limit.
+	const envelope = `{"revision":"` + blitzTestSnapshot + `","evidence":"`
+	for _, evidence := range []string{strings.Repeat("e", 4098-len(envelope)-2), "/tmp/grh/blitz/reader-fixture.md"} {
+		read := blitzNodes(blitzTestLaunch, nil)
+		assess := advanceBlitz(t, read, envelope+evidence+`"}`)
+		_, data := checkBlitzNode(t, assess, "Assess admission")
+		if data.Reading != evidence {
+			t.Fatal("reader handoff changed before assessment")
+		}
+	}
+}
+
 func TestBlitzModeSwitchesSharePassCap(t *testing.T) {
 	pauses := 0
 	read := blitzNodes(blitzTestLaunch, func() error { pauses++; return nil })
@@ -73,7 +87,7 @@ func TestBlitzModeSwitchesSharePassCap(t *testing.T) {
 	if data.Plan["stop"] != "Stop on the specified counterexample or a checked endpoint" || data.Plan["mode"] != "INFORMAL" || data.Current != nil {
 		t.Fatalf("open node did not receive the plan before any pass: %+v", data)
 	}
-	pass := advanceBlitz(t, open, blitzOpening("INFORMAL"))
+	pass := advanceBlitz(t, open, blitzOpening())
 	for i, tc := range []struct{ mode, role, next, report string }{
 		{"INFORMAL", "Coordinate independent conjecturers", "LEAN", "first pass proof idea"},
 		{"LEAN", "Coordinate independent Lean formalizers", "INFORMAL", "second pass elaboration blocker"},
@@ -84,7 +98,7 @@ func TestBlitzModeSwitchesSharePassCap(t *testing.T) {
 		if p == nil || p.Number != i+1 || p.Mode != tc.mode || len(data.Passes) != i {
 			t.Fatalf("pass %d: incorrect mode or pass accounting: %+v", i+1, data)
 		}
-		if data.Snapshot != blitzTestSnapshot || data.Assessment["target"] != "RH" || data.Plan["stop"] != "Stop on the specified counterexample or a checked endpoint" || data.Opening["path"] != blitzTestAttempt || data.Opening["revision"] != blitzTestOpened {
+		if data.Snapshot != blitzTestSnapshot || data.Assessment["target"] != "RH" || data.Plan["stop"] != "Stop on the specified counterexample or a checked endpoint" || data.ScratchPlan != blitzTestPlan {
 			t.Fatalf("pass %d: lost attempt identity, target, revision, or stopping condition: %+v", i+1, data)
 		}
 		if i > 0 && data.Passes[i-1].Synthesis["outcome"] != "Outcome for pass: "+data.Passes[i-1].Report {
@@ -99,7 +113,7 @@ func TestBlitzModeSwitchesSharePassCap(t *testing.T) {
 	}
 	close := pass
 	prompt, data := checkBlitzNode(t, close, "Close this cycle")
-	if data.Current != nil || len(data.Passes) != 3 || !strings.Contains(data.Finish, "three-pass cap") || data.Opening["path"] != blitzTestAttempt {
+	if data.Current != nil || len(data.Passes) != 3 || !strings.Contains(data.Finish, "three-pass cap") || data.ScratchPlan != blitzTestPlan {
 		t.Fatalf("a mode switch at the cap must close the original attempt: %+v", data)
 	}
 	for i, p := range data.Passes {
@@ -132,7 +146,7 @@ func TestBlitzEarlyDoneAndCanceledPause(t *testing.T) {
 	assess := advanceBlitz(t, read, blitzTestReading)
 	plan := advanceBlitz(t, assess, blitzAssessment("GRH"))
 	open := advanceBlitz(t, plan, blitzPlanReply("LEAN"))
-	pass := advanceBlitz(t, open, blitzOpening("LEAN"))
+	pass := advanceBlitz(t, open, blitzOpening())
 	_, data := checkBlitzNode(t, pass, "Coordinate independent Lean formalizers")
 	if data.Assessment["target"] != "GRH" || data.Current == nil || data.Current.Number != 1 || data.Current.Mode != "LEAN" {
 		t.Fatalf("bad first LEAN pass for full GRH: %+v", data)
@@ -154,7 +168,7 @@ func TestBlitzRejectsMalformedTransitions(t *testing.T) {
 	assess := advanceBlitz(t, read, blitzTestReading)
 	plan := advanceBlitz(t, assess, blitzAssessment("RH"))
 	open := advanceBlitz(t, plan, blitzPlanReply("INFORMAL"))
-	pass := advanceBlitz(t, open, blitzOpening("INFORMAL"))
+	pass := advanceBlitz(t, open, blitzOpening())
 	synth := advanceBlitz(t, pass, `{"report":"No positive finding"}`)
 	decline := advanceBlitz(t, assess, blitzAssessment("NOT_YET"))
 	for _, tc := range []struct {
@@ -164,7 +178,7 @@ func TestBlitzRejectsMalformedTransitions(t *testing.T) {
 	}{
 		{"read", read, []string{
 			"", `{"revision":"main","evidence":"Stale tree"}`,
-			strings.Repeat(" ", 4097) + blitzTestReading,
+			string([]byte{0xff}),
 		}},
 		{"assessment", assess, []string{
 			blitzAssessment("BOTH"), blitzAssessment("rh"), `{"target":"RH"}`, blitzAssessment("RH") + ` {}`,
@@ -174,11 +188,8 @@ func TestBlitzRejectsMalformedTransitions(t *testing.T) {
 			blitzPlanReply("DONE"), `{"mode":"LEAN","stop":"  ","plan":"Run a check"}`,
 		}},
 		{"open", open, []string{
-			blitzOpening("LEAN"),
-			strings.Replace(blitzOpening("INFORMAL"), "OPENED", "UNADOPTED", 1),
-			strings.Replace(blitzOpening("INFORMAL"), blitzTestAttempt, ".godel/blitz/../experiments/attempt.md", 1),
-			strings.Replace(blitzOpening("INFORMAL"), blitzTestAttempt, blitzTestDecision, 1),
-			strings.Replace(blitzOpening("INFORMAL"), blitzTestOpened, blitzTestSnapshot, 1),
+			`{"path":".godel/blitz/attempt-fixture.md"}`,
+			`{"path":"/tmp/grh/blitz/attempt-../other.md"}`,
 		}},
 		{"pass", pass, []string{`{"report":" \t\n"}`, `{"report":"a report","next":"DONE"}`}},
 		{"synthesis", synth, []string{
@@ -247,8 +258,8 @@ func blitzPlanReply(mode string) string {
 	return `{"mode":"` + mode + `","stop":"Stop on the specified counterexample or a checked endpoint","plan":"A bounded check with two perspectives"}`
 }
 
-func blitzOpening(mode string) string {
-	return `{"status":"OPENED","path":"` + blitzTestAttempt + `","revision":"` + blitzTestOpened + `","mode":"` + mode + `"}`
+func blitzOpening() string {
+	return `{"path":"` + blitzTestPlan + `"}`
 }
 
 func blitzSynthesis(next, result string) string {
