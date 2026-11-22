@@ -3,7 +3,6 @@ package main
 
 import (
 	"context"
-	"flag"
 	"fmt"
 	"os"
 	"os/signal"
@@ -14,18 +13,17 @@ import (
 )
 
 func main() {
-	reviewer := flag.String("reviewer", "", "executable accepting a walk request as its only argument")
-	flag.Parse()
-	if err := run(*reviewer); err != nil {
+	if len(os.Args) != 1 {
+		fmt.Fprintln(os.Stderr, "walk takes no arguments; supply the task on stdin")
+		os.Exit(1)
+	}
+	if err := run(); err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
 }
 
-func run(reviewer string) error {
-	if reviewer == "" {
-		return fmt.Errorf("no reviewer configured (draft requires -reviewer)")
-	}
+func run() error {
 	root, err := filepath.Abs("../..")
 	if err != nil {
 		return err
@@ -37,7 +35,15 @@ func run(reviewer string) error {
 	if err != nil {
 		return err
 	}
-	node, err := t.nextNode(godel.Node{Exec: reviewer, Directory: root})
+	launchRoot := os.Getenv("GRH_LAUNCH_ROOT")
+	if !filepath.IsAbs(launchRoot) {
+		return fmt.Errorf("set GRH_LAUNCH_ROOT to the absolute path of the durable GRH workspace")
+	}
+	launchRoot, err = filepath.EvalSymlinks(launchRoot)
+	if err != nil {
+		return fmt.Errorf("resolve GRH_LAUNCH_ROOT: %w", err)
+	}
+	node, err := t.nextNode(launchRoot)
 	if err != nil || node == nil {
 		return err
 	}

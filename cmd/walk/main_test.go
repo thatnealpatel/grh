@@ -107,11 +107,13 @@ func TestEvidenceReplayAfterReopen(t *testing.T) {
 	if err := w.submit(&use, false); err == nil || !strings.Contains(err.Error(), "acknowledge") {
 		t.Fatalf("review without receipt: got %v, want acknowledgment error", err)
 	}
+	w.done()
 	if !bytes.Equal(before, w.file("chapter-01")) {
 		t.Fatal("unsuccessful revisit changed the chapter")
 	}
 	w.reopen()
 	w.want("chapter-01", &tail.Passage, &use.Passage)
+	w.retryMalformed()
 	use.Dependencies[0].Reviewed = first
 	w.accept(&use, false)
 	w.reopen()
@@ -193,6 +195,55 @@ func TestCitationCycleDefersWithoutConsumingReview(t *testing.T) {
 	w.done()
 }
 
+func TestMalformedReviewRetry(t *testing.T) {
+	w := startWalk(t)
+	w.want("chapter-01", nil, nil)
+	w.retryMalformed()
+	r := openRecord("prop", "1.1", 2)
+	w.accept(&r, false)
+	w.want("chapter-01", &r.Passage, nil)
+	if c := w.chapter("chapter-01"); c.Complete || !reflect.DeepEqual(c.Cursor, &r.Passage) || !reflect.DeepEqual(c.Records, []record{r}) {
+		t.Fatalf("retry did not save exactly one open review: %+v", c)
+	}
+
+	// A new request in the same chapter gets
+	// a retry of its own.
+	w.retryMalformed()
+	before := w.ledger()
+	if err := w.submitText(`{"chapter":"chapter-01",`); err == nil || !strings.Contains(err.Error(), "unexpected end of JSON input") {
+		t.Fatalf("second malformed response: got %v, want a syntax error", err)
+	}
+	w.done()
+	if !reflect.DeepEqual(w.ledger(), before) {
+		t.Fatal("second syntax failure changed the ledger")
+	}
+	w.reopen()
+	w.want("chapter-01", &r.Passage, nil)
+}
+
+func TestInvalidReviewDoesNotRetry(t *testing.T) {
+	for _, tc := range []struct{ name, text, diagnostic string }{
+		{"chapter", `{"chapter":"chapter-02","complete":true}`, "unexpected chapter"},
+		{"type", `{"chapter":"chapter-01","complete":"true"}`, "cannot unmarshal"},
+		{"null", `null`, "unexpected chapter"},
+		{"missing disposition", `{"chapter":"chapter-01"}`, "must supply a passage or complete"},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			w := startWalk(t)
+			if !json.Valid([]byte(tc.text)) {
+				t.Fatal("fixture must have valid JSON syntax")
+			}
+			if err := w.submitText(tc.text); err == nil || !strings.Contains(err.Error(), tc.diagnostic) {
+				t.Fatalf("invalid response: got %v, want %q", err, tc.diagnostic)
+			}
+			w.done()
+			if _, err := os.Stat(w.dir); !os.IsNotExist(err) {
+				t.Fatalf("invalid response created ledger state: %v", err)
+			}
+		})
+	}
+}
+
 func TestFailedPublicationDoesNotAdvance(t *testing.T) {
 	w := startWalk(t)
 	w.want("chapter-01", nil, nil)
@@ -237,13 +288,15 @@ func publish(r *record, conclusion, verdict, version string) *evidence {
 }
 
 type walkTest struct {
-	t    *testing.T
-	dir  string
-	node *godel.Node
+	t          *testing.T
+	dir        string
+	launchRoot string
+	node       *godel.Node
 }
 
 func startWalk(t *testing.T) *walkTest {
-	w := &walkTest{t: t, dir: filepath.Join(t.TempDir(), "walk")}
+	root := t.TempDir()
+	w := &walkTest{t: t, dir: filepath.Join(root, "walker", ".godel", "walk"), launchRoot: filepath.Join(root, "launch")}
 	w.reopen()
 	return w
 }
@@ -256,19 +309,46 @@ func (w *walkTest) reopen() {
 	if err != nil {
 		w.t.Fatal(err)
 	}
-	w.node, err = t.nextNode(godel.Node{Exec: "test-reviewer"})
+	w.node, err = t.nextNode(w.launchRoot)
 	if err != nil {
 		w.t.Fatal(err)
 	}
 }
 
+func (w *walkTest) reviewPrompt() (prompt, requestJSON string) {
+	w.t.Helper()
+	if w.node == nil || w.node.Exec != "yah" || w.node.Directory != w.launchRoot || w.node.Next == nil ||
+		len(w.node.Args) != 5 || !slices.Equal(w.node.Args[:4], []string{"-yolo", "-effort", "high", "-append"}) {
+		w.t.Fatalf("expected a Yah reviewer node at %s, got %+v", w.launchRoot, w.node)
+	}
+	prompt, requestJSON, ok := strings.Cut(w.node.Args[4], "\n\nRequest (data): ")
+	if !ok || !strings.Contains(prompt, w.dir) {
+		w.t.Fatalf("reviewer prompt missing request or ledger location: %q", w.node.Args[4])
+	}
+	return prompt, requestJSON
+}
+
+func (w *walkTest) retryMalformed() {
+	w.t.Helper()
+	before := w.ledger()
+	_, original := w.reviewPrompt()
+	if err := w.submitText(`{"chapter":"chapter-01","complete":true} trailing prose`); err != nil {
+		w.t.Fatalf("first malformed response: %v", err)
+	}
+	prompt, retried := w.reviewPrompt()
+	if retried != original || !strings.Contains(prompt, "previous response was not valid JSON") {
+		w.t.Fatalf("retry changed the request or omitted the diagnostic: %s -> %s", original, retried)
+	}
+	if !reflect.DeepEqual(w.ledger(), before) {
+		w.t.Fatal("first syntax failure changed the ledger")
+	}
+}
+
 func (w *walkTest) request() request {
 	w.t.Helper()
-	if w.node == nil || w.node.Exec != "test-reviewer" || len(w.node.Args) != 1 || w.node.Next == nil {
-		w.t.Fatalf("expected a reviewer node, got %+v", w.node)
-	}
+	_, requestJSON := w.reviewPrompt()
 	var req request
-	if err := json.Unmarshal([]byte(w.node.Args[0]), &req); err != nil {
+	if err := json.Unmarshal([]byte(requestJSON), &req); err != nil {
 		w.t.Fatal(err)
 	}
 	return req
@@ -295,7 +375,13 @@ func (w *walkTest) submit(r *record, complete bool) error {
 	if err != nil {
 		w.t.Fatal(err)
 	}
-	w.node, err = w.node.Next(godel.Result{Text: string(data)})
+	return w.submitText(string(data))
+}
+
+func (w *walkTest) submitText(text string) error {
+	w.t.Helper()
+	node, err := w.node.Next(godel.Result{Text: text})
+	w.node = node
 	return err
 }
 
@@ -320,6 +406,26 @@ func (w *walkTest) file(id string) []byte {
 		w.t.Fatal(err)
 	}
 	return data
+}
+
+func (w *walkTest) ledger() map[string]string {
+	w.t.Helper()
+	entries, err := os.ReadDir(w.dir)
+	if os.IsNotExist(err) {
+		return nil
+	}
+	if err != nil {
+		w.t.Fatal(err)
+	}
+	files := make(map[string]string, len(entries))
+	for _, entry := range entries {
+		data, err := os.ReadFile(filepath.Join(w.dir, entry.Name()))
+		if err != nil {
+			w.t.Fatal(err)
+		}
+		files[entry.Name()] = string(data)
+	}
+	return files
 }
 
 func (w *walkTest) chapter(id string) chapterState {

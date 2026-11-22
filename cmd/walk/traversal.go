@@ -78,7 +78,7 @@ func sameEvidence(a, b *evidence) bool {
 	return *a == *b
 }
 
-func (t *traversal) nextNode(reviewer godel.Node) (*godel.Node, error) {
+func (t *traversal) nextNode(launchRoot string) (*godel.Node, error) {
 	deferred := false
 	for i, c := range t.chapters {
 		for j, r := range c.Records {
@@ -93,13 +93,13 @@ func (t *traversal) nextNode(reviewer godel.Node) (*godel.Node, error) {
 					deferred = true
 					break
 				}
-				return t.node(reviewer, i, j)
+				return t.node(launchRoot, i, j)
 			}
 		}
 	}
 	for i, c := range t.chapters {
 		if !c.Complete {
-			return t.node(reviewer, i, -1)
+			return t.node(launchRoot, i, -1)
 		}
 	}
 	if deferred {
@@ -108,7 +108,7 @@ func (t *traversal) nextNode(reviewer godel.Node) (*godel.Node, error) {
 	return nil, nil
 }
 
-func (t *traversal) node(reviewer godel.Node, chapterIndex, recordIndex int) (*godel.Node, error) {
+func (t *traversal) node(launchRoot string, chapterIndex, recordIndex int) (*godel.Node, error) {
 	c := &t.chapters[chapterIndex]
 	req := request{Edition: edition, Chapter: c.Chapter, Cursor: c.Cursor}
 	if recordIndex >= 0 {
@@ -124,21 +124,28 @@ func (t *traversal) node(reviewer godel.Node, chapterIndex, recordIndex int) (*g
 	if err != nil {
 		return nil, err
 	}
-	// Successors receive original stdin;
-	// pass the request in Args.
-	node := reviewer
-	node.Args = []string{string(arg)}
-	node.Next = func(result godel.Result) (*godel.Node, error) {
-		var out review
-		if err := json.Unmarshal([]byte(result.Text), &out); err != nil {
-			return nil, fmt.Errorf("%s review: %w", req.Chapter, err)
+	// Both attempts use the same serialized request,
+	// including the evidence offered on a revisit.
+	// Only a published review reschedules.
+	var attempt func(diagnostic string) *godel.Node
+	attempt = func(diagnostic string) *godel.Node {
+		node := passageReviewer(launchRoot, t.dir, string(arg), diagnostic)
+		node.Next = func(result godel.Result) (*godel.Node, error) {
+			var out review
+			if err := json.Unmarshal([]byte(result.Text), &out); err != nil {
+				if syntax, ok := err.(*json.SyntaxError); ok && diagnostic == "" {
+					return attempt(fmt.Sprintf("The previous response was not valid JSON (byte %d). Check the JSON and answer the same request.", syntax.Offset)), nil
+				}
+				return nil, fmt.Errorf("%s review: %w", req.Chapter, err)
+			}
+			if err := t.applyReview(chapterIndex, recordIndex, out); err != nil {
+				return nil, fmt.Errorf("%s review: %w", req.Chapter, err)
+			}
+			return t.nextNode(launchRoot)
 		}
-		if err := t.applyReview(chapterIndex, recordIndex, out); err != nil {
-			return nil, fmt.Errorf("%s review: %w", req.Chapter, err)
-		}
-		return t.nextNode(reviewer)
+		return &node
 	}
-	return &node, nil
+	return attempt(""), nil
 }
 
 func (t *traversal) applyReview(chapterIndex, recordIndex int, out review) error {

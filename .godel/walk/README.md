@@ -7,14 +7,37 @@
 reading order, a `cursor` (last forward-reviewed passage, or `null`), and a
 separate `complete` flag. Completion is coverage, not formal resolution.
 
+## Running Walk
+
+Run with no flags from `cmd/walk` in the workspace that owns the ledger.
+`GRH_LAUNCH_ROOT` is the absolute path of the stable GRH project workspace
+attached to the owning Yah campaign. It can differ from the walker's root.
+Use an authenticated `yah` on `PATH` and a working user systemd manager.
+
+```sh
+# From the ledger owner's root, with GRH_LAUNCH_ROOT already exported:
+cd cmd/walk
+printf '%s\n' 'Review the pinned Masullo manuscript in order.' | go run .
+```
+
+Gödel needs nonblank stdin on the first run (or whenever there is no saved
+nonblank response). To resume, rerun the same command from the same `cmd/walk`
+with the same `.godel/walk` ledger, after the earlier writer has stopped.
+Supplying nonblank stdin again is safe: It is not the cursor or the next
+request. Once Gödel has a saved nonblank response, `go run . </dev/null` also
+works from that directory. The ledger, not Gödel's stdin or history, determines
+what to review next.
+
 ## Reviewer interface
 
-No reviewer is bundled. The draft expects to start from
-`cmd/walk`, with `-reviewer` naming a trusted executable on `PATH`
-or an absolute path. The reviewer runs from the repository root, may read the
-ledger, and must not edit it. It must use the pinned PDF. It receives a single
-JSON argument with `edition`, `chapter`, and `cursor`; it returns one JSON
-object on stdout and sends diagnostics to stderr.
+Walk runs a built-in Yah reviewer node from `GRH_LAUNCH_ROOT`. Yah may read
+but must not edit the walker's ledger. It uses the pinned PDF and current
+accepted project evidence. Each appended prompt carries one JSON request
+with `edition`, `chapter`, and `cursor`; the reviewer returns one JSON object
+on stdout. Walk retries the same request once if stdout is not valid JSON
+syntax, with a short diagnostic in the new prompt. Neither syntax failure
+writes the ledger. Process failures and valid JSON that fails review
+validation stop without retry.
 
 - **Forward:** Return `chapter` and the next `record`. To finish reading that
   chapter, also return `complete: true`, with or without a final record. Use
