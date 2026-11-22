@@ -110,7 +110,9 @@ source checks are inherited from that note, not repeated here. This
 audit does not establish entireness on a repaired completed tensor
 space, justify the Archimedean input or passage to the completion,
 or settle character descent. It is a counterexample to the printed
-inclusion, not a counterexample to repaired entireness.
+inclusion, not a counterexample to repaired entireness. The
+[diagonal-unit check](#diagonal-unit-cancellation-on-every-quotient-character-component)
+separately tests the reverse inference on the actual quotient.
 
 **Independent review:** Yah session `01a201f3-2ac7-70b6-a2de-5c20cb1c1598`,
 agent `UduQBuX` (`finite-factor-review`). The reviewer checked the source
@@ -125,6 +127,127 @@ obstruction and the compact-away control. The reviewer also confirmed
 the uses of the inclusion in Lemma 5.3.4.2 and the full valuation
 factor immediately before (5.3.4.7), but did not redo the residue audit
 or review the topology of the replacement.
+
+## Diagonal-unit cancellation on every quotient character component
+
+**Result:** The reverse inference in the proof of Lemma 5.3.4.2(2),
+p. 260, fails for an additive pure tensor over $\mathbb Q$ with
+$S=\{\infty,3\}$. Its $S$-local zeta transform is entire on the whole
+quotient character space, although its finite test takes value one
+at zero and its finite zeta factor has a pole. This is a mathematical
+check of the printed inference, not a Lean theorem or a counterexample
+to forward entireness on the repaired domain.
+
+**Printed route and hypotheses.** Use the [inherited rendered reading
+of the proof](#scope-of-the-repair-and-use-in-lemma-5-3-4-2): The proof
+starts with additive Schwartz–Bruhat factors, assumes $Z_S$ entire
+on $\Omega(J_{F,S})$, and infers local vanishing, in particular
+$f_v(0)=0$ at finite $v$. The statement of part (2) starts instead
+with a polar-free test. With $B=\mathbb Z_3$, choose nonzero
+nonnegative $b\in C_c^\infty((1,2))$ and extend by zero. Put
+$$
+f(t,y)=(b(t)-b(3t))\mathbf1_B(y),\qquad
+h(t,y)=b(t)\mathbf1_{B\setminus3B}(y).
+$$
+The real difference is a nonzero Schwartz test (the two supports
+are disjoint) and is flat at zero. Both finite indicators are compact
+open in the additive field. Thus $f$ is in the additive pure-tensor
+domain of the reverse inference by (2.1.4.1), p. 71, and the additive
+test conventions on pp. 63–64 in the [domain audit](#the-real-slice-tests-the-displayed-inclusion).
+It is not asserted to be in the antecedent of the forward statement.
+
+**Defining route on the quotient.** The [shared-norm audit](hecke-right-line-majorant.md#checked-shared-norm-and-the-printed-s-local-mismatch)
+verifies the quotient and product norm in (3.1.2.1) and the following
+clause, p. 120, with the product (A.1.5.1) and outside-$S$ integrality
+in §A.1.5.1, p. 543. Here the numerator is
+$G=\mathbb R^\times\times\mathbb Q_3^\times$, the diagonal units are
+$\pm3^{\mathbb Z}$, and $N(t,y)=|t||y|_3$. For every continuous
+quasi-character $c$ of $J_{\mathbb Q,S}$ its pullback to $G$ satisfies
+$c(3,3)=1$. More explicitly, writing $y=3^k u$ with $u\in B^\times$,
+the quotient identifies with $\mathbb R_{>0}\times B^\times$ by
+$(t,y)\mapsto (3^{-k}|t|,\operatorname{sgn}(t)u)$, with inverse on
+classes given by $(r,u)\mapsto[(r,u)]$. With the [inherited character
+convention](complex-gaussian-angular.md#rendered-readings) from
+(3.1.1.1)–(2), p. 119, these coordinates put every component in the form
+$c=\xi N^s$ for a fixed unitary character $\xi$ of $B^\times$.
+
+Equation (3.3.1.1), p. 129, integrates the test times the pulled-back
+character on $G$, not directly on $J_{\mathbb Q,S}$: Inherit the
+[integral reading](isotypic-inverse-range-q-sqrt-minus-five.md#character-domain-and-constants)
+and the [product Haar reading](isotypic-fourier-gluing-q-sqrt-minus-five.md#evidence-and-limits)
+of (A.3.4.2), p. 561. On $\Re s>0$ all terms converge absolutely:
+The real supports are compact in $\mathbb R^\times$, and the finite
+absolute mass on $B\setminus\{0\}$ is a geometric shell sum. Apply
+$(t',y')=(3t,3y)$ to the integral of $b(3t)\mathbf1_B(y)c(t,y)$.
+The indicator becomes $\mathbf1_{3B}(y')$, multiplicative Haar is
+invariant, and $c(t'/3,y'/3)=c(t',y')$. Therefore
+$$
+Z_S(f,c)=Z_S(h,c)\qquad(\Re s>0)
+$$
+on **every** component, with no normalization factor. The substitution
+uses only diagonal-unit invariance and applies to any such unit and
+integrable translated test on its common convergence domain. The
+right-hand test has compact support in $G$: $\log N$ is bounded on it,
+so differentiation of $e^{s\log N}$ under the integral gives an
+entire continuation component by component. In this example the
+continuation is zero on $\xi\ne1$ by the $B^\times$ Haar average,
+and nonzero on the trivial component.
+
+**Pole control and verdict.** In (3.3.1.7), p. 130, with unit mass one
+from (A.3.2.2), p. 560, the local finite factor of $f$ on the trivial
+norm line is
+$$
+\sum_{k\ge0}3^{-ks}=(1-3^{-s})^{-1}\qquad(\Re s>0).
+$$
+Inherit those readings and the shell-tail calculation from the
+[finite residue audit](finite-local-zeta-residue.md#defining-integral-and-reflected-control).
+This factor has a simple pole at $s=0$, and $\mathbf1_B(0)=1$.
+Writing $M_b(s)=\int b(t)|t|^s\,d^\times t$, the real factor of $f$
+on that line is $(1-3^{-s})M_b(s)$, with $M_b(0)>0$. This cancels the
+pole rather than making its finite residue vanish. The same calculation
+works with $3$ replaced by any rational prime $p$ and $S=\{\infty,p\}$.
+Holomorphy does not detect whether the **given** tensor has zero finite
+slice, even when the entire transform is not identically zero. The
+**different** representative $h$ is flat and compact-away, so the example
+does not obstruct finding such a lift.
+Nor does it test passage to a completed tensor space.
+
+**Evidence:** Independent review by `GJphKCD` (`reverse-inference-review`,
+transcript Yah `01a2052f-36ab-7cb0-9c82-1c22ab09a1ae`), against
+`c1211d2341543aa63bc58bdd4fee81206e2411ac`. The reviewer separately
+checked the printed inference and witness membership, the applicability
+of the inherited quotient and integral readings, and the defining
+calculation at $3$ (including absolute convergence, the change of
+variables, and the nonzero continuation). The source readings above are
+inherited from accepted rendered audits, not a new visual check. The
+quotient coordinates, absolute convergence, substitution, and comparison
+of orders are ordinary mathematics. The accepted [exact-stage Lean
+pairing](#checked-entire-pairing-on-the-exact-rational-idele-stage)
+already handles the compact-away representative for its stage and
+Hecke-character hypotheses; it is not a formalization of this
+original additive test or all characters of the printed quotient.
+
+**Next bounded check:** On the same local domain and in the same
+$s$ coordinate, replace the real difference by arbitrary
+$a\in C_c^\infty(\mathbb R_{>0})$ with the finite factor still
+$\mathbf1_B$. On the nontrivial components the finite unit average
+still kills the transform; on the trivial component the verified
+local inputs (3.3.1.1), p. 129, (3.3.1.7), p. 130, (A.3.2.2), p. 560,
+and (A.3.4.2), p. 561, reduce the problem to the numerator over
+$1-3^{-s}$. Check that its residues at $s=2\pi i n/\log 3$ are the
+Fourier coefficients, with the $\log 3$ constants accounted for, of
+the periodization of $a(e^x)$ with period $\log 3$. The real Haar in
+(A.3.2.2)(1), p. 560, is $dt/t$ on this support by the
+[inherited signed Haar reading](trace-real-prime-q.md#source-and-domain).
+The [one-prime orbital calculation](trace-orbital-q.md#which-quotient-is-closed)
+already identifies zero periodization of a compact log profile with
+being a compact log translation difference in that coordinate
+(informal mathematics; the global manuscript mapping there is
+provisional and is not a premise here). After identifying the local
+residues with those coefficients, the existing difference criterion
+and the substitution above give a compact-away representative rather
+than forcing the original finite value to vanish. No global Euler
+factor or completed-space statement enters this check.
 
 ## The finite-only repair is not projectively continuous
 
