@@ -1061,34 +1061,59 @@ go run ./cmd/godel audit-local "$CANDIDATE" \
   Masullo.ideleFiniteStage_character_factor
 ```
 
-### Next: Split the norm and form the stage density
+### Checked norm and raw zeta density on the open stages
 
-Use (A.1.3.2)–(3), p. 541, for the idelic norm and (3.1.2.3), p. 121,
-for the squared norm at a complex place. For each `x : IdeleFiniteStage K S`,
-prove that the actual adele norm of `ideleFiniteStageEmbedding K S x`
-is $(\prod_{v\mid\infty}\|x_v\|^{v.\mathrm{mult}})\cdot
-(\prod_{v\in S}\|x_v\|)$. Start with `AdeleRing.norm_apply_of_isUnit`
-and use the stage coordinate lemmas. The finite norm is a `finprod`:
-Show its multiplicative support is in `S` and apply
-`finprod_eq_prod_of_mulSupport_subset`. The norm-one calculation for the
-image of an integral unit is already in the reverse inclusion of
-`finiteLocalUnitSet_eq_range`. Convert the product to stage subtype
-coordinates, then split its complex power using
-`Complex.mul_cpow_ofReal_nonneg`. No character or Haar hypothesis is
-needed for the norm step.
+[`IdeleFiniteStageZetaDensity`](../../Proofs/Theorems/IdeleFiniteStageZetaDensity.lean)
+proves `Masullo.ideleFiniteStage_norm` for every number field, finite
+stage $S$, and stage point $x$. It splits the norm of the actual embedded
+idele into the product of the infinite norms raised to the place
+multiplicities and the local norms for $v\in S$. Use (A.1.3.2)–(3), p. 541,
+for the product and (3.1.2.3), p. 121, for the square at complex places.
+The support argument uses that every inactive coordinate is an integral
+unit, hence has norm one. No character or Haar hypothesis is needed.
 
-On stages containing all Haar, test, and ramification exceptions `E`,
-combine the norm and `ideleFiniteStage_character_factor` with the
-pointwise split of the pure adelic test. This should give the tensor
-identity consumed by `ideleFiniteStage_integral`. For the joint
-Archimedean Schwartz test a grouped factor is still needed.
+`Masullo.ideleFiniteStage_zetaDensity` proves the pointwise step for the raw
+integrand of (3.2.2.1), p. 124. The finite test is arbitrary on $E$ and is the
+integral-ring indicator off $E$; the infinite test is grouped as in
+(3.4.1.2), p. 143. For $E\subseteq S$ and a Hecke character unramified
+outside $S$, pulling back the density is the grouped infinite density times
+the product of active finite densities. The exponent is arbitrary complex,
+and there is no unitarity, integrability, or Haar hypothesis. The proof
+splits the test, the actual character, and the normalized norm separately.
+The independent statement review (session
+`01a201c0-5a94-7d3f-9f41-b27cb30f8e23`, child `review-stage-density`,
+output `9f7bd86aa59c798dbbb31c926f08e7a0fc1cbd2c`) approved this scope.
+The manuscript reading is provisional (Markdown and numbered PDF layout).
+The proof of Theorem 3.4.1.1, pp. 143–144, does not supply the restricted-product
+limit argument for (3.4.1.5)–(6) (see footnote 3 on p. 144). The two Lean
+results fill the pointwise part, not the limit or Haar normalization.
 
-Then multiply the fixed local absolute masses on `E` by the bound above
-for the outside factors, whose Haar unit masses are one. Use
-`ideleFiniteStage_exhaust` on stages containing `E` and identify the
-complex limit by the corresponding tail `HasProd`. This is a corrected
-right-half-plane identity with the actual test on `E`, not the printed
-admissible-set independence of (3.4.1.5)–(6). Neither quotient
+```sh
+go run ./cmd/godel audit-local "$CANDIDATE" \
+  Lemmas.IdeleStageNormCoordinates Theorems.IdeleFiniteStageZetaDensity -- \
+  Masullo.ideleFiniteStage_norm Masullo.ideleFiniteStage_zetaDensity
+```
+
+### Next: Integrate the grouped Archimedean density on each stage
+
+Generalize `ideleFiniteStageProduct_tensor` to an integrable function on the
+full Archimedean product with measure `Measure.pi μa`. Do not require it to
+be a tensor over infinite places. Use `integral_prod_mul` for the two blocks,
+`integral_fintype_prod_eq_prod` for the finite block, and
+`inactiveHaar_probability` to integrate the inactive tuple. Transport via
+`ideleFiniteStage_integral`'s open-embedding `map_comap` argument to get
+stage integrability, the complex integral, and the integral of its norm.
+The hypotheses are integrability of the grouped factor and each active
+factor, the existing stage comap identity, and mass one *only* off $S$.
+Use `ideleFiniteStage_zetaDensity` to supply the exact pullback identity. The
+inactive pointwise factors being one does not supply the measure hypothesis.
+
+Then multiply the fixed local absolute masses on $E$ by the positive
+Euler-tail bound for the outside factors, whose Haar unit masses are one.
+Use `ideleFiniteStage_exhaust` on stages containing $E$ and identify the
+complex limit by the corresponding tail `HasProd`. This would give a
+corrected right-half-plane identity with the actual test on $E$, not the
+printed admissible-set independence of (3.4.1.5)–(6). Neither quotient
 normalization nor evaluation of the exceptional mass product by the
 discriminant follows from exhaustion.
 
