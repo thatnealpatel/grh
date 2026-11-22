@@ -72,6 +72,72 @@ exact candidate, and leave universe rendering disabled for literal
 axiom-name checks. The recorded correction and replay support those
 small changes. No new parser, node, build gate, or automatic retry.
 
+## Follow-up: Large-norm Fourier decay
+
+Gödel run `01a20531-7d84-7a36-a6c3-d8be59ff32a3` matches Yah work
+`01a20531-7ed6-7167-ac6c-839c1b0c8889` by input and final handoff.
+Its launch marker was `1cd220b56599e71c64c408abef826bd936ddea27` and
+its initial accepted tip was `80df4d935675284a7ec4ae13fe9d4756748add08`.
+The `cmd/godel` tree was unchanged from launch through the proof landing.
+The work prompt's prior-artifact lookup found the matching earlier
+improvement, Yah `01a20522-cddb-7b0c-a62a-3ee14581e0f1`. The worker
+confirmed that the corrected Gaussian inversion already stood at
+`91a1e59ccd12a3b51dbc5e16f8366d31ca552b0d` and advanced to the reflected
+Fourier decay input, rather than doing the stale handoff's inversion step.
+
+- Writer `KxuYcPr` repaired integral and coordinate elaboration in two
+  failed builds before checking the arbitrary-frequency factorization
+  in finalized output `9984aa7ae41d568db92324ea3dd094ff2f438ed3`.
+  The owner separately generalized compact-representative lattice
+  control and trace-frequency estimates. Several local attempts failed
+  on projections, coordinate rewrites, and instances. The assembled
+  proof failed three more builds on syntax, support and valuation APIs,
+  mass bounds, and linter diagnostics before passing (owner events
+  151–177; finalized output `dd96d56bc6dcb8e3811da383daa6dfa97ae6d9bf`).
+  The owner did not request integration of the failing versions.
+- Independent reviewer `mVmfYPn` checked the fixed theorem shapes,
+  normalization, and scaling against Masullo, including a targeted
+  rendered reading of (2.2.3.10), p. 84. The review outputs
+  `fb1996783c4c6abd021397c673d56a6560bc2566` and
+  `40be5edb7f9b1df54ab8c19032b389bd4dfffbf3` were evidence, not
+  writer patches. No reviewer tested a moving build.
+- On base `093c53ad3b7ed38f558dd3a6f21fd05914c98177`, the first
+  exact-candidate build named nonexistent `+Theorems.GaussianThetaInversion`
+  (work events 187, 194). The corrected build, using
+  `+Theorems.IdeleGaussianThetaInversion` and two additional relevant
+  importers, passed on the same candidate (195, 199). A fresh joint probe
+  checked 30 declarations and only allowed axioms (200, 204); adoption
+  was not stale (213–214). The accepted result is
+  `3684b4c6c42ce5822042e036961ab4869b132741`. See the
+  [Fourier decay handoff](../../obligations/single-place-norm.md#large-norm-decay-for-the-additive-fourier-integral).
+  The target error was not another endpoint elaboration failure.
+
+**Bounded replay:** In improvement session
+`01a2053f-0c78-78bd-b245-d71dc7783365`, extract each original and corrected
+`+Module` list from the two owning build commands (older events 99 and
+108, newer 187 and 195). In each checked revision's `jj file list`, look
+for `Proofs/` plus the module name with dots replaced by slashes and
+`.lean` appended, as specified by the pinned `lakefile.toml`.
+The first lists are missing exactly `Theorems.AdeleQuotientMeasure`
+(8 targets) and `Theorems.GaussianThetaInversion` (16 targets); neither
+corrected list has a missing path (8 and 18 targets). This detects
+nonexistent source paths, not omitted importers, bad statements, or
+failed proofs. No live automatic preflight was tried. The second failure
+and correction cost one tool cycle, without a stale adoption or lost
+proof. Keep the guide's existing source-path check and scope the target
+list from actual files; no routing change, automatic preflight, or new
+landing gate is justified by this replay.
+
+The same improvement separately landed the
+[small-norm successor](../../obligations/single-place-norm.md#zero-mode-corrected-theta-decay-at-small-norm)
+at `9eaebdf11efdf33b8b510e8550e686cf2bedaf27`. Its reviewed statement
+was fixed before the owner resolved two elementary arithmetic proof
+failures. The owner then built the exact candidate and checked the
+built signature and axioms. This is proof progress, not evidence of a
+new routing method. The next Gaussian average can use an already
+measurable periodization, so generic box-span measurability is not a
+prerequisite for that specialization.
+
 [assembled]: ../assembled-endpoint-elaboration/
 [wrapped]: ../wrapped-axiom-reports/
 [guide]: ../../../cmd/godel/README.md#checking-a-proof-candidate
