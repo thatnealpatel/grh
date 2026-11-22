@@ -1,6 +1,6 @@
 # The one-prime orbital quotient over the rationals
 
-**Scope:** Project calculations for $F=\mathbb Q$, the trivial $C_{\mathbb Q}^1$-isotype, and one rational prime $p$. Source readings are provisional and use `pdftotext -layout` of the [digest-matched edition](../sources/masullo/README.md). PDF ordinals match the printed pages cited below. No Lean declaration or visual reading is claimed.
+**Scope:** Project calculations for $F=\mathbb Q$, the trivial $C_{\mathbb Q}^1$-isotype, and one rational prime $p$. Except for the rendered right-mask audit below, source readings are provisional and use `pdftotext -layout` of the [digest-matched edition](../sources/masullo/README.md). PDF ordinals match the printed pages cited below. The right-mask calculation is informal.
 
 ## Which quotient is closed?
 
@@ -242,11 +242,87 @@ $$\|(Q_{Y,a}-G_a)J_a\|_1\ll Y^{-1}H^{M+1}+H^{-1}\ll Y^{-\beta},\qquad \beta=1/(M
 
 ## The right cutoff erases a fixed shell in the literal chain
 
-**Provisional source reading.** In (11.3.1.2), pp. 492–493, the indicators $\alpha_k$ require units at the growing set $P_k$. Equation (11.3.1.4), p. 494, uses the signed difference $\alpha_{k+1}-\alpha_k$. For a fixed shell $k$, (11.3.2.3), p. 495, appears to multiply this difference by $\alpha_{k_1}$ in the same input variable $y=\xi g\tau(t)$. The text leading to (11.3.2.4), pp. 495–496, then treats the limit of $\alpha_{k_1}$ as $\beta_{S'}$, the requirement of units *outside* $S'$, where $S'$ contains the places newly added in the chosen shell. We do not see a separately indexed exhaustion in that passage. If the input factor is the same chain, there is an exact obstruction, independent of the indentation, position cutoff, and band level:
+**Rendered source audit of the fixed prime-$2$ shell.** In the rational
+trivial compact isotype take $S=\{\infty\}$ and $S'=\{\infty,2\}$.
+The mask reading is visually verified. The rank-zero log parallelotope
+for the choice $g=1$ below was checked from extraction; the same-chain
+multiplier identity does not depend on that choice.
+
+In the pinned edition, (11.3.1.2), pp. 492–493, forms unit masks from
+finite restriction sets. On p. 493, $P_k$ selects the places over the
+first $k$ rational primes, so $P_0=\varnothing$ and $P_1=\{2\}$ here.
+The text at (11.3.1.4), p. 494, names $\alpha_k$
+as the strata indicators and prints the difference
+$\alpha_{k+1}-\alpha_k$. That display suppresses the difference's
+argument; the orbital proof on p. 495 selects the input shell, by
+restricting the second argument $y=\xi g\tau(t)$ at the added places.
+
+* **Printed route.** Equation (11.3.2.3), p. 495, has the right factor
+  $\alpha_{k_1}(\xi g\tau(t))$, with the nested subscript $k_1$, at
+  exactly the second kernel argument. The preceding prose calls this
+  multiplication in the second variable and calls for a sufficiently
+  late stage with support containing the $S'$-local ideles. The following
+  sentence takes $k_1\to+\infty$ and calls the indicator of the $S'$-local
+  ideles the limit of those same $\alpha_{k_1}$, even restricting to
+  Schwartz–Bruhat inputs supported in the $k$th stratum. Equation
+  (11.3.2.4), p. 496, uses $\beta_{S'}(\xi g\tau(t))$ in that slot,
+  alongside the separate level cutoff. The passage does not define a
+  new family of masks or reset the base of the chain. The requested
+  eventual support is impossible for the chain just defined.
+* **Possible repair.** The index set in (11.1.2.1), p. 480, is the set
+  of finite sets disjoint from its base $S$. One could choose base
+  $S'$ instead, then use new masks indexed by finite sets increasing
+  to the complement of $S'$. Their pointwise limit is $\beta_{S'}$,
+  since they never test units at the selected shell place. Citing
+  Theorem 11.1.2.1 without specifying this change does not implement
+  the repair or supply convergence of the repaired operators.
+
+**Discriminating check (informal).** For the positive real norm section
+$\tau$ with finite components $1$, take the diagonal rational $\xi=2$
+and $g=1$. In (A.2.3.12)–(14), p. 549, the union defining
+$E_{\mathbb Q}^1$ includes the $g_1=1$ component, with angle zero
+allowed. Over $\mathbb Q$ the log parallelotope in (A.2.3.9)–(10)
+is the singleton zero, so this component includes $g=1$. The element
+$2$ is a uniformizer at $2$ and $y=2\tau(t)$ is in the zeroth stratum, with
+$\operatorname{ord}_2(y_2)=1$ and $\operatorname{ord}_\ell(y_\ell)=0$
+for every other finite prime $\ell$. Thus the signed shell factor is
+$-1$, the printed right mask is $0$ at every $k_1\ge1$, and the
+outside-$S'$ right mask is $1$. In particular, no sufficiently late
+original stage contains the $S'$-local ideles in its support. More
+generally for any decreasing family of stratum indicators in the same
+coordinate, $\alpha_{k_1}=1$ implies $\alpha_k=\alpha_{k+1}=1$ once
+$k_1\ge k+1$, so
 
 $$(\alpha_{k+1}-\alpha_k)\alpha_{k_1}=0\qquad(k_1\ge k+1).$$
 
-Indeed $\alpha_{k_1}=1$ implies both earlier indicators are one, and otherwise the product is zero. This holds even if the input is already supported in the $k$th stratum. In contrast, $\beta_{S'}$ permits a nonunit in $P_{k+1}\setminus P_k$. The cited carving theorem does index its sets outside a base $S$, by (11.1.2.1), p. 480. Rebasing that exhaustion at $S'$ is a possible repair, not an explicit identification of the chain in the extracted passage. Use finite sets exhausting the places **outside $S'$**, with no unit constraint added inside $S'$, to obtain $\beta_{S'}$ pointwise. This repairs that limit of multipliers, not the orbital trace identity. The shell condition alone does not imply support in the $S'$-idele subgroup: Over $\mathbb Q$, multiplying the diagonal rational $p$ by any sufficiently late prime outside $S'$ still gives an idele in the same $p$-shell. The reading of the indices and the indentation (11.3.2.2) still need rendered-page verification.
+This is a failure of the claimed **multiplier** limit at finite cutoff,
+not a claim that the indented kernel is nonzero on the witness or that
+the full integrals differ. The shell condition itself also does not
+force all other places to be units: Multiplying the diagonal $2$ by a
+later prime outside $S'$ stays in the first shell. Uniform localization,
+Haar compatibility of (11.3.2.2), identification of the resulting shell
+operator with the orbital quotient, and trace limits remain separate.
+
+**Evidence and disposition.** Independent reviewer `right-mask-pixels`
+(`jCtatYX`, transcript Yah `01a2054b-ef1b-7fba-a7a7-9f5b21279626`)
+checked the decisive crops against the pinned PDF at accepted comparison
+revision `e1dcdefaa32e5bd232b47925a61ef938ad486499`. Readable pixels
+confirmed the unit factors, stage assignment, and difference sign,
+pp. 492–494; the nested right index, input argument, eventual support
+claim, limit and support proviso, and replacement, pp. 495–496; the
+base-disjointness condition (11.1.2.1), p. 480; and the identity coset,
+angle condition, and union (A.2.3.12)–(14), p. 549. The reviewer
+checked the rank-zero parallelotope and the carving theorem's $s\ge2$
+threshold over $\mathbb Q$ from extraction, not pixels, and checked
+both mask evaluations mathematically. No Lean was added. Neither the
+review nor the result rechecks the indentation reading. The intervening
+[cut-range result](trace-cut-range-q.md) concerns a terminal position
+cutoff, not the input stratum or a shell trace, and does not alter
+this comparison. To reopen the trace comparison, specify a
+Haar-compatible transport of the orbital quotient that fixes the
+selected shell operator at finite cutoffs. The conditional lifts below
+already preserve the full diagonal with varying shell coefficient $c$,
+so full diagonal preservation alone cannot supply this identification.
 
 **Conditional Haar lift in the rational trivial isotype.** Let $G=\mathbb A_{\mathbb Q}^\times$, $H=\mathbb Q^\times$, and choose the positive real section with finite coordinates one. Then $D=\mathbb R_{>0}\times\widehat{\mathbb Z}^{\times}$ is a clopen fundamental subgroup: Clearing all finite valuations and then choosing the real sign gives $G=H D$ and $H\cap D=\{1\}$. Write $\sigma(q)\in D$ for the representative of $q\in G/H$. In this splitting the norm-one part of $D$ is $E_{\mathbb Q}^1$ from (A.2.3.14), p. 549. Use counting measure on $H$ and quotient Haar $\mu$. Since $G$ is the disjoint union of its open translates $hD$, Haar integration is the sum over $h$ followed by integration over $D$ with the restriction of Haar on $G$. That restriction pushes forward to $\mu$ by the quotient Haar formula. This directly gives the unfolding used in (12.2.2.4)–(12.2.2.7), p. 508, without invoking the connected fundamental domain hypothesis on p. 507: $D$ is not connected.
 
@@ -266,7 +342,7 @@ whenever the integral is absolutely convergent. For a sharp radial threshold, it
 
 **What this does not identify.** The same kernel and full diagonal give different shell integrals for a point mass ($c=0$) and two equal masses ($c=1/2$), if the cutoff diagonal integral is nonzero. More directly, the point-mass indentation always gives zero in this shell, whereas the section-based half-twisted circle trace is nonzero for a radial nonnegative test supported close to log norm $\log p$ with positive value there. Thus admissibility and preservation of the full diagonal alone cannot imply the orbital trace comparison. An independent identification of the selected shell operator with the orbital quotient is still needed. Neither the unrestricted joint limit nor the precise source level identification was changed here.
 
-**Review status:** Independent Yah review checked the cutoff calculation, the rational lift and its Haar unfolding, and the source interfaces against the digest-matched extraction. No visual or Lean check was performed.
+**Earlier review status:** Independent Yah review checked the cutoff calculation, the rational lift and its Haar unfolding, and the source interfaces against the digest-matched extraction. That review did not include rendered pages or Lean.
 
 ## Main cutoff test: No Haar lift of the literal shell kernel
 
