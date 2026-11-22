@@ -1,0 +1,20 @@
+{
+  "key": "c64e82e32522f673bc0c0eecefcfb1aed7f21c2579a2f948ea7484441134e9c4",
+  "revision": "582a453927941b3774d5611a6285568394f99999906c9f6934ff08dd85951500",
+  "outcome": "landed",
+  "source": "Masullo, The Music of the Primes, SHA-256 e039d3f6cf0a4b14f03c7edb85097752dd65c0a2fe543c76fe992be234f97bf5, chapter-01, §1.1.4 fourth bullet, printed p. 12 (one-based PDF ordinal 12), with the principal theta sum over F× in the preceding bullet. The all-real-weight definition is in §1.1.2, p./ordinal 11, display (1.1.2.1) and surrounding text, and Definition D.3.3.1, p./ordinal 804, with stage maps (D.3.3.1)–(D.3.3.2), p./ordinal 805. Supporting locators (printed page = PDF ordinal): Definition 2.2.3.1 (2.2.3.1), pp. 81–82; (2.2.3.2) and Remark 2.2.3.3 on p. 82; Theorem 2.2.3.4 (2.2.3.4)–(2.2.3.7) on p. 83 and (2.2.3.10)–(2.2.3.12) on p. 84; (A.2.2.8)–(A.2.2.11) on p. 547; Lemma 2.2.4.3 (2.2.4.7) on p. 88 and Lemma 2.2.4.5 (2.2.4.23), (2.2.4.27) and (2.2.4.29)–(2.2.4.31) on pp. 91–92. See global-box-theta-class-decay.md for the rendered-source audit and runnable checks.",
+  "finding": "Partial landing. The bullet claims exponentially decaying Schwartz–Bruhat membership on C_F for adelic Schwartz–Bruhat tests with both zero modes absent, and glosses it by pointwise bounds at both ends of the idelic norm for every integer N≥1. The printed proof of the pointwise estimate combines a lattice estimate with adelic inversion, but the linear Archimedean scaling in (2.2.3.10) does not follow from the printed diagonal section. Use the canonical section with ordinary scale t^(1/[K:ℚ]) and a sufficiently high Schwartz order. On the actual adeleBoxSpan and adeleBoxThetaLinear of the accepted global-box-theta-operator.md handoff at base a2f09a7a1fc08da97e122ad19cb64890e1d321a8, the new theorem proves the pointwise bound on the actual IdeleClassGroup for every number field and natural N, with one constant for each test and N, valid at every class including norm one. It discharges the support requirement in idele_periodization_rapidDecay_of_support and constructs the trace-calibrated Haar input to adeleBoxSpan_theta_smallNorm_decay; the only test hypotheses are f(0)=0 and the actual Fourier integral at zero vanishing. No general class-derivative estimate, all-weight Schwartz–Bruhat membership, bounded-family uniformity or source LF identification is proved. In the printed derivative argument the Fourier zero-mode derivative is −α times the original Fourier zero mode when |γ(t)|_F=t^α, not identically zero; it is zero on the intended kernel.",
+  "retry": "Supply a common compact finite-idele stabilizer of the finite box data, identify its class quotient as an admissible Lie stage with compactly generated annihilator, and prove on that quotient that all Lie derivatives commute with theta and preserve the two-mode kernel. Apply the pointwise estimate to the resulting tests and prove the all-real-weight Schwartz seminorm bounds on that same stage. Relate the box span to the full source Schwartz–Bruhat tests in Lean. The handoff specifies a candidate stabilizer and the quotient and differentiation inputs needed.",
+  "evidence": [
+    {
+      "path": "Proofs/Theorems/AdeleBoxThetaClassDecay.lean",
+      "declarations": [
+        "Masullo.adeleBoxThetaLinear_largeNorm_decay",
+        "Masullo.adeleBoxThetaHaar",
+        "Masullo.instIsAddHaarMeasure_adeleBoxThetaHaar",
+        "Masullo.adeleFourier_zero_eq_integral",
+        "Masullo.adeleBoxThetaLinear_exp_decay"
+      ]
+    }
+  ]
+}
