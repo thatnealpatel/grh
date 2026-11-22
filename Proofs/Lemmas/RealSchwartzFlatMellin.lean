@@ -12,7 +12,7 @@ open scoped SchwartzMap
 namespace Masullo
 
 /-- The two signed rays folded using the real sign character of parity `ε`. -/
-public noncomputable def realSchwartzParityLogProfile (b : 𝓢(ℝ, ℂ)) (ε : ℕ) (t : ℝ) : ℂ :=
+@[expose] public noncomputable def realSchwartzParityLogProfile (b : 𝓢(ℝ, ℂ)) (ε : ℕ) (t : ℝ) : ℂ :=
   b (Real.exp t) + (-1 : ℂ) ^ ε * b (-Real.exp t)
 
 private theorem norm_realSchwartz_exp_ray_le (b : 𝓢(ℝ, ℂ)) (K : ℕ) (t y : ℝ)

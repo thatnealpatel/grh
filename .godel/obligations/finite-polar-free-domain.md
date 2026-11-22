@@ -430,22 +430,78 @@ mapping of the real split (3.1.2.3), p. 121, is provisional and is not
 needed for the estimate or for using the checked coordinate identities.
 No pages were reread for this proof.
 
-**Next bounded check:** Transport the raw integral to full Haar on the
-actual real completion units, establishing absolute integrability and
-value equality for each $s\in\mathbb C$ with a fixed unitary character.
-For $y=\operatorname{extensionEmbeddingOfIsReal}(hv)(u.\mathrm{val})$, the accepted
-`realCompletionHaar_map_logSign` sends $u$ to $(\log\|u.\mathrm{val}\|,\operatorname{sign} y)$
-with target Lebesgue times counting measure, mass one per sign. The
-accepted `exists_archimedeanHeckeRestriction_real` and real norm identity
-identify the character and module power in those coordinates: Use
-`positive_cpow_add_radial` at $|y|>0$ and $z=s+i\tau$. This needs the
-raw pairing, restriction, and full-Haar readings cited above, not a
-printed Gamma evaluation. Folded integrability for a single parity
-would not justify integration over the signs. At the same $z$, taking
-half the sum and half the difference of the checked even and odd
-weighted integrands gives separate integrability of both rays. That
-allows a pushforward argument for the actual unit integral, with no
-half-Haar factor and no restriction to the positive sign.
-[Finite-shell assembly](finite-local-zeta-residue.md) for the repaired
-algebraic tensor, character descent, and any extension to a completed
-tensor remain separate.
+## Checked raw flat Schwartz pairing on real completion units
+
+[`Masullo.realCompletionSchwartzMellinPair`](../../Proofs/Theorems/RealCompletionSchwartzMellin.lean)
+transports the real log pairing to the actual units $F_v^\times$ of
+any real place of a number field, with their Borel measurable structure.
+For a unitary Mathlib Hecke character $\chi$ and a complex Schwartz
+profile $b$ with every jet at zero equal to zero, the statement supplies
+$\epsilon\le 1$ and $\tau\in\mathbb R$ satisfying the local character
+identity on all units, before quantifying over $s\in\mathbb C$. It
+proves absolute integrability and the value equality
+$$
+\int_{F_v^\times} b(y)\,\chi(j_v(u))\,|y|^s\,d^\times u
+ = \int_{\mathbb R}
+  [b(e^t)+(-1)^\epsilon b(-e^t)]e^{(s+i\tau)t}\,dt.
+$$
+Here $y=\operatorname{extensionEmbeddingOfIsReal}(hv)(u.\mathrm{val})$.
+The Lean norm is $\|u.\mathrm{val}\|^{v.\mathrm{mult}}=|y|$ by the real
+isometry and `hv.mult_eq_one`. The measure is full `realCompletionHaar`,
+with no restriction to the positive sign or division by two. There is
+no support gap, convergence half-plane, or Gamma normalization.
+
+At the same $z=s+i\tau$, the half-sum and half-difference of the
+integrable parity-zero and parity-one integrands give integrability
+of each ray. This is stronger than integrability after cancellation
+between signs. `realCompletionHaar_map_logSign` pushes the measure to
+Lebesgue times counting measure, with mass one on each sign. The
+checked restriction and `positive_cpow_add_radial` apply at $|y|>0$ in
+that same coordinate $t=\log|y|$. Fubini sums the two integrals without
+a scalar. The result thus identifies the raw pairing with the
+[already-entire log integral](#checked-entireness-of-the-raw-real-log-mellin-pairing)
+translated by the fixed $i\tau$.
+
+**Evidence:** Independent statement and reduction review, including
+normalization and source applicability: Yah
+`01a204bf-f419-7ee0-957f-3990373a8b6f`, agent `pfjAZjT`, against
+`83e360130cbd779f6d5ed1ca21f0d19613b91a0d`. Inherit the rendered jet
+condition (5.3.3.10), p. 252, and Definition 5.3.4.1, p. 259, from the
+[domain audit](#the-finite-only-repair-is-not-projectively-continuous);
+(3.3.1.7), p. 130, and insertion in §3.1.2.2, p. 121, from the
+[angular audit](complex-gaussian-angular.md#rendered-readings); and
+A.3.2.2(1), p. 560, from the
+[real-prime audit](trace-real-prime-q.md#source-and-domain). The
+provisional manuscript mapping of (3.1.2.3), p. 121, is not a premise.
+No pages were reread. This supplies one local input to the repaired
+forward direction of Lemma 5.3.4.2(2), pp. 259–261, not a proof on its
+printed tensor domain.
+
+**Next bounded check:** On the actual units of one rational finite
+completion, prove absolute integrability and a finite shell formula
+for a compactly supported locally constant test paired with the
+actual restricted character times the normalized norm power. Use
+`RationalLocalNormShell.iUnion_eq_univ`, `.log_norm`, and `.measure`
+for the same rational unit domain and `rationalLocalMultiplicativeHaar`.
+Compact support in the units bounds $\log\|u.\mathrm{val}\|$ and thus
+both ends of the integer shell index. In the formula, keep the whole
+character-weighted test integral as the coefficient on shell $k$,
+so it need not be radial or unramified. The parameter-dependent factor
+is exactly $\exp(-ks\log p)$ by `.log_norm`. A finite sum of these
+terms would supply the missing Lean finite-local entireness input;
+the [shell argument](finite-local-zeta-residue.md#what-is-checked-in-lean-and-what-chapter-5-can-use)
+is presently informal for this test class.
+
+For that check, inherit the finite-domain repair and the reviewed
+forward-direction scope, (5.3.4.1) and Lemma 5.3.4.2(2), pp. 259–261,
+from the [domain audit](#scope-of-the-repair-and-use-in-lemma-5342).
+The compact-away class is a repair, not the printed finite test space.
+Inherit the bilinear pairing and insertion from the angular audit as
+above, and the normalized finite coordinate (§3.1.2.1, p. 120) and
+unit mass (A.3.2.2, p. 560) from the
+[finite normalization audit](finite-gaussian-tamagawa.md#source-and-the-two-readings-of-l_v).
+In the rational field the local extension is trivial and that unit
+mass is one, as in the [finite residue audit](finite-local-zeta-residue.md#printed-residue-and-admissible-tests).
+No reflected pairing or Euler factor is used for the next check.
+Beyond it, assembly on a repaired algebraic tensor, character descent,
+and passage to a completed tensor remain separate.
