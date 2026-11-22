@@ -2278,34 +2278,89 @@ and reviewed hashes. The owner reran the five-target `lake build
 prior candidate and the independent review; every axiom report
 listed only the three allowed axioms. The restack was adopted.
 
-**Next: bound the reflected theta term before averaging.** Masullo's
-Theorem 2.2.3.4(2), (2.2.3.7), PDF p. 83, applies the large-norm
-bound to $\widehat f$, not to $f$. The proof of Theorem 2.2.5.4(2),
-(2.2.5.10), pp. 97–98, then averages on the compact norm-one group.
-This successor reading is provisional (Markdown and numbered layout).
-The existing arbitrary-character Gaussian large-norm estimate applies
-to the *spatial* Gaussian, not to the integral `adeleFourier μ f`.
-At the same $\mu$ and fixed $S$, the next bound to prove is: For each
-$N\in\mathbb N$ there is a finite constant $C_N$ such that for every
-actual idele $b$ of norm at least one,
-\[
-\sum_{t\in K^\times}|\widehat f(b\,t)|\le C_N |b|_K^{-N}.
-\]
-One route is to upgrade the single-box factorization
-`adeleBox_fourier_integral` from diagonal to arbitrary adelic
-frequencies: The finite part of a transformed box is the trace-dual
-box indicator times a translated phase and a Haar mass, and
-`archimedeanTraceFourier_eq` gives the Euclidean Schwartz factor
-with the trace frequency and measure. For the bound, domination by
-such a box suffices; expansion of the phase into smaller boxes is
-not necessary. Extend the fixed lattice majorant to these finitely
-many boxes, with compact norm-one representatives. Alternatively,
-an explicit Fourier formula for this Gaussian must match the same
-additive integral at the idelic diagonal samples, not just at bare
-diagonal frequencies. Use $N+1$ for the reflected estimate to absorb
-the prefactor $|a|_K^{-1}$. Integrability/measurability of the class
-slices and cancellation by the norm-one character are separate:
-Retain both zero modes until the weighted Haar average; for the
-trivial restriction multiply them by the actual Haar mass. This
-writer result does not prove class continuity, continuation, full
-Schwartz–Bruhat inversion, RH, or GRH.
+### Large-norm decay for the additive Fourier integral
+
+Theorem 2.2.3.4(2), (2.2.3.7), PDF p. 83, needs the large-norm
+bound for the **same** additive Fourier integral used in theta inversion.
+The existing spatial Gaussian estimate does not establish this premise.
+The following replacement obtains the estimate for each fixed member of
+`adeleBoxSpan K`, which includes the repaired fixed-stage Hecke test.
+
+1. **Actual Fourier integral.** `adeleBox_fourier_at` uses the same
+   cofinal finite-stage comaps as pointwise inversion. For any actual
+   additive adele frequency, it proves integrability and multiplies the
+   trace-normalized Archimedean transform by the finite local integrals.
+   Masullo's displayed product (2.2.4.32), p. 92, concerns a directional
+   derivative under a compact-support assumption at infinity and prints
+   the finite test at the frequency. The replacement uses the integration
+   variable, a Schwartz factor at infinity, and the corrected conjugated
+   finite factors in the global character (so the local Fourier integrals
+   have positive phase). The stage contains all exceptions for the
+   center, radius, frequency, and Haar normalization (Definition A.3.1.2,
+   p. 556). Outside it the box is integral, the phase is one on that box,
+   and the integral is one. The global integral is the old `adeleFourier`
+   definition, moved unchanged to a module upstream of diagonal Poisson.
+2. **Bounds on the factors.** Example A.3.1.10, (A.3.1.8), p. 558,
+   gives the inverse-different support for the local *integer-ring*
+   transform. `finiteBoxLocalFourierAt_eq` extends the local formula to
+   scaled, translated boxes, and `finiteBox_annihilates_iff` identifies
+   the support condition at an arbitrary local frequency. If $h_v$
+   represents the different and $g_v$ is the box scale, then a nonzero
+   Fourier value forces $h_vg_vy_v$ integral. The translation only
+   contributes a phase. Since the factors are one cofinitely, one bad
+   factor makes the global product zero; otherwise its modulus is
+   bounded by the fixed product of centered box masses. The bound
+   `exists_archimedeanTraceFourier_norm_mul_pow_le` uses the Euclidean
+   Schwartz Fourier transform at trace frequency $(y_v)$ at real places
+   and $(2\overline{y_v})$ at complex places. These bounds are on the
+   computed integral itself, not on a substitute dual Gaussian.
+3. **Fixed lattice and exponent.** Lemma 2.2.2.1(3), (2.2.2.3),
+   pp. 77–78, uses finite support, and the proof (2.2.2.8)–(11),
+   pp. 79–80, requires the finite coordinates of the full representative.
+   With unrestricted finite coordinates even the unramified rational
+   Gaussian gives arbitrarily many samples at a fixed real coordinate
+   (use $g_p=p^k$ and lattice $p^{-k}\mathbb Z$). For the inference
+   (2.2.3.8)–(13), pp. 83–84, `idele_periodization_rapidDecay_of_support`
+   instead absorbs a fixed finite dilation into the compact norm-one
+   cover used to clear denominators. The positive lower bound for the
+   Archimedean unit coordinates is on the *original* cover. We use the
+   scalar section of Lemma A.2.2.4, p. 547, not the section (A.2.2.11)
+   chosen in the printed proof. At norm $t$ its ordinary coordinate
+   dilation is $t^{1/[K:\mathbb Q]}$, not $t$ as asserted for the
+   sup-norm in (2.2.3.10). An exponent larger than the lattice rank and
+   at least $N[K:\mathbb Q]$ suffices. The theorem also recovers the
+   previous spatial Gaussian estimate without changing its statement.
+4. **Fixed box span.** `adeleBoxSpan_fourier_rapidDecay` combines these
+   pointwise bounds for one box and then extends by ordinary integral
+   linearity and the triangle inequality. For each $N\in\mathbb N$ it
+   gives $C_N>0$ such that for all actual ideles $b$ of norm at least one,
+   the series of absolute values converges and
+   $\sum_{t\in K^\times}|\widehat f(bt)|\le C_N|b|_K^{-N}$.
+   No uniformity on bounded families or identification with the full
+   Schwartz–Bruhat space is asserted.
+
+**Review and checking.** Owning Yah session
+`01a20531-7ed6-7167-ac6c-839c1b0c8889` records the exact assembled
+candidate and base, warning-failing build, fresh joint signatures and
+axiom reports, and adoption result. Writer `KxuYcPr` built the six-file
+arbitrary-frequency output `9984aa7ae41d568db92324ea3dd094ff2f438ed3`.
+Independent Yah reviewer `mVmfYPn` audited the general support and
+lattice lemma, the arbitrary-frequency fixed statements, the local
+annihilator and coordinate bounds, and the exact box-span endpoint
+(review outputs `fb1996783c4c6abd021397c673d56a6560bc2566` and
+`40be5edb7f9b1df54ab8c19032b389bd4dfffbf3` in the owning session).
+Readings are provisional from pinned Markdown and numbered PDF layout,
+except for the reviewer's targeted rendering of (2.2.3.10).
+
+**Next: Reflect before averaging.** `adeleBoxSpan_theta_inversion`
+already gives the same Fourier integral and both zero modes. For
+$0<t=|a|_K\le 1$, apply the new estimate to $b=a^{-1}$ with exponent
+$N+1$ to absorb $t^{-1}$ in (2.2.3.7) and obtain (2.2.3.5) on this
+span. Then the compact norm-one Haar average of Theorem 2.2.5.4(2),
+(2.2.5.10), pp. 97–98, needs measurable principal series and class
+slices in addition to the pointwise bound. Retain both zero modes up
+to weighting; for the trivial restriction multiply them by the actual
+Haar mass. Inversion sends the weight to its inverse. Unfolding the
+weighted average needs the appropriate multiplicative counting-quotient
+measure, not the additive measure of the Fourier integral. This does
+not prove class continuity, continuation, RH, or GRH.

@@ -82,6 +82,21 @@ private theorem valuation_inv_coordinate (g : Fˣ) (v : V) :
     rfl
   rw [eq_inv_of_mul_eq_one_right h, map_inv₀]
 
+/-- If `h` represents the different, the annihilator of `g_v O_v`
+at any local frequency is the centered box of radius `(h_v g_v)⁻¹`. -/
+public theorem finiteBox_annihilates_iff (g h : Fˣ) (hh : (finiteIdeleIdeal K h : J) = D)
+    (v : V) (z : K[v]) :
+    (∀ t : O[v], χ[v] (z * (g.val v * (t : K[v]))) = 1) ↔
+      w[v] (z) ≤ w[v] (((h * g)⁻¹ : Fˣ).val v) := by
+  obtain ⟨t, ht, htD⟩ := different_coordinates h hh v
+  simp only [← mul_assoc]
+  rw [finiteCompletion_traceChar_trivial_iff, finiteCompletion_traceDual_eq_inv_differentIdeal,
+    FractionalIdeal.mem_coeToSubmodule, finiteCompletion_mem_codifferent_iff v t htD,
+    valuation_inv_coordinate, ← one_div, le_div_iff₀
+      (pos_iff_ne_zero.mpr (finiteIdele_valuation_ne_zero (h * g) v)), ← w[v].map_mul, ht]
+  change w[v] (h.val v * (z * g.val v)) ≤ 1 ↔ w[v] (z * (h.val v * g.val v)) ≤ 1
+  rw [mul_left_comm]
+
 /-- The diagonal frequencies annihilating the finite box `g ∏ O_v` are
 exactly the rational trace dual of the fractional ideal of `g`. -/
 public theorem mem_traceDual_finiteIdeleIdeal_iff (g : Fˣ) (y : K) :
@@ -95,19 +110,7 @@ public theorem mem_traceDual_finiteIdeleIdeal_iff (g : Fˣ) (y : K) :
     rw [fractionalIdeal_traceDual_eq, map_inv, map_mul, mul_inv_rev, Units.val_mul,
       Units.val_inv_eq_inv_val, Units.val_inv_eq_inv_val, hh', mul_comm]
   rw [hdual, mem_finiteIdeleIdeal_iff]
-  apply forall_congr'
-  intro v
-  obtain ⟨t, ht, htD⟩ := different_coordinates h hh' v
-  -- Absorb the radius into the frequency, then use the local different
-  -- generator to turn annihilation into an integrality test.
-  simp only [← mul_assoc]
-  rw [finiteCompletion_traceChar_trivial_iff, finiteCompletion_traceDual_eq_inv_differentIdeal,
-    FractionalIdeal.mem_coeToSubmodule, finiteCompletion_mem_codifferent_iff v t htD]
-  change w[v] (k[v] y) ≤ w[v] (((h * g)⁻¹ : Fˣ).val v) ↔ w[v] ((t : K[v]) * (k[v] y * g.val v)) ≤ 1
-  rw [valuation_inv_coordinate, ← one_div, le_div_iff₀
-    (pos_iff_ne_zero.mpr (finiteIdele_valuation_ne_zero (h * g) v)), ← w[v].map_mul, ht]
-  change w[v] (k[v] y * (h.val v * g.val v)) ≤ 1 ↔ _
-  rw [mul_left_comm]
+  exact forall_congr' fun v ↦ (finiteBox_annihilates_iff g h hh' v (k[v] y)).symm
 
 /-- On the diagonal trace-dual support the positive finite Fourier phase of
 a translated box is the positive Archimedean shift phase. The product is

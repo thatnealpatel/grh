@@ -38,20 +38,33 @@ local notation "ν[" v "]" => @finiteCompletionNormalizedHaar K _ _ v (borel K[v
   (@BorelSpace.mk K[v] _ (borel K[v]) rfl)
 local notation "mass[" g "," v "]" => @Measure.real K[v] (borel K[v]) (ν[v])
   (Units.val g v • (O[v] : Set K[v]))
-/-- The local positive-kernel Fourier integral of the translated box, sampled
-at the diagonal frequency `y`, with the normalized additive Haar measure. -/
-@[expose] public noncomputable def finiteBoxLocalFourier (a : F) (g : Fˣ) (y : K) (v : V) : ℂ :=
+/-- The local positive-kernel Fourier integral of the translated box at a
+frequency in the actual completion, with the normalized additive Haar measure. -/
+@[expose] public noncomputable def finiteBoxLocalFourierAt (a : F) (g : Fˣ) (v : V)
+    (ω : K[v]) : ℂ :=
   @integral K[v] ℂ _ _ (borel K[v])
     (@Measure.restrict K[v] (borel K[v]) (ν[v]) ((a v + ·) '' (Units.val g v • (O[v] : Set K[v]))))
-    (fun t ↦ χ[v] (k[v] y * t))
+    (fun t ↦ χ[v] (ω * t))
+
+/-- At any local frequency the centered subgroup must be annihilated for its
+integral to survive. In that case translation contributes the positive phase. -/
+public theorem finiteBoxLocalFourierAt_eq (a : F) (g : Fˣ) (v : V) (ω : K[v]) :
+    finiteBoxLocalFourierAt a g v ω =
+      if ∀ t : O[v], χ[v] (ω * (g.val v * (t : K[v]))) = 1 then
+        χ[v] (ω * a v) * (mass[g,v] : ℂ) else 0 := by
+  borelize K[v]
+  exact finiteCompletion_box_fourier v (finiteCompletionNormalizedHaar v) (a v) (g.val v) ω
+    ((FiniteAdeleRing.isUnit_iff.mp g.isUnit).1 v)
+
+/-- The same local integral sampled at a diagonal frequency. -/
+@[expose] public noncomputable def finiteBoxLocalFourier (a : F) (g : Fˣ) (y : K) (v : V) : ℂ :=
+  finiteBoxLocalFourierAt a g v (k[v] y)
 
 private theorem boxIntegral_eq (a : F) (g : Fˣ) (y : K) (v : V) :
     finiteBoxLocalFourier a g y v =
       if ∀ t : O[v], χ[v] (k[v] y * (g.val v * (t : K[v]))) = 1 then
-        χ[v] (k[v] y * a v) * (mass[g,v] : ℂ) else 0 := by
-  borelize K[v]
-  exact finiteCompletion_box_fourier v (finiteCompletionNormalizedHaar v) (a v) (g.val v) (k[v] y)
-    ((FiniteAdeleRing.isUnit_iff.mp g.isUnit).1 v)
+        χ[v] (k[v] y * a v) * (mass[g,v] : ℂ) else 0 :=
+  finiteBoxLocalFourierAt_eq a g v (k[v] y)
 
 /-- The actual local Fourier integrals of `a + g ∏ O_v` on diagonal frequencies
 are one off a finite set, even when the frequency does not lie in the trace

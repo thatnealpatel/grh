@@ -75,16 +75,16 @@ public theorem numberFieldInfiniteAdeleAddChar_diagonal (x : K) :
   change Complex.exp (2 * Real.pi * Complex.I * (archimedeanAdeleTrace K (algebraMap K A∞ x) : ℂ)) = _
   rw [h, Complex.ofReal_ratCast]
 
-/-- The infinite factor of the Fourier integral at a diagonal frequency. -/
-@[expose] public def archimedeanAdeleFourierIntegrand (φ : 𝓢(E, ℂ)) (y : K) (z : A∞) : ℂ :=
-  φ (ι∞.symm z) * conj (numberFieldInfiniteAdeleAddChar K (z * algebraMap K A∞ y))
+/-- The infinite factor of the Fourier integral at an actual infinite-adele frequency. -/
+@[expose] public def archimedeanAdeleFourierIntegrandAt (φ : 𝓢(E, ℂ)) (y : A∞) (z : A∞) : ℂ :=
+  φ (ι∞.symm z) * conj (numberFieldInfiniteAdeleAddChar K (z * y))
 
-private theorem archimedeanAdeleFourierIntegrand_coord (φ : 𝓢(E, ℂ)) (y : K) (x : E) :
-    archimedeanAdeleFourierIntegrand K φ y (ι∞ x) =
+private theorem archimedeanAdeleFourierIntegrandAt_coord (φ : 𝓢(E, ℂ)) (y : A∞) (x : E) :
+    archimedeanAdeleFourierIntegrandAt K φ y (ι∞ x) =
       Complex.exp ((↑(-2 * Real.pi * ⟪x, archimedeanTraceFrequency K
-        (archimedeanEuclideanEmbedding K y)⟫_ℝ) : ℂ) * Complex.I) * φ x := by
-  simp only [archimedeanAdeleFourierIntegrand, ι∞.symm_apply_apply, numberFieldInfiniteAdeleAddChar,
-    AddChar.coe_mk, archimedeanAdeleTrace_mul, ← euclideanToAdele_embedding K y, ← Complex.exp_conj]
+        (ι∞.symm y)⟫_ℝ) : ℂ) * Complex.I) * φ x := by
+  simp only [archimedeanAdeleFourierIntegrandAt, ι∞.symm_apply_apply, numberFieldInfiniteAdeleAddChar,
+    AddChar.coe_mk, archimedeanAdeleTrace_mul, ← Complex.exp_conj]
   rw [mul_comm (φ x)]
   congr 2
   simp only [map_mul, map_ofNat, Complex.conj_ofReal, Complex.conj_I]
@@ -92,28 +92,46 @@ private theorem archimedeanAdeleFourierIntegrand_coord (φ : 𝓢(E, ℂ)) (y : 
   ring
 
 /-- Transporting the trace measure to the infinite adeles preserves the Fourier integral. -/
-public theorem archimedeanAdeleFourierIntegrand_integral (φ : 𝓢(E, ℂ)) (y : K) :
-    (∫ z, archimedeanAdeleFourierIntegrand K φ y z ∂(archimedeanTraceMeasure K).map ι∞) =
-      archimedeanTraceFourier K φ (archimedeanEuclideanEmbedding K y) := by
+public theorem archimedeanAdeleFourierIntegrandAt_integral (φ : 𝓢(E, ℂ)) (y : A∞) :
+    (∫ z, archimedeanAdeleFourierIntegrandAt K φ y z ∂(archimedeanTraceMeasure K).map ι∞) =
+      archimedeanTraceFourier K φ (ι∞.symm y) := by
   have he : MeasurableEmbedding (ι∞ : E → A∞) := ι∞.toHomeomorph.measurableEmbedding
   rw [he.integral_map, archimedeanTraceFourier]
-  exact integral_congr_ae (Filter.Eventually.of_forall (archimedeanAdeleFourierIntegrand_coord K φ y))
+  exact integral_congr_ae (Filter.Eventually.of_forall (archimedeanAdeleFourierIntegrandAt_coord K φ y))
 
 /-- This Archimedean integrand is integrable, without a compact-support hypothesis. -/
-public theorem integrable_archimedeanAdeleFourierIntegrand (φ : 𝓢(E, ℂ)) (y : K) :
-    Integrable (archimedeanAdeleFourierIntegrand K φ y) ((archimedeanTraceMeasure K).map ι∞) := by
+public theorem integrable_archimedeanAdeleFourierIntegrandAt (φ : 𝓢(E, ℂ)) (y : A∞) :
+    Integrable (archimedeanAdeleFourierIntegrandAt K φ y) ((archimedeanTraceMeasure K).map ι∞) := by
   have he : MeasurableEmbedding (ι∞ : E → A∞) := ι∞.toHomeomorph.measurableEmbedding
   rw [he.integrable_map_iff]
   have hφ : Integrable (φ : E → ℂ) (archimedeanTraceMeasure K) := by
     rw [archimedeanTraceMeasure]
     exact φ.integrable.smul_measure (by finiteness)
   have h : Continuous (fun x : E ↦ conj (numberFieldInfiniteAdeleAddChar K
-      (ι∞ x * algebraMap K A∞ y))) :=
+      (ι∞ x * y))) :=
     Complex.continuous_conj.comp ((continuous_numberFieldInfiniteAdeleAddChar K).comp
       (ι∞.continuous.mul continuous_const))
-  simpa only [Function.comp_def, archimedeanAdeleFourierIntegrand, ι∞.symm_apply_apply] using
+  simpa only [Function.comp_def, archimedeanAdeleFourierIntegrandAt, ι∞.symm_apply_apply] using
     hφ.mul_bdd h.aestronglyMeasurable (Filter.Eventually.of_forall fun x ↦ by
       rw [Complex.norm_conj, norm_numberFieldInfiniteAdeleAddChar])
+
+/-- The infinite factor at a diagonal frequency. -/
+@[expose] public def archimedeanAdeleFourierIntegrand (φ : 𝓢(E, ℂ)) (y : K) (z : A∞) : ℂ :=
+  archimedeanAdeleFourierIntegrandAt K φ (algebraMap K A∞ y) z
+
+/-- The infinite integral on the diagonal uses the Euclidean embedding of `y`. -/
+public theorem archimedeanAdeleFourierIntegrand_integral (φ : 𝓢(E, ℂ)) (y : K) :
+    (∫ z, archimedeanAdeleFourierIntegrand K φ y z ∂(archimedeanTraceMeasure K).map ι∞) =
+      archimedeanTraceFourier K φ (archimedeanEuclideanEmbedding K y) := by
+  change (∫ z, archimedeanAdeleFourierIntegrandAt K φ (algebraMap K A∞ y) z
+    ∂(archimedeanTraceMeasure K).map ι∞) = _
+  rw [archimedeanAdeleFourierIntegrandAt_integral, ← euclideanToAdele_embedding K y,
+    ι∞.symm_apply_apply]
+
+/-- Integrability at a diagonal frequency. -/
+public theorem integrable_archimedeanAdeleFourierIntegrand (φ : 𝓢(E, ℂ)) (y : K) :
+    Integrable (archimedeanAdeleFourierIntegrand K φ y) ((archimedeanTraceMeasure K).map ι∞) :=
+  integrable_archimedeanAdeleFourierIntegrandAt K φ (algebraMap K A∞ y)
 
 end
 

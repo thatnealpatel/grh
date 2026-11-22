@@ -1,6 +1,6 @@
 module
 
-public import Theorems.AdeleTraceCharacter
+public import Lemmas.AdeleFourier
 public import Theorems.AdeleRestrictedProductHaar
 public import Lemmas.FiniteBoxStageFourier
 
@@ -8,16 +8,16 @@ import Mathlib.MeasureTheory.Integral.Prod
 
 /-! # The adelic Fourier integral for a translated finite box
 
-The conjugated kernel and the tensor of local indicators come from
-Masullo's (2.2.4.32), PDF p. 92. That display assumes a compactly supported
-Archimedean factor and prints the finite indicator at the frequency. For
-this integral the indicator restricts the integration variable. The
-cofinal stage comaps from the restricted-product prescription (before
-Definition A.3.1.2, p. 556) and the corrected signs in `AdeleTraceCharacter`
-let us prove the product identity for a Schwartz factor, at every diagonal
-frequency. This does not identify the counting-normalized quotient measure
-of Definition A.3.1.1, p. 555. Source readings are provisional, based on the
-pinned Markdown and numbered PDF layout.
+Masullo's (2.2.4.32), PDF p. 92, supplies the conjugated kernel and tensor
+shape, but assumes a compactly supported Archimedean factor and prints the
+finite test at the frequency. Here it restricts the integration variable;
+the signs are those of the corrected `AdeleTraceCharacter`. The stage comaps
+implement the local Haar prescription at Definition A.3.1.2, p. 556, and the
+local box integrals extend the integer-ring calculation of Example A.3.1.10,
+p. 558. The resulting product at actual adelic frequencies supplies a
+Fourier input to the use of (2.2.3.4) for the transformed test in (2.2.3.7),
+p. 83. It does not prove the fixed-ideal estimate (2.2.3.8) or either theta
+bound. Source readings are provisional, from pinned Markdown and PDF layout.
 -/
 
 open IsDedekindDomain MeasureTheory NumberField Set
@@ -43,9 +43,67 @@ local notation "E∞" => mixedEmbedding.euclidean.mixedSpace K
 @[expose] public def adeleBoxFourierIntegrand (φ : 𝓢(E∞, ℂ)) (a : F) (g : Fˣ) (y : K) (z : A) : ℂ :=
   adeleBoxTensor φ a g z * conj (numberFieldAdeleAddChar (z * algebraMap K A y))
 
-/-- Integrability and Fourier factorization for any measure with the prescribed
-cofinal stage comaps. Existence of such a Haar measure is proved in
-`exists_adeleRestrictedProductHaar`. There is no nonzero-frequency premise. -/
+/-- Exact Fourier factorization at every actual adelic frequency, under the
+same cofinal comap hypotheses as the diagonal Poisson theorem. -/
+public theorem adeleBox_fourier_at (μ : Measure A) (E : Finset V)
+    (hμ : ∀ S : Finset V, E ⊆ S →
+      μ.comap (adeleFiniteStageEmbedding K S) = adeleFiniteStageHaar K S)
+    (φ : 𝓢(E∞, ℂ)) (a : F) (g : Fˣ) (y : A) :
+    Integrable (fun z : A ↦ adeleBoxTensor φ a g z * conj (numberFieldAdeleAddChar (z * y))) μ ∧
+      adeleFourier μ (adeleBoxTensor φ a g) y =
+        archimedeanTraceFourier K φ ((archimedeanEuclideanToAdele K).symm y.1) *
+          ∏ᶠ v : V, finiteBoxLocalFourierAt a g v (y.2 v) := by
+  -- Enlarge the stage to include the finite exceptions of this actual frequency.
+  obtain ⟨S, hES, hS⟩ := exists_finiteBoxStageConditionsAt a g y.2 E
+  let := adeleFiniteStageOutside_isProbabilityMeasure K S hS.mass
+  let j := adeleFiniteStageEmbedding K S
+  let H (z : A) := adeleBoxTensor φ a g z * conj (numberFieldAdeleAddChar (z * y))
+  have hj : MeasurableEmbedding (j : AdeleFiniteStage K S → A) :=
+    measurableEmbedding_adeleFiniteStageEmbedding K S
+  -- The spatial box is contained in the stage; the integrand is unchanged by restriction.
+  have hi : (range j).indicator H = H := by
+    funext z
+    by_cases hz : z ∈ range j
+    · exact indicator_of_mem hz _
+    · have hz' : z.2 ∉ finiteAdeleBox a g :=
+        fun h ↦ hz (finiteAdeleBox_preimage_snd_subset_stage a g S hS.center hS.scale h)
+      rw [indicator_of_notMem hz]
+      simp [H, adeleBoxTensor, hz']
+  have hr : μ.restrict (range j) = (adeleFiniteStageHaar K S).map j := by
+    rw [← hj.map_comap μ, hμ S hES]
+  -- On the actual product stage, the conjugated global character splits into two kernels.
+  let f := archimedeanAdeleFourierIntegrandAt K φ y.1
+  let k := fun b ↦ finiteAdeleBoxFourierKernelAt a g y.2 (j (0, b)).2
+  have hfun : (fun b : AdeleFiniteStage K S ↦ H (j b)) = (fun b ↦ f b.1 * k b.2) := by
+    funext b
+    change (φ ((archimedeanEuclideanToAdele K).symm (j b).1) *
+          (finiteAdeleBox a g).indicator (fun _ ↦ (1 : ℂ)) (j b).2) *
+        conj (numberFieldInfiniteAdeleAddChar K ((j b).1 * y.1) *
+          numberFieldFiniteAdeleAddChar ((j b).2 * y.2)) =
+      (φ ((archimedeanEuclideanToAdele K).symm b.1) *
+        conj (numberFieldInfiniteAdeleAddChar K (b.1 * y.1))) *
+      ((finiteAdeleBox a g).indicator (fun _ ↦ (1 : ℂ)) (j (0, b.2)).2 *
+        conj (numberFieldFiniteAdeleAddChar ((j (0, b.2)).2 * y.2)))
+    rw [adeleFiniteStageEmbedding_infinite K S b, adeleFiniteStageEmbedding_finite_eq_zero S b,
+      map_mul]
+    ac_rfl
+  obtain ⟨hf, hfi⟩ := finiteAdeleBox_stage_fourier_at a g y.2 S hS
+  have hArch := integrable_archimedeanAdeleFourierIntegrandAt K φ y.1
+  -- Transfer integrability and integrate on the product of the stage measures.
+  constructor
+  · change Integrable H μ
+    rw [← hi, integrable_indicator_iff hj.measurableSet_range, IntegrableOn, hr,
+      hj.integrable_map_iff]
+    change Integrable (fun b : AdeleFiniteStage K S ↦ H (j b)) _
+    rw [hfun, adeleFiniteStageHaar]
+    exact hArch.mul_prod hf
+  · change (∫ z, H z ∂μ) = _
+    rw [← hi, integral_indicator hj.measurableSet_range, hr, hj.integral_map]
+    change (∫ b : AdeleFiniteStage K S, H (j b) ∂adeleFiniteStageHaar K S) = _
+    rw [hfun, adeleFiniteStageHaar, integral_prod_mul f k]
+    exact congrArg₂ (· * ·) (archimedeanAdeleFourierIntegrandAt_integral K φ y.1) hfi
+
+/-- The original diagonal Fourier factorization, including at frequency zero. -/
 public theorem adeleBox_fourier_integral (μ : Measure A) (E : Finset V)
     (hμ : ∀ S : Finset V, E ⊆ S →
       μ.comap (adeleFiniteStageEmbedding K S) = adeleFiniteStageHaar K S)
@@ -54,62 +112,10 @@ public theorem adeleBox_fourier_integral (μ : Measure A) (E : Finset V)
       (∫ z, adeleBoxFourierIntegrand φ a g y z ∂μ) =
         archimedeanTraceFourier K φ (archimedeanEuclideanEmbedding K y) *
           ∏ᶠ v, finiteBoxLocalFourier a g y v := by
-  obtain ⟨S, hES, hS⟩ := exists_finiteBoxStageConditions a g y E
-  let := adeleFiniteStageOutside_isProbabilityMeasure K S hS.mass
-  let j := adeleFiniteStageEmbedding K S
-  let H := adeleBoxFourierIntegrand φ a g y
-  have hj : MeasurableEmbedding (j : AdeleFiniteStage K S → A) :=
-    measurableEmbedding_adeleFiniteStageEmbedding K S
-  -- The finite box is contained in this stage, so restricting loses no mass of the integrand.
-  have hzero : ∀ z ∉ range j, H z = 0 := by
-    intro z hz
-    have hz' : z.2 ∉ finiteAdeleBox a g :=
-      fun h ↦ hz (finiteAdeleBox_preimage_snd_subset_stage a g S hS.center hS.scale h)
-    simp [H, adeleBoxFourierIntegrand, adeleBoxTensor, hz']
-  have hi : (range j).indicator H = H := by
-    funext z
-    by_cases hz : z ∈ range j
-    · exact indicator_of_mem hz _
-    · rw [indicator_of_notMem hz, hzero z hz]
-  have hr : μ.restrict (range j) = (adeleFiniteStageHaar K S).map j := by
-    rw [← hj.map_comap μ, hμ S hES]
-  -- On the product stage the actual conjugated character splits into the two kernels.
-  have hcomp (b : AdeleFiniteStage K S) : H (j b) =
-      archimedeanAdeleFourierIntegrand K φ y b.1 *
-        finiteAdeleBoxFourierKernel a g y (j (0, b.2)).2 := by
-    have hfst : (j b).1 = b.1 := adeleFiniteStageEmbedding_infinite K S b
-    have hsnd : (j b).2 = (j (0, b.2)).2 := adeleFiniteStageEmbedding_finite_eq_zero S b
-    simp only [H, adeleBoxFourierIntegrand, adeleBoxTensor, archimedeanAdeleFourierIntegrand,
-      finiteAdeleBoxFourierKernel]
-    change (φ ((archimedeanEuclideanToAdele K).symm (j b).1) *
-          (finiteAdeleBox a g).indicator (fun _ ↦ (1 : ℂ)) (j b).2) *
-        conj (numberFieldInfiniteAdeleAddChar K ((j b).1 * algebraMap K (InfiniteAdeleRing K) y) *
-          numberFieldFiniteAdeleAddChar ((j b).2 * algebraMap K F y)) =
-      (φ ((archimedeanEuclideanToAdele K).symm b.1) *
-        conj (numberFieldInfiniteAdeleAddChar K (b.1 * algebraMap K (InfiniteAdeleRing K) y))) *
-      ((finiteAdeleBox a g).indicator (fun _ ↦ (1 : ℂ)) (j (0, b.2)).2 *
-        conj (numberFieldFiniteAdeleAddChar ((j (0, b.2)).2 * algebraMap K F y)))
-    rw [hfst, hsnd, map_mul]
-    ac_rfl
-  let f := archimedeanAdeleFourierIntegrand K φ y
-  let k := fun b ↦ finiteAdeleBoxFourierKernel a g y (j (0, b)).2
-  have hfun : (fun b : AdeleFiniteStage K S ↦ H (j b)) =
-      (fun b ↦ f b.1 * k b.2) := funext hcomp
-  obtain ⟨hf, hfi⟩ := finiteAdeleBox_stage_fourier a g y S hS
-  have hArch := integrable_archimedeanAdeleFourierIntegrand K φ y
-  constructor
-  · change Integrable H μ
-    rw [← hi, integrable_indicator_iff (hj.measurableSet_range), IntegrableOn, hr,
-      hj.integrable_map_iff]
-    change Integrable (fun b : AdeleFiniteStage K S ↦ H (j b)) _
-    rw [hfun, adeleFiniteStageHaar]
-    have hp := hArch.mul_prod hf
-    exact hp
-  · change (∫ z, H z ∂μ) = _
-    rw [← hi, integral_indicator hj.measurableSet_range, hr, hj.integral_map]
-    change (∫ b : AdeleFiniteStage K S, H (j b) ∂adeleFiniteStageHaar K S) = _
-    rw [hfun, adeleFiniteStageHaar, integral_prod_mul f k]
-    exact congrArg₂ (· * ·) (archimedeanAdeleFourierIntegrand_integral K φ y) hfi
+  have h := adeleBox_fourier_at μ E hμ φ a g (algebraMap K A y)
+  rw [AdeleRing.algebraMap_fst_def, ← euclideanToAdele_embedding K y,
+    ContinuousAddEquiv.symm_apply_apply] at h
+  exact h
 
 /-- One regular Haar measure with the prescribed local scales satisfies the
 factorization and integrability simultaneously for every translated box and

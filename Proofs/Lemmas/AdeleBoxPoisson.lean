@@ -4,7 +4,7 @@ public import Theorems.AdeleBoxFourier
 
 import Lemmas.FiniteIdeleIdealCoordinates
 
-/-! # The adelic Fourier integral and diagonal samples of box tensors -/
+/-! # Diagonal samples of adelic box tensors -/
 
 open IsDedekindDomain MeasureTheory NumberField Set
 open scoped Classical ComplexConjugate Masullo.AdeleStage Pointwise SchwartzMap WithZero
@@ -19,10 +19,6 @@ local notation "V" => HeightOneSpectrum (𝓞 K)
 local notation "E∞" => mixedEmbedding.euclidean.mixedSpace K
 local notation "K[" v "]" => HeightOneSpectrum.adicCompletion K v
 local notation "w[" v "]" => (Valued.v : Valuation K[v] ℤᵐ⁰)
-
-/-- Fourier integration with the conjugated global trace character. -/
-@[expose] public noncomputable def adeleFourier (μ : Measure A) (f : A → ℂ) (z : A) : ℂ :=
-  ∫ w, f w * conj (numberFieldAdeleAddChar (w * z)) ∂μ
 
 private theorem mem_localBox_iff (a : F) (g : Fˣ) (v : V) (z : K[v]) :
     z ∈ (a v + ·) '' (g.val v • (v.adicCompletionIntegers K : Set K[v])) ↔

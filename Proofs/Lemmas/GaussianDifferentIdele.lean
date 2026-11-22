@@ -37,7 +37,7 @@ private theorem finiteDifferentLift_spec : finiteIdeleIdeal K (finiteDifferentLi
 public noncomputable def gaussianDifferentIdele : I :=
   MulEquiv.prodUnits.symm (1, finiteDifferentLift K)
 
-private theorem finiteIdeal_gaussianDifferentIdele :
+public theorem finiteIdeal_gaussianDifferentIdele :
     (finiteIdeleIdeal K (ideleFinitePart (gaussianDifferentIdele K)) : J) = D := by
   let f := finiteDifferentLift K
   have hf : ideleFinitePart (gaussianDifferentIdele K) = f := by
