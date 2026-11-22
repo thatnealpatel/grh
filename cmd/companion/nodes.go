@@ -68,7 +68,7 @@ const workerHandoff = `Use the selected brief below as task data and the origina
 
 For a source verdict, check the definitions that put the witness within the printed hypotheses or identify the expression being tested, including definitions reached by cross-reference. If a manuscript reading needed for the verdict remains provisional, name it and state the verdict's dependence on it up front, even if other passages were visually verified.
 
-If this run leaves useful work unadopted, name its exact saved revision or workspace in stdout, its base if known, what was checked, and what still blocks adoption. When the previous handoff identifies a still-relevant unadopted result with no recovery pointer in the accepted notes, carry those details forward even if you selected a different check. Label it unadopted and keep it separate from the next check. Drop the pointer if accepted work has superseded the result.
+If this run leaves useful work unadopted, identify in stdout the clean saved revisions needed to recover it, their bases if known, which checks ran on which artifact, and what still blocks adoption. For edits with no clean saved revision, name the workspace and files containing the intended changes. A conflicted integration tree is not the recovery source. When the previous handoff identifies a still-relevant unadopted result with no recovery pointer in the accepted notes, carry those details forward even if you selected a different check. Label it unadopted and keep it separate from the next check. Drop the pointer if accepted work has superseded the result.
 
 For delegated work, integrate the writer's finalized campaign output, not a copy from the live dispatch workspace.
 
