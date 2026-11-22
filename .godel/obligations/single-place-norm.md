@@ -1969,6 +1969,38 @@ The first check's reports and their validation are at events 167 and 169.
 All reported axioms were allowed. These are scoped checks, not a project
 or GRH audit.
 
+### Additive idelic change of variables for the box Fourier measure
+
+Lemma A.3.1.4, equation (A.3.1.4), PDF p. 556, states the image law
+for arbitrary additive Haar and gives an external reference for its proof.
+The Lean proof in `Theorems.AdeleAdditiveDilation` computes the ratio on
+a positive compact box and uses Haar uniqueness. Source reading:
+Provisional, from the pinned Markdown and numbered PDF layout.
+
+- `archimedeanAdeleTraceMeasure_image_mul` computes the real determinant
+  of multiplication in mixed coordinates, with one norm factor at a real
+  place and two at a complex place. The transported trace measure is the
+  same one used in stage Haar and box Fourier.
+- `adeleCalibrationBox_image_idele_stage` uses local integer-ball dilation
+  at the retained places and bijectivity by integral units on the compact
+  tail. The chosen stage retains the finite integer-mass exceptions and
+  the nonintegral coordinates of both the idele and its inverse, so the
+  omitted norm factors are all one. The same comap computes both masses.
+- `comap_adeleAddHaar_dilate` transports the ratio from one normalized
+  restricted-product Haar to any additive Haar by uniqueness.
+  `adeleAddHaar_image_idele_mul` is the image formula (even for non-Borel
+  sets). `map_adeleAddHaar_dilate` uses the inverse idele to give
+  the pushforward factor $|h|_K^{-1}$. In particular, it applies to the
+  very measure used for box Fourier and counting quotient Weil, with
+  no further change of normalization.
+
+Exact-candidate source, joint build, signatures, axiom reports, independent
+review, and adoption evidence: Owning Yah session
+`01a204ec-e522-72e2-899d-3d969158c45b`. The Archimedean writer check was at
+`5228df142b4bbe08f4b398e0a79abd519623e4db`, and the stage writer check at
+`2986113c78beb01bce757df1e0513cb24856ebe0`. Those writer checks are not
+exact-candidate adoption evidence.
+
 **Next: Pointwise inversion for finite linear combinations of boxes.**
 In Theorem 2.2.3.2, p. 82, Abstract Weil normalization is invoked in
 Remark 2.2.3.3 to eliminate the volume factor. Use the same $\mu$ as
@@ -1987,9 +2019,8 @@ For the identity at $h=1$, use `finiteBox_diagonal_poisson` and
 For general $h$, check that pullback by $w\mapsto hw$ preserves the
 box span: It is a real-linear automorphism at infinity acting on the
 Schwartz input and translates/rescales the finite box by the inverse
-finite part. Use the pushforward
-$(w\mapsto hw)_*\mu=|h|_K^{-1}\mu$ (the comap uses $|h|_K$),
-the precise change of variables from Lemma A.3.1.4, p. 556. This gives
+finite part. Use the checked `map_adeleAddHaar_dilate` for the pushforward
+$(w\mapsto hw)_*\mu=|h|_K^{-1}\mu$ (the comap uses $|h|_K$). This gives
 $\widehat{f(h\,\cdot)}(t)=|h|_K^{-1}\widehat f(th^{-1})$ at the samples.
 Then split off both zero indices; do not appeal to a second quotient
 construction. This next obligation is pointwise, not yet continuity on
