@@ -1,0 +1,57 @@
+{
+  "key": "43b86bfe3419289dc9b5f874c3cc975b3d16defbe19648c05ed3ad4bb7e55999",
+  "revision": "422b22889832db04e8b2f15939301a25be0a82146ce5d953037bf5d9060a1248",
+  "outcome": "landed",
+  "source": "Alessandro Maria Masullo, The Music of the Primes, edition SHA-256 e039d3f6cf0a4b14f03c7edb85097752dd65c0a2fe543c76fe992be234f97bf5 (.godel/sources/masullo/README.md). chapter-01, §1.1.4 second bullet, printed p. 12 / one-based PDF ordinal 12, unnumbered C_{F,S} → J_{F,S} display and following unitary base-point sentence. Related rendered locators (printed numbers equal PDF ordinals): §2.3 opening p. 98 and first paragraphs p. 99 (open inclusion, outside-unit image Γ, and conditional Pic(O_{F,S})=1 statement); Appendix A.1.5.1 p. 543 (A.1.5.1)–(A.1.5.3), including the S-integer condition, and A.1.5.3 p. 544 (A.1.5.7); §3.1.2 p. 120 (3.1.2.1) defining J_{F,S}, and §3.1.2.3 p. 121 (3.1.2.6)–(3.1.2.9) defining unramifiedness, insertion of ones, and the global-to-local map; §3.1.1 p. 118 (compact-open topology) and p. 119 (3.1.1.1) and its real-positive-module fibre display.",
+  "finding": "The second bullet denotes by χ_S the unique continuous character on J_{F,S} pulling back to the restriction of a unitary χ on C_F when χ is unramified outside a finite S containing all infinite places. The pullback is to C_{F,S}, not C_F. The bullet gives no proof. On the accepted stage (Theorems.IdeleFiniteStage at 8d6df0da8aaf7cc4fb066dd20b7270a231cb7eb9), principal ideles intersect it in precisely the diagonals of the S-units: both a and a⁻¹ must be integral at every finite place outside S. The active projection is an open quotient after dividing by the respective principal relations. Its kernel is the compact closed image of the full outside-unit product. The accepted Masullo.ideleFiniteStage_character_factor uses the density of finitely supported outside units and continuity, so insertion of ones does not change the evaluation of χ. The insertion character kills the projected S-unit relations, is continuous on the quotient and is unique by surjectivity; unitary input gives unitary descent. No triviality of the S-class group is required. The proof also handles nonunitary quasi-characters, with the same unramifiedness premise.\n\nFor the base-point sentence, the actual compact norm-one subgroup has discrete Pontryagin dual, and restriction to it is continuous. The actual log norm section and compactness from Theorems.IdeleLogSplit and Theorems.IdeleClassCompactHausdorff at the same base give that the fibre over the trivial norm-one character is the connected component of 1. It is parametrized uniquely by complex norm powers, and its unitary points have exactly the exponents iτ, τ real. Consequently 1 is a unitary point in the component of every χ in the bullet with trivial norm-one restriction. The character-space identification from ℂˣ-valued to mathlib’s ℂ-valued realization is explicitly a compact-open homeomorphism. This addresses the two assigned dependencies; it does not establish global extension or analyticity, the family-level continuity/surjectivity of (3.1.2.9), a complex manifold structure, or claims about θ-functions. See .godel/formalize/s-local-idele-character.md for the argument and ordinary-import replay.",
+  "evidence": [
+    {
+      "path": "Proofs/Theorems/SLocalIdeleCharacter.lean",
+      "declarations": [
+        "Masullo.SLocalIdeles",
+        "Masullo.OutsideSUnits",
+        "Masullo.ideleStageProject",
+        "Masullo.ideleStageInsert",
+        "Masullo.ideleStageOutside",
+        "Masullo.ideleStagePrincipal",
+        "Masullo.ideleStage_unitEmbedding_mem_range_iff",
+        "Masullo.mem_ideleStagePrincipal_iff",
+        "Masullo.IdeleStageClasses",
+        "Masullo.SLocalIdeleClasses",
+        "Masullo.ideleStageToClass",
+        "Masullo.ideleStageToClass_mk",
+        "Masullo.isOpenEmbedding_ideleStageToClass",
+        "Masullo.ideleStageToLocal",
+        "Masullo.ideleStageToLocal_mk",
+        "Masullo.isOpenQuotientMap_ideleStageToLocal",
+        "Masullo.ker_ideleStageToLocal",
+        "Masullo.isCompact_isClosed_ker_ideleStageToLocal",
+        "Masullo.sLocalCharacter",
+        "Masullo.sLocalCharacter_mk",
+        "Masullo.sLocalCharacter_pullback",
+        "Masullo.character_eq_one_on_ideleStageToLocal_kernel",
+        "Masullo.sLocalCharacter_existsUnique",
+        "Masullo.sLocalCharacter_unitary"
+      ]
+    },
+    {
+      "path": "Proofs/Theorems/IdeleClassCharacterComponent.lean",
+      "declarations": [
+        "Masullo.ideleClassQuasiCharacterHomeomorph",
+        "Masullo.ideleClassQuasiCharacterHomeomorph_apply",
+        "Masullo.ideleClassNormPower",
+        "Masullo.ideleClassNormPower_apply",
+        "Masullo.continuous_ideleClassNormPower",
+        "Masullo.ideleClassNormPower_on_normOne",
+        "Masullo.ideleClassNormPower_existsUnique",
+        "Masullo.ideleClassNormOneRestriction",
+        "Masullo.ideleClassNormOneRestriction_apply",
+        "Masullo.continuous_ideleClassNormOneRestriction",
+        "Masullo.ideleClass_component_one",
+        "Masullo.ideleClassNormPower_unitary_iff",
+        "Masullo.ideleClass_component_one_unitary",
+        "Masullo.ideleClass_trivial_basePoint"
+      ]
+    }
+  ]
+}
