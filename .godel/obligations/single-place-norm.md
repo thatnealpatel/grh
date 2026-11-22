@@ -2001,29 +2001,92 @@ review, and adoption evidence: Owning Yah session
 `2986113c78beb01bce757df1e0513cb24856ebe0`. Those writer checks are not
 exact-candidate adoption evidence.
 
-**Next: Pointwise inversion for finite linear combinations of boxes.**
-In Theorem 2.2.3.2, p. 82, Abstract Weil normalization is invoked in
-Remark 2.2.3.3 to eliminate the volume factor. Use the same $\mu$ as
-above, and define $\widehat f(z)=\int f(w)\overline{\psi(wz)}\,d\mu(w)$
-with `numberFieldAdeleAddChar`. For $f$ any finite complex linear
-combination of `adeleBoxTensor` and $h$ any actual idele, prove
-absolute summability of $t\mapsto f(th)$ and
-$t\mapsto\widehat f(th^{-1})$ on $K$, and the pointwise equality
+### Pointwise inversion on the number-field box span
+
+[The pointwise theorem](../../Proofs/Theorems/AdeleBoxThetaInversion.lean),
+`adeleBoxSpan_theta_inversion`, proves the following for every number field
+$K$, every $f$ in the complex span of `adeleBoxTensor`, and every actual
+idele $h$. Let $\mu$ be additive Haar with the cofinal
+`adeleFiniteStageHaar` comaps and put
+$\widehat f(z)=\int_{\mathbf A_K}f(w)\overline{\psi(wz)}\,d\mu(w)$,
+where $\psi$ is `numberFieldAdeleAddChar`. Both $t\mapsto f(th)$ and
+$t\mapsto\widehat f(th^{-1})$ are absolutely summable over **all** of $K$,
+and
 \[
 \sum_{t\in K^\times} f(th)
 =|h|_K^{-1}\sum_{t\in K^\times}\widehat f(th^{-1})
  +|h|_K^{-1}\widehat f(0)-f(0).
 \]
-For the identity at $h=1$, use `finiteBox_diagonal_poisson` and
-`adeleBox_fourier_integral` at every diagonal sample, including zero.
-For general $h$, check that pullback by $w\mapsto hw$ preserves the
-box span: It is a real-linear automorphism at infinity acting on the
-Schwartz input and translates/rescales the finite box by the inverse
-finite part. Use the checked `map_adeleAddHaar_dilate` for the pushforward
-$(w\mapsto hw)_*\mu=|h|_K^{-1}\mu$ (the comap uses $|h|_K$). This gives
-$\widehat{f(h\,\cdot)}(t)=|h|_K^{-1}\widehat f(th^{-1})$ at the samples.
-Then split off both zero indices; do not appeal to a second quotient
-construction. This next obligation is pointwise, not yet continuity on
-the idele class group or the whole Schwartz–Bruhat space. The ramified
-Gaussian still needs its own decomposition or inversion argument; GRH
-remains open.
+
+- **Manuscript input and scope.** Theorem 2.2.3.2, (2.2.3.2)–(3),
+  PDF p. 82, invokes external adelic Riemann–Roch and uses Lemma 2.2.2.1
+  for convergence; Remark 2.2.3.3 uses the counting quotient of volume
+  one. `adeleIntegralClassMeasure_haar_probability` separately establishes
+  that normalization for the same stage comaps. It is not another premise
+  of the box theorem. We replace the invocation of Riemann–Roch at this
+  point by the proofs below, only for the **pointwise box span**, not as a
+  theorem of continuous functions on idele classes or for the full
+  Schwartz–Bruhat space. The independent Yah reader `theta-review`
+  (`GxoPgJb`, output `72ce426136af54d1cb954d6bce2b8119274ca638` in owning
+  session `01a20503-084a-723f-a5ef-b59603c0635d`) verified the rendered
+  p. 82 displays: (2.2.3.3) is already written on the nonzero index and
+  rearranges to (2.2.3.2), with inverse norm, inverse idele, and both
+  zero terms. The left-hand $f$ in $\Psi_F(g,0)$ is implicit in context.
+  Other source readings here are provisional (pinned Markdown and
+  numbered PDF layout).
+- **Kernel and identity idele.** Equation (2.2.4.32), PDF p. 92, supplies
+  the conjugated kernel of the integral; the finite indicator must act
+  on the integration variable. Examples A.3.1.5–10, pp. 557–558, describe
+  the local phases, product, and trace pullback. The positive finite
+  standard phases in the printed product need conjugation to cancel the
+  positive infinite phase on the diagonal; see the separately
+  [rendered rational check](theta-inversion-q.md#rendered-sign-check-a-translated-box-breaks-the-printed-theta-identity).
+  `adeleBoxSpan_diagonal_poisson` uses `finiteBox_diagonal_poisson`
+  (the shifted ideal lattice and its trace dual) and
+  `adeleBox_fourier_integral` (the actual integral at each diagonal
+  frequency, including zero) on a generator. The span argument carries
+  integrability of the kernel and absolute summability of both series
+  through addition and scalar multiplication.
+- **General idele.** `adeleBoxTensor_dilate` composes the Schwartz factor
+  with the actual forward Archimedean dilation and multiplies **both** the
+  center and scale of the finite box by the inverse finite unit. Thus
+  `adeleBoxSpan_dilate` preserves the span under $w\mapsto f(hw)$.
+  Masullo's image law (A.3.1.4), p. 556, gives the direct volume factor;
+  `map_adeleAddHaar_dilate` gives the inverse pushforward factor on the
+  same Haar. `adeleFourier_dilate` uses that factor and the inverse
+  frequency $h^{-1}z$ in the conjugated pairing. Applying the identity
+  result to the pullback gives both absolute full sums at $h$ and
+  $h^{-1}$. The proof removes zero from each summable series and reindexes
+  the nonzero terms by actual $K^\times$; neither zero term is presumed
+  to vanish.
+
+Writer base `f44dfe887421a288b8b624fed59f335d9310aa93`; the Haar dilation
+prerequisite landed at `9012d9ed33a1c6be2c2a3f4793dd044f61b7d289`.
+The combined writer build passed with these targets:
+
+```sh
+lake build --wfail +Lemmas.AdeleBoxDilation +Lemmas.AdeleBoxPoisson \
+  +Theorems.AdeleBoxPoisson +Theorems.AdeleBoxThetaInversion \
+  +Theorems.AdeleBoxFourier +Theorems.FiniteBoxPoisson \
+  +Theorems.AdeleAdditiveDilation +Theorems.AdeleIntegralClassMeasure
+```
+
+A fresh joint import checked 17 signatures and axiom lists, including
+all 11 new public declarations and the six direct normalization,
+character, Fourier, and lattice Poisson interfaces. Each used only
+`propext`, `Classical.choice`, and `Quot.sound`. This is writer evidence;
+exact-candidate integration, checks and adoption belong to the owning
+Yah session named above.
+
+**Next local obligation for the ramified Gaussian.** For the test in
+(3.4.3.7)–(8), PDF p. 152, prove for each actual completion $K_v$ and
+continuous Hecke character that `finiteAdditiveHeckeGaussian χ v` is a
+finite complex linear combination of indicators of $a_i+r\mathcal O_v$,
+with one $r\in K_v^\times$ and centers $a_i\in\mathcal O_v$.
+Use a small kernel neighborhood in the unit group (continuity and no
+nontrivial subgroup in a small complex arc), then a finite quotient by a
+principal open ideal, or adapt `padicTest_eq_sum_closedBalls` to the
+actual completion. Before applying pointwise inversion to the global
+test in (3.4.3.9), assemble those decompositions on a common finite stage
+and discharge the separate Archimedean Schwartz factor. Those bridges,
+class continuity for the number-field box span, and GRH remain open.
