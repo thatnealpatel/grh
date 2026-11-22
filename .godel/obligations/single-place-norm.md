@@ -1155,9 +1155,12 @@ go run ./cmd/godel audit-local "$CANDIDATE" \
   Masullo.covolume_archimedeanIdealLattice_traceMeasure
 ```
 
-**Next Archimedean input, not yet proved:** For every complex Schwartz
-function $\phi$ on $E$, every nonzero $I$, and $a\in E$, prove absolute
-summability of both series and
+#### Checked shifted fractional-ideal Poisson summation
+
+[`Masullo.archimedeanIdeal_poisson`](../../Proofs/Theorems/ArchimedeanIdealPoisson.lean)
+proves, for every number field, nonzero fractional ideal $I$, complex
+Schwartz function $\phi$ on $E$, and shift $a\in E$, that both series
+below are absolutely summable and
 
 $$
 \sum_{u\in L_I}\phi(a+u)=\frac{1}{\operatorname{covol}_{dx}(L_I)}
@@ -1165,53 +1168,73 @@ $$
   \mathcal F_E\phi(T(e(y))).
 $$
 
-Equivalently, multiply the Fourier value and the covolume by $2^{r_2}$
-together. This is the elaborated target proposition, **not a proof**
-(run `lake env lean` on the following input):
+The sums include zero on both sides. This is a project proof of the
+Archimedean input to a lattice proof of (2.2.3.2), PDF p. 82, not a
+formula separately stated by Masullo. Theorem 2.2.3.2 there invokes
+adelic Riemann–Roch, and Remark 2.2.3.3 fixes mass one of the *additive
+adelic quotient*, not of an ordinary Euclidean lattice cell. The source
+correspondence is a provisional reading of the pinned Markdown and
+numbered PDF layout, without rendered-page inspection in this review.
 
-```lean
-import Theorems.ArchimedeanIdealDual
-import Mathlib.Analysis.Distribution.SchwartzSpace.Fourier
+The proof periodizes in real basis coordinates. The Schwartz majorant
+on bounded sets of shifts makes the periodization continuous on the
+coordinate torus. Its Haar probability coefficient at an integer tuple
+$n$ is the negative-phase Euclidean Fourier transform at the unique
+$v$ with $\langle b_i,v\rangle=n_i$, divided by the ordinary covolume.
+`mFourierCoeff_latticePeriodization` supplies the missing calculation:
+The basis coordinate map takes ambient volume to a multiple of coordinate
+volume, calibrated on the unit cube; the two half-open cube conventions
+agree off a null boundary. Unfolding uses global Schwartz integrability
+to justify the sum-integral exchange. Schwartz decay on the Euclidean
+dual gives summable coefficients, hence pointwise torus reconstruction
+at the shift with the **positive** character. The ambient dual bridge
+and injectivity of $T\circ e$ identify that full dual exactly with
+$I^\vee$. The theorem uses unscaled volume in both the covolume and the
+Fourier transform; both quantities would acquire the same factor
+$2^{r_2}$ under trace-normalized volume.
 
-open NumberField MeasureTheory Masullo
-open scoped Classical nonZeroDivisors SchwartzMap FourierTransform InnerProductSpace
+Independent Yah statement review: Session
+`01a2043a-58d6-7878-bb85-cb20d5ba2214`, child `statement` (`tfduHve`,
+read-only output `4ab81a97db878e156fa18004865f18a3cbb3a916`). The review
+checked the exact endpoint, continuous periodization and coefficient
+formula, both signs, normalizations, and complete indexing. The built
+signature has the reviewed quantifiers and conclusion, with local
+notation for the Euclidean space and the fractional-ideal type. The
+writer base is `e46ddc2d60607575a47f38b7e9bd1fe340192a2e`; Mathlib is
+`fc4f59e577feb1a4956671bc04ac18aaaf8cd842` (Lean `v4.36.0`). The writer's
+`lake --wfail build +Theorems.ArchimedeanIdealPoisson` passed, as did an
+imported proof of the former target proposition by direct assignment of
+the new theorem. Each of the four new modules passed local `leanchecker`
+replay, and each endpoint below reported only `propext`, `Classical.choice`,
+and `Quot.sound`.
 
-example : Prop :=
-  ∀ (K : Type) [Field K] [NumberField K]
-    (I : (FractionalIdeal (𝓞 K)⁰ K)ˣ)
-    (φ : 𝓢(mixedEmbedding.euclidean.mixedSpace K, ℂ))
-    (a : mixedEmbedding.euclidean.mixedSpace K),
-    let p (u : archimedeanIdealLattice K I) := φ (a + u)
-    let q (y : ↥(FractionalIdeal.dual ℤ ℚ I.val)) :=
-      let v := archimedeanTraceFrequency K (archimedeanEuclideanEmbedding K y)
-      Complex.exp ((↑(2 * Real.pi * ⟪a, v⟫_ℝ) : ℂ) * Complex.I) * 𝓕 (⇑φ) v
-    Summable (fun u ↦ ‖p u‖) ∧ Summable (fun y ↦ ‖q y‖) ∧
-      ∑' u, p u = ((↑(ZLattice.covolume (archimedeanIdealLattice K I)
-        volume) : ℂ)⁻¹) * ∑' y, q y
+Replay in the exact integration candidate:
+
+```sh
+go run ./cmd/godel audit-local "$CANDIDATE" \
+  Lemmas.LatticeFrequency Lemmas.LatticeSchwartzPeriodization \
+  Lemmas.LatticePeriodizationCoefficient Theorems.ArchimedeanIdealPoisson -- \
+  Masullo.latticeSchwartzPeriodization_apply \
+  Masullo.mFourierCoeff_latticePeriodization Masullo.mFourier_eq_exp_inner \
+  Masullo.mem_latticeEuclideanDual Masullo.inner_latticeEuclideanDualIndex \
+  Masullo.schwartz_lattice_poisson Masullo.archimedeanIdeal_poisson
 ```
 
-Here the sums include zero on both sides, and $a$ allows the translated
-lattice boxes needed for ramified finite weights. Start with an integral
-basis $b$ of $L_I$ and periodize $\phi$ in its real basis coordinates on
-`UnitAddTorus`. The interface to check first is the coefficient formula:
-`UnitAddTorus.mFourierCoeff_eq_integral`, unfolding with
-`MeasureTheory.IsAddFundamentalDomain.integral_eq_tsum` on the half-open
-domain, and the Lebesgue Jacobian from basis coordinates
-(`ZLattice.covolume_eq_det` in the real pi space). Use
-`ZLattice.summable_norm_sub_inv_pow` for absolute convergence and a
-compact-uniform majorant for continuity; use
-`UnitAddTorus.hasSum_mFourier_series_apply_of_summable` for the pointwise
-identity. `VectorFourier.fourier_eq'` fixes the negative sign of the
-integral and thus the positive translation phase in the sum. Pinned
-Mathlib's `PoissonSummation.lean` gives the real-line case, not this
-lattice statement. This step must still be connected to finite support
-boxes and their compatible character and Haar factors on both sides.
-In particular, prove cancellation on the number-field diagonal using the
-positive Archimedean character and **conjugated** positive finite trace
-characters, as required by the
+**Next finite-to-global obligation:** For one finite box, prove that its
+pullback to the number-field diagonal is a coset of the fractional ideal
+with the prescribed local lattice balls. If a diagonal representative
+$x_0$ exists, identify the pullback explicitly with $x_0+I$; prove that
+representative exists by finite approximation with integrality outside
+the specified places. For a translated box, match the local transform's
+annihilator with $I^\vee$ and show that its product of translation phases
+at $y\in I^\vee$ equals the Archimedean positive phase at $a=e(x_0)$.
+This uses diagonal cancellation for the **positive Archimedean** and
+**conjugated positive finite** trace characters, as required by the
 [rational sign repair](theta-inversion-q.md#rendered-sign-check-a-translated-box-breaks-the-printed-theta-identity).
-Thus the finite Fourier kernel uses the positive finite exponent; an
-integer-ring indicator centered at zero cannot distinguish the two signs.
-This does not yet yield pointwise adelic theta inversion. In the final
-passage to the nonzero-orbit sums, retain **both** zero modes before
-norm-one averaging.
+An integer-ring indicator at zero cannot check the sign. The finite
+Haar masses must also be proved to multiply to the reciprocal of the
+trace-normalized Archimedean covolume. Then extend by finite linearity
+to the ramified tests, after proving their finite-coset decomposition.
+None of these steps is supplied by the Archimedean result. Retain both
+zero modes in the passage to the nonzero-orbit sums, before norm-one
+averaging.
