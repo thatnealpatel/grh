@@ -12,8 +12,9 @@ Sobolev completion. The display and its continuation were checked
 in rendered pixel crops, separately from the chapter Markdown,
 text extraction, and OCR. The PDF ordinals match the printed pages;
 SHA-256 is `e039d3f6cf0a4b14f03c7edb85097752dd65c0a2fe543c76fe992be234f97bf5`.
-This finding covers the opening claim, not the subsequent subquotient
-identifications or the trace formula.
+This finding covers the opening claim and the following global
+operator definition, not the $S$-local analogue, the subquotient
+identifications, or the trace formula.
 
 **What the operator argument checks.** For an idele $a$, write
 $T_a f(x)=f(a^{-1}x)$. On adelic tests, $T_a$ fixes evaluation at
@@ -27,18 +28,38 @@ commutes with integrated translation, so its image
 is stable under $\mathcal D(C_F)$ convolution. This is the reviewer's
 operator check. It does not imply closedness of the image.
 
-**Which operator?** The next sentence on p. 18 writes the ordinary
-uniformizer difference, as confirmed by the rendered formula.
-Masullo's Definition 5.3.1.2, p. 241, instead uses the difference on
-the local unit-invariant part and the identity on the nontrivial
-local unit isotypes. Equivalently, with $U_v$ the normalized local
-unit average, this operator is $1-T_{\pi_v}U_v$. The same moment and
-commutation checks apply to it. On a norm-one isotype unramified at
-each $v\mid p$, the induced operators agree, since $U_v$ acts as the
-identity there. The later closed-range claim for this definition
-cannot simply be used for the literal difference in a ramified
-isotype. The reading of the later definition uses the chapter
-Markdown and raster OCR and is provisional.
+**Which operator?** The next sentence, §1.2.9, printed p. 18,
+beginning “Recall that,” takes $S_p$ to be the finite places of residue
+characteristic $p$ and defines $\mathrm{PV}_{S_p}$ as the product of the
+operators induced by the literal differences $1-T_{\pi_v}$, for a
+choice of uniformizer at each $v\in S_p$. The rendered sentence and
+display match the chapter Markdown and PDF text extraction. The
+translation intertwining above gives descent to the theta quotient:
+The kernel of the theta map is stable under $T_{\pi_v}$, and continuity
+passes to the quotient by its defining topology. Since the differences
+commute with each other, their product needs no ordering.
+
+Masullo's Definition 5.3.1.2(2)–(3), p. 241, instead uses the difference
+on the local unit-invariant part and the identity on nontrivial local
+unit isotypes. Definition 5.3.1.4(1)–(2), pp. 241–242, tensors these
+local principal-value operators to form the adelic product, not the
+unconditional differences. The two cases of the local definition and
+the lines specifying the tensor factors on p. 242 were checked directly
+in rendered pixel crops of the same pinned PDF. With $U_v$ the normalized
+local unit average, the later local operator is $1-T_{\pi_v}U_v$.
+It preserves the two zero moments and commutes with translations, as
+in the calculation above. On a norm-one isotype unramified at every
+$v\mid p$, the two products agree because each $U_v$ acts as the
+identity. At a ramified place the local factors differ on every
+nonzero vector in that unit isotype: The omitted translate is nonzero
+because $T_{\pi_v}$ is invertible. The unit average also makes the
+later factor independent of replacing $\pi_v$ by a unit multiple,
+unlike the literal factor on a nontrivial unit isotype. Thus
+unramifiedness at all places over $p$ licenses the identification;
+without it, the local formulas do not justify the substitution.
+This is a source comparison and an elementary operator check, not a
+Lean result or a determination of the range, topology, or trace of
+either product.
 
 **Open topological step.** Theorem 7.4.2.1(1), printed p. 367,
 repeats the claim for the global principal-value operator; the
