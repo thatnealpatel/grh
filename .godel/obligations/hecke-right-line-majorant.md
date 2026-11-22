@@ -360,7 +360,8 @@ patch at `0ae987b585b5254b0e4920098e74eec919aba5b0` conflicted in this
 note and was not audited or adopted. Recover the needed paths on a
 fresh accepted base, preserving the intervening Gaussian work and note
 updates, then run the exact-candidate audit and fresh-import checks.
-This is not the next sign check or a general conductor assembly.
+This recovery is separate from the global sign result and does not
+assemble the general conductor.
 
 ### Separate global Fourier sign
 
@@ -369,13 +370,14 @@ tests Theorem 2.2.3.2, p. 82 using (2.2.4.32), p. 92, and Examples
 A.3.1.5–8, pp. 557–558. The printed kernel evaluates the reflected
 finite coset, so the unmodified global Poisson step does not give the
 claimed theta identity on all rational boxes. The repaired kernel
-conjugates only the finite character factors. The next sign check is
-on the reflected Mellin pairing (3.2.2.2), p. 124, for the global odd
-conductor-three character. This is distinct from the local conductor
-power above: A constant sign in a functional equation would cancel
-from its logarithmic derivative, and the test does not supply the
-exponential or the completed-product identification in (B.4.2.4),
-p. 615.
+conjugates only the finite character factors. The [global Mellin sign
+check](global-mellin-sign-q.md) verifies the relevant Chapter 3 passages
+and tests (3.2.2.2), p. 124, on the global odd conductor-three character.
+The continued left side and absolutely convergent printed right side have
+opposite nonzero values. This is distinct from the local conductor power
+above: A constant sign cancels on logarithmic differentiation, and the
+test does not supply the exponential factor or the completed-product
+identification in (B.4.2.4), p. 615.
 
 ### Separate relative 1-line integrability failure
 

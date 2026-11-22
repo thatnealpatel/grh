@@ -1657,17 +1657,14 @@ mathematics, not Lean endpoint evaluations. The existing
 `Masullo.rationalAdeleBoxSum_theta_inversion` remains the finite-conjugation
 control, with $k$ rather than $\sigma k$ on the left.
 
-**Next check:** Test whether this finite sign persists in the reflected
-Mellin pairing for the global odd character of conductor $3$. Inspect
-p. 124, (3.2.2.1)–(3.2.2.2), and the proof on p. 126 of Theorem
-3.2.2.1 for the exact dual quasi-character and any compensating
-translation. Then compare the reflected character's value at $\sigma$
-with the nonzero right-half-plane zeta pairing of a compatible test.
-This would decide whether the printed normalization also changes the
-phase in that specific global functional equation. The Chapter 3
-reflection locators are provisional, not rendered-page readings in
-this check. That question is separate from the local conductor power,
-general completed-product identification, and contour exhaustion.
+**Follow-up:** The [global Mellin sign check](global-mellin-sign-q.md)
+verifies (3.1.1.4), p. 119, (3.2.2.1)–(2), p. 124, and the proof on
+p. 126. In the odd conductor-three test at $c=\chi|\cdot|^{-1}$, the
+untranslated right side is the negative of the nonzero continued left
+side. The change of variables uses the frequency relation above; the
+continuation uses the repaired class theta identity. This is separate
+from the local conductor power, general completed-product identification,
+and contour exhaustion.
 
 ## Checked joint orbit convergence and theta inversion on idele classes
 

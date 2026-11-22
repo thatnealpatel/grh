@@ -120,23 +120,13 @@ go run ./cmd/godel audit-local "$CANDIDATE" \
 ### Separation from the reflected-line proof
 
 The Gaussian boundary obstruction does not supply a reflected Mellin
-comparison. The relevant printed inputs for the next sign check are
-(3.2.2.1)–(2), p. 124, and the proof on p. 126; their exact wording and
-pairing convention are not verified here. Use the accepted [theta sign
-check](theta-inversion-q.md#rendered-sign-check-a-translated-box-breaks-the-printed-theta-identity)
-for the source verification of the transform, not as verification of
-those later equations.
+comparison. The independent [odd conductor-three sign check](global-mellin-sign-q.md)
+verifies (3.1.1.4), p. 119, (3.2.2.1)–(2), p. 124, and the proof on
+p. 126. It compares a continued value to an absolutely convergent
+reflected pairing, not an upstairs integral at $\Re s=1$.
 
-## Next bounded check
-
-Return to the [odd conductor-three sign test](theta-inversion-q.md#rendered-sign-check-a-translated-box-breaks-the-printed-theta-identity):
-Read the reflected character and any finite translation in (3.2.2.2),
-p. 124, and its proof on p. 126, and test the value at
-$\sigma=(1,-1,-1,\ldots)$ on a nonzero pairing. This would decide whether
-the finite reflection changes the phase of the printed pairing. Those
-Chapter 3 sign readings are still provisional. The general-field
-identification of the Haar unit mass with the finite discriminant,
-conductor assembly, completed-product identification, and contour
-exhaustion are separate. The [checked finite local pairings](hecke-right-line-majorant.md#finite-local-zeta-pairings-with-the-haar-unit-mass-retained)
+The general-field identification of Haar unit mass with the finite
+discriminant, conductor assembly, completed-product identification, and
+contour exhaustion are separate. The [checked finite local pairings](hecke-right-line-majorant.md#finite-local-zeta-pairings-with-the-haar-unit-mass-retained)
 retain the unit mass as a parameter. No extension of (3.4.2.1) as a
 Lebesgue integral may be used to fill those gaps.
