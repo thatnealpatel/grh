@@ -1745,6 +1745,25 @@ run `#check @Masullo.<name>` and `#print axioms Masullo.<name>`; print
 verify that the tail uses the actual comaps. The proof candidate uses
 Lean `v4.36.0` and Mathlib `fc4f59e577feb1a4956671bc04ac18aaaf8cd842`.
 
+### Continuous finite-adele trace character
+
+On the actual finite adeles of any number field, the
+[`FiniteAdeleTraceCharacter`](../../Proofs/Theorems/FiniteAdeleTraceCharacter.lean)
+module constructs `numberFieldFiniteAdeleAddChar`. Masullo gives the
+positive local trace characters in Example A.3.1.10, PDF p. 558, and a
+global trace pullback in Example A.3.1.9, (A.3.1.7), on the same page.
+The [diagonal phase repair](finite-diagonal-phase.md) shows why the
+finite factors need conjugating while retaining the positive
+Archimedean phase. Diagonal compatibility alone did not construct
+an additive character or give continuity off the diagonal. Lean uses
+local triviality on the integer ring (not an exact conductor claim),
+finite multiplicative support, and restriction to stages to prove a
+continuous unit-modulus character. Its conjugate has the positive
+local phases of `finiteBoxLocalFourier`; its value at a diagonal
+$x$ cancels the positive Archimedean phase of $\mathrm{Tr}_{K/\mathbb Q}(x)$.
+The source reading remains provisional (pinned Markdown and numbered
+PDF layout).
+
 **Next: Identify the actual global Fourier integral for one translated
 finite box.** Use this $\mu$, a finite adele $a$, a finite idele $g$, a
 complex Schwartz Archimedean factor $\phi$, and any diagonal $y\in K$,
@@ -1757,15 +1776,10 @@ $$
 $$
 Here $\psi$ must be the continuous global character from the positive
 Archimedean phase and the product of conjugates of the positive finite
-trace phases. The [diagonal phase repair](finite-diagonal-phase.md)
-checks its diagonal value, not the global character. One runnable first
-step is the actual finite-adele character: Use local triviality on
-$\mathcal O_v$ and the eventual integrality of each finite adele to prove
-finite support and additivity. Apply `RestrictedProduct.continuous_dom`
-to the resulting finite products of continuous trace characters on the
-stages (cf. `Lemmas.RationalAdeleFiniteCharacter`). Use
-`finiteCompletion_traceChar_eq_one_of_integral` for the unit tail, not a
-claim that the conductor is exactly $\mathcal O_v$. Masullo's (2.2.4.32), p. 92,
+trace phases. Pair the checked finite character above with the positive
+Archimedean trace phase on the actual infinite completions, using the
+Archimedean trace pairing and the additive stage coordinates.
+Masullo's (2.2.4.32), p. 92,
 supplies the conjugated Fourier kernel and tensor shape, but the finite
 integrand must use the integration variable. Use the corrected sign so
 its finite factors are precisely `finiteBoxLocalFourier`.
