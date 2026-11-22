@@ -466,7 +466,7 @@ and additive Haar mass one on $\mathbb Z_p$.
   the primitive quadratic character; the original computation is
   retained as an independent route.
 
-**Local zeta quotient, not formalized.** Extend the unit character to
+**Local zeta quotient, originally reviewed mathematics.** Extend the unit character to
 $\mathbb Q_p^\times$ by $\chi(p)=1$. It has conductor $p^n\mathbb Z_p$:
 Reduction on units is onto with kernel $1+p^n\mathbb Z_p$, and a smaller
 conductor would factor the residue character through a lower level
@@ -560,9 +560,9 @@ The current reviewer corroborated this by extraction, not an independent
 visual reading. The Lean result is independent of that prose reading.
 In the earlier **informal** forward-over-reflected quotient,
 $R_p(1/2)=p^{-n/2}/A$ with $A=\widehat f(p^{-n})$, so the new modulus
-makes its absolute value one. This does not identify the phase with
-Masullo's $\rho_0$, formalize either zeta integral, or treat finite
-extensions.
+makes its absolute value one. This modulus result alone does not identify
+the phase with Masullo's $\rho_0$, evaluate either zeta integral, or
+treat finite extensions.
 
 **Statement review:** `ONimXXT` (transcript Yah
 `01a2029a-53c8-7475-8440-d5a8540e1b74`) checked both statements, the
@@ -619,13 +619,72 @@ identify the phase.
 the use of the inherited readings, and the rendered unit-restriction
 criterion on p. 121. The additive Fourier normalization is unchanged.
 
-**Next bounded check:** Construct the multiplicative unit-part map
-$\mathbb Q_p^\times\to O^\times$, $x\mapsto p^{-v_p(x)}x$, and check
-that it fixes integral units and sends $p$ to one. This would supply
-the algebraic input to extend the unit character with the printed
-uniformizer normalization. Continuity and unitarity of the extension,
-the local zeta identities, phase comparison, and finite-extension and
-global steps are separate.
+### Checked: Ramified local zeta integrals and quotient over $\mathbb Q_p$
+
+[Lean](../../Proofs/Theorems/PadicConductorZeta.lean) replaces the reviewed
+multiplicative integral and quotient calculation in the [shell
+note](#primitive-prime-power-conductor-shells-over-mathbb_q_p). The
+source interface is inherited from that note and the [modulus-three
+review](#ramified-local-conductor-power-the-modulus-three-test):
+(3.3.1.7), p. 130, pairs the test and twist with multiplicative Haar;
+(3.1.1.4), p. 119, gives the dual twist $\chi^{-1}|\cdot|_p^{1-s}$.
+This is the forward-over-reflected orientation of (3.3.1.2), p. 129.
+No new manuscript rendering is used.
+
+`padicZetaCharacter` extends the residue character by taking the unit
+part $xp^{-v_p(x)}$. `padicZetaCharacter_spec` proves continuity, value
+one on $p$, and the pullback formula on $\mathbb Z_p^\times$, without
+assuming positive level or primitivity. Thus the checked exact unit
+conductor above applies to this extension, not to a different character.
+
+For any prime $p$, $n>0$, and primitive complex Dirichlet character of
+level $p^n$, put $d=p^n$ and $A=\widehat f(d^{-1})$ for the accepted
+negative-sign Fourier integral of the inverse-character test, with
+additive integral-ball mass one. For any Borel multiplicative Haar
+measure $\mu$ on $\mathbb Q_p^\times$, set
+$m=\mu(\mathbb Z_p^\times)$. The norm-one set is compact and open, so
+$m$ is finite and positive. `padicConductorZeta_integrals` proves both
+integrands are integrable for every $s\in\mathbb C$ and evaluates them:
+
+- Forward: After character cancellation the integrand is the indicator
+  of the norm-one shell, and the integral is $m$.
+- Reflected: The support is the preimage of that shell under multiplication
+  by $d$, with the same mass by left invariance. Writing $x=d^{-1}u$,
+  the extended character has the unit value $\chi(u)$, and the Fourier
+  amplitude is $A\chi(u)$. Hence the integrand there is $Ad^{1-s}$,
+  and the integral is $mAd^{1-s}$.
+
+`padicConductorZetaRatio` is the quotient of the actual Bochner integrals.
+`padicConductorZeta_ratio_div` cancels the nonzero mass and amplitude to
+prove $R_p(s)/R_p(t)=d^{s-t}$ for all complex $s,t$, and
+`padicRamifiedThreeZeta_ratio_div` specializes to
+$R_3(3/4)/R_3(1/4)=\sqrt3$ for the nontrivial character modulo three.
+No Haar mass calibration or convergence strip is assumed.
+
+**Source comparison:** As recorded in the inherited rendered reviews,
+with trivial different and both Euler factors equal to one, the finite
+factor in (3.3.1.30), p. 136, has no $s$-dependence, while the conductor
+power in (3.3.2.24), p. 141, has exactly the variation proved here. This
+is a local counterexample to the constant factor, not a phase
+identification or a verdict on the printed $S$-local product.
+
+**Statement review:** `xdBkxRI` (transcript Yah
+`01a2048d-3571-77be-a412-bd9b6efa6955`) independently checked the
+applicability of the inherited source readings and the statements
+against the accepted Fourier support, unit covariance, and signed coset
+test. The Lean proof supplies the character and Haar shell reductions,
+and checks nonvanishing for cancellation; none is a quotient hypothesis.
+
+**Next bounded check:** Evaluate the signed central amplitude
+$\widehat f(1/3)$ in Lean, in the same negative-sign convention. The
+accepted `padicRamifiedThree_fourier` reduces it to the difference of
+two conjugate phases at $1/3$ and $2/3$, and
+`padicStdAddChar_apply_of_scaled_integral` gives the corresponding
+residues $1$ and $2$ at level three. The target is the reviewed value
+$-i/\sqrt3$, not another norm calculation. This would fix the phase of
+the defining integral at $s=1/2$ by the new evaluation. Identification
+with either printed Gauss sum, finite extensions, and the global
+functional equation are separate.
 
 ### Separate global Fourier sign
 
