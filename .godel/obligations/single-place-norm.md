@@ -1287,18 +1287,14 @@ go run ./cmd/godel audit-local "$CANDIDATE" \
 ```
 
 **Next finite-to-global obligation:** The
-[diagonal representative and exact coset](#checked-diagonal-pullback-of-a-finite-box)
-are checked. For a translated box, match the local transform's
-annihilator with $I^\vee$ and show that its product of translation phases
-at $y\in I^\vee$ equals the Archimedean positive phase at $a=e(x_0)$.
-The [diagonal trace-phase theorem](finite-diagonal-phase.md) supplies the
-sign and product identity for the centers $x_{0,v}$. To replace the
-original centers $a_v$ by $x_{0,v}$, use $x_{0,v}-a_v\in g_v\mathcal O_v$
-and the local annihilator condition. The centered Haar masses must also
-be proved to multiply to the reciprocal of the trace-normalized
-Archimedean covolume. Then extend by finite linearity to the ramified
-tests, after proving their finite-coset decomposition. Retain both zero
-modes in the passage to the nonzero-orbit sums, before norm-one averaging.
+[diagonal coset](#checked-diagonal-pullback-of-a-finite-box) and
+[Fourier support and positive phase](#checked-finite-box-fourier-support-and-phase)
+are checked. The centered Haar masses still need to multiply to the
+reciprocal of the trace-normalized Archimedean covolume. Then combine
+these inputs in the Fourier formula and extend by finite linearity to
+the ramified tests, after proving their finite-coset decomposition.
+Retain both zero modes in the passage to the nonzero-orbit sums, before
+norm-one averaging.
 
 #### Checked diagonal pullback of a finite box
 
@@ -1361,10 +1357,78 @@ go run ./cmd/godel audit-local "$CANDIDATE" \
   Masullo.exists_ideal_finiteIdeleIdeal_of_integral Masullo.exists_finiteBox_diagonalCoset
 ```
 
-**Next:** For $B_g=\prod_v g_v\mathcal O_v$, prove that the diagonal
-pullback of its trace-character annihilator is exactly $I(g)^\vee$.
-The local condition is $y g_v\in\mathfrak D_v^{-1}$ for every $v$.
-Use the completed codifferent comparison and the homogeneous membership
-criterion to identify this with the global trace dual, then match the
-translation phase and the box mass. This result alone computes neither
-of those factors nor evaluates the adelic Fourier integral.
+#### Checked finite-box Fourier support and phase
+
+Let $g\in\mathbf A_{K,f}^{\times}$, $B_g=\prod_v g_v\mathcal O_v$, and
+$I=I(g)$ be the fractional ideal of $g$. In
+[`Theorems.FiniteBoxTraceDual`](../../Proofs/Theorems/FiniteBoxTraceDual.lean),
+`mem_traceDual_finiteIdeleIdeal_iff` proves for every $y\in K$ that
+
+$$
+y\in I^\vee\quad\Longleftrightarrow\quad
+\forall v<\infty\;\forall t\in\mathcal O_v,\quad \chi_v(y_vg_vt)=1,
+$$
+
+where $\chi_v$ is the positive canonical local trace character. This is
+about the diagonal pullback, not classification of arbitrary adelic
+frequencies. For a finite adele $a$ and any $x_0\in K$ with
+$x_{0,v}-a_v\in g_v\mathcal O_v$ at every finite place,
+`finiteBox_tracePhase_eq_diagonal` proves for each $y\in I^\vee$ that
+all but finitely many $\chi_v(y_va_v)$ equal one, and
+
+$$
+\prod_{v<\infty}\chi_v(y_va_v)
+  = e^{2\pi i\operatorname{Tr}_{K/\mathbf Q}(x_0 y)}.
+$$
+
+Masullo gives the centered local support in Example A.3.1.10,
+(A.3.1.8), PDF p. 558. The $S$-integer lattice orthogonal in Example
+A.3.1.11, PDF pp. 558–559, is not this finite-box diagonal pullback.
+Theorem 2.2.3.2, p. 82, instead invokes adelic Riemann–Roch. Lean fills
+the lattice-reduction step as follows: Represent the global different
+by a finite idele $h$. The placewise extension theorem and the integral
+ideal membership criterion show that $h_v$ generates the local different.
+Local annihilation is then the integrality condition $y_v h_v g_v\in
+\mathcal O_v$. Pulling back the homogeneous box for $(hg)^{-1}$ gives
+$\mathfrak d_K^{-1} I^{-1}=I^\vee$. The argument includes $y=0$ and
+makes no principality assumption on either global ideal.
+
+The conjugated Fourier kernel in (2.2.4.32), p. 92, gives the **positive**
+finite factors after the [pairing sign repair](finite-diagonal-phase.md).
+The difference of the two centers belongs to $B_g$, so it contributes
+one at each place on the dual support. The resulting diagonal factors
+have finite support and their product is the positive shift phase in
+`archimedeanIdeal_poisson`. These source readings are provisional:
+Pinned Markdown and numbered PDF layout, not rendered-page inspection.
+
+Independent Yah statement review record: Session
+`01a2045d-a01b-7729-b120-5b495e87d33d`, child `box-dual-review`
+(`VbyJETV`). Checked against Lean `v4.36.0` and Mathlib
+`fc4f59e577feb1a4956671bc04ac18aaaf8cd842`.
+To replay the declaration scope and axioms, build
+`lake build --wfail +Theorems.FiniteBoxTraceDual`, then use `lake env lean`
+on a fresh file importing `Theorems.FiniteBoxTraceDual` and checking
+`@Masullo.mem_traceDual_finiteIdeleIdeal_iff` and
+`@Masullo.finiteBox_tracePhase_eq_diagonal` with `#check` and `#print axioms`.
+
+**Next: Match the centered masses.** For the actual local additive
+measures $\nu_v$ of `finiteCompletionNormalizedHaar`, prove that the
+real masses $\nu_v(g_v\mathcal O_v)$ equal one off a finite set and
+
+$$
+\prod_{v<\infty}\nu_v(g_v\mathcal O_v)
+= \frac{1}{\operatorname{covol}_{\nu_\infty}(L_I)}
+= \frac{1}{N(I)\sqrt{|D_K|}}.
+$$
+
+Definition A.3.1.2 and Lemmas A.3.1.3–4, PDF p. 556, specify the
+normalization and dilation. Use the local integer mass, the arithmetic
+product for the different, local additive Haar scaling by the finite
+idele norm, and `covolume_archimedeanIdealLattice_traceMeasure`.
+`Lemmas.FiniteIdeleIdealNorm` already proves the finite norm comparison
+internally as `absNorm_inv_finiteIdeleIdeal`.
+`prod_finiteCompletionMultiplicativeHaar_unitMass` is an arithmetic
+product with the same integer-ball factors by their formulas. Compare
+the scalars, not the two measures. The scalar product is not yet a
+restricted-product measure or Fourier integral; those assembly steps
+and the ramified test decomposition remain open.
