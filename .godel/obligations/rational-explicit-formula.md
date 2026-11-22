@@ -1387,7 +1387,7 @@ absolutely integrable. The per-place finite integrability statement is
 all the zero pairings are integrals against `rationalIdeleClassHaar`.
 `rationalIdeleRadialMellin_eq_compactLogMellin` uses the checked log-norm
 pushforward to prove integrability and translate each pairing to
-$\Phi_g(s)$ with $g(t)=e^{-t/2}F(t)$, by (B.2.1.29), p. 598, and the
+$\Phi_g(s)$ with $g(t)=e^{-t/2}F(t)$, by (B.2.1.29), p. 599, and the
 norm-one volume convention (A.3.2.1), p. 560.
 
 Masullo gives both poles and prescribes counting zeros by order before
@@ -1410,10 +1410,13 @@ the already normalized additive pairing. The different correction of
 Independent Yah `idelic-statement-review` checked this repaired scalar
 comparison, the sign and weights, and the scope against the
 digest-verified text extraction and accepted Lean dependencies.
-Audit scope: `Theorems.RationalIdeleRadialExplicitFormula`, with
-endpoints `rationalIdeleRadialMellin`,
-`rationalIdeleRadialMellin_eq_compactLogMellin`, and
-`rationalIdeleRadial_explicit_formula`.
+At `9330ec2f38fe508354301080f8110dc70989458a`, the full warning-free
+Lake build and separate kernel replay of
+`Theorems.RationalIdeleRadialExplicitFormula` passed. The elaborated
+types were inspected, and the provenance and axiom audit of
+`rationalIdeleRadialMellin`, `rationalIdeleRadialMellin_eq_compactLogMellin`,
+and `rationalIdeleRadial_explicit_formula` found only `propext`,
+`Classical.choice`, and `Quot.sound`.
 
 This checks scalar equality, not strong-dual convergence on
 $\mathcal D(C_F)$, ramified local terms, nontrivial compact characters,
@@ -1422,8 +1425,8 @@ extraction; rendered-page verification remains open.
 
 ### Next: Compare the actual global geometric contribution
 
-The rational radial comparison with (B.4.4.16) is no longer a premise
-for the [above-one control](trace-to-zeros.md#first-unmatched-geometric-evaluation-and-a-positive-log-control).
+The rational radial comparison with (B.4.4.16) now supplies the scalar
+reference value for the [above-one control](trace-to-zeros.md#first-unmatched-geometric-evaluation-and-a-positive-log-control).
 At a common positive width and allowed Sobolev degree, take the
 profile $F=b'$ supported in $(0,\log 2)$ specified there. The idelic
 formula gives $M_F(0)+M_F(1)-D_\infty(F)$ on this support; the finite
