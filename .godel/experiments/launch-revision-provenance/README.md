@@ -46,5 +46,12 @@ integration candidate from `git archive` as the bootstrap does, check
 that the marker equals the candidate ID and is embedded in the binary,
 and test that both prompt builders expose a valid marker but omit the
 unexpanded checkout placeholder. This tests provenance, not proof
-quality or a changed routing decision. No new live run is needed for
-the control.
+quality or a changed routing decision.
+
+The exact candidate `7c90a726c211b8f720b65d725d6b95e6e3c5eb19`
+passed the archive expansion and binary checks, and `GOWORK=off go test
+./...` passed in the extracted archive. The candidate was adopted.
+See the `launch-revision-control` task in Yah session
+`01a200d0-dd62-702c-8e60-c2e380ff8aaa`. No fresh live Gödel run was
+performed, so there is no observation yet of the marker in a live
+session baseline.
