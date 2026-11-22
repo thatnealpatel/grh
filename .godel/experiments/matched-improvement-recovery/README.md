@@ -52,3 +52,18 @@ useful. No new router, state, or loop transport. On a future live
 handoff with a checked but unlanded artifact, check whether it is
 found before work starts a redundant proof or review. No such live
 launch was run in this experiment.
+
+## Live control: The matched result had already landed
+
+Run `01a2043a-57b8-733e-a42b-d4b230c40abe` used the lookup in
+Yah work session `01a2043a-58d6-7878-bb85-cb20d5ba2214` (main
+sequence 17). The prior work response concerned a blocked trace test;
+its matching improvement reported the Gaussian zero modes and the
+Archimedean trace-dual and covolume results. They were already present
+at the run's initial pin `253ee3543f5f465600ff1b64be0d559a3231d22a`.
+Work advanced to shifted fractional-ideal Poisson and adopted
+`aca6533d21b24a10276e26e59845e83e83f43a64`. Do not repeat the earlier
+proof or change the router. This is a live control for recognizing
+accepted work, not evidence that the prompt recovers a missing artifact
+or that the lookup was necessary to choose Poisson. The live test with
+an unlanded artifact is still outstanding.
