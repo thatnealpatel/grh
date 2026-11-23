@@ -29,3 +29,21 @@ Work run `01a206de-1f1f-707b-aa60-c553c25ead5c` matches session `01a206de-20d3-7
 At the handoff decision, two messages already identified the one-divisor barrier (Work events 70 and 113). In particular `vMKqpoe` supplied both the $13/10$ target and the $7/5$ row calculation before the note was written at event 136. The handoff kept the target and omitted the calculation. There is no evidence that a later live worker repeated it.
 
 **Cold-reader replay.** Two fresh Sol readers in improvement session `01a206fa-0eac-7f3e-ac45-ec4cc2f9af81` received the same adopted note and bounded calculation task. Only `KMlOvSf` received the omitted row estimate; neither brief suggested splitting by gcd. Both found that split. `ItbbKuN` counted the reduced progression trivially and disposed of $g\ge q^{11/40}$ at cost $q^{51/40+o(1)}$. Its row cost at gap cutoff $J$ is $O(J)$ instead of $q^{o(1)}\sqrt J$: At $J=q^{9/100}$ it gives exponent $1.34$, not $1.295$. Thus the added evidence improved the *proved range*, not the choice of decomposition. Both readers took about one minute; there is no speed claim. Keep the graph, standing prompts, and independent proof check. Link this parameter-specific bound where the next worker reads the target. Recompute it if the product length or time cutoff changes; one replay does not justify a mandatory new review or establish live progress on the residual.
+
+## Also discount repeated factors on both sides
+
+There is a stronger normalized gap cutoff. For $n=gu,m=gv$ in the notation above put $e(t)=t/\operatorname{rad}(t)$, with $e(1)=1$. Uniformly for $S\ge1$, the count with
+
+$$h\le S e(u)e(v)$$
+
+is at most $q^{5/4+o(1)}\sqrt S$. In particular one may now discard all pairs with $h\le q^{9/100}e(u)e(v)$ for the same cost $q^{259/200+o(1)}$. This saves on pairs with repeat prime factors even if their gcd is one. It gives no further saving when both reduced products are squarefree.
+
+First, among $X$-smooth $t\le z$ with at most $k$ prime factors counted with multiplicity and $e(t)\ge R$, there are at most $q^{o(1)}\sqrt{z/R}$ values. Indeed the radical is $X$-smooth and at most $z/R$; use the Rankin estimate above. For each radical with $j\ge1$ primes ordered by size, the possible positive exponent lists of sum at most $k$ number $\binom{k}{j}\le2^k$. The unit adds no difficulty. All losses here are uniform for the parameters in the count.
+
+By symmetry put $e(u)\ge e(v)$. Use dyadic intervals $h\in(J/2,J]$, $e(u)\in[U,2U)$, $e(v)\in[V,2V)$, with $U\ge V\ge1$. For fixed $g$ the starting values $u$ cost $q^{o(1)}\sqrt{N/(gU)}$. To bound the row of $v$, put $W=\min(V,\sqrt J)$. Choose a divisor $b\mid e(v)$ in $[W/X,W]$: Multiply prime factors until just before exceeding $W$, or take the whole product if equal. Then $d_0=b\operatorname{rad}(b)$ divides $v$ and is at most $W^2\le J$. Complete it by multiplying remaining prime factors of $v$ up to just before exceeding $J$, giving $d\mid v$ in $(J/X,J]$ since $v>J$ for large $q$. Now $e(d)\ge e(d_0)=b\ge W/X$. The radical count bounds the number of possible $d$ by $q^{o(1)}\sqrt{J/W}$, absorbing $\sqrt X$. For each such $d$ the old CRT row costs $O(X)$: $v$ belongs to one class modulo $qd$ within distance $qJ$ of $u$. Summing over $g$ costs only $\sum_{g\ \text{$X$-smooth}}g^{-1/2}=P=q^{o(1)}$ after extracting the factor $\sqrt{N/U}$. Thus the dyadic block costs
+
+$$q^{5/4+o(1)}\sqrt{J/(U\min(V,\sqrt J))}.$$
+
+If $V\le\sqrt J$, the gap hypothesis gives $J<8SUV$. Otherwise $U\ge V>\sqrt J$ already bounds the square root by one. Summing the logarithmically many choices in each parameter and allowing both orientations proves the assertion. Here $J\le 2H$ and the lower bound $v\ge NB^{-4k}/H$ used earlier is still more than $J$.
+
+**Remaining fixed-gain test.** It suffices to treat $h>q^{9/100}uv/\operatorname{rad}(uv)$ since $(u,v)=1$. In particular $g e(u)e(v)<2q^{21/100}$ there. The missing bound is still on the sum over $g$ and the large gaps, not a per-progression statement. In a dyadic range $h\asymp q^j$ with squarefree $u,v$, the row calculation gives $q^{5/4+j/2+o(1)}$ and needs a further $q^{j/2-1/20+\xi}$ saving when that exponent is positive. The separate [masked operator estimate](masked-conductor-window.md) improves the second-order window without furnishing this fixed-power saving.
