@@ -30,6 +30,10 @@ r = floor_cert(D**2)
 pairs = [(i, j) for i, p in enumerate(starts) for j, s in enumerate(starts) if abs(p-s) <= r]
 pressure = n*n*sum(w[i]*w[j] for i, j in pairs)
 assert QQ(6099)/100 < pressure and pressure < 61
+# Preflight for the asymptotic two-resolution screen. On this fixture
+# even one bin has too large a diagonal for its coarse threshold.
+assert sum(b*b for b in w) > QQ(11)/1000 > QQ(1)/(8*16**2)
+assert t < X**8
 
 offset = 1296287232
 v = 9*t/8 + offset

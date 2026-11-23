@@ -33,6 +33,8 @@ $$0.4286<s<0.4311,\qquad 44.6<n\log(s/a)-\tfrac12\log n<44.8,\qquad 0.0966<Q_d<0
 
 Thus even the separated part is large at this genuine interior height. The interval clears the actual high cutoff $X^{-1/10}$. Its corrected high-branch integral alone lies between $1.55\cdot10^8$ and $1.24\cdot10^9$ unit budgets. Run [check-retained-crest.py](check-retained-crest.py) with a Sage Python interpreter without `-O`. A numerical search selected the height; the certificate needs no search or floating-point phase recurrence. It encloses the logarithms, all rotations over the interval, the original translated sinc square, and the full ordered correction including the diagonal. The bound is on this interval, not the entire shell. One finite excess does not refute a cap with an unspecified $O_K(1)$ or an eventual budget, and is not a finite computation of completed $I$.
 
+**Follow-up for the per-shift cap.** The [two-resolution screen](retained-shell-screen.md) clears whole height cells before applying this signed gap test. Only the flagged cells need fine nodes. It does not bound the signed sum there or price the smaller excursions.
+
 ## A retained shift cannot stay just at threshold
 
 Fix $c>0$ and $cD/2\le d\le5D$. In the scaled coordinate $h$ write $F(h)=Z_d(t+Lh)$, $g=|F|^2$, and $W=X/D^2\asymp_\gamma n^2$. There exist constants $C_0,\beta>0$ such that on **every** interval $J$ of length at most $W$ and for all sufficiently large $X$,
