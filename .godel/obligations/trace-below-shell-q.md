@@ -295,18 +295,48 @@ provisional (Markdown and numbered layout, not rendered pages).
 The owning exact-candidate checks are in Yah
 `01a2064d-01df-7985-9550-7d5295c124ee`.
 
-**Next:** Supply the actual fixed-width tail budget for the distinct
-shifted zeta zeros outside the open strip, including boundary zeros.
-For a fixed $0<\alpha<1/2$, the [reviewed upper counting bound](trace-carving-weight-q.md#the-short-window-detects-any-omitted-zero)
-at $\sigma=1/2+\min(\alpha,1/8)$ is sublinear with a power saving;
-a Lean proof must supply that bound or another proof of summability of
-$1/|\Im w|$ for the omitted $|\Im w|>1$. Use reflection and conjugation,
-then a dyadic sum and a sufficiently high finite split to fit the slack.
-The checked full-divisor quadratic summability does not imply this
-reciprocal-height bound. Use a real polynomial with both polar roots and the finite omitted
-roots at the negative Mellin argument. The below-one log coordinate
-reflects the class sample, so use the negation symmetry of the omitted
-set (or explicitly enumerate the reflected frequencies).
+### Conditional budget for the actual omitted divisor
+
+[`Masullo.exists_omittedZetaTail_reciprocal_budget`](../../Proofs/Props/OmittedZetaTailBudget.lean)
+reduces the tail hypothesis to a right-hand zero-density estimate. For a
+fixed $0<\alpha$, assume the number of distinct critical-strip zeros
+with $\Re\rho\ge 1/2+\alpha$ and $0<\Im\rho<2^{j+1}$ is at most $Cq^j$
+for all $j\ge0$, with $0\le q<2$. Then for every $\varepsilon>0$ there is
+$T\ge1$ such that the distinct actual zeros with
+$|\Re\rho-1/2|\ge\alpha$ and $|\Im\rho|>T$ have summable displacement
+costs $\pi/|\Im\rho|$, of total less than $\varepsilon$. The weak
+inequality in the real coordinate includes both edges of the open
+strip. All remaining omitted zeros are a finite set by
+`criticalStripZetaZeros_boundedIm_finite`, using the enclosing open
+height interval $(-T-1,T+1)$.
+
+In `Lemmas.ZetaZeroHeightBudget`, reflection $\rho\mapsto1-\bar\rho$
+and conjugation put each sign sector in the counted sector, yielding
+a factor at most four. A dyadic shell with lower height $2^j$ then
+costs at most $4\pi C(q/2)^j$. After summability, the cutoff is raised
+above a finite set that accounts for all but the specified budget.
+This is an original reduction for comparing (12.5.1.3–4), pp. 519–520,
+which sum over the open strip, with (B.4.2.2), p. 614, which does not
+cut down to that strip. Neither passage proves the density premise.
+These readings are provisional from the pinned Markdown and PDF text
+layout, not a rendered-page inspection.
+
+Owning check session: Yah `01a20655-db3c-7878-9b63-9a84a996229f`.
+The statement review and exact candidate build, joint import, signature,
+and axiom checks are recorded in that session.
+
+**Next analytic obligation:** Prove the above right-hand dyadic count
+in Lean for every fixed $0<\alpha<1/2$, allowing $C,q$ to depend on
+$\alpha$. The [reviewed classical power-saving estimate](trace-carving-weight-q.md#the-short-window-detects-any-omitted-zero)
+would give it: Absorb the logarithmic factors into a slightly larger
+power still less than one and inflate $C$ for finitely many low
+shells. The checked quadratic full-divisor summability does not imply
+this bound. Separately, the witness assembly still has to enumerate the
+large tail without repetition (handling the finite case), and choose a
+real polynomial with both polar roots and the finite omitted roots at
+the negative Mellin argument. The below-one log coordinate reflects
+the class sample, so use the negation symmetry of the omitted set (or
+explicitly enumerate the reflected frequencies).
 The already checked rational strip index and conditional RH endpoint
 (`rationalRadialStripIndexEquiv` and
 `riemannHypothesis_of_ideleClassTraceFormula`) do not supply this bound
