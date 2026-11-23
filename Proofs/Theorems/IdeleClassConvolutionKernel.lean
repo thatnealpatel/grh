@@ -6,8 +6,10 @@ public import Mathlib.MeasureTheory.Integral.Bochner.Basic
 public import Mathlib.MeasureTheory.Function.L1Space.Integrable
 public import Mathlib.Topology.Algebra.Support
 import Mathlib.MeasureTheory.Function.LocallyIntegrable
+import Mathlib.MeasureTheory.Integral.Bochner.ContinuousLinearMap
 import Mathlib.MeasureTheory.Group.Integral
 import Mathlib.MeasureTheory.Measure.Haar.Unique
+import Mathlib.MeasureTheory.Measure.OpenPos
 
 /-! # The regular class-Haar convolution kernel
 
@@ -69,6 +71,36 @@ public theorem ideleClass_convolution_kernel_isotype {φ ψ : C → ℂ} (hφ : 
   funext g
   rw [mul_left_comm (g⁻¹ : C) ((h : C)⁻¹) x, hχ h (g⁻¹ * x)]
   exact mul_left_comm (φ g) (χ h : ℂ) (ψ (g⁻¹ * x))
+
+/-- In §1.7.2, p. 35, a test convolved with its conjugate inverse is zero if
+its value at the identity is zero. No other norm-one values are needed. -/
+public theorem ideleClass_convolution_star_self_eq_zero_of_one {ψ : C → ℂ}
+    (hψ : Continuous ψ) (hc : HasCompactSupport ψ)
+    (h : (∫ g, ψ g * star (ψ ((g⁻¹ * (1 : C))⁻¹)) ∂μ) = 0) (x : C) :
+    (∫ g, ψ g * star (ψ ((g⁻¹ * x)⁻¹)) ∂μ) = 0 := by
+  let s (g : C) : ℝ := ‖ψ g‖ ^ 2
+  have hs : Continuous s := hψ.norm.pow 2
+  have hsc : HasCompactSupport s := by
+    simp only [s, pow_two]
+    exact (hc.norm.mul_right : HasCompactSupport ((fun g ↦ ‖ψ g‖) * (fun g ↦ ‖ψ g‖)))
+  have hsi : Integrable s μ := hs.integrable_of_hasCompactSupport hsc
+  have hcast (g : C) : ψ g * star (ψ ((g⁻¹ * (1 : C))⁻¹)) = (s g : ℂ) := by
+    have harg : (g⁻¹ * (1 : C))⁻¹ = g := calc
+      (g⁻¹ * (1 : C))⁻¹ = (g⁻¹)⁻¹ := congrArg (fun y : C ↦ y⁻¹) (mul_one (g⁻¹ : C))
+      _ = g := inv_inv g
+    rw [harg]
+    simpa only [s, Complex.star_def, Complex.ofReal_pow] using Complex.mul_conj' (ψ g)
+  have hi : (∫ g, s g ∂μ) = 0 := by
+    have heq := integral_congr_ae (μ := μ) (Filter.Eventually.of_forall hcast)
+    rw [h, integral_complex_ofReal] at heq
+    exact Complex.ofReal_eq_zero.mp heq.symm
+  have hz : s = 0 := Measure.eq_of_ae_eq
+    ((integral_eq_zero_iff_of_nonneg (fun g ↦ sq_nonneg ‖ψ g‖) hsi).mp hi)
+    hs continuous_zero
+  have hzψ (g : C) : ψ g = 0 := by
+    have hg : ‖ψ g‖ ^ 2 = 0 := congrFun hz g
+    simpa using hg
+  simp [hzψ]
 
 end Haar
 
