@@ -18,7 +18,7 @@ and proof checks](../../cmd/godel/README.md) for landing.
 ## Cadence and history
 
 Assess immediately at launch. After the terminal node records a decline or an
-attempt outcome, wait 30 minutes, then let Gödel launch a fresh process. The wait
+attempt outcome, wait 15 minutes, then let Gödel launch a fresh process. The wait
 is from completion, not a fixed wall-clock slot. Changes to the campaign don't
 interrupt it. INT or TERM can cancel the wait. A failure stops the loop rather
 than silently retrying.

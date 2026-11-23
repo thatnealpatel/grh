@@ -14,8 +14,8 @@ func TestPauseBetweenCycles(t *testing.T) {
 		if err := pauseBetweenCycles(context.Background()); err != nil {
 			t.Fatalf("pause: %v", err)
 		}
-		if elapsed := time.Since(start); elapsed != 30*time.Minute {
-			t.Fatalf("pause lasted %s, want 30m", elapsed)
+		if elapsed := time.Since(start); elapsed != 15*time.Minute {
+			t.Fatalf("pause lasted %s, want 15m", elapsed)
 		}
 	})
 }

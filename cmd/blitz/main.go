@@ -55,7 +55,7 @@ func run(ctx context.Context) error {
 // pauseBetweenCycles is only called from the terminal
 // logging node's Next.
 func pauseBetweenCycles(ctx context.Context) error {
-	timer := time.NewTimer(30 * time.Minute)
+	timer := time.NewTimer(15 * time.Minute)
 	defer timer.Stop()
 	select {
 	case <-ctx.Done():
