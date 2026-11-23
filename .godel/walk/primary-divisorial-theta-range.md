@@ -599,9 +599,11 @@ scope at `b7adbad2eb6a2a2080cd83aae93661471ee9c936`. This was exact-source
 review, not elaboration. See the owning transcript for the dependency
 probe and integrated candidate checks.
 
-**Next bounded check (formalization only):** Specialize the corrected
-small-norm estimate to this same masked tensor on all rational idele
-classes: For each $m\in\mathbb N$ and $t=N(d)\le1$, bound
+**Alternative threshold-one route at $2,3$ (formalization only):** The
+[arbitrary-prime estimate below](#checked-small-norm-tail-at-any-two-distinct-primes)
+now gives this same bound through $t=1/6$. One can also prove the bound
+up to $t=1$ by specializing the box tail directly: For each $m\in\mathbb N$
+and $t=N(d)\le1$, bound
 $|\Theta(M_{2,3}b)(d)-t^{-1}(\int b)/3|$ by $K t^m$. No new tail or
 reflection argument is needed. The Fourier proof already constructs the
 required level-six assembly, but locally. Expose that equality without
@@ -617,6 +619,66 @@ the verified readings of the zero-mode domain and normalization above
 are separate. The estimate applies to the repaired project kernel and
 does not give range membership or a theorem for the literal printed
 inversion convention.
+
+## Checked small-norm tail at any two distinct primes
+
+[`Masullo.rationalAdeleClassTheta_twoPrimeMasked_eq_rationalTheta`][two-prime-section]
+reduces the joint mask of `rationalAdeleUnramified b` on any rational
+idele class to four real lattice theta terms at its norm $t=N(d)$:
+$$
+\Theta(M_{p,q}b)(d)=\theta_b(t)-\theta_b(pt)-\theta_b(qt)+\theta_b(pqt).
+$$
+It uses the all-class proof's valuation-invariant section reduction,
+then the two-prime section identity and the single-prime section identity
+at $t$ and $qt$. The direction $qt$ agrees with the already checked
+inverse-uniformizer norm calculation. This identity has no small-norm
+hypothesis.
+
+[`Masullo.rationalAdeleClassTheta_twoPrimeMasked_small_norm`][two-prime-section]
+takes distinct `p q : Nat.Primes`, `b : 𝓢(ℝ, ℂ)`, and `m : ℕ`. For
+one $K>0$ independent of the class, it gives
+$$
+\left|\Theta(M_{p,q}b)(d)-t^{-1}(1-p^{-1})(1-q^{-1})
+\int_{\mathbb R}b(x)\,dx\right|\le Kt^m
+\qquad \left(t=N(d)\le\frac{1}{pq}\right).
+$$
+No LF witness, parity, or moment premise is required. Each scale is
+positive and at most $pqt\le1$. The singleton real Schwartz tail bound
+leaves four remainders of total norm at most $4B(pq)^m t^m$, where $B>0$
+is the lattice constant. The four spatial constants cancel, the
+alternating reciprocal scales factor as stated, and the real Fourier
+value at zero equals the real integral. This proves the leading
+coefficient without a new residue-cell or masked Fourier-zero calculation.
+
+**Source scope:** The mapping to the fixed-test corrected estimate
+(2.2.3.5), p. 83, is provisional from the accepted
+[extraction-based tail note](../obligations/theta-inversion-q.md#checked-fixed-test-tails-on-rational-idele-classes)
+and is not needed by the Lean reduction. The inherited [theta source
+interface][theta-sum] verifies the nonzero representative sum (2.2.3.1),
+p. 81. The [ordinary filtration note][ordinary] verifies disjointness
+in (1.3.2.2), p. 25, which holds for $S=\{\infty\}$ and the two finite
+places. The [tensor audit][tensor] verifies the outside-$S$ input in
+(11.3.1.1), p. 492, and separately the printed right-hand index in
+§1.3.2, p. 26. We use the repaired complement of $S\cup\{p,q\}$.
+Nothing here identifies the general masked additive Fourier zero mode
+or proves membership in the principal-value range.
+
+**Review and checks:** Independent Yah exact-source review
+`joint-tail-statement` (`aTJZAOZ`), housed in Yah
+`01a20666-63b4-7a42-a7ca-e921a6b81888`, checked both fixed statements,
+valuation invariance, norm direction, the four scale bounds, coefficient
+and spatial cancellation, and applicability of the inherited readings
+against `824c5ba148a1afe5b0187da2a99e732274cc17a7`, without elaboration.
+The same owning transcript records the dependency probe, joint build
+and signature and axiom reports, exact candidate, and adoption result.
+
+**Next bounded check (formalization only):** Extend the explicit threshold
+to $t\le1$ for every distinct pair. The checked small-norm estimate
+already covers $t\le1/(pq)$. On the remaining compact interval
+$[1/(pq),1]$, use the four-scale identity and `rationalTheta_continuousOn`
+to bound the norm of the corrected expression divided by $t^m$. This is
+the same norm coordinate and requires no new Fourier-tail derivation,
+level-six assembly, or source reading beyond the scope above.
 
 [joint-unit-zero]: ../../Proofs/Theorems/RationalAdeleJointUnitZeroMode.lean
 

@@ -13,8 +13,8 @@ are invariant under finite units, so the section identity gives the class
 identity with inverse-uniformizer translation.
 -/
 
-open NumberField IsDedekindDomain
-open scoped SchwartzMap
+open NumberField IsDedekindDomain MeasureTheory
+open scoped FourierTransform SchwartzMap
 
 namespace Masullo
 
@@ -202,5 +202,93 @@ public theorem rationalAdeleClassTheta_twoPrimeMasked (p q : Nat.Primes) (hpq : 
     rw [map_mul, map_inv, ideleClassNorm_mk, ideleNorm_rationalThetaRadialUniformizer, inv_inv, hq]
   rw [hjoint d, rationalAdelePrimeMasked, hsingle d, hsingle _, hnorm]
   exact (rationalTheta_eq_twoPrimeMasked_idele_sum p q hpq b (ideleClassNorm_pos d)).2
+
+/-- The joint unit-cut theta on any rational idele class is a four-term
+inclusion-exclusion of the real lattice theta at scales `t`, `p*t`, `q*t`, and `p*q*t`. -/
+public theorem rationalAdeleClassTheta_twoPrimeMasked_eq_rationalTheta
+    (p q : Nat.Primes) (hpq : p ≠ q) (b : 𝓢(ℝ, ℂ)) (d : C) :
+    let t := ideleClassNorm d
+    rationalAdeleClassTheta (Set.indicator (rationalAdelePrimeUnits p ∩ rationalAdelePrimeUnits q)
+      (rationalAdeleUnramified b)) d =
+        (rationalTheta b t - rationalTheta b ((p : ℝ) * t)) -
+          (rationalTheta b ((q : ℝ) * t) - rationalTheta b ((p : ℝ) * ((q : ℝ) * t))) := by
+  dsimp only
+  have hu (v : Nat.Primes) (x y : A) (hval : ∀ w, Valued.v (y.2 w) = Valued.v (x.2 w)) :
+      y ∈ rationalAdelePrimeUnits v ↔ x ∈ rationalAdelePrimeUnits v := by
+    change Valued.v (y.2 (vₚ v)) = 1 ↔ Valued.v (x.2 (vₚ v)) = 1
+    rw [hval]
+  have ht := ideleClassNorm_pos d
+  have hqt : 0 < (q : ℝ) * ideleClassNorm d := mul_pos (Nat.cast_pos.mpr q.property.pos) ht
+  rw [masked_theta_section _ (fun x y hv ↦ and_congr (hu p x y hv) (hu q x y hv)) b d,
+    (rationalTheta_eq_twoPrimeMasked_idele_sum p q hpq b ht).2, rationalAdeleTheta,
+    rationalAdeleTheta, (rationalTheta_eq_primeMasked_idele_sum p b ht).2,
+    (rationalTheta_eq_primeMasked_idele_sum p b hqt).2]
+
+/-- For the repaired joint unit cut, the spatial constants cancel and the
+small-norm main term has coefficient `(1 - p⁻¹) * (1 - q⁻¹)` times the real mass.
+The error estimate is uniform in the idele class. -/
+public theorem rationalAdeleClassTheta_twoPrimeMasked_small_norm
+    (p q : Nat.Primes) (hpq : p ≠ q) (b : 𝓢(ℝ, ℂ)) (m : ℕ) :
+    ∃ K : ℝ, 0 < K ∧ ∀ d : C,
+      let t := ideleClassNorm d
+      t ≤ 1 / ((p : ℝ) * (q : ℝ)) →
+        ‖rationalAdeleClassTheta (Set.indicator
+            (rationalAdelePrimeUnits p ∩ rationalAdelePrimeUnits q) (rationalAdeleUnramified b)) d -
+          (t⁻¹ * (1 - (p : ℝ)⁻¹) * (1 - (q : ℝ)⁻¹)) • (∫ x : ℝ, b x)‖ ≤ K * t ^ m := by
+  let P : ℝ := p
+  let Q : ℝ := q
+  have hp : 1 ≤ P := Nat.one_le_cast.mpr p.property.one_lt.le
+  have hq : 1 ≤ Q := Nat.one_le_cast.mpr q.property.one_lt.le
+  have hp₀ := zero_lt_one.trans_le hp
+  have hq₀ := zero_lt_one.trans_le hq
+  have hmass : (𝓕 b) 0 = ∫ x : ℝ, b x := by
+    rw [congrFun (SchwartzMap.fourier_coe b) 0, Real.fourier_real_eq_integral_exp_smul]
+    simp
+  obtain ⟨B, hB, htail⟩ := rationalTheta_uniform_tail_bounds
+    (Bornology.isVonNBounded_singleton (𝕜 := ℂ) b) m
+  let R (s : ℝ) := rationalTheta b s - s⁻¹ • (𝓕 b) 0 + b 0
+  refine ⟨4 * B * (P * Q) ^ m, by positivity, ?_⟩
+  intro d t ht₁
+  have ht : 0 < t := ideleClassNorm_pos d
+  have hpt := mul_pos hp₀ ht
+  have hqt := mul_pos hq₀ ht
+  have hpqt := mul_pos hp₀ hqt
+  have htop : P * (Q * t) ≤ 1 := by
+    rw [← mul_assoc, mul_comm (P * Q), ← le_div_iff₀ (mul_pos hp₀ hq₀)]
+    exact ht₁
+  have htqt : t ≤ Q * t := le_mul_of_one_le_left ht.le hq
+  have hptpqt : P * t ≤ P * (Q * t) := mul_le_mul_of_nonneg_left htqt hp₀.le
+  have hqtpqt : Q * t ≤ P * (Q * t) := le_mul_of_one_le_left hqt.le hp
+  have hbound {s : ℝ} (hs : 0 < s) (hle : s ≤ P * (Q * t)) :
+      ‖R s‖ ≤ B * (P * (Q * t)) ^ m :=
+    ((htail b (Set.mem_singleton b)).2 s hs (hle.trans htop)).trans
+      (mul_le_mul_of_nonneg_left (pow_le_pow_left₀ hs.le hle _) hB.le)
+  have hcoeff : t⁻¹ - (P * t)⁻¹ - ((Q * t)⁻¹ - (P * (Q * t))⁻¹) =
+      t⁻¹ * (1 - P⁻¹) * (1 - Q⁻¹) := by
+    simp only [mul_inv_rev]
+    ring
+  rw [rationalAdeleClassTheta_twoPrimeMasked_eq_rationalTheta p q hpq b d, ← hmass]
+  change ‖(rationalTheta b t - rationalTheta b (P * t)) -
+    (rationalTheta b (Q * t) - rationalTheta b (P * (Q * t))) -
+    (t⁻¹ * (1 - P⁻¹) * (1 - Q⁻¹)) • (𝓕 b) 0‖ ≤ _
+  -- Expanding the real scalar difference leaves just the four remainders.
+  have hrem : (rationalTheta b t - rationalTheta b (P * t)) -
+      (rationalTheta b (Q * t) - rationalTheta b (P * (Q * t))) -
+      (t⁻¹ * (1 - P⁻¹) * (1 - Q⁻¹)) • ((𝓕 b) 0 : ℂ) =
+        (R t - R (P * t)) - (R (Q * t) - R (P * (Q * t))) := by
+    rw [← hcoeff]
+    simp only [sub_smul, R]
+    abel
+  rw [hrem]
+  calc
+    _ ≤ (‖R t‖ + ‖R (P * t)‖) + (‖R (Q * t)‖ + ‖R (P * (Q * t))‖) :=
+      (norm_sub_le ..).trans (add_le_add (norm_sub_le ..) (norm_sub_le ..))
+    _ ≤ (B * (P * (Q * t)) ^ m + B * (P * (Q * t)) ^ m) +
+        (B * (P * (Q * t)) ^ m + B * (P * (Q * t)) ^ m) :=
+      add_le_add (add_le_add (hbound ht (htqt.trans hqtpqt)) (hbound hpt hptpqt))
+        (add_le_add (hbound hqt hqtpqt) (hbound hpqt le_rfl))
+    _ = 4 * B * (P * Q) ^ m * t ^ m := by
+      rw [← mul_assoc P, mul_pow]
+      ring
 
 end Masullo
