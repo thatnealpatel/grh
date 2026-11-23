@@ -1,0 +1,17 @@
+{
+  "key": "3a3ababa0070841cb415a1678d91a360b7d6f37477042e7ed596f0584d9ede52",
+  "revision": "8390eb3590e3b53d28d06f3656718a75be2fa1e6f2e5a75b1e5a45b473467b8d",
+  "outcome": "landed",
+  "source": "Alessandro Maria Masullo, The Music of the Primes, edition SHA-256 e039d3f6cf0a4b14f03c7edb85097752dd65c0a2fe543c76fe992be234f97bf5, chapter-01 §1.2.1 Fundamental Divisor Exact Sequence, printed p. 13/PDF ordinal 13, paragraph beginning ‘This is the reason why I called this the “divisor exact sequence”’: unnumbered sheaf display 0 → O_X(−D) → O_X → O_D → 0, followed by X = C and D = div(L(s+1/2,χ)((s+1/2)(s−1/2))^δ). Read with the preceding multiplicity and δ paragraph on p. 13/ordinal 13, the unitary base-point convention §1.1.4 p. 12/ordinal 12, the completed L continuation in chapter-03 Proposition 3.2.1.3(1)–(2), p. 123/ordinal 123, and chapter-07 §7.2 p. 332/ordinal 332, (7.2.0.1) and its global-sections display after the coherent-sheaf vanishing sentence. The displayed H^1(C,O/J)=0 in the proof of Theorem 7.1.4.2(1), p. 328/ordinal 328, is about the quotient sheaf.",
+  "finding": "The printed paragraph is a comparison to global sections of the divisor sheaf sequence, not an assertion of a new interpolation theorem with strip bounds. The needed Stein vanishing for lifting is H^1(C,O_X(−D))=0 for the coherent ideal sheaf, as in the general coherent-sheaf argument on p. 332; quotient-sheaf vanishing on p. 328 is not this implication. The Lean proof instead works directly with entire functions: for every nonzero entire g, every array indexed by all zeros a of g and 0 ≤ k < ord_a(g) is realized as f^(k)(a)/k! by an entire f, with no support or growth hypothesis. Exact factor extraction and a local Taylor truncation give single-center blocks; subtracting entire multiples of g permits a locally uniformly convergent sum without changing any jets, and local uniform convergence of iterated derivatives gives the prescribed coefficients. The normalized jet map has kernel exactly g O(C), using Masullo.entire_mul_iff_vanishing_jets in Lemmas.EntireDivisorDivision. This establishes the algebraic global-sections comparison for a supplied nonzero entire generator with the indicated divisor. It does not formalize coherent sheaf cohomology, construct or identify the completed Hecke generator for all characters, prove a topological quotient statement, interpolate in AS(C), or identify the theta image. See entire-divisor-interpolation.md for the source distinctions, proof, and ordinary-import client.",
+  "evidence": [
+    {
+      "path": "Proofs/Lemmas/EntireDivisorInterpolation.lean",
+      "declarations": [
+        "Masullo.entireDivisorJet",
+        "Masullo.entireDivisorJet_eq_zero_iff",
+        "Masullo.entireDivisorJet_surjective"
+      ]
+    }
+  ]
+}
