@@ -8,8 +8,9 @@ Use the conductor-normalized $\chi_{-4}$ Weil form, autocorrelation, and Fourier
 |---|---:|---:|
 | $2$ | $5.929\,10^{-7}$ | $8.184\,10^{-7}$ |
 | $11/5$ | $4.368\,10^{-9}$ | $5.800\,10^{-9}$ |
+| $9/4$ | $1.100\,10^{-9}$ | $3.797\,10^{-9}$ |
 
-The second window exceeds $\log9$, where the first nonzero prime-square term enters. Run [chi4-circle-cert.py](chi4-circle-cert.py) with `sage -python` under SageMath 10.9: The default certifies diameter two; `--period 16` sharpens its lower bound; `--period 17` certifies diameter $11/5$. The upper bounds each use one fixed test in [chi4-trial-upper.py](chi4-trial-upper.py). Neither script requires a zero table.
+The second window exceeds $\log9$, where the first nonzero prime-square term enters. Run [chi4-circle-cert.py](chi4-circle-cert.py) with the Python interpreter from SageMath 10.9 (assertions enabled): The default certifies diameter two; `--period 16` sharpens its lower bound; `--period 17` certifies diameter $11/5$; `--period 17 --nine-fourths` certifies diameter $9/4$. The upper bounds each use one fixed test in [chi4-trial-upper.py](chi4-trial-upper.py). Neither script requires a zero table.
 
 ## Why the finite lower certificate controls arbitrary tests
 
@@ -35,7 +36,9 @@ At $D=11/5$ add $-(2\log 3/3)\cos(y\log9)$ to the symbol. The numerator is $\Lam
 
 ## Independent direction of comparison and what remains
 
-For the upper comparison use the normalized real sum of eight odd-index Dirichlet sine modes specified in `chi4-trial-upper.py`. The zero extension is in $H^1$, hence in the log form domain. The script integrates its explicit normalized autocorrelation $A$ against $2k(t)$ in the combination $1-A(t)$, with a Taylor bound near zero and an exponential series bound beyond $D$. Its ball enclosure at $D=2$ is centered at $8.1834717849\,10^{-7}$ with displayed radius $2.89\,10^{-18}$. At $D=11/5$ a sixteen-mode fixed trial gives a quotient below $5.800\,10^{-9}$. At $D=9/4$ the same construction with another test, including the $-2\log3/3$ coefficient at $\log9$, gives an upper bound $3.797\,10^{-9}$, not a lower certificate there.
+For the upper comparison use the normalized real sum of eight odd-index Dirichlet sine modes specified in `chi4-trial-upper.py`. The zero extension is in $H^1$, hence in the log form domain. The script integrates its explicit normalized autocorrelation $A$ against $2k(t)$ in the combination $1-A(t)$, with a Taylor bound near zero and an exponential series bound beyond $D$. Its ball enclosure at $D=2$ is centered at $8.1834717849\,10^{-7}$ with displayed radius $2.89\,10^{-18}$. At $D=11/5$ a sixteen-mode fixed trial gives a quotient below $5.800\,10^{-9}$. At $D=9/4$ the same construction with another test, including the $-2\log3/3$ coefficient at $\log9$, gives an upper bound $3.797\,10^{-9}$. The independent lower certificate retains $P=17$, the cap, the frequency weights, and the cutoff, but recomputes every overlap and the image penalty at diameter $9/4$. The even shift $57/50000000000$ loses less than $2.970\,10^{-11}$ to the verified residual and rounding; the odd shift $10^{-6}$ loses less than $3.192\,10^{-11}$. The line image costs nothing on even tests and less than $1.12\,10^{-9}$ on odd tests. In particular the diameter-$9/4$ floor is strictly below the diameter-$11/5$ floor, without any new prime atom entering.
+
+See [the exterior-correction note](chi4-exterior.md) for what this slack in support length buys, and two certified obstructions to small corrections.
 
 The circle reduction itself works on every fixed window: include exactly the active prime powers, and take $P>D+\max\log n$ over active atoms (and $P>D$). For fixed $P$, clipping the symbol from above by $c$ gives increasing supported floors tending to the circle floor as $c\to\infty$. Indeed, a unit sequence of near minimizers with bounded clipped energy is Fourier-tight: once $c\ge M$, all sufficiently high modes cost at least $M$, since the unclipped symbol tends to infinity. Its strong $L^2$ limit is still supported on $I$; lower semicontinuity first with any fixed clip, then monotone convergence, proves the claim. Taking large $P$ first makes the image error arbitrarily small. This is a way to detect a *strictly positive* fixed-window floor, with no useful complexity bound. It does not ensure the floors stay positive as $D$ grows.
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Whole-window certificate for chi4 at diameter 2 or 11/5.
+"""Whole-window certificate for chi4 at diameters 2, 11/5, and 9/4.
 Run with SageMath 10.9's Python (not the Sage preparser), assertions enabled.
 SciPy Cholesky and rounding by float are only proposals. The certificate
 uses Arb for analytic quantities and exact integers/rationals for the residual.
@@ -16,11 +16,20 @@ pi = R.pi()
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument('--period', type=int, choices=[14,16,17], default=14,
                     help='14 and 16 certify diameter two; 17 certifies diameter 11/5')
-P = parser.parse_args().period
+parser.add_argument('--nine-fourths', action='store_true',
+                    help='use diameter 9/4 instead of 11/5 with period 17')
+args = parser.parse_args()
+P = args.period
+if args.nine_fourths and P != 17:
+    parser.error('--nine-fourths requires --period 17')
 if P == 17:
     diameter, K, c_exact, q = QQ(11)/5, 247000, QQ(263)/50, 52
     even_sigma, even_floor = QQ(44)/10**10, QQ(4368)/10**12
     odd_sigma, odd_floor, image_upper = QQ(3)/10**6, QQ(2)/10**6, QQ(1005)/10**12
+    if args.nine_fourths:
+        diameter = QQ(9)/4
+        even_sigma, even_floor = QQ(57)/50_000_000_000, QQ(11)/10**10
+        odd_sigma, odd_floor, image_upper = QQ(1)/10**6, QQ(9)/10**7, QQ(7)/6250000000
 else:
     diameter = QQ(2)
     odd_sigma, odd_floor = QQ(1)/5000, QQ(1)/6000
@@ -104,6 +113,7 @@ def verify(parity,sigma,target):
                 s = rshift(w*v*(g[j-l]+parity*g[j+l]),2*q)
             row.append(-s)
         row[-1] += off
+        assert -(1 << 63) <= min(row) and max(row) < (1 << 63)
         U[i,:i+1] = row
         U[:i,i] = row[:-1]
     print('assembled parity, n:',parity,n,flush=True)
