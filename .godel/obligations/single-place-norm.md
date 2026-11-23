@@ -2908,16 +2908,77 @@ and this source correspondence. Owning Yah session
 `01a205a6-2328-79c2-827b-75cc5a01356a` records the independent review and
 exact candidate, base, build, joint signatures, axiom checks, and adoption.
 
-**Next obligation:** Establish the signed finite-rectangle residue sum
-for this same trivial $L$ and the compact-log Mellin test used in
-(B.4.2.2), p. 614. Use the horizontal witnesses and the two checked
-vertical edges to exclude boundary zeros. Show that the pole-cleared
-numerator $H$ is nonzero at both $0,1$ (the centered proof identifies
-its values as $\sqrt D\,a$ and $a$, but the public formula currently
-hides the Haar origin and nonvanishing of $a$). Then the logarithmic
-derivative contributes weight $-1$ at each of those points and the
-vanishing order at each other zero. Reuse the signed-divisor rectangle
-machinery of `Proofs/Props/RectangleResidue.lean`, checking the finite
-rectangle hypotheses against the rational and Dirichlet examples.
-Passage to the limit, the all-height zero sum, and the global trace
-comparison remain separate obligations. This does not prove RH or GRH.
+The [signed finite rectangle below](#checked-signed-finite-rectangles)
+uses these edges and explicitly verifies the two simple poles.
+
+### Checked signed finite rectangles
+
+[`completedHecke_one_poleCleared_values`](../../Proofs/Theorems/CompletedHeckeOneReflection.lean)
+retains the values at $0,1$ when comparing the **entire** numerator $H$
+with the polynomial obtained from the centered integral. In the notation
+above, $H(1)=a$ and $H(0)=\sqrt D\,a$. The real part of $a$ is strictly
+positive: The Gaussian zero value is positive, and Haar measure is finite
+on the compact norm-one group and positive on its nonempty open whole
+space. The public statement gives $\Re H(1)>0$ and
+$H(0)=\exp(\delta/2)H(1)$ for the given $H$, hence nonvanishing at both.
+This uses neither of the assigned Lean values of $L$ at the poles.
+
+[`rectangleIntegral_logDeriv_of_two_poles`](../../Proofs/Props/PoleClearedRectangleResidues.lean)
+then computes the meromorphic order of $L=H/(s(s-1))$ on punctured germs.
+The polynomial has order one at each of $0,1$ and zero elsewhere. Since
+$H$ is nonzero at the two points, their orders in $L$ are $-1$. At other
+zeros the order is the full analytic order of $H$. The zero set of this
+nonidentically-zero entire $H$ meets a closed rectangle in a finite set.
+`logDeriv_weighted_principalPart` gives the simple principal part of the
+**tested** integrand even if the test vanishes there. The residue theorem
+applies to the union of the distinct interior zeros and $\{0,1\}$, with
+no boundary zeros.
+
+[`completedHecke_one_rectangle_at_good_heights`](../../Proofs/Theorems/CompletedHeckeOneRectangle.lean)
+accepts the $L,H$ of
+`exists_completedHeckeEulerProduct_one_gaussianContinuation_horizontal`
+without switching witnesses. It retains the horizontal bounds and puts
+both vertical estimates under a common constant. For each integer $n\ge1$
+it gives a height $n<T<n+1$ and one finite set $Z_T$ of **all** zeros
+of $H$ in $(-1,2)\times(-T,T)$, independent of the test. If
+$\Phi(s)=\int_{\mathbb R}g(x)e^{sx}\,dx$ for smooth compactly supported
+$g$, it proves
+
+$$
+\int_{\partial R_T}^{\mathrm{ccw}}\Phi(s)\frac{L'(s)}{L(s)}\,ds
+=2\pi i\left(\sum_{\rho\in Z_T}\operatorname{ord}_{\rho}(H)\Phi(\rho)
+ -\Phi(0)-\Phi(1)\right).
+$$
+
+**Source and repair:** Theorem 3.2.2.1(1a), p. 124, gives the possible
+poles and signed zero-mode residues for the *zeta integral*;
+(3.2.2.4)–(5), p. 125, gives its radial representation. The Gaussian
+Euler comparison and numerator values above establish actual simple
+poles for the **completed Euler product** used in (B.4.2.1), p. 614.
+Figure 3, p. 605, and (B.3.2.3), p. 606, give the finite contour step.
+Use bottom and right forward and top and left backward, not the two
+horizontal signs in the displayed expansion (B.3.2.4). The weighted
+principal-part argument supplies the justification for pulling the test
+value out of each residue. The signed sum agrees with (B.4.2.2), p. 614,
+at finite height, not the oppositely signed unnumbered divisor comparison
+above that equation. Proposition B.2.1.9, pp. 598–599, and (B.2.1.29),
+p. 599, give the test coordinates; `analyticAt_compactLogMellin` proves
+the needed analyticity for the compact-log subclass. The text reading
+is provisional (pinned Markdown and numbered PDF layout, not rendered
+pages). Independent Yah reviewer `bOSGsBK` reviewed the fixed statements
+and manuscript correspondence. Owning Yah session
+`01a205b0-0177-711f-a3d6-12ac846dc0be` records the review, exact candidate
+and base, scoped builds, joint signatures, axiom checks, and adoption.
+
+**Next obligation:** Take the contour limit for this same trivial $L$ and
+compact-log test in (B.4.2.2), p. 614. Use `compactLogMellin_vertical_decay`
+with $A=2$ to make both horizontal pairings vanish and the two vertical
+integrands absolutely integrable. For an all-height zero sum, also retain
+the Jensen full-order bounds for the same $H$ from
+`exists_completedHeckeEulerProduct_one_gaussianContinuation_zeroCount`,
+cover integer height slabs, and prove absolute summability before
+identifying the rectangle limit with the unrestricted sum. The rational
+and quadratic Dirichlet exhaustion modules supply examples. The remaining
+geometric explicit formula and the comparison with the proposed global
+trace are separate; this does not prove RH or GRH or obstruct the essential
+mechanism.

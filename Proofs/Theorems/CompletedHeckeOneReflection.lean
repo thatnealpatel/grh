@@ -56,15 +56,16 @@ variable [∀ v : InfinitePlace K, MeasurableSpace v.Completionˣ]
   [MeasurableSpace (IdeleGroup (𝓞 K) K)] [BorelSpace (IdeleGroup (𝓞 K) K)]
   [BorelSpace (ideleNormOne (K := K))]
 
-/-- The continued trivial Euler product equals the symmetric centered
-Mellin expression away from the two possible poles. The proof takes the
-entire pole-cleared numerator of the given `L`, not a new witness. -/
-public theorem completedHecke_one_centeredMellin
+/-- Keep the two numerator values in the centered calculation, before
+forgetting the origin and positivity of the zero-mode coefficient. -/
+private theorem completedHecke_one_centeredMellin_aux
     (v : InfinitePlace K) (r : ClassGroup (𝓞 K) → I₁)
     (hr : ∀ p, ideleIdealClassNormOne (r p) = p) {L H : ℂ → ℂ}
     (hEuler : ∀ s, 1 < s.re → L s = completedHeckeEulerProduct χ₀ (fun _ ↦ norm_one) s)
     (hH : Differentiable ℂ H) (hclear : ∀ s, s ≠ 0 → s ≠ 1 → H s = (s - 1) * s * L s) :
-    ∃ (J : ℂ → ℂ) (a : ℂ), Differentiable ℂ J ∧ ∀ s : ℂ, s ≠ 0 → s ≠ 1 →
+    ∃ (J : ℂ → ℂ) (a : ℂ), Differentiable ℂ J ∧ 0 < a.re ∧
+      H 0 = exp ((δ : ℂ) / 2) * a ∧ H 1 = a ∧
+      ∀ s : ℂ, s ≠ 0 → s ≠ 1 →
       L s = exp ((δ : ℂ) * (1 - s) / 2) * (J s + J (1 - s) + a / (s - 1) - a / s) := by
   classical
   obtain ⟨T, ν, F, E, μ, _, hμ, hstage, hm, _, hF, hperiod, _, hraw⟩ :=
@@ -140,9 +141,46 @@ public theorem completedHecke_one_centeredMellin
       have hs₀ : s ≠ 0 := by rintro rfl; norm_num at hs
       have hs₁ : s ≠ 1 := by rintro rfl; norm_num at hs
       rw [hclear s hs₀ hs₁, hpoly s hs₀ hs₁, hagree s hs])
-  refine ⟨J, a, hJ, fun s hs₀ hs₁ ↦ ?_⟩
-  apply mul_left_cancel₀ (mul_ne_zero (sub_ne_zero.mpr hs₁) hs₀)
-  exact (hclear s hs₀ hs₁).symm.trans ((hEq (Set.mem_univ s)).trans (hpoly s hs₀ hs₁))
+  refine ⟨J, a, hJ, ?_, ?_, ?_, fun s hs₀ hs₁ ↦ ?_⟩
+  · have hmpos : 0 < m.real Set.univ := ENNReal.toReal_pos
+      (isOpen_univ.measure_pos m Set.univ_nonempty).ne'
+      (isCompact_univ.measure_lt_top (μ := m)).ne
+    rw [show a = (((1 / (2 * Real.pi)) ^ nrComplexPlaces K * m.real Set.univ : ℝ) : ℂ) by
+      rw [ofReal_mul, ofReal_pow], ofReal_re]
+    positivity
+  · rw [hEq (Set.mem_univ (0 : ℂ))]
+    simp [G]
+  · rw [hEq (Set.mem_univ (1 : ℂ))]
+    simp [G]
+  · apply mul_left_cancel₀ (mul_ne_zero (sub_ne_zero.mpr hs₁) hs₀)
+    exact (hclear s hs₀ hs₁).symm.trans ((hEq (Set.mem_univ s)).trans (hpoly s hs₀ hs₁))
+
+/-- The continued trivial Euler product equals the symmetric centered
+Mellin expression away from the two possible poles. The proof takes the
+entire pole-cleared numerator of the given `L`, not a new witness. -/
+public theorem completedHecke_one_centeredMellin
+    (v : InfinitePlace K) (r : ClassGroup (𝓞 K) → I₁)
+    (hr : ∀ p, ideleIdealClassNormOne (r p) = p) {L H : ℂ → ℂ}
+    (hEuler : ∀ s, 1 < s.re → L s = completedHeckeEulerProduct χ₀ (fun _ ↦ norm_one) s)
+    (hH : Differentiable ℂ H) (hclear : ∀ s, s ≠ 0 → s ≠ 1 → H s = (s - 1) * s * L s) :
+    ∃ (J : ℂ → ℂ) (a : ℂ), Differentiable ℂ J ∧ ∀ s : ℂ, s ≠ 0 → s ≠ 1 →
+      L s = exp ((δ : ℂ) * (1 - s) / 2) * (J s + J (1 - s) + a / (s - 1) - a / s) := by
+  obtain ⟨J, a, hJ, _, _, _, hM⟩ := completedHecke_one_centeredMellin_aux v r hr hEuler hH hclear
+  exact ⟨J, a, hJ, hM⟩
+
+/-- Theorem 3.2.2.1(1a), p. 124, gives the zeta integral's residues in terms
+of its two zero modes. For the completed trivial Euler product used in
+(B.4.2.2), p. 614, the centered formula calculates the values after pole
+clearing. The value at one is positive by the nonzero Gaussian zero mode
+and the positive, finite Haar mass of the compact norm-one quotient. -/
+public theorem completedHecke_one_poleCleared_values
+    (v : InfinitePlace K) (r : ClassGroup (𝓞 K) → I₁)
+    (hr : ∀ p, ideleIdealClassNormOne (r p) = p) {L H : ℂ → ℂ}
+    (hEuler : ∀ s, 1 < s.re → L s = completedHeckeEulerProduct χ₀ (fun _ ↦ norm_one) s)
+    (hH : Differentiable ℂ H) (hclear : ∀ s, s ≠ 0 → s ≠ 1 → H s = (s - 1) * s * L s) :
+    0 < (H 1).re ∧ H 0 = exp ((δ : ℂ) / 2) * H 1 := by
+  obtain ⟨_, a, _, ha, h₀, h₁, _⟩ := completedHecke_one_centeredMellin_aux v r hr hEuler hH hclear
+  exact ⟨h₁ ▸ ha, h₀.trans (congrArg _ h₁.symm)⟩
 
 /-- The conductor reflection as an equality of germs at each ordinary
 point, with the same `L` on both sides. -/
