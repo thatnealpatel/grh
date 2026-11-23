@@ -3082,17 +3082,93 @@ compiled out of tree. Joint signatures and axiom checks in the writer
 workspace found only `propext`, `Classical.choice`, and `Quot.sound`.
 The owning Yah checks the integrated candidate separately.
 
-**Next obligation.** Assemble the $a=2$ trivial-character local-factor
-identity. For (B.4.2.4), p. 615, apply
-[`completed_reflect_left_integral`](../../Proofs/Props/HeckeContourReflection.lean)
-with the same-$L$ conductor germ and compact-log inversion to get the
-**plus** contact $\kappa g(0)$, $\kappa=\log|\operatorname{disc} K|$, and
-the $\Phi(s)+\Phi(1-s)$ right-line test. Use Euler agreement as germs and
-identify the finite and infinite factors for $\chi=\bar\chi=1$. The
-finite $L^1$ exchange and samples (`finiteHecke_paired_right_line`) and
-shifted Gamma evaluations (`Props.ArchimedeanGammaRightLine`) already
-have [checked local results](hecke-right-line-majorant.md); reuse them
-for (B.4.2.5)–(11), p. 615, and (B.4.2.12)–(16), pp. 615–616. The
-[rational right-line assembly](../../Proofs/Theorems/RationalExplicitFormulaRightLine.lean)
-is a template. The contour theorem does not establish the full local
-formula, a global trace comparison, RH, or GRH.
+### Trivial Hecke scalar explicit formula
+
+[`exists_completedHecke_one_explicitFormula`](../../Proofs/Theorems/CompletedHeckeOneExplicitFormula.lean)
+uses exactly the contour theorem's $L$ and $H$ over a number field $K$,
+with the same measurable and Borel instances and norm-one ideal-class
+section. For every $g\in C_c^\infty(\mathbb R;\mathbb C)$ put
+$\Phi(s)=\int_{\mathbb R}g(x)e^{sx}\,dx$. It proves
+
+$$
+\sum_{H(\rho)=0}\operatorname{ord}_{\rho}(L)\Phi(\rho)
+ -\Phi(0)-\Phi(1)
+ =\log|\operatorname{disc}K|g(0)
+ -\sum_{v<\infty}\sum_{m\ge1}\log q_v
+    [g(y)+e^{-y}g(-y)]+\sum_{v\mid\infty}C_v(g),\qquad y=m\log q_v.
+$$
+
+Both infinite sums on their declared index types are absolute. At a
+real place use $(d,B)=(2,\pi)$, and at a complex place use
+$(d,B)=(1,2\pi)$. With $\gamma$ Euler's constant,
+
+$$
+C_v(g)=-\frac{2(\log B+\gamma)}d g(0)
+ +\int_0^\infty
+  \frac{2g(0)e^{-dx}-g(x)-e^{-x}g(-x)}{1-e^{-dx}}\,dx.
+$$
+
+The integral is absolute for both $d$. The zeros are precisely the
+ordinary zeros of $L$ off its two pole points, including their full
+orders. The theorem asserts only $0\le\Re\rho\le1$.
+
+**Passages and repairs (provisional source reading).** Appendix B,
+§B.4.2.1–4, pp. 614–617, supplies the contour-to-local calculation;
+(3.2.1.2–5), p. 123, gives the factors. The statement above uses the
+unshifted multiplicative test $\phi(e^x)=g(x)$ in (B.4.2.2–16), before
+the half-translation of (B.4.2.17). For the centered comparison put
+$h(x)=e^{x/2}g(x)$. Then the transform of $h$ at $s-1/2$ is $\Phi(s)$,
+and the prime-power sample is $e^{-y/2}[h(y)+h(-y)]$. This change of
+coordinates does not give the printed Gamma integral. The compact-log
+specialization and repairs are as follows.
+
+- **Full orders and both poles:** (B.4.2.2), p. 614, supplies the
+  contour arrangement with height exhaustion. The preceding
+  `exists_completedHecke_one_contour_identity` result supplies the
+  unrestricted absolute sum with orders and the pole evaluations.
+- **Same-continuation reflection:** Proposition 3.2.1.3(3), p. 123,
+  supplies the shape of the functional equation. The line in (B.4.2.3),
+  p. 614, calls for the explicit conductor dependence and does not give
+  the chain-rule sign for the ordinary logarithmic derivative. The
+  `completedHecke_one_reflection` germ on this same $L$ and
+  `completed_logDeriv_reflection` give $L'/L(z)=-L'/L(1-z)-\kappa$,
+  $\kappa=\log|\operatorname{disc}K|$; `completed_reflect_left_integral`
+  applies inversion. Subtracting the upward left integral then gives
+  the **plus** conductor contact and the right-line pair in (B.4.2.4),
+  p. 615. The proof derives nonvanishing on the left from the germ and
+  the above-one Euler product.
+- **Finite places:** (B.4.2.5–11), p. 615, supplies the log-derivative
+  expansion, exchange, and point evaluations. The Lean proof compares
+  Euler germs and subtracts the two `HasSum` evaluations to split off
+  the Archimedean terms. `finiteHecke_paired_right_line` supplies the
+  absolute interchange over places and powers with normalized Mellin
+  inversion. The unramified coefficients of $1=\bar 1$ are both one;
+  the second sample carries $e^{-y}$ and has the same sign as the first
+  after including the negative derivative coefficient (B.4.2.7).
+- **Archimedean places:** (B.4.2.12–16), pp. 615–616, supplies the
+  normalized line pairing and the digamma calculation. The printed
+  (B.4.2.15) is not used as an ordinary convergent integral. The checked
+  `compactLogMellin_archimedeanGamma_pair` instead uses the exponential
+  subtraction above and keeps the $\log B$ and Euler contacts. The
+  `localHeckeGammaFactor_one_real` and `_complex` equalities implement
+  the factors in (3.2.1.4–5) at trivial character. This eliminates the
+  need to assume the contour move to $1/2$ in (B.4.2.16).
+
+**Checking evidence:** Owning Yah session
+`01a205d5-86e7-72d0-aaa8-0d773ef7e05e`; the writer built
+`+Theorems.CompletedHeckeOneExplicitFormula` with `lake build --wfail`.
+Independent Yah `formula-review` (`HSQJGyI`, read-only output
+`2d3ccc410fbd7496d71c95612aa8162444b649e3`) confirmed the three fixed
+statements, signs, convergence, and manuscript correspondence. The
+exact integrated candidate, joint import, built signatures, and axiom
+reports are recorded in the owning session. Evidence uses Markdown,
+numbered PDF layout, and independent targeted raster-to-Braille crops;
+native rendered page verification remains open.
+
+**What remains:** This is not a global trace identification. In
+particular, the [rational full-versus-strip comparison](trace-to-zeros.md#full-versus-positive-width-sums-on-the-same-tests)
+still requires matching the actual global projected diagonal to the full
+scalar divisor sum, with its Haar measure, both pole terms, and the same
+cutoffs and limit order, at arbitrarily small positive widths. The
+trivial-character calculation neither supplies this comparison nor
+handles general characters. It does not prove or disprove RH or GRH.
