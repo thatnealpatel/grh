@@ -158,7 +158,7 @@ adopted (seqs. 90–93). No stale or unadopted proof candidate remained.
 This is a live success of the flat landing workflow, not evidence
 that it prevents a race.
 
-**Replay and decision:** Run the [read-only lookup recipe](../../../cmd/godel/README.md#finding-the-matching-improvement-report)
+**Replay and decision:** Run the [read-only lookup recipe](../../../cmd/examples/godel/README.md#finding-the-matching-improvement-report)
 on the two saved consumer records. It returned the already-landed
 filter report and the unlanded lower-edge report respectively. It also
 accepted appended CR/LF and rejected an appended space and a fresh

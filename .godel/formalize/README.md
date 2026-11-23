@@ -1,6 +1,6 @@
 # Formalize dispositions
 
-This directory holds accepted, per-passage receipts from [Formalize](../../cmd/formalize/README.md). The [coordinator protocol](../../cmd/formalize/coordinator.md#per-assignment-receipt) specifies their JSON format. These are campaign changes, not live state. Keep valid receipts in the accepted tree; a new meaningful Walk record revision has its own path.
+This directory holds accepted, per-passage receipts from [Formalize](../../cmd/examples/formalize/README.md). The [coordinator protocol](../../cmd/examples/formalize/coordinator.md#per-assignment-receipt) specifies their JSON format. These are campaign changes, not live state. Keep valid receipts in the accepted tree; a new meaningful Walk record revision has its own path.
 
 Proof lane (`<key>-<revision>.json`; existing receipts remain valid):
 

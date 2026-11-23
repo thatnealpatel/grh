@@ -1,5 +1,7 @@
 # Independent accepted-history auditor
 
+[Archived source example](../README.md). Launch instructions below describe the former layout.
+
 `cmd/audit` runs a Gödel loop backed by Yah, without self-improvement. It
 examines each successive accepted commit, including claims and handoffs later
 reverted. Each pass pins the next accepted parent and child; newer accepted

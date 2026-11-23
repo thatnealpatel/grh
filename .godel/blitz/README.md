@@ -1,5 +1,7 @@
 # Blitz
 
+[Archived source example](../../cmd/examples/README.md). Launch instructions below describe the former layout.
+
 Blitz assesses classical RH and full Masullo GRH separately. For each target,
 it asks whether the accepted formalization supports a bounded proof attempt:
 How do the accepted results fit together, and what assumptions would still
@@ -13,7 +15,7 @@ may use informal mathematics or Lean, with **at most three passes total**,
 even if it switches modes. It can stop sooner. It does not launch, direct, or
 edit the other drivers and has no self-improvement phase. Keep informal
 evidence separate from checked Lean results, and follow the [campaign workflow
-and proof checks](../../cmd/godel/README.md) for landing.
+and proof checks](../../cmd/examples/godel/README.md) for landing.
 
 ## Cadence and history
 
@@ -44,7 +46,7 @@ that revision.
 
 Use a durable GRH jj workspace that contains `cmd/blitz` and shares the owning
 campaign repository. Use the accepted-build and runtime prerequisites described
-in the [main driver guide](../../cmd/godel/README.md). Keep this workspace in
+in the [main driver guide](../../cmd/examples/godel/README.md). Keep this workspace in
 place: each iteration runs `go run .` from `cmd/blitz` and resolves the target
 anew. The local target defaults to `main`; Blitz takes no arguments.
 

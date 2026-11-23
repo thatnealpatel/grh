@@ -123,4 +123,4 @@ The [local closed-range audit](obligations/isotypic-local-closed-range-q-sqrt-mi
 ## External gates
 
 - **Image-capable source review:** The external image-capable route is still blocked; reopen it only with working credentials and a fresh p. 514 control. The targeted pp. 308–309 denominator check above instead used independent inspection of rendered pixel crops. Other text-only readings remain provisional.
-- **Lean checking:** Use the [local campaign workflow](../cmd/godel/README.md#checking-a-proof-candidate). The [explicit-formula audit control](obligations/rational-explicit-formula.md#local-audit-control) records why the local command replays one module per process. Older handoffs waiting for remote transport are superseded. Drafts remain unverified until checked.
+- **Lean checking:** Use the [local campaign workflow](../cmd/examples/godel/README.md#checking-a-proof-candidate). The [explicit-formula audit control](obligations/rational-explicit-formula.md#local-audit-control) records why the local command replays one module per process. Older handoffs waiting for remote transport are superseded. Drafts remain unverified until checked.

@@ -1,5 +1,7 @@
 # Conjecture
 
+[Archived source example](../README.md). Launch instructions below describe the former layout.
+
 From the durable GRH workspace root, run:
 
 ```sh

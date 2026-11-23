@@ -1,5 +1,7 @@
 # Running the manuscript program
 
+[Archived source example](../README.md). Launch instructions below describe the former layout.
+
 Start at **the root of a durable GRH jj workspace**. The workspace must contain this bootstrap and share the owning campaign’s backing repository. A retained, harness-provisioned workspace is suitable; a temporary writer checkout or a separate clone is not. Adoption advances the target, not the working files.
 
 ```sh

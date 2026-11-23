@@ -1,8 +1,10 @@
 # Proof-breadth companion
 
-**Not scheduled by `cmd/godel`.** This independent Gödel loop complements the [main manuscript program](../../../cmd/godel/README.md) without scheduling or editing it. Each iteration chooses one substantive Masullo claim to test, looking for neglected passages and missing cases or generality. The selector returns `AUDIT` or `PRODUCE` and a brief; the selected Yah worker receives that brief in its prompt and the unchanged input on stdin. Invalid selection runs no worker and ends the loop with an error. The worker's handoff, not the improver's report, feeds the next iteration.
+[Archived source example](../../../cmd/examples/README.md). Launch instructions below describe the former layout.
 
-Both programs share the proof library and notes through the owning campaign. The companion uses the [same local proof checks and stale-candidate recovery](../../../cmd/godel/README.md#checking-a-proof-candidate). Its separate improver reviews its own runs and may change only the companion's selection or procedure.
+**Not scheduled by `cmd/godel`.** This independent Gödel loop complements the [main manuscript program](../../../cmd/examples/godel/README.md) without scheduling or editing it. Each iteration chooses one substantive Masullo claim to test, looking for neglected passages and missing cases or generality. The selector returns `AUDIT` or `PRODUCE` and a brief; the selected Yah worker receives that brief in its prompt and the unchanged input on stdin. Invalid selection runs no worker and ends the loop with an error. The worker's handoff, not the improver's report, feeds the next iteration.
+
+Both programs share the proof library and notes through the owning campaign. The companion uses the [same local proof checks and stale-candidate recovery](../../../cmd/examples/godel/README.md#checking-a-proof-candidate). Its separate improver reviews its own runs and may change only the companion's selection or procedure.
 
 ## Observed run
 

@@ -2375,7 +2375,7 @@ go run ./cmd/godel audit-local "$CANDIDATE" \
 
 
 From the integration workspace, use the
-[local audit workflow](../../cmd/godel/README.md#checking-a-proof-candidate)
+[local audit workflow](../../cmd/examples/godel/README.md#checking-a-proof-candidate)
 with the exact candidate ID:
 
 ```sh

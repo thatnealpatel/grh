@@ -140,4 +140,4 @@ prerequisite for that specialization.
 
 [assembled]: ../assembled-endpoint-elaboration/
 [wrapped]: ../wrapped-axiom-reports/
-[guide]: ../../../cmd/godel/README.md#checking-a-proof-candidate
+[guide]: ../../../cmd/examples/godel/README.md#checking-a-proof-candidate

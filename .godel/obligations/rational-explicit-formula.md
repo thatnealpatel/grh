@@ -642,7 +642,7 @@ claimed.
 
 ## Local audit control
 
-Use [`audit-local`](../../cmd/godel/README.md#checking-a-proof-candidate)
+Use [`audit-local`](../../cmd/examples/godel/README.md#checking-a-proof-candidate)
 from the integration workspace with the full candidate ID, all changed
 modules, and the independently reviewed endpoints. On the explicit-formula
 proof tree from `81704cee`, the Lake build passed but the single
@@ -860,7 +860,7 @@ Adopted as `852e57bfbd4870a6fb1b3818ad00ba23ac0ff506`. Its Lean inputs
 match the earlier independently reviewed and audited candidate
 `4f74603111803f89d05ae5e96040e5e7093ad2c9`, whose adoption went stale.
 Restoring only its proof and handoff patch on the current base preserved
-later non-proof work. With the [trusted Lake cache reuse procedure](../../cmd/godel/README.md#recovering-a-checked-but-unadopted-proof),
+later non-proof work. With the [trusted Lake cache reuse procedure](../../cmd/examples/godel/README.md#recovering-a-checked-but-unadopted-proof),
 the exact new candidate passed the full Lake build, separate kernel
 replay of both modules, endpoint type inspection, and all three axiom
 checks (`propext`, `Classical.choice`, and `Quot.sound` only). The

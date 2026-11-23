@@ -1,5 +1,7 @@
 # Masullo walk ledger (unadopted draft)
 
+[Archived source example](../../cmd/examples/README.md). Launch instructions below describe the former layout.
+
 This directory is Walk's repository home for schema, guidance, and accepted
 self-contained findings. The mutable chapter and appendix checkpoints live
 in the private ledger outside the checkout.

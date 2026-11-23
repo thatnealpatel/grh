@@ -1,6 +1,8 @@
 # Formalize
 
-This program consumes the [Walk private ledger](../../.godel/walk/README.md) in small batches, with one Yah coordinator per batch. It does not improve itself or advance Walk. The [coordinator protocol](coordinator.md) defines the writing, independent review, and adoption workflow. The [receipt directory](../../.godel/formalize/README.md) explains disposition evidence.
+[Archived source example](../README.md). Launch instructions below describe the former layout.
+
+This program consumes the [Walk private ledger](../../../.godel/walk/README.md) in small batches, with one Yah coordinator per batch. It does not improve itself or advance Walk. The [coordinator protocol](coordinator.md) defines the writing, independent review, and adoption workflow. The [receipt directory](../../../.godel/formalize/README.md) explains disposition evidence.
 
 ## Launch after adoption
 

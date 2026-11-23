@@ -63,7 +63,7 @@ remain the source of the mathematical result and remaining obligations.
 ## Decision
 
 Document the just-in-time refresh in the shared [direct-edit
-workflow](../../../cmd/godel/README.md#integrating-a-direct-edit). Do not
+workflow](../../../cmd/examples/godel/README.md#integrating-a-direct-edit). Do not
 add a retry loop or change proof routing. A refresh does not prevent a
 move during the audit; the existing candidate-exact restack and cache
 rules worked for that distinct failure. Do not apply the identical-input

@@ -69,7 +69,7 @@ missing report, a duplicate report, and `sorryAx` inserted on a
 continuation line. This tests report framing and the controls, not a
 replacement for statement review or a new proof audit.
 
-Document complete-message checking in the [landing procedure](../../../cmd/godel/README.md#checking-a-proof-candidate),
+Document complete-message checking in the [landing procedure](../../../cmd/examples/godel/README.md#checking-a-proof-candidate),
 with JSON as an option, not a parser or new landing gate. Put the owner
 session reference in the handoff before integrating, so evidence can
 be located without changing a candidate to insert its own hash. Keep
