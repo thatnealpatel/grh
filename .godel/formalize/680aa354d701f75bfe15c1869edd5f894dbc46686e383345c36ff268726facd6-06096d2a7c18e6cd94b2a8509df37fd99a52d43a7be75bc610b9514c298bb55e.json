@@ -1,0 +1,20 @@
+{
+  "key": "680aa354d701f75bfe15c1869edd5f894dbc46686e383345c36ff268726facd6",
+  "revision": "06096d2a7c18e6cd94b2a8509df37fd99a52d43a7be75bc610b9514c298bb55e",
+  "outcome": "landed",
+  "source": "Alessandro Maria Masullo, The Music of the Primes, SHA-256 e039d3f6cf0a4b14f03c7edb85097752dd65c0a2fe543c76fe992be234f97bf5. Chapter 01, §1.2.1, printed p. 14/PDF ordinal 14, paragraph beginning ‘This is computed using the Schauder basis’, ending ‘the multiplicity of ρ’. Read with the preceding inverse-left convolution display on p. 14 and the symmetric strip, s=0 and interior sum on p. 13. Printed pages equal PDF ordinals at the following rendered comparisons: Theorem 7.1.4.2(2)–(3), (7.1.4.5)–(7.1.4.7) and (7.1.4.12), (7.1.4.18)–(7.1.4.20), pp. 326–330; Theorem 9.3.2.6, (9.3.2.10), p. 426; Theorem 10.2.2.1, (10.2.2.4)–(10.2.2.6), p. 446; (10.3.1.8)–(10.3.1.17), pp. 449–450; Theorem 10.3.2.1, (10.3.2.3)–(10.3.2.5), pp. 453–455; Lemma C.3.2.2, p. 695. See rational-mellin-divisor-jet-block.md.",
+  "finding": "Partial result for Q, trivial character and continuous compact radial log profiles, before Hilbert completion. The source claims strip-selected jets are a Schauder basis of the original Fréchet quotient strong dual and uses Fréchet nuclearity to compute the Hilbert trace by the transpose; it calls the finite blocks Jordan blocks of rank equal to multiplicity. At the accepted rational divisor points, actual inverse-left convolution multiplies the Mellin transforms; in normalized jet coordinates the resulting finite matrix is triangular, with constant shifted Mellin value on the diagonal. Its trace is multiplicity times that value. Its determinant vanishes exactly when that value vanishes, including for the admissible zero test, so multiplicity is the dimension, not necessarily the rank. No identification with blocks on the completed Hilbert quotient is asserted. The accepted rational bounded convolution (f3c1b674… proof receipt), entire divisor kernel (8d24a7b4… proof receipt), and necessary boundary-jet criterion (093f4c8b… proof receipt) do not prove quotient separation by the retained jets or trace class. Theorem 7.1.4.2 gives all-zero biorthogonality, not strip-restricted Schauder convergence; the p. 426 projection proof uses the reverse inclusion for its jet-kernel intersections, and the interval trace theorem assumes s>1, not s=0. These gaps do not disprove the proposed trace identity.",
+  "retry": "For the actual weighted theta quotient, prove that the surviving shifted Mellin jets descend continuously and that their joint kernel in the ambient completion equals the theta closure (at s=0 only interior jets). On those actual spaces also supply a trace-class factorization or trace-norm summable approximation for the descended convolution. Then identify the finite invariant transpose blocks and exhaust the trace by orthogonal compressions onto increasing spans of whole blocks. To recover the literal Fréchet Schauder claim instead, supply convergence in the original strong-dual topology and address omitted jets: a biorthogonal vector for any omitted jet already separates it from the retained span.",
+  "evidence": [
+    {
+      "path": "Proofs/Theorems/RationalMellinDivisorJetBlock.lean",
+      "declarations": [
+        "Masullo.compactLogMellin_convolution",
+        "Masullo.rationalMellinDivisorJetBlock",
+        "Masullo.rationalMellinDivisorJet_convolution",
+        "Masullo.trace_rationalMellinDivisorJetBlock",
+        "Masullo.det_rationalMellinDivisorJetBlock_eq_zero_iff"
+      ]
+    }
+  ]
+}
