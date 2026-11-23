@@ -65,10 +65,13 @@ A full-project audit, all-project joint import, and separate kernel replay are n
 If a candidate was integrated directly on the accepted target and a
 concurrent landing may have moved it, prepare the scoped checks first,
 then compare its base with one fresh `tool_campaign status` immediately
-before starting the build. If the base has already been superseded, use
-the recovery steps below instead. This is an optional preflight, not
-polling or a new landing check. It does not apply to an intentional
-stack on a pending parent and cannot prevent a later stale adoption.
+before starting the build. Apply the same preflight to a replacement
+after a stale adoption: The status used to choose its base can be out
+of date by the time its checks are ready. If the base has already been
+superseded, use the recovery steps below instead. This is one query per
+candidate at the build decision, not polling or a new landing check.
+It does not apply to an intentional stack on a pending parent and
+cannot prevent a later stale adoption.
 
 ### Integrating a direct edit
 

@@ -145,3 +145,62 @@ router change, new trial, or post-hoc latency estimate. Independently,
 make the already-reviewed positive-width literal-box witness visible
 in the frontier so a geometric worker can use it without redoing
 the source audit; it is not a Lean result or a no-repair theorem.
+
+## Live follow-up: Cut-output orbital transfer
+
+Run `01a205e4-007b-74d9-8304-a4f185d2eca3` matches work Yah
+`01a205e4-0237-7d93-a13b-f9d9dbc59121` by input and final response.
+Both its launch archive and its first accepted tip were
+`aa79b7171a8529ec766213f4e5d823f5a685541b`. The exact `cmd/godel`
+tree is unchanged through the proof landing
+`98737322ea237b5e8fbdd87a95b93f597f4a6d29`. The launch included the
+preceding improvement from run `01a205d5-8540-7f4e-9f8e-9886762a6d04`
+(Yah `01a205df-498d-7a40-9b67-6e9a3a992f86`): Move past the already
+checked scalar explicit formula to a fixed-cutoff comparison.
+
+Work tested a necessary condition for one specific repair: The
+orbital action must be constant on each cut-output fibre if it is
+to be recovered from just that output on every representative. Lean
+proves that every fibre meets the orbital-null subspace in the same
+rational Fourier band. Independent child `arBwtLA` reviewed the fixed
+statements, the nonzero target action, and the source operator order.
+The four failed draft builds isolated a decay estimate and reindexing,
+then elaboration of the cut convolution; the fifth passed. The preceding
+scalar-formula run (work Yah `01a205d5-86e7-72d0-aaa8-0d773ef7e05e`)
+also converged through draft fixes with a fixed-statement review,
+but adopted its first integrated candidate. These drafting failures did
+not require changing the statement or routing to a different worker.
+
+The owner built and jointly checked the same proof patch on three
+candidates. The first two passed but were not adopted. Replay one
+`status` at each recorded exact-build decision against the latest
+successful adoption visible at that time (UTC):
+
+| Candidate | Build call (work seq.) | Base at build decision | Replay |
+|---|---|---|---|
+| `31f580269dba62c6dc7d87753635164874adf2ea` | 01:00:43 (117) | Still `8f59df9e67ff4d6420e26df0c98b0c3f8fa01109` | Build, as observed. |
+| `b68f23b677b150aef65e2248305e9a65c89011db` | 01:01:55 (134) | `f78c72cd8a78beaad182f56048078bedddd59ee9` had been replaced by `9ba3764cc416e68c89aec475ebd964ff53bd963a` | Reconcile before building. The live run did not query again. |
+| `98737322ea237b5e8fbdd87a95b93f597f4a6d29` | 01:02:59 (151) | `bd17de18d89e2d61e0c3f8f50eb7a2eac0bd83b9` | Build, as observed. Exact checks and adoption at seqs. 157 and 160. |
+
+The first preflight saw the right base (seq. 115), and the build and
+joint import finished at 01:01:06 (seq. 123). The new base was only
+adopted at 01:01:18 (Yah `01a205ea-1750-7340-a2cc-3685df6ceefc`,
+seq. 31), two seconds before work attempted its first adoption. The
+second move was at 01:01:45 (Yah `01a205e9-ac64-7a37-8857-b081ae5d412f`,
+seq. 49), after integration but ten seconds before the replacement
+build decision. The third base was adopted at 01:02:27 (Yah
+`01a205da-c94f-7c66-89af-b3ff997d9d87`, seq. 141). The replay selects
+one fewer build of an already superseded candidate at those recorded
+choices; it does not predict the revised landing time or which tip
+would have been selected on a changed schedule.
+
+**Decision (improvement Yah `01a205ee-89fa-7794-b7ee-186c379522f3`):**
+Make the existing just-before-build query explicit for replacements
+following stale adoption. No polling, node, or change to the required
+checks or to the proof router. See the [branch handoff](../../obligations/trace-cut-orbital-q.md)
+for the next mathematical decision. The obstruction is to the direct
+fixed-cutoff transfer only: An upstream shell or section still needs
+a comparison with the common Haar diagonal, and the scalar limit is
+not ruled out. Manuscript correspondence remains provisional pending
+rendered-page verification; the nonzero same-band target action was
+independently reviewed mathematics, not checked in Lean in this run.
