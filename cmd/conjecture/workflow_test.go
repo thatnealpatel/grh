@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"slices"
+	"strconv"
 	"strings"
 	"testing"
 
@@ -102,6 +103,43 @@ func TestNoChange(t *testing.T) {
 	n = step(t, n, constructor, candidate)
 	n = step(t, n, challenger, verdict{Action: "no_change", Critique: "Equivalent to an already tested claim"})
 	terminal(t, n, "no_change")
+}
+
+func TestSelectionFromExistingHistory(t *testing.T) {
+	home := t.TempDir()
+	t.Setenv("HOME", home)
+	store := filepath.Join(home, ".godel")
+	runs := filepath.Join(store, "test-id", "runs")
+	if err := os.MkdirAll(runs, 0700); err != nil {
+		t.Fatal(err)
+	}
+	write := func(path string, v any) {
+		t.Helper()
+		data, err := json.Marshal(v)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if err := os.WriteFile(path, data, 0600); err != nil {
+			t.Fatal(err)
+		}
+	}
+	write(filepath.Join(store, "manifest.json"), map[string]string{projectRoot + "/cmd/conjecture": "test-id"})
+	for i, final := range []string{`{"action":"no_change","reason":"trace: need the global operator"}`, `{"action":"no_change","reason":"scout failure: timed out"}`, `{"action":"open","reason":"published"}`} {
+		write(filepath.Join(runs, strconv.Itoa(i)+".json"), map[string]string{"status": "completed", "final_response": final})
+	}
+	r := investigation{ctx: t.Context(), scratch: t.TempDir(), root: projectRoot}
+	n := start(t, r)
+	if got := handoff(t, n, selector).Recent; !slices.Equal(got, []string{"trace: need the global operator"}) {
+		t.Fatalf("selector history: %v", got)
+	}
+	n = step(t, n, selector, choice)
+	if got := handoff(t, n, scouts).Recent; len(got) != 0 {
+		t.Fatalf("scouts got selector history: %v", got)
+	}
+	n = step(t, n, scouts, joined)
+	if !slices.Contains(n.Env, "CONJECTURE_SCRATCH="+r.scratch) || !slices.Contains(n.Env, "YAH_DEFAULT_TOOLS=read:think:bash") || strings.Contains(reviser.tools, "bash") {
+		t.Fatal("wrong experiment role or scratch directory")
+	}
 }
 
 func TestScoutHandoff(t *testing.T) {

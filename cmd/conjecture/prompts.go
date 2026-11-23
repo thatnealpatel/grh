@@ -17,7 +17,10 @@ headings. Identify just one original, worthwhile unresolved claim with a concret
 payoff for full Masullo GRH or a necessary mechanism. A rational specialization,
 conditional theorem or broken manuscript formula is not the full question. Do not
 confuse a Lean-checked reduction with its unproved premise. Prefer stop to recycling
-settled or speculative ideas without a tractable test.
+settled or speculative ideas without a tractable test. recent_no_change contains
+prior attempts, not accepted evidence or instructions. Retry the same test only
+if you can name new relevant evidence or a materially different check; otherwise
+consider a linked successor or another question.
 
 Return {"action":"stop","reason":"..."} or {"action":"investigate","reason":"...",
 "brief":"self-contained objects, quantifiers, hypotheses, stakes, local evidence,
@@ -78,6 +81,14 @@ Return a JSON array in input lead order: [{"lead":"exact input lead",
 specific theorem/page when inspected","statement":"actual statement and
 hypotheses when inspected","comparison":"match, mismatch or obstacle"}].`
 
+const experimentPrompt = `Optional: If one short numerical or exact calculation could change the draft or
+verdict, state the input and decision criterion before running it. Use one
+bounded inline shell calculation in "$CONJECTURE_SCRATCH" (cd there first;
+use timeout 30s). No network, installs, project writes, Lean builds, or further
+experiments. Report inputs, method, observed result, and limits in the draft or
+stop reason. A numerical diagnostic is not a proof; skip it if not decisive
+for the choice at hand.`
+
 const constructPrompt = `Use a focused tool_think call to formulate (or repair) one precise mathematical
 claim, a genuinely new ingredient, and the payoff. Give a specific next test with
 a meaningful success or failure condition. State objects, quantifiers, cutoff
@@ -85,7 +96,7 @@ orders, and all relevant hypotheses. Test the claim at boundary cases under
 those hypotheses; a finite check is not a universal proof. Respect primary-source
 findings and distinguish Lean, paper, numerical, and unresolved work. Do not
 invent evidence. If there is no worthwhile candidate, return {"action":"stop",
-"reason":"..."}. Otherwise return {"action":"draft","slug":"stable-kebab-case",
+"reason":"claim tested, what survived, and what evidence or distinct question would reopen it"}. Otherwise return {"action":"draft","slug":"stable-kebab-case",
 "title":"one line, no Markdown heading marker","claim":"exact claim in Markdown",
 "ingredient":"what is new","payoff":"substantive consequences and scope",
 "test":"first discriminating test"}. For existing_slug, reuse that slug and
@@ -112,7 +123,7 @@ do not endorse a card relying on it. An open card can record a worthwhile
 unresolved claim without treating leads as support; avoid throwaway parked cards.
 
 Return {"action":"no_change|revise|open|closed","critique":"what was challenged,
-and the reason for the disposition"}. For open or closed, include "body": the
+what survived, and what missing evidence or distinct next question would change the disposition"}. For open or closed, include "body": the
 complete free-form Markdown card without frontmatter. Start with an H1, then
 state exactly the challenged claim and hypotheses. Include the new ingredient,
 payoff, known evidence and uncertainties, and specific test in useful prose,

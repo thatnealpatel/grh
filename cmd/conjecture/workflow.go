@@ -64,6 +64,7 @@ type packet struct {
 	Revision string         `json:"evidence_revision"`
 	Index    string         `json:"evidence_index,omitempty"`
 	Snapshot string         `json:"evidence_directory,omitempty"`
+	Recent   []string       `json:"recent_no_change,omitempty"`
 	Choice   *selection     `json:"selection,omitempty"`
 	Scouts   *scouting      `json:"scouting,omitempty"`
 	Primary  []primaryCheck `json:"primary_checks,omitempty"`
@@ -93,7 +94,7 @@ var (
 	selector    = role{"select", "read", selectPrompt, false}
 	scouts      = role{"scouts", "read:subagent:openalex:search:think", scoutPrompt, true}
 	verifier    = role{"primary-sources", "read:arxiv:fetch", primaryPrompt, true}
-	constructor = role{"construct", "read:think", constructPrompt, false}
+	constructor = role{"construct", "read:think:bash", experimentPrompt + "\n\n" + constructPrompt, true}
 	reviser     = role{"revise", "read:think", revisePrompt + "\n\n" + constructPrompt, false}
 	challenger  = role{"challenge", "read:think", challengePrompt, false}
 	publisher   = role{"publish", "read:write:bash:campaign", publishPrompt, true}
@@ -121,6 +122,9 @@ func (r investigation) node(stage role, p packet, next func(godel.Result) (*gode
 	// packet on stdin.
 	prompt := commonPrompt + "\n\n" + stage.prompt
 	env := []string{"YAH_DEFAULT_MODEL=" + luna, "YAH_DEFAULT_TOOLS=" + stage.tools, "YAH_INBOX=off"}
+	if stage == constructor {
+		env = append(env, "CONJECTURE_SCRATCH="+r.scratch)
+	}
 	if stage == publisher {
 		prompt = stage.prompt
 		env = append(env, "YAH_CAMPAIGN_TARGET="+r.target)
@@ -130,7 +134,7 @@ func (r investigation) node(stage role, p packet, next func(godel.Result) (*gode
 		// Yah classifies network retrieval as
 		// rwx. The explicit tool filter still
 		// excludes shell and file writes unless
-		// this is publication.
+		// this is construction or publication.
 		args = append(args, "-yolo")
 	}
 	return &godel.Node{
@@ -157,9 +161,43 @@ func parse[T any](result godel.Result) (T, error) {
 	return v, err
 }
 
+// Recent attempts guide selection only. Missing
+// history does not block research.
+func recentNoChange(store, source string) []string {
+	data, err := os.ReadFile(filepath.Join(store, "manifest.json"))
+	var manifest map[string]string
+	if err != nil || json.Unmarshal(data, &manifest) != nil || !filepath.IsLocal(manifest[source]) || filepath.Base(manifest[source]) != manifest[source] {
+		return nil
+	}
+	files, _ := filepath.Glob(filepath.Join(store, manifest[source], "runs", "*.json"))
+	var reasons []string
+	for i := len(files) - 1; i >= max(0, len(files)-6); i-- {
+		var run struct {
+			Status string `json:"status"`
+			Final  string `json:"final_response"`
+		}
+		var result struct {
+			Action string `json:"action"`
+			Reason string `json:"reason"`
+		}
+		data, err := os.ReadFile(files[i])
+		if err != nil || json.Unmarshal(data, &run) != nil || run.Status != "completed" || json.Unmarshal([]byte(run.Final), &result) != nil || result.Action != "no_change" || blank(result.Reason) || strings.HasPrefix(result.Reason, "scout failure:") {
+			continue
+		}
+		r := []rune(result.Reason)
+		reasons = append(reasons, string(r[:min(2048, len(r))]))
+	}
+	return reasons
+}
+
 func (r investigation) start(revision, evidence string) (*godel.Node, error) {
 	p := packet{Revision: revision, Index: filepath.Join(evidence, "index.txt"), Snapshot: evidence}
-	return r.node(selector, p, func(result godel.Result) (*godel.Node, error) {
+	selectionPacket := p
+	home, _ := os.UserHomeDir()
+	if home != "" {
+		selectionPacket.Recent = recentNoChange(filepath.Join(home, ".godel"), filepath.Join(r.root, "cmd/conjecture"))
+	}
+	return r.node(selector, selectionPacket, func(result godel.Result) (*godel.Node, error) {
 		s, err := parse[selection](result)
 		if err != nil {
 			return nil, err
@@ -333,6 +371,15 @@ func (r investigation) publish(revision, action string, card publication) (*gode
 }
 
 func finish(p packet, action, path, accepted, reason string) *godel.Node {
+	if action == "no_change" && p.Choice != nil && !strings.HasPrefix(reason, "scout failure:") {
+		slug := p.Choice.Existing
+		if p.Draft != nil {
+			slug = p.Draft.Slug
+		}
+		if slug != "" {
+			reason = slug + ": " + reason
+		}
+	}
 	result := struct {
 		Revision string `json:"evidence_revision"`
 		Action   string `json:"action"`

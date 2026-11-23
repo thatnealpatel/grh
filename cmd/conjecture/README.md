@@ -14,7 +14,10 @@ must agree on its exact commit.
 
 The command reads the accepted mission, frontier, obligations, conjectures,
 source notes, and Lean sources from Git objects at that commit, not from the
-working copy. The selector chooses one line of inquiry or stops. A coordinator
+working copy. The selector sees short `no_change` reasons from the six most recent
+Gödel run records for this source, excluding failed runs and scout failures.
+They guide retries and possible successor questions, not mathematical conclusions.
+The selector chooses one line of inquiry or stops. A coordinator
 requests and joins three scouts in parallel: OpenAlex for scholarly discovery,
 web search for other records and entry points, and `think` for implications and
 counterexamples. Up to four distinct leads can get an explicit primary-source
@@ -35,7 +38,10 @@ No-change paths do not start the publisher. There is no remote upload.
 
 The Go transitions bound the run, check the report envelope, pin the evidence,
 and derive card paths from the disposition and slug. Research stages have a
-filtered Yah tool set without workspace writes or shell tools. They receive
+filtered Yah tool set. Only the initial constructor has shell access for one
+optional, time-limited scratch calculation. Its result and limits go to the
+challenger; the reviser cannot run another test or switch claims. The scratch
+restriction and experiment budget are instructions, not OS enforcement. They receive
 request-local packets rather than prior conversational history. Every Yah stage
 runs from the project root; only the packets and pinned evidence live in scratch. All stage
 prompts append the Alpöge exclusion, and the coordinator must pass it to each
