@@ -212,7 +212,7 @@ changed family is $\lambda\lambda'=kT^3$: The absolute error bound
 there is $O(\varepsilon(\lambda+\lambda'))=o(1)$, not an approximation
 to $T^2$.
 
-The calculation is informal; no Lean source changed. It controls the
+That comparison is informal. It controls the
 scalar **after** extending the radial domain. The use of the literal
 $E_{S,0}$ in (12.4.1.23), the identification of the geometrical operator
 and the global $S$-piece, and the two Mellin corrections are separate
@@ -222,16 +222,53 @@ need not give the trace of the actual local projection. The
 exhibits a defect even for position lower edges tending to zero in
 bandwidth units and upper-only Fourier multipliers.
 
-**Bounded next check, formalization only:** Check a Lean statement of
-$\operatorname{Re}\int_{|w|\le K}(\log K-\log|w|)\widehat v(w)\,dw>0$
-for $K:\mathbb R$ positive and $v:\mathbb R\to\mathbb R$ integrable,
-nonnegative almost everywhere, with $\int v>0$ (take the standard
-Fourier transform of the complex coercion). This is the same finite
-band as the verified display (12.4.1.24), p. 518, inherited above.
-`real_log_fourier_sharp_tendsto` evaluates its limit under other
-hypotheses, and `real_log_fourier_of_zero` supplies the untruncated
-kernel, not the finite-band inequality. Factor out the positive
-cosine kernel above before specializing to the smooth additive test
-$U$, which additionally vanishes near zero. No $v(0)=0$, integrability
-of $\widehat v$ over the line, or support gap is needed for the
-finite-band Fubini calculation. The endpoint is not elaborated here.
+**Lean-checked finite-band sign.** [RealLogBandPositive](../../Proofs/Lemmas/RealLogBandPositive.lean)
+proves `Masullo.real_log_band_cos_pos` for every real cosine argument
+and `Masullo.real_log_fourier_sharp_pos` for every $K>0$ and real
+$v\in L^1(\mathbb R)$ with $v\ge0$ almost everywhere and $\int v>0$:
+
+$$
+\operatorname{Re}\int_{|w|\le K}(\log K-\log|w|)\widehat v(w)\,dw>0.
+$$
+
+Lean takes the Fourier transform of the complex coercion of $v$.
+Unlike `real_log_fourier_sharp_tendsto`, this needs neither continuity,
+vanishing at zero, a support gap, nor integrability of $\widehat v$
+over the whole line. The proof uses the positive integral of the
+continuous nonnegative kernel $\tfrac12\operatorname{sinc}^2(aw/2)$
+in the cosine primitive, then exchanges the two $L^1$ inputs to the
+Fourier pairing. For the two-sign test $U$ above, smooth compact support
+and nonzero nonnegativity give the hypotheses. The joint-import check
+also identifies the band with `realSharpCutScalar` in the accepted
+[sharp lower-edge calculation](trace-real-prime-q.md#lean-checked-path-dependence-of-the-retained-position-edge)
+and checks the negative real part of $-2J(1)$. This checks the sign of
+the correction, not the smoothing estimate that produces it.
+
+The rendered symmetric band (12.4.1.24), p. 518, and the two-sign
+counting and quotient normalization of (12.4.1.17)–(21) are inherited
+from the [real coefficient audit](trace-real-prime-q.md#the-chapter-12-real-coefficient),
+not reread. No smoothing wording or joint-limit rate is a hypothesis
+of the Lean result. The exact qualifiers of the smoothing comparison
+above keep their separate source status. Yah
+`01a20611-2118-7d6d-b406-1e305f20e5ea` houses the independent statement
+and applicability review (`juHIOEc`, reviewed base
+`0ae6cd4b47baded506e8c8449a7ce74ce28485e9`) and the owning build,
+joint-import signatures, axiom report, and candidate disposition.
+
+**Bounded next check, formalization only:** Identify the sharp
+position and frequency **annular scalar** with the four-term
+combination, before taking any smooth or joint limit. For
+$0<A\le B$ and $0<C\le D$, its radial weight at $r=|w|>0$ is the
+$ds/s$ volume of $[A,B]\cap[r/D,r/C]$. Subtract the weight for the
+upper Fourier cutoff $C$ from that for $D$, ignoring the single
+radial boundary $s=r/C$. Apply `real_position_band_scalar_eq` at
+$D$ and $C$ to get both terms in the same coordinate; no fresh
+one-edge calculation is needed. The accepted
+`real_log_profile_two_annuli_erase` starts from this four-term
+combination, so the missing check is the integral identification,
+not the limit. The accepted subtraction theorem can be reused as-is
+for the smooth witness; its global Fourier integrability premises need
+not be necessary for the bounded calculation. This is a project repair
+of the scalar based on the inherited display (12.4.1.24), not a new
+reading of the footnote or a projected operator identity.
+
