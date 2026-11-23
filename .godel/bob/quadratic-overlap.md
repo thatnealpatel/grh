@@ -16,3 +16,5 @@ For each shift use the starts $p$ with both $p,p+d$ prime in $[e^{-8}X,X]$ (inte
 Thus excluding six simultaneous hits uniformly in the auxiliary angle would be false on this fixture, even though there are only four at the genuine angle. The witness is a common rotation of genuine coefficients, not a second untwisted ordinate. No maximum over the period, real-projection conclusion, or asymptotic overlap bound is certified. To bound the untwisted overlap beyond this fixture, retain information that locates the superlevel sets relative to $\beta=0$.
 
 **Persistence follow-up:** The [direct real check](conductor-interval-search.md#finite-checks-and-the-flagged-cell) finds a common subinterval below threshold for every trim shift inside the next genuine grid cell. A peak at the node does not persist on the entire cell; this does not exclude shorter overshoots.
+
+**Short windows:** The [continuous run-length test](real-run-length.md) encloses the longest six-label real overlap inside this cell, resolves the signs, and prices the full positive box independently of retention.
