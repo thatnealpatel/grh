@@ -294,17 +294,66 @@ build, joint-import signatures, axiom report, and adoption against
 the full candidate ID are recorded in Yah
 `01a2061d-6bc7-725a-b079-14f4d6c12d36`.
 
-**Next bounded check, formalization only.** For $0<K\le K'$ and
-$u\in L^1$, prove the bound $|J(K')-J(K)|\le 2\|u\|_1(K'-K)$
-in the same frequency coordinate. The private
-`integrable_sharp_cut_pairing` already gives finite integrability
-and uses the Fourier bound; the finite-band positivity theorem
-controls a sign, not the variation in $K$. The remaining inference
-is that the difference of the two nested log weights is nonnegative
-almost everywhere and has integral $2(K'-K)$ (compute each band
-mass using the real log antiderivative). This supplies the uniform
-endpoint error for the four-term sum by the triangle inequality.
-It uses the same inherited scalar display only, with no new source
-claim. Representing smooth profiles as endpoint averages and
-transferring those estimates to a projected or global trace,
-including the two Mellin corrections, remain separate problems.
+### Lean-checked perturbation of the sharp scalar endpoints
+
+For $u\in L^1(\mathbb R;\mathbb C)$ and $0<K\le K'$, the theorem
+`norm_realSharpCutScalar_sub_le` in
+[RealSharpLowerEdges](../../Proofs/Props/RealSharpLowerEdges.lean) proves
+
+$$
+|J(K')-J(K)|\le 2(K'-K)\int_{\mathbb R}|u(x)|\,dx.
+$$
+
+Each cutoff weight has integral $2K$ by integrating the real logarithm
+on $[-K,K]$. At $D=1$, `real_position_band_radial_volume` identifies
+the difference of the weights off $w=0$ with a nonnegative radial
+integral. The difference therefore has mass $2(K'-K)$. Finite pairing
+integrability and the pointwise Fourier bound then give the estimate,
+including $K'=K$, without global integrability of $\widehat u$ or
+$\log|\cdot|\widehat u$. Reversing the endpoints when necessary, the
+triangle inequality controls the four-term scalar above by twice the
+$L^1$ norm times the sum of the four absolute product changes. That
+last corollary is not a separate Lean declaration.
+
+**Source and review.** This is an estimate on the repaired positive
+radial quotient, not a printed claim. The band (12.4.1.24), p. 518,
+and the two-sign sum and counting-quotient normalization of
+(12.4.1.17)–(21) are inherited rendered evidence from the
+[real coefficient audit](trace-real-prime-q.md#the-chapter-12-real-coefficient),
+not reread. Independent exact-statement review (`QkhXDEC`, reviewed
+base `0c66aa8549fbe74761d9ddd15b019e4d1a704048`) checked applicability
+and the mathematical reduction. Its transcript and the owning build,
+fresh joint-import signatures, axiom report, and candidate disposition
+are in Yah `01a20628-35f8-7cc3-84eb-2ea8c1169911`.
+
+**Next bounded check, formalization only.** For measurable real upper
+profiles $p,q$ on $s>0$, bracket each by sharp upper indicators with
+positive bracketing endpoints $B_-\le B_+$ and $D_-\le D_+$. Check the
+pointwise weight sandwich, for $r=|w|>0$:
+
+$$
+L_{B_-D_-}(r)\ \le\ \int_0^\infty p(s)q(r/s)\,\frac{ds}{s}
+\ \le\ L_{B_+D_+}(r).
+$$
+
+Here $L_K(r)=\mathbf 1_{r\le K}(\log K-\log r)$. The sharp comparison
+in the same coordinate already follows from
+`real_position_band_radial_volume` with $A=r/D$ when $r\le BD$:
+The lower-product log term is zero, and for $r>BD$ the radial set is
+empty. What remains in this check is the two comparisons against the
+profile product, using the support interval $[r/D_+,B_+]$ to make
+the inner integral finite. This is the first step to the [informal
+upper-only error estimate](#the-full-signed-scalar-comparison) without
+monotonicity or endpoint averaging. The outer measurability and norm
+comparison, and any projected trace or Mellin identification, are
+separate.
+
+This next check takes the brackets as project hypotheses. The
+[clause-specific review](#review-and-continuation) supplies inherited
+rendered evidence for Step II's two upper bounds, p. 516, and the
+sharp ranges in (12.4.1.22), p. 518, not the exact smoothening qualifier
+or the preceding equality. In (12.4.1.12) and (12.4.1.15), p. 517,
+the arguments and minus subscripts have rendered evidence, but the
+exact factor names and parameter subscripts are extraction-supported.
+None of these clauses establishes that the printed smooth profiles
+meet the project brackets. No joint-limit rate is needed for the check.

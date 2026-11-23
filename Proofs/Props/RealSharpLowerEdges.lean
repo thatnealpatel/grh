@@ -139,26 +139,84 @@ private theorem annular_band_radial_volume {A B C D r : ℝ}
   · rintro ⟨⟨⟨ha, hd⟩, hb⟩, hc⟩
     exact ⟨⟨ha, hb⟩, hd, (lt_of_not_ge (fun h ↦ hc ⟨⟨ha, h⟩, hb⟩)).le⟩
 
+private noncomputable def sharpCutWeight (K : ℝ) : ℝ → ℝ :=
+  {w : ℝ | |w| ≤ K}.indicator (fun w ↦ Real.log K - Real.log |w|)
+
+private theorem measurableSet_sharp_cut (K : ℝ) : MeasurableSet {w : ℝ | |w| ≤ K} :=
+  measurableSet_le (by fun_prop) measurable_const
+
+private theorem sharp_cut_set_eq_Icc (K : ℝ) : {w : ℝ | |w| ≤ K} = Icc (-K) K := by
+  ext w
+  change |w| ≤ K ↔ -K ≤ w ∧ w ≤ K
+  exact abs_le
+
+private theorem integrable_sharp_cut_weight (K : ℝ) : Integrable (sharpCutWeight K) := by
+  apply (integrable_indicator_iff (measurableSet_sharp_cut K)).2
+  rw [sharp_cut_set_eq_Icc, integrableOn_Icc_iff_integrableOn_Ioc (μ := volume)]
+  have hlog : IntervalIntegrable (fun w : ℝ ↦ Real.log K - Real.log w) volume (-K) K :=
+    intervalIntegrable_const.sub intervalIntegral.intervalIntegrable_log'
+  simpa only [Real.log_abs] using hlog.1
+
+private theorem sharpCutWeight_mul_fourier (u : ℝ → ℂ) (K : ℝ) :
+    (fun w ↦ (sharpCutWeight K w : ℂ) * 𝓕 u w) =
+      {w : ℝ | |w| ≤ K}.indicator (fun w ↦ ((Real.log K - Real.log |w| : ℝ) : ℂ) * 𝓕 u w) := by
+  funext w
+  by_cases hw : |w| ≤ K <;> simp [sharpCutWeight, hw]
+
 private theorem integrable_sharp_cut_pairing {u : ℝ → ℂ} (hu : Integrable u) (K : ℝ) :
     Integrable ({w : ℝ | |w| ≤ K}.indicator
       (fun w ↦ ((Real.log K - Real.log |w| : ℝ) : ℂ) * 𝓕 u w)) := by
-  have hs : {w : ℝ | |w| ≤ K} = Icc (-K) K := by
-    ext w
-    change |w| ≤ K ↔ -K ≤ w ∧ w ≤ K
-    exact abs_le
-  have hl : IntegrableOn (fun w : ℝ ↦ Real.log K - Real.log |w|) {w : ℝ | |w| ≤ K} := by
-    rw [hs, integrableOn_Icc_iff_integrableOn_Ioc (μ := volume)]
-    have hlog : IntervalIntegrable (fun w : ℝ ↦ Real.log K - Real.log w) volume (-K) K :=
-      intervalIntegrable_const.sub intervalIntegral.intervalIntegrable_log'
-    simpa only [Real.log_abs] using hlog.1
-  have hm : MeasurableSet {w : ℝ | |w| ≤ K} := hs.symm ▸ measurableSet_Icc
-  have hg : Integrable ({w : ℝ | |w| ≤ K}.indicator
-      (fun w ↦ ((Real.log K - Real.log |w| : ℝ) : ℂ))) :=
-    (integrable_indicator_iff hm).2 hl.ofReal
   have hf : Continuous (𝓕 u) := VectorFourier.fourierIntegral_continuous
     Real.continuous_fourierChar continuous_inner hu
-  simpa only [← Set.indicator_mul_left] using
-    hg.mul_bdd hf.aestronglyMeasurable (.of_forall (Real.norm_fourier_le_integral_norm u))
+  rw [← sharpCutWeight_mul_fourier]
+  exact (integrable_sharp_cut_weight K).ofReal.mul_bdd hf.aestronglyMeasurable
+    (.of_forall (Real.norm_fourier_le_integral_norm u))
+
+private theorem integral_sharp_cut_weight {K : ℝ} (hK : 0 ≤ K) :
+    (∫ w, sharpCutWeight K w) = 2 * K := by
+  rw [sharpCutWeight, integral_indicator (measurableSet_sharp_cut K), sharp_cut_set_eq_Icc,
+    integral_Icc_eq_integral_Ioc, ← intervalIntegral.integral_of_le (by linarith),
+    intervalIntegral.integral_sub intervalIntegrable_const
+      (by simpa only [Real.log_abs] using intervalIntegral.intervalIntegrable_log'),
+    intervalIntegral.integral_const]
+  simp only [Real.log_abs, integral_log, Real.log_neg_eq_log, smul_eq_mul]
+  ring
+
+/-- The sharp scalar is Lipschitz in the positive cutoff product, with
+constant twice the `L¹` norm of the additive test. No integrability of
+its Fourier transform on the whole line is assumed. -/
+public theorem norm_realSharpCutScalar_sub_le {u : ℝ → ℂ} (hu : Integrable u)
+    {K K' : ℝ} (hK : 0 < K) (hKK' : K ≤ K') :
+    ‖realSharpCutScalar u K' - realSharpCutScalar u K‖ ≤ 2 * (K' - K) * ∫ x, ‖u x‖ := by
+  let W : ℝ → ℝ := fun w ↦ sharpCutWeight K' w - sharpCutWeight K w
+  have hW : Integrable W := (integrable_sharp_cut_weight K').sub (integrable_sharp_cut_weight K)
+  have hmass : (∫ w, W w) = 2 * (K' - K) := by
+    change (∫ w, sharpCutWeight K' w - sharpCutWeight K w) = _
+    rw [integral_sub (integrable_sharp_cut_weight K')
+      (integrable_sharp_cut_weight K), integral_sharp_cut_weight (hK.le.trans hKK'),
+      integral_sharp_cut_weight hK.le]
+    ring
+  have hnonneg : ∀ᵐ w : ℝ, 0 ≤ W w := by
+    filter_upwards [volume.ae_ne (0 : ℝ)] with w hw
+    have hradial := real_position_band_radial_volume hK hKK' (D := 1) one_pos (abs_pos.mpr hw)
+    simp only [div_one, mul_one] at hradial
+    simp only [W, sharpCutWeight, indicator_apply, mem_ofPred_eq, ← hradial]
+    exact setIntegral_nonneg measurableSet_Icc fun s hs ↦
+      inv_nonneg.mpr (hK.le.trans ((le_max_left ..).trans hs.1))
+  have hJ (L : ℝ) : realSharpCutScalar u L = ∫ w, (sharpCutWeight L w : ℂ) * 𝓕 u w := by
+    rw [realSharpCutScalar, sharpCutWeight_mul_fourier,
+      integral_indicator (measurableSet_sharp_cut L)]
+  have hq (L : ℝ) : Integrable (fun w ↦ (sharpCutWeight L w : ℂ) * 𝓕 u w) := by
+    rw [sharpCutWeight_mul_fourier]
+    exact integrable_sharp_cut_pairing hu L
+  rw [hJ, hJ, ← integral_sub (hq K') (hq K)]
+  simp only [← sub_mul, ← Complex.ofReal_sub]
+  change ‖∫ w, (W w : ℂ) * 𝓕 u w‖ ≤ _
+  rw [← hmass, ← integral_mul_const]
+  refine norm_integral_le_of_norm_le (hW.mul_const _) ?_
+  filter_upwards [hnonneg] with w hw
+  rw [norm_mul, Complex.norm_real, Real.norm_eq_abs, abs_of_nonneg hw]
+  exact mul_le_mul_of_nonneg_left (Real.norm_fourier_le_integral_norm u w) hw
 
 /-- The sharp scalar on the repaired positive radial quotient, retaining
 both the position band `[A,B]` and the frequency band `[C,D]`. -/
