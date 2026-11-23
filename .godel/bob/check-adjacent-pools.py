@@ -75,3 +75,54 @@ for pool, expected, lower, upper in [(P, 1, 59, 60), (Q, 7, -15, -14)]:
     count, lo, hi = certify(pool)
     assert count == expected and lower < lo <= hi < upper
     print(f'{count} unordered split(s) passing the integer filter; certified total in ({lower}, {upper})')
+
+
+def certify_neighbors():
+    from decimal import Decimal, localcontext
+
+    def log_bound(n, upper):
+        # Decimal.ln is correctly rounded; widen by one representable step.
+        with localcontext() as ctx:
+            ctx.prec = 24
+            y = Decimal(n).ln()
+            return F(y.next_plus() if upper else y.next_minus())
+
+    assert 1099 < (F(9, 5)*log_bound(q, False))**2
+    assert (F(9, 5)*log_bound(q, True))**2 < 1100
+
+    def weight_factor(p, upper):
+        # X*w_p. Use the opposite endpoint for the subtracted logarithm.
+        return ((log_bound(1100 if upper else 1099, upper) - log_bound(p, not upper))
+                * log_bound(p, upper) * log_bound(p+d, upper))
+
+    starts = [s for s in range(2, 1100-d) if prime(s) and prime(s+d)]
+    counts = [0, 0, 0]  # positive, negative, and identically zero
+    neg_lo = neg_hi = 0
+    for p in P:
+        for s in starts:
+            if s in P or any(abs(s-r) < 50 for r in P-{p}):
+                continue
+            _, lo, hi = certify((P-{p}) | {s})
+            if hi < 0:
+                ratio_lo = weight_factor(s, False)/weight_factor(p, True)
+                ratio_hi = weight_factor(s, True)/weight_factor(p, False)
+                assert 0 < ratio_lo < ratio_hi
+                neg_lo += -hi*ratio_lo
+                neg_hi += -lo*ratio_hi
+                counts[1] += 1
+            elif lo > 0:
+                counts[0] += 1
+            else:
+                assert lo == hi == 0
+                counts[2] += 1
+    assert counts == [7, 4, 96] and 20 < neg_lo <= neg_hi < F(101, 5)
+    print('107 one-exchange neighbors: 7 positive, 4 negative, 96 zero; '
+          'total negative capacity / c(P) in (20, 20.2)')
+
+
+if __name__ == '__main__':
+    import sys
+    if sys.argv[1:] == ['--neighbors']:
+        certify_neighbors()
+    elif sys.argv[1:]:
+        sys.exit('expected no arguments or --neighbors')
