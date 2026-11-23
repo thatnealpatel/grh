@@ -69,3 +69,38 @@ built, checked, and adopted at `5ebb1863c3039c8c8d54c428f6624b4bae43a788`;
 the first candidate was not built. This confirms a live change in
 the build decision, not a measured time saving or a guarantee
 against a subsequent race. Keep the preflight optional.
+
+## Later control: Signed finite Hecke rectangles
+
+Run `01a205af-ffeb-7e3e-805d-1f8b1310a9ce` matches Main Yah
+`01a205b0-0177-711f-a3d6-12ac846dc0be` by input and final response.
+Its launch archive and starting accepted revision were
+`a36dcd32e6e687da76b7ea30fc9eb0e2aa48b392`. The pinned `cmd/godel`
+source is unchanged from `700e00f5ef52eca6dc813921b71de4f4094141b7`.
+The previous improvement (Yah `01a205a6-2328-79c2-827b-75cc5a01356a`,
+run `01a2059a-e907-7dc0-978a-71b8587e81fa`) landed the reflection
+and left-edge estimate after the work stdout was fixed. Main correctly
+skipped that already-landed successor and worked on the finite residues.
+
+Main fixed draft elaboration and lint errors before integration
+(seqs. 40, 53, and 64). Reviewer `bOSGsBK` checked the exact
+statements and pinned text, not a moving build. Candidate
+`395585053820b419ededa8cc4740ddecfafd27a6` passed its scoped build and
+joint signature/axiom check. Its base
+`6e72a29f2dc679fa7ccfcd9bfb7478ba4212c836` was still accepted at seq. 93,
+62 seconds after the build call (seq. 84). Companion session
+`01a205b6-d5c7-7f70-92e4-bc6b0b222b29` then adopted
+`de80bdedda20b8fe8b504ad5be58e2dcb1639406` (its seq. 45), and Main's
+adoption went stale (seq. 118). Main reconciled and replayed the same
+patch on `3b265e62969f64e230fa27317cfe0e46f7098999`, reran build and
+joint checks, and adopted `942585653bf62c58ddd716324c0443b7aeccc96d`
+(seqs. 124, 137, and 139).
+
+The adoption race recurred, but this is a negative control for the
+preflight: It would not have averted this build. The repeat status
+checks did not change the proof decision. Keep the optional single
+preflight and explicit restack; neither a polling node nor a different
+proof router was tested or is justified by this run. Improvement took
+the unmet [good-height contour limit](../../obligations/single-place-norm.md#checked-good-height-contour-limit)
+instead of changing the program. Assessment Yah:
+`01a205bb-a8c6-73f3-ae04-5d0c3192ac5e`.

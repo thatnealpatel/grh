@@ -2970,15 +2970,62 @@ and manuscript correspondence. Owning Yah session
 `01a205b0-0177-711f-a3d6-12ac846dc0be` records the review, exact candidate
 and base, scoped builds, joint signatures, axiom checks, and adoption.
 
-**Next obligation:** Take the contour limit for this same trivial $L$ and
-compact-log test in (B.4.2.2), p. 614. Use `compactLogMellin_vertical_decay`
-with $A=2$ to make both horizontal pairings vanish and the two vertical
-integrands absolutely integrable. For an all-height zero sum, also retain
-the Jensen full-order bounds for the same $H$ from
-`exists_completedHeckeEulerProduct_one_gaussianContinuation_zeroCount`,
-cover integer height slabs, and prove absolute summability before
-identifying the rectangle limit with the unrestricted sum. The rational
-and quadratic Dirichlet exhaustion modules supply examples. The remaining
-geometric explicit formula and the comparison with the proposed global
-trace are separate; this does not prove RH or GRH or obstruct the essential
-mechanism.
+The [good-height contour limit below](#checked-good-height-contour-limit)
+passes these signed identities to the two infinite vertical integrals.
+
+### Checked good-height contour limit
+
+[The boundary limit](../../Proofs/Props/TestedRectangleBoundaryLimit.lean),
+`tendsto_rectangleIntegral_compactLogMellin_logDeriv`, uses
+`compactLogMellin_vertical_decay` at $A=2$ and $N=3$. In the proof of
+Lemma B.3.1.2, pp. 604–605, (B.3.1.3) uses a lower power bound on
+$|T_k|$ that does not follow from the stated upper bound. The completed
+application replaces the slow-growth citation in (B.4.2.1)–(2), p. 614,
+with the actual-height estimates on the closed edges of the same $L$.
+The bound on each horizontal integral is $3BD/(1+T_n)$, with test
+constant $B$ and quadratic edge constant $D$. On each vertical line,
+linear growth times cubic decay gives an integrable inverse-square
+majorant. As in (B.3.2.5), p. 606, the boundary limit is $iR-iL_{\mathrm v}$,
+where $R$ and $L_{\mathrm v}$ denote the right and left tested upward
+integrals with respect to $dt$. At finite height the horizontal signs
+are those of the counterclockwise Fig. 3, p. 605, not (B.3.2.4), p. 606.
+
+[`completedHecke_one_tendsto_zeroSum_at_good_heights`](../../Proofs/Theorems/CompletedHeckeOneExhaustion.lean)
+chooses $n+1<T_n<n+2$ and the exact interior zero sets $Z_n$ before
+the test. Combining the checked finite residues with the boundary limit
+then cancels $i$ from the vertical Jacobians against the residue factor
+$2\pi i$. For each smooth compact-log test it proves absolute integrability
+on both lines and
+
+$$
+\sum_{\rho\in Z_n}\operatorname{ord}_{\rho}(H)\Phi(\rho)
+\longrightarrow \Phi(0)+\Phi(1)+\frac{R-L_{\mathrm v}}{2\pi}.
+$$
+
+The positive pole terms here are on the limit side after solving for
+the zero sum; on the divisor side of (B.4.2.2), p. 614, they are negative.
+The theorem assumes the exact inputs of the finite rectangle theorem,
+including the horizontal bound supplied with $L,H$ by
+`exists_completedHeckeEulerProduct_one_gaussianContinuation_horizontal`.
+It does not choose another continuation or prove an unrestricted sum.
+
+**Review and check:** Independent Yah reviewer `srofpOK` checked the
+pinned text, the edge argument, and the signed same-witness limit. The
+source reading is provisional (Markdown and numbered PDF layout, not
+rendered pages). Owning Yah session `01a205bb-a8c6-73f3-ae04-5d0c3192ac5e`
+records the exact candidate, base, scoped build, joint signatures, axiom
+checks, and adoption.
+
+**Next obligation:** For (B.4.2.2)'s unrestricted zero sum, retain the
+Jensen full-order count of the **same** $H$ from
+`exists_completedHeckeEulerProduct_one_gaussianContinuation_logDeriv`
+when constructing its horizontal heights. Cover each unit slab of
+$-1<\Re s<2$ at absolute heights $k\le|\Im s|<k+1$ by the two radius-five
+disks at $2\pm ik$. The $O(1+k)$ bound on total orders and cubic test
+decay give an $O((1+k)^{-2})$ absolute slab majorant. Prove summability
+and use cofinality of the $Z_n$ among finite sets of strip zeros to
+identify the checked limit with that sum. To use the entire divisor,
+exclude exterior zeros by right-half-plane nonvanishing and reflection,
+and identify ordinary orders via pole clearing. The rational and
+quadratic Dirichlet exhaustion modules give examples. The geometric
+explicit formula and global trace comparison remain separate obligations.
