@@ -95,6 +95,58 @@ reserved slack; the sum is absolutely bounded by $\sum d_w$. By
 independence and bounded convergence, $M_\mu(w)=0$ at every tail
 location, and $M_\mu(\lambda)>0$ for real $\lambda$.
 
+### Checked dependency: The compact tail measure
+
+[`Masullo.exists_probability_measure_kill_frequencies`](../../Proofs/Props/ProbabilityMeasureKillFrequencies.lean)
+proves the measure construction in the preceding paragraph. For any
+sequence $w:\mathbb N\to\mathbb C$ with every $\Im w_n\ne0$ and
+summable $d_n=\pi/|\Im w_n|$, it produces **one** Borel probability
+$\mu$ with $\mu([0,\sum_n d_n]^c)=0$. Every complex exponential
+integrand is integrable; $\int e^{w_n t}\,d\mu(t)=0$ for all $n$,
+and $\int e^{rt}\,d\mu(t)>0$ for all real $r$. The last clause gives
+nonvanishing for the real coefficients of the transformed densities,
+since $e^{rt}$ agrees with the real restriction of the complex
+exponential. Carrying does not specify the exact topological support.
+
+In [`Lemmas.BernoulliDisplacement`](../../Proofs/Lemmas/BernoulliDisplacement.lean),
+the full displacement has probability $1/(1+\exp(\Re w_n\,d_n))$.
+The half-turn identity kills the one-coordinate expectation. Finite
+marginals of `Measure.infinitePi` and the product integral transfer that
+zero to every initial-segment expectation containing the coordinate.
+The displacements sum measurably and are bounded pointwise by the budget;
+dominated convergence preserves the zero, and pushforward gives the
+stated law. Compact carrying gives integrability and the real integral
+is positive because the integrand is everywhere strictly positive.
+
+This is an original repair for the omitted-sample comparison with
+(12.5.1.3–4), pp. 519–520. It is not a consequence of Masullo's orbital
+trace theorem or his local multiplier calculation. Given a summable
+omitted tail, the theorem allows the convolution displacement to fit
+arbitrarily small positive slack by choosing the finite split first.
+It does not prove summability, form the filtered bump, or compare traces.
+
+Writer check (Yah `01a20624-d19d-7566-86d3-0dc22f4adc92`):
+`lake build --wfail +Lemmas.BernoulliDisplacement +Props.ProbabilityMeasureKillFrequencies`.
+A fresh joint import and `#check @Masullo.exists_probability_measure_kill_frequencies`
+confirmed the statement; `#print axioms` on it and the supporting
+lemmas used only `propext`, `Classical.choice`, and `Quot.sound`.
+The integration owner checks the exact candidate separately.
+
+Independent read-only review `tail-statement` (`kijjoZR`, output
+`3f772a9b867a2a4ed96f1ae0c3a297b73341e3cb`) confirmed the exact, unchanged
+statement against the obligation at `0fa139d2d20de39dcc566b38d23103eb95ff957d`.
+It checked the PDF digest and read Theorem 12.5.1.1, pp. 519–520,
+(12.5.1.3–4), against Theorem 11.3.2.1, pp. 495–496 (strictly above-one
+support), and (12.4.1.8–12), p. 517 (local Fourier multiplier). These are
+provisional Markdown/layout readings, without rendered-page verification.
+The review distinguishes the positive scalar transform from a claim of
+smoothness or positivity of a density. The writer's two-revision diff
+confirms that the assigned base `e58cab0cc9def603bd473be0bbd71da3a24ceff4`
+adds only a separate same-width comparison note to the reviewed base;
+the tail obligation is identical there.
+
+### Applying the measure to the short test (not yet checked here)
+
 For a real bump $\phi$ supported in the smaller interval let
 $f=P_0(\partial_t)(\mu*\phi)$, where
 $P_0(z)=(z^2-1/4)\prod_{w\,\mathrm{finite}}(z+w)$ has real coefficients.
@@ -172,10 +224,10 @@ not a fresh rendered-page verification.
   separately justified global base with the *raw* value would fail on
   this witness, where both are zero.
 
-The witness with omitted-sample filtering and its trace comparison are
-reviewed ordinary mathematics, not Lean declarations. Lean dependencies
-are identified in the linked proof records; they do not machine-check
-this obstruction end to end.
+The full witness with omitted-sample filtering and its trace comparison
+are reviewed ordinary mathematics, not Lean declarations. The compact
+tail-measure dependency is checked above; it does not machine-check this
+obstruction end to end.
 
 ## Checked local scalar separation
 
@@ -201,6 +253,48 @@ statement, $g=e^{-t}$ and its Haar measure, the exponents and signs, and
 the p. 517 and pp. 519–520 interfaces against the pinned text/layout.
 The owning candidate build, joint import, signatures, and axiom report
 are recorded in Yah session `01a20615-9d61-7879-bfbb-bb714a7cbca9`.
+
+## Checked smoothing for the short test
+
+[`Masullo.logTranslateAverage_smooth_supported`](../../Proofs/Lemmas/CompactLogMellinSmoothing.lean)
+proves that a finite measure carried by $[0,D]$ sends a smooth test
+supported in $[a,b]$ to the smooth real log profile
+$g(x)=\int\phi(x-t)\,d\mu(t)$ supported in $[a,b+D]$. This uses
+parametric integration on the carrying interval. With only continuity
+of $\phi$ and the same support and measure hypotheses,
+`Masullo.compactLogMellin_logTranslateAverage` uses absolute integrability
+on a compact rectangle, Fubini, and Lebesgue translation to prove
+$M_g(z)=M_\phi(z)\int e^{zt}\,d\mu(t)$ for every complex $z$.
+This is the positive Mellin sign in the $t$ coordinate. Below norm one,
+$t=-\log|g|$, so the shifted class sample uses $M_g(-z)$, and the
+omitted set is stable under negation.
+
+These Lean results supply smoothness, support, and the convolution
+factor for the filtered test above and for the
+[even separator](trace-even-separator-q.md). They are part of an
+original witness construction for comparing the strip sum in
+(12.5.1.3–4), pp. 519–520, with the full sum. They do not supply a
+trace identity or compare a projected shell to a local cutoff.
+
+Independent read-only `smoothing-review` (`naCfTGW`, output
+`96604d689ac137b758de74c4feb6f004c91be714`) checked the fixed hypotheses,
+translation sign, support slack, and the match to both witness arguments
+against `4c06d9d8aff8d97563d20aae176f5dffe4834bc8` and the pinned Mathlib.
+The review checked the manuscript's pp. 519–520 requirements, the
+strictly above-one support of Theorem 11.3.2.1, p. 495, and the
+multiplier at (12.4.1.8–12), p. 517, by Markdown and layout extraction;
+this fresh reading is provisional, not rendered-page verification.
+The owning exact-candidate build, joint import, and axiom check are
+recorded in Yah session `01a20624-d19d-7566-86d3-0dc22f4adc92`.
+
+**Next proof obligation:** For a real polynomial $P$, implement
+$P(\partial_t)$ on a real smooth compact log profile without widening
+its support, and derive the multiplier $P(-z)$ from the existing
+[`compactLogMellin_iteratedDeriv`](../../Proofs/Lemmas/CompactLogMellin.lean).
+This will assemble the two parts of the filter. It will not yet prove
+the nonproportionality of the transformed $J$ and $U_\beta$, the
+density bound giving the budget for the actual omitted zeros, or the
+projected trace comparison.
 
 ## Exact successor for position-dependent weights
 
