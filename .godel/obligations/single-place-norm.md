@@ -3029,3 +3029,70 @@ exclude exterior zeros by right-half-plane nonvanishing and reflection,
 and identify ordinary orders via pole clearing. The rational and
 quadratic Dirichlet exhaustion modules give examples. The geometric
 explicit formula and global trace comparison remain separate obligations.
+
+### Trivial Hecke contour with the unrestricted zero sum
+
+[`exists_completedHecke_one_contour_identity`](../../Proofs/Theorems/CompletedHeckeOneContour.lean)
+repairs the zero sum in (B.4.2.2), p. 614, for the completed trivial Hecke
+product over a number field with the same norm-one inputs as the
+[good-height limit](#checked-good-height-contour-limit). It keeps one pair
+$L,H$ for all smooth compact log profiles. At $a=2$ the two upward tested
+line integrals are absolutely integrable, and their right-minus-left
+difference divided by $2\pi$ in the real height coordinate is
+
+$$
+\sum_{H(\rho)=0}\operatorname{ord}_{\rho}(L)\Phi(\rho)-\Phi(0)-\Phi(1),
+$$
+
+with an absolutely convergent sum over the full ordinary zero divisor,
+including multiplicities. The location assertion is only $0\le\Re\rho\le1$,
+with the pole points $0,1$ excluded; it does not use the stricter bound
+in Proposition 3.2.1.3(4), p. 123.
+
+**Source and repair.** In §B.4.2.1, (B.4.2.1)–(B.4.2.3), p. 614, Masullo
+applies the good-rectangle limit (B.3.2.1)–(2), p. 606, to $L'/L$ and
+uses a height cutoff for the zero sum. The good-rectangle limit alone
+does not establish unrestricted absolute convergence. The repair keeps
+the full-order disk count together with the good heights in
+[`exists_completedHeckeEulerProduct_one_gaussianContinuation_horizontal_count`](../../Proofs/Theorems/IdeleClassGaussianHorizontal.lean);
+the old horizontal theorem only forgets the count. The endpoint uses
+`completedHeckeEulerProduct_logDeriv` on $\Re s>1$, the checked same-$L$
+conductor reflection underlying (B.4.2.3) on $\Re s<0$, and the nonzero
+pole-cleared values at $0,1$. At each ordinary point multiplication by
+$(s-1)s$ is a nonvanishing analytic germ; it preserves both zero membership
+and analytic order. The helper
+[`summable_norm_analyticOrder_mul_of_disk_count`](../../Proofs/Lemmas/AnalyticSlabSummability.lean)
+bounds the sum of orders in the two halves of each unit absolute-height
+slab by the two disk counts. Cubic test decay makes the slab majorant
+summable. Every finite set of zeros eventually lies in the checked
+rectangles, so the absolutely convergent sum over the zero subtype is
+the same limit as in (B.3.2.1). The signs of the endpoint follow the
+numbered (B.4.2.2), not the unnumbered signed-divisor display above it.
+
+**Review and check.** Own check session
+`01a205c5-bb89-7e44-9e38-430cdd04116d`; independent Yah `slab-review`
+(`HvlMDzp`, read-only output `1065b6efd3bea73c2f4ad642546e284a98a8e9cd`)
+reviewed the mathematics and source correspondence. The source reading
+remains provisional (pinned Markdown and numbered PDF layout; targeted
+render-to-Braille crops corroborated some signs, not native image review).
+The writer rebuilt `Theorems.IdeleClassGaussianHorizontal` and
+`Theorems.CompletedHeckeOneExhaustion` with `lake build --wfail` and
+elaborated the endpoint with warnings as errors against the real helper
+compiled out of tree. Joint signatures and axiom checks in the writer
+workspace found only `propext`, `Classical.choice`, and `Quot.sound`.
+The owning Yah checks the integrated candidate separately.
+
+**Next obligation.** Assemble the $a=2$ trivial-character local-factor
+identity. For (B.4.2.4), p. 615, apply
+[`completed_reflect_left_integral`](../../Proofs/Props/HeckeContourReflection.lean)
+with the same-$L$ conductor germ and compact-log inversion to get the
+**plus** contact $\kappa g(0)$, $\kappa=\log|\operatorname{disc} K|$, and
+the $\Phi(s)+\Phi(1-s)$ right-line test. Use Euler agreement as germs and
+identify the finite and infinite factors for $\chi=\bar\chi=1$. The
+finite $L^1$ exchange and samples (`finiteHecke_paired_right_line`) and
+shifted Gamma evaluations (`Props.ArchimedeanGammaRightLine`) already
+have [checked local results](hecke-right-line-majorant.md); reuse them
+for (B.4.2.5)–(11), p. 615, and (B.4.2.12)–(16), pp. 615–616. The
+[rational right-line assembly](../../Proofs/Theorems/RationalExplicitFormulaRightLine.lean)
+is a template. The contour theorem does not establish the full local
+formula, a global trace comparison, RH, or GRH.

@@ -11,7 +11,9 @@ B.3.1.1 (1)–(2), p. 604, used in Lemma B.3.1.2, pp. 604–605: Count the
 zeros in two fixed disks, select a common pair of separated ordinates, and
 transfer the moving-disk estimate to the completed logarithmic derivative.
 The estimate is in the actual height, not just the index of a sequence.
-It does not supply the vertical input or prove (B.4.2.2).
+The counted version also keeps the Jensen bound for the **same** numerator;
+this is the input for absolute zero summability in (B.4.2.2). This module
+does not supply the vertical input or prove the contour identity.
 Source reading: Provisional, from pinned Markdown and numbered PDF layout.
 -/
 
@@ -35,23 +37,25 @@ variable [∀ v : InfinitePlace K, MeasurableSpace v.Completionˣ]
   [MeasurableSpace (IdeleGroup (𝓞 K) K)] [BorelSpace (IdeleGroup (𝓞 K) K)]
   [BorelSpace (ideleNormOne (K := K))]
 
-/-- The continued completed trivial Hecke product is nonzero on both
-closed horizontal edges at common heights in each unit interval above one.
-Its logarithmic derivative has a uniform quadratic bound on those edges. -/
-public theorem exists_completedHeckeEulerProduct_one_gaussianContinuation_horizontal
+/-- The same pole-cleared numerator used to find good horizontal heights
+retains its linear Jensen bound on the full-order disk count. -/
+public theorem exists_completedHeckeEulerProduct_one_gaussianContinuation_horizontal_count
     (v : InfinitePlace K) (r : ClassGroup (𝓞 K) → ideleNormOne (K := K))
     (hr : ∀ p, ideleIdealClassNormOne (r p) = p) :
     ∃ L H : ℂ → ℂ, Meromorphic L ∧
       (∀ s, s ≠ 0 → s ≠ 1 → DifferentiableAt ℂ L s) ∧
       (∀ s, 1 < s.re → L s = completedHeckeEulerProduct χ₀ (fun _ ↦ norm_one) s) ∧
       Differentiable ℂ H ∧ (∀ s, s ≠ 0 → s ≠ 1 → H s = (s - 1) * s * L s) ∧
+      (∃ C > (0 : ℝ), ∀ t : ℝ,
+        ((∑ᶠ z, MeromorphicOn.divisor H (Metric.closedBall (2 + (t : ℂ) * I) 5) z : ℤ) : ℝ) ≤
+          C * (1 + |t|)) ∧
       ∃ B : ℝ, 0 < B ∧ ∀ n : ℕ, 1 ≤ n → ∃ T : ℝ, (n : ℝ) < T ∧ T < (n : ℝ) + 1 ∧
         ∀ z : ℂ, -1 ≤ z.re → z.re ≤ 2 → |z.im| = T →
           L z ≠ 0 ∧ ‖logDeriv L z‖ ≤ B * (1 + |z.im|)^2 := by
   obtain ⟨L, H, hmero, hdiffL, hEuler, hdiffH, hclear, _, hJ, D, K₀, hD, hK₀, hlocal⟩ :=
     exists_completedHeckeEulerProduct_one_gaussianContinuation_logDeriv v r hr
   obtain ⟨_, C, _, hC, hcount⟩ := hJ
-  refine ⟨L, H, hmero, hdiffL, hEuler, hdiffH, hclear,
+  refine ⟨L, H, hmero, hdiffL, hEuler, hdiffH, hclear, ⟨C, hC, fun t ↦ (hcount t).2.2.2⟩,
     D + K₀ * (16 * (C + 1)) + 2, by positivity, fun n hn ↦ ?_⟩
   -- Exclude the ordinates of zeros in both fixed disks, reflecting the lower ones.
   have hn' : (1 : ℝ) ≤ n := by exact_mod_cast hn
@@ -83,5 +87,22 @@ public theorem exists_completedHeckeEulerProduct_one_gaussianContinuation_horizo
       gcongr
       linarith
     _ = _ := by ring
+
+/-- The continued completed trivial Hecke product is nonzero on both
+closed horizontal edges at common heights in each unit interval above one.
+Its logarithmic derivative has a uniform quadratic bound on those edges. -/
+public theorem exists_completedHeckeEulerProduct_one_gaussianContinuation_horizontal
+    (v : InfinitePlace K) (r : ClassGroup (𝓞 K) → ideleNormOne (K := K))
+    (hr : ∀ p, ideleIdealClassNormOne (r p) = p) :
+    ∃ L H : ℂ → ℂ, Meromorphic L ∧
+      (∀ s, s ≠ 0 → s ≠ 1 → DifferentiableAt ℂ L s) ∧
+      (∀ s, 1 < s.re → L s = completedHeckeEulerProduct χ₀ (fun _ ↦ norm_one) s) ∧
+      Differentiable ℂ H ∧ (∀ s, s ≠ 0 → s ≠ 1 → H s = (s - 1) * s * L s) ∧
+      ∃ B : ℝ, 0 < B ∧ ∀ n : ℕ, 1 ≤ n → ∃ T : ℝ, (n : ℝ) < T ∧ T < (n : ℝ) + 1 ∧
+        ∀ z : ℂ, -1 ≤ z.re → z.re ≤ 2 → |z.im| = T →
+          L z ≠ 0 ∧ ‖logDeriv L z‖ ≤ B * (1 + |z.im|)^2 := by
+  obtain ⟨L, H, hmero, hdiffL, hEuler, hdiffH, hclear, _, hgood⟩ :=
+    exists_completedHeckeEulerProduct_one_gaussianContinuation_horizontal_count v r hr
+  exact ⟨L, H, hmero, hdiffL, hEuler, hdiffH, hclear, hgood⟩
 
 end Masullo
