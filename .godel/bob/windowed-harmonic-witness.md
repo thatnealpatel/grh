@@ -1,10 +1,28 @@
 # A single harmonic witness on the actual kernel window
 
-The [broad-window square](distant-frequency-differences.md) retains a count of *unwrapped* small differences, but its positive part exceeds the squared detection scale by a power of $t$. An alternative is to keep **both original frequencies inside the detector window** and wrap their difference. A flat density on this finite window then gives exactly zero, not a boundary energy. More particularly a detected excess forces a single nonzero harmonic of the weighted distant-pair count to be large; the index need not be fixed across shifts.
+The [broad-window square](distant-frequency-differences.md) retains a count of *unwrapped* small differences, but its positive part exceeds the squared detection scale by a power of $t$. An alternative is to keep **both original frequencies inside the detector window** and wrap their difference. A flat density on this finite window then gives exactly zero, not a boundary energy. Keeping the original triangle factor gives a fixed harmonic that recovers the one-sided test to power-saving additive accuracy. If instead only sharp-window counts are wanted, a detected excess forces a single nonzero harmonic of their distant-pair count to be large; its index need not be fixed across shifts.
 
 Use that note's $t,d,n,L,\gamma,R_*,s$, product weights, separation radius, and completed-tuple gate. Let $\sigma$ count the scaled frequencies $z=t\nu$ on $[-2\pi,2\pi]$ with those weights and no taper. The omitted slot is recovered throughout this interval. The cut is on the original log frequency, not the rounded linearization. Write $G(z)=(1-|z|/(2\pi))_+\cos z$. We have $S=\int G\,d\sigma=J_R+O(t^{-1-\gamma/8+o(1)})$ by the private-slot bound (no loss at the power radius). All claims below concern this one center and shift.
 
-**The witness.** Suppose $J_R\ge B$, $B=t^{-1+o(1)}>0$. Fix $0<\epsilon<1/10$. There is an index $1\le j\le t^{3/5+\epsilon}$, either odd or equal to 2, such that
+**Fixed harmonic with the original triangles.** Put $T(z)=(1-|z|/(2\pi))_+$, and set
+
+$$ F=\iint_{\rm distant}T(z)T(z')\cos(z-z')\,d\sigma(z)\,d\sigma(z'). $$
+
+Distance is the symmetric support condition specified below, not a condition on $z-z'$. Without this cut the integral is **exactly** $S^2$: The positive and negative label blocks can be interchanged, preserving product weights, separation, and privacy, and negating $z$. Although the rounded gate designates a positive slot, recovery is automatic for the designated slot of *either* signing throughout the window. Thus $\int T(z)\sin z\,d\sigma=0$. The compact-window nondistant charge proved below gives $|F-S^2|\le t^{-b'+o(1)}$, $b'>2+\gamma/4$. Also $J_R\ge-t^{-1-\gamma/8+o(1)}$ by the nonnegative-density lower comparison with $|Z|^n$ (valid for either radius), **not** by pointwise positivity of $G$. Therefore
+
+$$ J_R=\sqrt{\max(0,F)}+O(t^{-1-\gamma/8+o(1)}). \tag{A} $$
+
+Indeed taking the positive part is a contraction and taking square roots costs at most the square root of the additive error; replacing $|S|$ by $J_R$ uses the lower floor and the private-slot charge. Unlike a harmonic chosen after observing the counts, this particular signed pair integral tests the target in both directions. No $t^{o(1)}$ loss multiplies $J_R$.
+
+**An arithmetic count for (A).** For an original gated tuple write $y=td\ell/(Np)=t(U/W_0-1)$, where $U=M(p+d)$ and $W_0=Np$. Impose $|y|\le8$, use $a=y-y^2/(2t)$, and form $F_{\rm ar}$ by using $a,a'$ instead of $z,z'$ everywhere in $T(z)T(z')\cos(z-z')$. Start here from the original separated tuple weights with both completed gates, *not* from a further cut at $|z|\le2\pi$. On the union of the exact and approximate one-copy supports, $|y|\le8$ eventually and $|t\log(1+y/t)-a|=O(t^{-2})$. The cutoff prevents the spurious second zero of the quadratic. The tested factor is bounded and Lipschitz in each variable. Its two-copy support, including the union for the error bound, requires both $|t\nu|,|t\nu'|\le9$. This costs at most $t^{-1/2+o(1)}$ by two independent constant-width counts before the distance cut. Consequently $|F_{\rm ar}-F|\le t^{-5/2+o(1)}$, even after restricting both expressions to the **same arbitrary subfamily** of pairs. This absolute comparison below the squared scale does not follow from merely multiplying the first-order Lipschitz error $O(1/t)$ by the available window mass bound. The triangle and phase are now evaluated on polynomials of the actual rational defects, with no independent draw of a residue.
+
+More explicitly, let $C_0(v)$ and $C_\pi(v)$ count distant pairs in this arithmetic test with $a-a'$ at circular distance at most $v$ from $0$ and $\pi$, respectively, modulo $2\pi$. Weight each by its original product weight times $T(a)T(a')$, with both $|y|$ cuts and both gates. Then
+
+$$ F_{\rm ar}=\int_0^{\pi/2}\sin(v)\,[C_0(v)-C_\pi(v)]\,dv. \tag{B} $$
+
+This follows by integrating the two arc indicators for each individual phase. It identifies the two *equal-width* counts to compare, summed over supports before taking the difference. A constant density in the original window, multiplied by $T$, folds to constant density modulo $2\pi$ since $T(z)+T(z-2\pi)=1$ on $[0,2\pi]$. Thus every such arc difference vanishes in the flat, unrestricted reference; this is not an assertion of flatness for the gated tuples. For $B=t^{-1+o(1)}$, a detection $J_R\ge B$ forces $C_0(v)-C_\pi(v)\ge (1-o(1))B^2$ for some $v$, since $\int_0^{\pi/2}\sin v\,dv=1$. It is the **integrated** difference that also has a converse by (A), not the excess at an individual width. Neither (A) nor (B) estimates that difference.
+
+**Alternative witness with no triangle factors.** Suppose $J_R\ge B$, $B=t^{-1+o(1)}>0$. Fix $0<\epsilon<1/10$. There is an index $1\le j\le t^{3/5+\epsilon}$, either odd or equal to 2, such that
 
 $$ \int\cos(jz/2)\,d\sigma(z)\gg \frac{jB}{\log t},\qquad
  \iint_{\rm distant}\cos(j(z-z')/2)\,d\sigma(z)\,d\sigma(z')\gg\frac{j^2 B^2}{(\log t)^2}. \tag{1} $$
