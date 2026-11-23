@@ -32,6 +32,6 @@ Fix $n$ (at most $q^{o(1)}\sqrt N$ choices), $g\mid n$ (at most $2^k$ choices), 
 
 $$q^{.27}e(nm)<|n-m|/q\le H,\qquad h=a r^2,\quad a>q^{.05}\text{ squarefree}.$$
 
-In particular $e(nm)<2q^{.12}$. Even for coprime squarefree products and squarefree $h\asymp H$, the existing row bound is $q^{1.445+o(1)}$, not a saving. A new estimate needs to count how often a smooth starting value has a smooth completion, not merely bound each row by its possible small divisors.
+In particular $e(nm)<2q^{.12}$. Even for coprime squarefree products and squarefree $h\asymp H$, the existing row bound is $q^{1.445+o(1)}$, not a saving. A new estimate needs to count how often a smooth starting value has a smooth completion, not merely bound each row by its possible small divisors. The [shared-complement count](shared-complement-count.md) prices this experiment over all gcds: Reapplying the one-divisor estimate after Cauchy-Schwarz still gives $1.445$. Test the number of columns with many admissible completions instead.
 
 **At the original $t=1.2$.** Use $S=q^{.09}$ for the joint repeat cut, at cost $q^{1.295+o(1)}$. The square-gap estimate costs $q^{1.325+o(1)}$ even at $Q=1$, above the $1.30$ budget. It does remove gaps with small fourth-power-free part: For $j=4$ and $Q=q^{.01}$ the exponent is $1.25+.30/8+7(.01)/8=1.29625$. No saving on general large gaps, or cancellation up to $q^{1.2}$, follows.
