@@ -14,8 +14,8 @@ open Complex MeromorphicOn Metric Set
 
 namespace Masullo
 
-private theorem sum_analyticOrders_le_disk_divisor {H : ℂ → ℂ}
-    (hH : Differentiable ℂ H) (h₁ : H 1 ≠ 0) (c : ℂ)
+private theorem sum_analyticOrders_le_disk_divisor {H : ℂ → ℂ} {a : ℂ}
+    (hH : Differentiable ℂ H) (ha : H a ≠ 0) (c : ℂ)
     (A : Finset ℂ) (hA : ∀ z ∈ A, z ∈ closedBall c 5) :
     ∑ z ∈ A, (analyticOrderNatAt H z : ℝ) ≤
       ((∑ᶠ z, divisor H (closedBall c 5) z : ℤ) : ℝ) := by
@@ -30,8 +30,8 @@ private theorem sum_analyticOrders_le_disk_divisor {H : ℂ → ℂ}
     finsum_eq_sum_of_support_subset _ fun _ hz ↦
       Finset.subset_union_right (hfin.mem_toFinset.mpr hz)
   have horder (z : ℂ) (hz : z ∈ A) : D z = (analyticOrderNatAt H z : ℤ) := by
-    have ht : analyticOrderAt H z ≠ ⊤ := fun he ↦ h₁ (congrFun
-      ((AnalyticOnNhd.analyticOrderAt_eq_top_iff_eq_zero z hH.analyticAt).mp he) 1)
+    have ht : analyticOrderAt H z ≠ ⊤ := fun he ↦ ha (congrFun
+      ((AnalyticOnNhd.analyticOrderAt_eq_top_iff_eq_zero z hH.analyticAt).mp he) a)
     change divisor H (closedBall c 5) z = _
     rw [han.divisor_apply (hA z hz), ← Nat.cast_analyticOrderNatAt ht]
     simp
@@ -70,10 +70,9 @@ private theorem mem_slab_disk {z : ℂ} (hl : -1 < z.re) (hr : z.re < 2)
   linarith
 
 /-- A linear bound on the full disk divisor gives absolute convergence of
-zero weights with cubic decay on the strip, with all analytic multiplicities. -/
-public theorem summable_norm_analyticOrder_mul_of_disk_count
-    {H Φ : ℂ → ℂ} (hH : Differentiable ℂ H) (h₁ : H 1 ≠ 0)
-    (hstrip : ∀ z, H z = 0 → -1 < z.re ∧ z.re < 2)
+zero weights with cubic decay, summed over the open slab with all analytic multiplicities. -/
+public theorem summable_norm_analyticOrder_mul_of_disk_count_on_slab
+    {H Φ : ℂ → ℂ} {a : ℂ} (hH : Differentiable ℂ H) (ha : H a ≠ 0)
     {C B : ℝ} (hB : 0 ≤ B)
     (hcount : ∀ t : ℝ,
       ((∑ᶠ z, MeromorphicOn.divisor H
@@ -81,10 +80,10 @@ public theorem summable_norm_analyticOrder_mul_of_disk_count
         ≤ C * (1 + |t|))
     (hΦ : ∀ z : ℂ, -1 ≤ z.re → z.re ≤ 2 →
       ‖Φ z‖ ≤ B / (1 + |z.im|)^3) :
-    Summable (fun z : {z : ℂ // H z = 0} ↦
+    Summable (fun z : {z : ℂ // -1 < z.re ∧ z.re < 2 ∧ H z = 0} ↦
       ‖(analyticOrderNatAt H z.val : ℂ) * Φ z.val‖) := by
   classical
-  let Z := {z : ℂ // H z = 0}
+  let Z := {z : ℂ // -1 < z.re ∧ z.re < 2 ∧ H z = 0}
   let shell (z : Z) := slab z.val
   let ord (z : Z) := analyticOrderNatAt H z.val
   let W (z : Z) := ‖(ord z : ℂ) * Φ z.val‖
@@ -95,7 +94,7 @@ public theorem summable_norm_analyticOrder_mul_of_disk_count
     have hA (w : ℂ) (hw : w ∈ S.map e) : w ∈ closedBall (2 + (t : ℂ) * I) 5 := by
       obtain ⟨z, hz, rfl⟩ := Finset.mem_map.mp hw
       exact hS z hz
-    have h := sum_analyticOrders_le_disk_divisor hH h₁ (2 + (t : ℂ) * I) (S.map e) hA
+    have h := sum_analyticOrders_le_disk_divisor hH ha (2 + (t : ℂ) * I) (S.map e) hA
     rw [Finset.sum_map] at h
     exact h.trans (hcount t)
   have hC : 0 ≤ C := by simpa using hdisk 0 ∅ (by simp)
@@ -111,7 +110,7 @@ public theorem summable_norm_analyticOrder_mul_of_disk_count
       apply hdisk
       intro z hz
       obtain ⟨hzS, hp⟩ := Finset.mem_filter.mp hz
-      obtain ⟨hl, hr⟩ := hstrip z.val z.property
+      obtain ⟨hl, hr, _⟩ := z.property
       have ht' : (if 0 ≤ z.val.im then (n : ℝ) else -(n : ℝ)) = t := by
         simp only [t, ← hp, decide_eq_true_eq]
       rw [← ht']
@@ -135,7 +134,7 @@ public theorem summable_norm_analyticOrder_mul_of_disk_count
     let d : ℝ := 1 + (n : ℝ)
     have hd : 0 < d := by dsimp [d]; positivity
     have hpoint (z : Z) (hz : z ∈ S) : W z ≤ (ord z : ℝ) * (B / d ^ 3) := by
-      obtain ⟨hl, hr⟩ := hstrip z.val z.property
+      obtain ⟨hl, hr, _⟩ := z.property
       have hfloor := Nat.floor_le (abs_nonneg z.val.im)
       change (shell z : ℝ) ≤ |z.val.im| at hfloor
       rw [hS z hz] at hfloor
@@ -163,5 +162,29 @@ public theorem summable_norm_analyticOrder_mul_of_disk_count
     _ ≤ ∑ n ∈ S.image shell, P n :=
       Finset.sum_le_sum fun n _ ↦ hblock n _ (fun z hz ↦ (Finset.mem_filter.mp hz).2)
     _ ≤ ∑' n, P n := hP.sum_le_tsum _ (fun n _ ↦ hnP n)
+
+/-- If every zero lies in the open slab, the same bound controls the sum over all zeros. -/
+public theorem summable_norm_analyticOrder_mul_of_disk_count
+    {H Φ : ℂ → ℂ} (hH : Differentiable ℂ H) (h₁ : H 1 ≠ 0)
+    (hstrip : ∀ z, H z = 0 → -1 < z.re ∧ z.re < 2)
+    {C B : ℝ} (hB : 0 ≤ B)
+    (hcount : ∀ t : ℝ,
+      ((∑ᶠ z, MeromorphicOn.divisor H
+        (Metric.closedBall (2 + (t : ℂ) * Complex.I) 5) z : ℤ) : ℝ)
+        ≤ C * (1 + |t|))
+    (hΦ : ∀ z : ℂ, -1 ≤ z.re → z.re ≤ 2 →
+      ‖Φ z‖ ≤ B / (1 + |z.im|)^3) :
+    Summable (fun z : {z : ℂ // H z = 0} ↦
+      ‖(analyticOrderNatAt H z.val : ℂ) * Φ z.val‖) := by
+  let Z := {z : ℂ // -1 < z.re ∧ z.re < 2 ∧ H z = 0}
+  let i (z : {z : ℂ // H z = 0}) : Z :=
+    ⟨z.val, (hstrip z.val z.property).1, (hstrip z.val z.property).2, z.property⟩
+  have hi : Function.Injective i := fun _ _ he ↦ Subtype.ext (congrArg (fun w : Z ↦ w.val) he)
+  let W (z : Z) := ‖(analyticOrderNatAt H z.val : ℂ) * Φ z.val‖
+  have hW : Summable W :=
+    summable_norm_analyticOrder_mul_of_disk_count_on_slab
+      (H := H) (Φ := Φ) (a := 1) (C := C) (B := B) hH h₁ hB hcount hΦ
+  change Summable (W ∘ i)
+  exact hW.comp_injective hi
 
 end Masullo
