@@ -251,10 +251,64 @@ pp. 514 and 519. The earlier Chapter 13 domain and Appendix B sign
 findings above are inherited from their accepted notes. The scalar
 limit and test transport are informal; no Lean changed.
 
-**Next bounded check:** Extend the [accepted modulus-three witness](hecke-right-line-majorant.md#ramified-local-conductor-power-the-modulus-three-test)
-to the primitive $p^n$ unit shell $|p^n y|_p=1$ over $\mathbb Q_p$.
-At lower frequencies, use cancellation under the last reduction
-kernel; on the shell, use unit transport and finite Fourier
-inversion for nonvanishing. This would test whether conductor-shell
-scaling forces the power $p^{n(s-1/2)}$ in the local Mellin quotient
-beyond the single modulus-three case.
+### Lean-checked sharp limit without a support gap
+
+The [sharp Fourier cutoff module](../../Proofs/Props/RealSharpFourierCutoff.lean)
+proves `Masullo.real_log_profile_sharp_fourier_tendsto`. For smooth
+compactly supported $f:\mathbb R\to\mathbb C$ with $f(0)=0$, take
+$u=\texttt{realLogProfileAdditive}(f\circ(-\mathrm{id}))$. The definition
+extends $|1+z|^{-1/2}f(-\log|1+z|)$ by zero at $z=-1$; compact log
+support makes it zero near that extension point, not necessarily near
+$z=0$. With Lebesgue measure and the standard additive Fourier transform,
+
+$$
+\lim_{L\to+\infty}\int_{|w|\le L}(\log L-\log|w|)\widehat u(w)\,dw
+=\frac12\int_{\mathbb R}\frac{u(z)}{|z|}\,dz.
+$$
+
+The reusable `Masullo.real_log_fourier_sharp_tendsto` assumes only
+continuity, $u(0)=0$, and integrability of $u$, $\widehat u$,
+$\log|\cdot|\,\widehat u$, and $u/|\cdot|$. Fourier inversion at zero
+turns the $\log L$ term into a negative omitted tail. For $L\ge1$,
+its norm is bounded by the tail integral of
+$\|\log|w|\,\widehat u(w)\|$, which tends to zero. The retained log
+pairing exhausts the line, so `real_log_fourier_of_zero` supplies the
+coefficient. The profile wrapper uses the accepted smooth compact
+additive test, its Schwartz lift, and `remainder_div_integrable` with
+$u(0)=0$. No gap at norm one or moment assumptions are needed. At
+radius zero, `translate_cutoff` and `density_cutoff` identify the
+spatial integral with the full two-sign Haar integral of
+`realLogProfileHaarKernel (fun t ↦ f (-t))`; neither change of variables
+adds a half. Inversion gives the uninverted $R(f)$ as above.
+
+**Source interface and review.** The rendered reading above supplies
+the sign sum in (12.4.1.17)–(21), the scalar band in (12.4.1.24),
+p. 518, and the counting-measure normalization $V=1$. Reversing the
+Fourier sign reflects the symmetric band and does not affect the limit.
+The same reading separately supplies the exterior half in (12.4.1.25),
+p. 519; the Lean limit does not justify that step with the defined
+prime. The rendered passages were inherited, not reread. Independent
+exact-source review (`RYTvBVm`, Yah `01a205f3-2f52-7660-aae5-430d791e231d`)
+checked both signatures, the applicability of those inherited clauses,
+and the Fourier, integrability, and Haar reductions at
+`2757bdce50e8b38fe4a09dab9cd19bb761b7a2ee`. The owning build, fresh
+joint-import signatures and axioms, and adoption are recorded in Yah
+`01a205f3-2f52-7660-aae5-430d791e231d` against the exact candidate.
+
+**Next bounded check:** On the repaired radial domain, check whether the
+cutoffs in (12.4.1.12), p. 517, and (12.4.1.15), p. 518, control the
+lower edges well enough for the sharp replacement in (12.4.1.22),
+p. 518. These weight and replacement clauses are still extraction-only
+in the [smooth-band note](trace-geometric.md#smooth-radial-bands-on-the-extended-domain).
+The radiality clause of Definition 9.3.3.1(2), p. 427, has a separate
+[rendered reading](trace-circle-compression-qi.md#chapter-12-interface);
+it does not determine the endpoint rates or which cutoffs Step II uses.
+In the same real modulus coordinate, the existing informal comparison
+already reduces the repaired weighted scalar to differences of sharp
+integrals. It controls the lower terms if $A_+D_+\to0$ and, with a lower
+Fourier edge, $B_+C_+\to0$; independently growing cutoffs do not imply
+these products vanish. The sharp limit above evaluates the surviving
+upper term. Check the printed lower-edge prescription against this
+comparison rather than rederive the sharp limit. The identification
+of the volume domain in (12.4.1.23), the actual geometric operator, the
+global $S$-piece, and the Mellin corrections remain separate premises.
