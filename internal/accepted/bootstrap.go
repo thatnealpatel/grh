@@ -1,4 +1,17 @@
-// Package accepted enters commands built from the accepted GRH revision.
+// Package accepted runs commands from the accepted revision without requiring
+// an operator to run `jj new main` in the launch workspace.
+//
+// Campaign adoption moves the target bookmark (normally main), not the
+// workspace's working-copy commit (@) or its files. A plain `go run` reads
+// those files. An unattended Gödel loop could therefore adopt an improvement
+// and then relaunch the very code it just replaced.
+//
+// The workspace need only contain a launcher that calls [Enter]. That first
+// binary is built from the working copy. Before the command does its work,
+// Enter builds a second binary from an archive of the accepted commit and
+// replaces the first binary with it. Even files embedded with //go:embed,
+// such as prompts, come from that accepted build. The checkout stays untouched,
+// and the command keeps its stable directory for Gödel run history.
 package accepted
 
 import (
