@@ -7,9 +7,10 @@ $0<\alpha<1/2$. Put $\beta=2\alpha$. This tests the two-leg lift of a
 specified projected global diagonal. The transfer needs the base of
 that same diagonal to equal the local projection modulo the two polar
 moments, since that is the local operator the transfer proposes to use
-in the p. 520 identification. We prove that this requirement is
-impossible for class-constant copy weights.
-This does not exclude shells formed before projection or other lifts.
+in the p. 520 identification. The conditional separator tests this
+requirement for class-constant copy weights. It does not exclude shells
+formed before projection, a direct evaluation of the raw local terms,
+or other lifts.
 
 ## Split the same diagonal before taking limits
 
@@ -489,11 +490,9 @@ the comparison with the common global trace, and the necessity of the
 modeled projection for the manuscript remain separate. The obstruction
 is not machine-checked end to end.
 
-**Operator-side successor:** Use the [global fixed-band density](#checked-fixed-cutoff-density-in-the-global-theta-chart),
-not the one-place `fixedAnnulus_traceDensity`. Check the cutoff-by-cutoff
-constant-copy weight split and bound both parts by the absolute whole
-trace before taking either limit. The distinct-zero count in Lean remains
-an independent analytic obligation.
+**Operator-side successor:** The [fixed-cutoff copy split below](#checked-constant-copy-split-before-either-limit)
+now bounds both pieces by the absolute whole trace. Neither the ordered
+trace limit nor the distinct omitted-location count is closed in Lean.
 
 ## Checked local scalar separation
 
@@ -623,20 +622,6 @@ by closure. Nonzero local band generators need not vanish there:
 Their additive profiles are entire. Weight multiplication does not
 remove this distinction.
 
-**Next:** At fixed $\rho,Y$, use the finite-copy model above to assign
-$M_{m_j} B M_{m_{j+\ell}}$ to relative input copy $\ell$, and verify the
-row sum under counting/Haar disintegration. A shell selector is not an
-ordinary log multiplier on the quotient. For constant probabilities the
-base factor is $b=\sum_jm_j^2$ and the positive-shell factor $1-b$;
-the printed decreasing-shell sign reverses the latter. Establish both
-absolute bounds on the common trace before removing the band at fixed
-position and then exhausting position. Do not substitute a joint local
-limit, and do not use Theorem 11.3.2.1, pp. 495–496, on a below-one test.
-Identifying the specified lift with Masullo's orbital pieces, or proving
-its constraints necessary for any repair, remains open. So does the
-identification of a limiting density with the strip sum in (12.5.1.4),
-p. 520. This fixed-cutoff construction is not a scalar incompatibility.
-
 **Evidence:** Independent `two-leg-review` (`HPXDyeI`, base
 `854d3946e90b25209366cb6b22b9a5139ae0d462`, review output
 `76e7e9c5049179ba19ff3906d91bf0ac377a27cc`) checked the fixed statement,
@@ -645,3 +630,59 @@ weights, mask order, and the source dependencies through pp. 489,
 provisional, not a rendered-page review. Owning Yah session
 `01a20678-b664-799c-ba54-9d0337bef822` records the exact candidate diff,
 build, joint-import signatures, axiom reports, and adoption decision.
+
+## Checked constant-copy split before either limit
+
+[`copyDiagonalWeight_eq_translate_sum` and `copyDiagonalWeight_split`](../../Proofs/Props/CopyDiagonalWeight.lean)
+check the relative-input counting factor $c(h)$ for ordered output and
+input labels $(i,j)$ with $i^{-1}j=h$. The translate formula is the sum
+of $m_i m_{ih}$ with input weights extended by zero off the finite label
+set. For nonnegative weights of total mass one, the total counting sum
+is one, the identity has mass $b=\sum_i m_i^2$, and the remainder has
+mass $1-b$.
+
+[`rationalThetaBand_copyTrace_split`](../../Proofs/Theorems/RationalThetaBandCopyTrace.lean)
+keeps the same fixed-cutoff global operator $B$ and $L^1$ density $d$ as
+the preceding construction. For each $h$, the scaled operator $c(h)B$
+has basis trace $\int c(h)d=c(h)T$ with $T=\int d$. Lean checks the
+counting sum of these traces, the off-identity sum $(1-b)T$, the signed
+decomposition $bT-(-(1-b)T)=T$, and both bounds by $|T|$. The statements
+are pointwise in the cutoffs and require no limit of the weights.
+
+**Source and repair:** The simultaneous two-leg pattern is (12.2.2.1–7),
+p. 508. On the rational normalized window $D$, the labels $2^j$ specialize
+the translate formula to $\sum_j m_j m_{j+\ell}$ for input in $2^\ell D$.
+In these copies only, the first decreasing unit-test difference in
+(11.3.1.4), p. 494, is minus the off-identity indicator. The outside-$2$
+input mask preserves the chosen copies, unlike the later literal mask
+in (11.3.2.3), p. 495. Choosing these probabilities and changing the mask
+are repairs, not consequences of the printed indentation or cutoff. The
+Lean result checks the counting and trace mathematics, not a geometric
+kernel descent from (11.3.2.2), pointwise diagonal regularity, or an
+orbital evaluation. In particular it does not use Theorem 11.3.2.1,
+pp. 495–496, on a below-one test.
+
+**Evidence:** Independent `copy-statement-review` (`DmJHSdg`, inspected base
+`20c4d6d47825b7d8f7456ef0aa0e7358a49a689f`, source review
+`2c1802a8a60dc33591560259c6f82c160e15a136`, final statement review
+`b81a0d7a32bfb300319f1b14c1a619eaa93ffee1`) checked the counting orientation,
+Haar normalization, signs, and scope. The review used the pinned Markdown
+and numbered layout extraction, not rendered pages. Owning Yah session
+`01a20681-c84c-7800-81e4-b5411773b697` records the candidate diff, build,
+joint-import signatures, axiom reports, and stale adoption decisions.
+Recovery session `01a2068e-dbb2-7b6d-9d57-092f0e571fa0` restored the
+Lean sources unchanged from `657036487bf6bfb5d33e7d7a67785fda65111686`;
+its transcript records the exact replacement candidate, independent
+statement review, checks, and adoption decision.
+
+**Next inference:** At fixed $\rho$ prove $T_Y\to T_\infty$, the trace
+of the same convolution with the terminal full weighted geometric
+projection. Use `tendsto_rationalThetaWeightedEvenBand_projection` on
+one annulus rank-one expansion with Fourier coefficients and windows
+independent of $Y$. Project each input vector, keep the coefficientwise
+summable bound, and pass to the limit in the trace series. This addresses
+the below-one fixed-position limit that (11.2.1.8–10), p. 489, does not
+supply. It does not exhaust position or identify $T_\infty$ with a zero
+sum. Separately, the required transport to the regular diagonal and the
+orbital and raw-local identifications in (12.5.1.1–4), pp. 519–520,
+remain open. The model does not impose these copy weights on other lifts.
