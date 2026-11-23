@@ -205,17 +205,15 @@ compute, including the sign of the desired correction, is
 
 $$-Z_\alpha(f)-J_f+\widehat f_{\rm M}(-1/2)+\widehat f_{\rm M}(1/2).$$
 
-Use the classical full rational explicit formula with the same Haar
-normalization as an independent diagnostic for this lift. The
+Use the [checked rational radial idelic explicit formula](rational-explicit-formula.md#checked-rational-radial-idelic-explicit-formula)
+with the same quotient Haar as the independent scalar reference. Its
+centered positive Mellin convention matches (12.5.1.3), pp. 519–520,
+and (B.4.4.16), p. 623, with full orders as in (B.4.2.2), p. 614. The
 [full-versus-strip comparison](trace-to-zeros.md#full-versus-positive-width-sums-on-the-same-tests)
-identifies the residual as $D_\alpha(f)=Z_{\rm full}(f)-Z_\alpha(f)$:
-There are no finite prime powers or identity terms in the support.
-This is the positive Mellin convention of (12.5.1.3), pp. 519–520,
-and (B.4.4.16), p. 623, with full orders as in (B.4.2.2), p. 614. In
-[Weil's full-divisor formula](https://doi.org/10.1070/IM1972v006n01ABEH001866),
-§§12–13, (8), (10), and §16, the opposite Mellin sign gives the same
-full sum after $\rho\mapsto1-\rho$. None of these passages identifies
-the replacement lift with the actual indented operator.
+identifies the displayed residual as $D_\alpha(f)=Z_{\rm full}(f)-Z_\alpha(f)$:
+There are no finite prime-power samples or identity contact on this
+support. This uses the checked scalar formula for the full sum, not for
+the indented or projected operator.
 
 ### The short window detects any omitted zero
 
@@ -283,9 +281,16 @@ actual lift. The first check is to specify an actual $S$ kernel and
 right-shell cutoff at fixed left position support in (11.3.1.4)–(11.3.2.3)
 and verify they represent the same operator as the corrected level-first
 trace before taking any limit. The [right-shell obstruction](trace-orbital-q.md#the-right-cutoff-erases-a-fixed-shell-in-the-literal-chain)
-excludes the literal same-chain choice. This comparison and its tail
-remain open. The independent [finite completed-zeta contour](rational-explicit-formula.md#checked-finite-completed-zeta-contour)
-is now in Lean; its height limit remains open.
+excludes the literal same-chain choice. The point-mass lift already
+preserves the unsplit quotient kernel by construction. Repeating that
+row-sum check cannot identify an orbital operator. A discriminating
+fixed-cutoff test must compare a **specific** shell or $S$-piece of the
+replacement with the independently defined orbital or local level
+operator on a common domain, or test a necessary relation between their
+diagonals. Keep the weights, measures, and terminal level projection
+in that test. The comparison and tail remain open. The independent
+[rational contour exhaustion](rational-explicit-formula.md#checked-exhaustion-of-the-rational-completed-zeta-contour)
+and its radial idelic evaluation have already landed.
 
 **Diagnostic review:** Independent Yah analysis (`short-window`)
 supplied the isolation argument and checked the classical source

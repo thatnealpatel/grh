@@ -103,3 +103,48 @@ typo or reviewer build failure recurred.
 surfaced a meaningful instantiation question. Do not add a node, a
 second review, or an adoption retry path for this case. This replay
 does not establish a speedup. See the [accepted mathematical handoff](../../obligations/single-place-norm.md#weighted-gaussian-decay-at-small-norm).
+
+## Follow-up: Trivial Hecke scalar formula
+
+Run `01a205d5-8540-7f4e-9f8e-9886762a6d04` matches work session
+`01a205d5-86e7-72d0-aaa8-0d773ef7e05e` by both input and final response.
+The launch marker and initial accepted tip were
+`db84a60a6fb6c114c3c27cf8698c8f8794612f96`. The `cmd/godel` tree
+and its shared `internal/godel` inputs are unchanged in the proof
+landing. The preceding work run `01a205c5-b9ef-791b-b752-3f2a8b1cc16f`
+(session `01a205c5-bb89-7e44-9e38-430cdd04116d`) had already exhausted
+the trivial Hecke contour with full multiplicities. Its improver
+(session `01a205d0-2ca5-73d1-8e5e-8c9c58aafbb4`) added a frontier
+pointer for the separate trace obstruction, not the scalar assembly.
+The current worker correctly used the existing contour and checked
+local terms to close that assembly.
+
+The worker allocated after refreshing to
+`dffe6e3491d1d3899b6e4b1ff8b582ad81eabe1c`, which did not change the
+Lean inputs. Seven assembled draft builds failed (imports and notation,
+parsing, a local notation binder, then integrand and kernel conversions).
+The eighth passed. Reviewer `HSQJGyI` read the fixed statements and
+dependencies, not the moving proof. A comparison with the adopted
+source found that the three reviewed statements and both definition
+bodies are unchanged, apart from renaming the conductor notation
+and inlining the alias for the finite-place index in four binders.
+The review has provisional source status, with targeted raster
+corroboration, not complete rendered-page verification. Its read-only
+output `2d3ccc410fbd7496d71c95612aa8162444b649e3` had no source delta
+and was not integrated.
+
+The checked writer output `e36004d071ea10a8ecccc4a4581b3d92b07fc3be`
+replayed onto `cf66b7847d0163851b9dc995d52807f375911b24`. Intervening
+Lean additions did not overlap the formula inputs. The first
+integrated candidate, `a1789f83871c2448dbffff58de4892f64040fd28`,
+passed its exact build, joint import, signature inspection, and all
+three axiom reports (work events 136–152), then adopted without a stale
+attempt. This is another live control for separating review from
+elaboration, not evidence for a speedup or a need to automate retries.
+
+**Decision:** Keep the proof checks, review split, and nodes. The
+[rational trace handoff](../../obligations/trace-carving-weight-q.md#next-comparison-and-checks)
+now points to the already checked rational radial scalar formula
+instead of an obsolete contour-limit task. The next decision is about
+a specific shell or local comparison at fixed cutoffs, not another
+scalar derivation or a row-sum test on the unsplit kernel.
