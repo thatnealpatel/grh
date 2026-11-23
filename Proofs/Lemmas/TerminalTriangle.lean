@@ -51,8 +51,16 @@ public theorem abs_triangle_le (q : ℕ) (F a : ℕ → ℝ) {K : ℝ} (hK : 0 �
       omega
 
 /-- Twisted Chebyshev function, including all higher prime powers. -/
-public noncomputable def D (y : ℝ) : ℝ :=
+@[expose] public noncomputable def D (y : ℝ) : ℝ :=
   ∑ m ∈ Icc 1 ⌊y⌋₊, ArithmeticFunction.vonMangoldt m * (ZMod.χ₄ (m : ZMod 4) : ℤ)
+
+/-- A difference of two prime prefixes really counts the half-open interval,
+with the lower endpoint excluded even when it is integral. -/
+public theorem D_sub {u v : ℝ} (h : v ≤ u) : D u - D v =
+    ∑ m ∈ Ioc ⌊v⌋₊ ⌊u⌋₊, ArithmeticFunction.vonMangoldt m * (ZMod.χ₄ (m : ZMod 4) : ℤ) := by
+  have he (k : ℕ) : Icc 1 k = Ioc 0 k := by ext m; simp; omega
+  rw [D, D, he, he]
+  exact sub_eq_iff_eq_add.mpr (by rw [add_comm, sum_Ioc_consecutive _ (Nat.zero_le _) (Nat.floor_mono h)])
 
 public def coeff (n : ℕ) : ℝ :=
   ((ArithmeticFunction.moebius n * ZMod.χ₄ (n : ZMod 4) : ℤ) : ℝ)
@@ -65,6 +73,6 @@ public theorem coeff_bound (n : ℕ) : |coeff n| ≤ 1 := by
       rw [ZMod.χ₄_nat_eq_if_mod_four]; split_ifs <;> decide
     simpa using mul_le_mul ArithmeticFunction.abs_moebius_le_one h (abs_nonneg _) zero_le_one)
 
-public noncomputable def signedTriangle (x : ℝ) (q : ℕ) := triangle q (fun n => D (x/n)) coeff
+@[expose] public noncomputable def signedTriangle (x : ℝ) (q : ℕ) := triangle q (fun n => D (x/n)) coeff
 
 end TerminalTriangle
