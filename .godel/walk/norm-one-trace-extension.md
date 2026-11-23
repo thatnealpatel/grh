@@ -62,3 +62,42 @@ compact isotype, a normalized scalar local pairing, and the full
 nontrivial zeta zero sum. It is not a comparison of Masullo’s geometric
 diagonal with a variable-width strip trace and does not justify this
 extension.
+
+## The hypothesis as recapped in the letter to Sarnak
+
+**Status: Open.** Printed p. 35, §1.7.2, first bullet, opening
+“Weil’s Positivity Criterion is not used,” through (1.7.2.1). Masullo
+presents the trace proof as proceeding without Weil positivity and as
+requiring the Bruhat test to vanish on the **whole** norm-one subgroup
+$C_F^1$. This reading stops at the display, before the separate claim
+about two divergences. Chapter Markdown and PDF layout extraction
+located the passage in the digest-verified edition. Raster OCR checked
+the prose, and direct inspection of rendered pixel crops checked the
+positivity heading, “can only be proved,” and (1.7.2.1).
+
+**Stated hypothesis, not a necessity proof.** The statement of Theorem
+12.5.1.1 (printed p. 519) also binds $\varphi(C_F^1)=0$, even though the
+§12.5 lead-in on the same page says $\varphi(1)=0$. Both were checked
+in rendered pixel crops. These conditions are not interchangeable:
+On the split rational idèle class group, take a compact smooth bump in
+log norm equal to one at zero and multiply it by one minus the
+nontrivial mod-3 character of the compact unit factor. This test vanishes
+at the identity but not on the norm-one subgroup. In particular, the
+local term $\varphi(1)\log(\lambda\lambda')$ in (12.4.1.3), p. 514
+(provisional extraction reading), does not by itself force vanishing
+on the whole fibre.
+
+The missing step for the stated trace remains to identify the same
+normalized, half-twisted diagonal with both the local terms (including
+the polar subtractions) and the full-order interior strip zero sum on
+the stated test class; see the
+[trace assembly audit](../obligations/trace-assembly.json).
+For the asserted necessity, one must prove an obstruction to widening
+that class for the specified cutoff trace, not infer impossibility
+from a sufficient hypothesis. The trace route is Masullo’s; the
+comparison of printed hypotheses and the rational test are reviewer
+checks. The accepted `Masullo.rationalIdeleRadial_explicit_formula`
+requires only a smooth compact radial profile and gives the scalar
+formula over $\mathbb Q$ with all nontrivial zeta zeros counted by order.
+It does not give the general idelic cutoff trace on any strip or
+establish that a restriction is necessary. No new Lean result is claimed.
