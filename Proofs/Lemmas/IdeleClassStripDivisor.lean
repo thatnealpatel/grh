@@ -104,6 +104,20 @@ public theorem ideleClass_eq_heckeBase_mul_normPower (χ : Ω) :
     _ = s (ideleClassLogNorm c) * (normOneProjection c : C) := by rw [hfst]; rfl
     _ = _ := mul_comm (s (ideleClassLogNorm c)) (normOneProjection c : C)
 
+/-- Pure norm powers have trivial norm-one component. -/
+@[simp] public theorem ideleClassHeckeBase_normPower (s : ℂ) :
+    ideleClassHeckeBase (ideleClassNormPower (K := K) s) = 1 := by
+  ext c
+  exact ideleClassNormPower_on_normOne s (normOneProjection c)
+
+/-- The exponent coordinate recovers the parameter of a pure norm power. -/
+@[simp] public theorem ideleClassNormExponent_normPower (s : ℂ) :
+    ideleClassNormExponent (ideleClassNormPower (K := K) s) = s := by
+  let χ := ideleClassNormPower (K := K) s
+  apply (ideleClassNormPower_existsUnique χ (ideleClassNormPower_on_normOne s)).unique _ rfl
+  simpa only [χ, ideleClassHeckeBase_normPower, one_mul] using
+    ideleClass_eq_heckeBase_mul_normPower χ
+
 private noncomputable def completedHeckeContinuation (χ : Ω) (hχ : ∀ c, ‖χ c‖ = 1) : ℂ → ℂ :=
   (exists_completedHeckeContinuation χ hχ).choose
 

@@ -99,6 +99,37 @@ private theorem mellin_eq_positive {F : ℝ → ℂ} (hf : Continuous F) (hc : H
     mul_eq_zero_of_right _ (image_eq_zero_of_notMem_tsupport (mt (@ht x) hx)))]
   simp only [g, mul_comm]
 
+/-- Positive-log profiles suffice to detect every omitted zero at this width. -/
+public theorem zeros_mem_strip_of_positive_radial_trace {a : ℝ} (ha : 0 < a)
+    (h : ∀ F : ℝ → ℂ, ContDiff ℝ ∞ F → HasCompactSupport F → tsupport F ⊆ Ioi (0 : ℝ) →
+      ∃ R : ℂ, Tendsto (rationalRadialRealCutoff F) (𝓝[>] 0) (𝓝 R) ∧
+        HasSum (fun ρ : rationalRadialStripZeros a ↦ term(F, ρ.val)) (balance(F, R))) :
+    ∀ ρ : criticalStripZetaZeros, |(shiftedZetaZero ρ).re| < a := by
+  classical
+  let m (ρ : criticalStripZetaZeros) :=
+    if ρ ∈ rationalRadialStripZeros a then zetaZeroOrder ρ else 0
+  have hm (ρ) : m ρ ≤ zetaZeroOrder ρ := by
+    dsimp only [m]; split <;> simp
+  have agree := zetaZeroOrder_eq_of_test_sum_eq (m := m) hm (by
+    intro F hf hc ht _
+    have h₀ : F 0 = 0 := image_eq_zero_of_notMem_tsupport (fun h ↦ (lt_irrefl 0) (ht h))
+    obtain ⟨R, hR, _, hall⟩ := rationalRadial_fullTrace hf hc h₀
+    obtain ⟨R', hR', hsub⟩ := h F hf hc ht
+    obtain rfl := tendsto_nhds_unique hR hR'
+    have hmask := (hasSum_subtype_iff_indicator (s := rationalRadialStripZeros a)
+      (f := fun ρ ↦ term(F, ρ))).mp hsub
+    simp_rw [← mellin_eq_positive hf.continuous hc ht]
+    refine hall.tsum_eq.trans (HasSum.tsum_eq (hmask.congr_fun fun ρ ↦ ?_)).symm
+    by_cases hi : ρ ∈ rationalRadialStripZeros a
+    · simp only [m, ite_eq_left hi, indicator_of_mem hi]
+    · simp only [m, ite_eq_right hi, indicator_of_notMem hi, Nat.cast_zero, zero_mul])
+  intro ρ
+  by_contra hout
+  have hne : (ρ : ℂ) ≠ 1 / 2 := by
+    intro he
+    exact hout (by simpa [shiftedZetaZero, he] using ha)
+  have he := agree ρ hne
+  exact (zetaZeroOrder_pos ρ).ne' (by simpa [m, hout] using he)
 /-- At a single positive width, the scalar trace identity detects every
 omitted zero, including zeros *on* a boundary of the strip. -/
 public theorem rationalRadialStripTrace_iff {a : ℝ} (ha : 0 < a) :
@@ -106,30 +137,11 @@ public theorem rationalRadialStripTrace_iff {a : ℝ} (ha : 0 < a) :
   classical
   constructor
   · intro h
-    let m (ρ : criticalStripZetaZeros) :=
-      if ρ ∈ rationalRadialStripZeros a then zetaZeroOrder ρ else 0
-    have hm (ρ) : m ρ ≤ zetaZeroOrder ρ := by
-      dsimp only [m]; split <;> simp
-    have agree := zetaZeroOrder_eq_of_test_sum_eq (m := m) hm (by
-      intro F hf hc ht _
-      have h₀ : F 0 = 0 := image_eq_zero_of_notMem_tsupport (fun h ↦ (lt_irrefl 0) (ht h))
-      obtain ⟨R, hR, _, hall⟩ := rationalRadial_fullTrace hf hc h₀
-      obtain ⟨R', hR', _, hsub⟩ := h F hf hc h₀
-      obtain rfl := tendsto_nhds_unique hR hR'
-      have hmask := (hasSum_subtype_iff_indicator (s := rationalRadialStripZeros a)
-        (f := fun ρ ↦ term(F, ρ))).mp hsub
-      simp_rw [← mellin_eq_positive hf.continuous hc ht]
-      refine hall.tsum_eq.trans (HasSum.tsum_eq (hmask.congr_fun fun ρ ↦ ?_)).symm
-      by_cases hi : ρ ∈ rationalRadialStripZeros a
-      · simp only [m, ite_eq_left hi, indicator_of_mem hi]
-      · simp only [m, ite_eq_right hi, indicator_of_notMem hi, Nat.cast_zero, zero_mul])
-    intro ρ
-    by_contra hout
-    have hne : (ρ : ℂ) ≠ 1 / 2 := by
-      intro he
-      exact hout (by simpa [shiftedZetaZero, he] using ha)
-    have he := agree ρ hne
-    exact (zetaZeroOrder_pos ρ).ne' (by simpa [m, hout] using he)
+    apply zeros_mem_strip_of_positive_radial_trace ha
+    intro F hf hc ht
+    have h₀ : F 0 = 0 := image_eq_zero_of_notMem_tsupport (fun h ↦ (lt_irrefl 0) (ht h))
+    obtain ⟨R, hR, _, hs⟩ := h F hf hc h₀
+    exact ⟨R, hR, hs⟩
   · intro hin F hf hc h₀
     obtain ⟨R, hR, hfin, hall⟩ := rationalRadial_fullTrace hf hc h₀
     refine ⟨R, hR, hfin, (hasSum_subtype_iff_indicator (s := rationalRadialStripZeros a)
