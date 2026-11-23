@@ -58,7 +58,7 @@ func run(ctx context.Context, args []string) error {
 			return err
 		}
 	default:
-		return fmt.Errorf("usage: astragraph [graph | think INSTRUCTIONS]")
+		return fmt.Errorf("usage: ff [graph | think INSTRUCTIONS]")
 	}
 	_, err = fmt.Print(text)
 	return err

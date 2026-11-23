@@ -1,4 +1,4 @@
-# Astra graph prototype
+# ff: Feed-forward reasoning graph
 
 From this directory, run the graph against the fixed tailnet proxy at `http://100.75.6.66:9001/v1/responses`:
 
