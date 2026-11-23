@@ -45,3 +45,5 @@ Indeed the ordered far-bin sum averages to more than $\varepsilon D/512$, and th
 For the scale comparison on the *local* four-prime statistic itself, see the [rectangle energy bound](prime-rectangle-dispersion.md).
 
 **After Work:** The [shift-fiber calculation](separated-bin-shift-fibers.md) prices where to take absolute values in (4). At fixed $p,r$, summing over $d$ can save only $O(1)$. At fixed $h=r-p$ and start-cell width $D^{7/2}$ the sum is unchanged up to $o(D)$ after restriction to cells with more than $D^{1/4}$ distinct shifts. Its equation (2) is a signed correlation test on pairs of those shifts, not an estimate of their phases. See the [replay decision](shift-fiber-handoff-review.md) before repeating the fixed-start check.
+
+The [two-prime phase-law test](separated-bin-phase-laws.md) transports (4), up to $o(D)$, to a named center within $X/D^2$ with local cancellation of every fixed character of nonzero total degree. Matched twists show precisely what even complete two-prime character tests can miss if they pool neighboring shifts before comparing the bins. They do not settle (4) for untwisted phases.
