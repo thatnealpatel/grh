@@ -1,0 +1,9 @@
+# Local and radial reductions for trace comparisons
+
+For the [width-one normalization test](../obligations/trace-window-q-sqrt-minus-five.md#a-full-divisor-test-at-width-one), `Lemmas.RawRadialClassMellin` evaluates the **actual unconjugated pairing** in `IdeleClassStripTrace`: `ideleClassMellin_radial_normPower` gives `dedekindZeta_residue K` times the log Mellin integral; `ideleClassMellin_radial_eq_zero` kills a character nontrivial on norm-one classes. These identities use totalized integrals; continuity alone does not assert convergence. For the smooth compact bump one can use ordinary absolute integrability. The zero index is the unshifted norm power; apply the `−1/2` shift in the pairing.
+
+`Theorems.ComplexRadialClassLocal` evaluates the **actual cutoff trace value** at a complex place on radial profiles supported in a strictly positive compact log interval. In the coordinate $x=2\log r$ the normalized angular mean contributes $e^{-x/2}/(1-e^{-x})$. `ShortPositiveLogBump.hasArchimedeanTraceValue_iff` supplies its unique positive integral for a particular smooth bump below $\log 2$. This uses the squared displacement at the complex place; no unsquared-denominator witness applies. The global test admissibility, prime-place and explicit-formula specialization, field-specific volume, and final comparison of sums are separate.
+
+For ramified characters, `Theorems.FiniteCompletionConductorGaussSum` evaluates the support, covariance, and squared modulus of the finite quotient transform, not the local Haar integral. `Lemmas.FiniteHeckeConductor` supplies a positive exact conductor at a ramified finite place. To get a local Fourier formula one must still identify the annular integral with the finite sum and determine the Haar and scaling factors. Even that formula would not supply the global completed functional equation or the contour identity.
+
+Owning build, statement review, and axiom-check session: `01a20674-e76e-733c-b30b-d54d5b2cd736`.

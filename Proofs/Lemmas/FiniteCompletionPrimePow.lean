@@ -155,6 +155,15 @@ public noncomputable def finiteCompletionPrimePowQuotientEquiv (n : ℕ) :
         obtain ⟨a, ha⟩ := exists_sub_mem_completionIdeal_pow v x n
         exact ⟨Ideal.Quotient.mk _ a, Ideal.Quotient.eq.mpr ha⟩⟩
 
+/-- Every prime-power quotient of the completion integers is finite. -/
+public theorem finite_finiteCompletionPrimePowQuotient (n : ℕ) : Finite (O ⧸ m ^ n) := by
+  have h : v.asIdeal ^ n ≠ ⊥ := by
+    by_cases hn : n = 0
+    · simp [hn]
+    · exact fun hz ↦ v.ne_bot ((Ideal.pow_eq_bot hn).mp hz)
+  let := Ring.HasFiniteQuotients.finiteQuotient h
+  exact Finite.of_equiv _ (finiteCompletionPrimePowQuotientEquiv v n).toEquiv
+
 /-- The quotient equivalence sends the class of a global integer to the class of its image. -/
 public theorem finiteCompletionPrimePowQuotientEquiv_mk (n : ℕ) (a : 𝓞 K) :
     finiteCompletionPrimePowQuotientEquiv v n (Ideal.Quotient.mk _ a) =
