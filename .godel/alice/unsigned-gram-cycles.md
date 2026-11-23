@@ -17,3 +17,5 @@ $$N q^{2+o(1)}\sup_{M\le D}\big(M q^{-1/k}+1+q^{.305/k}\big).$$
 For $k=11$ the extra squared-norm exponent is $\max(.12-1/11,.305/11)=8/275$. Thus even this powered bound gives only $\|G\|_{\rm op}\le d+\|H\|_F\ll q^{2.009546+o(1)}$. The two-class example shows why optimizing such an unsigned estimate *all the way to its natural scale* would still not give the fixed saving.
 
 **If returning to this route**, keep the phases in the distinct-cycle sum. Completion above gives $|H_{ij}|\ll q^{o(1)}\sqrt Q$ by taking absolute values in each length-$M$ dual sum. Repeated-index terms in $\operatorname{tr}(H^4)$ cost $O(q^{7.22+o(1)})$ since $H_{ii}=0$. A signed upper bound $q^{7.98-4\delta}$ on its distinct-index part would suffice. Neither this bound nor a counterexample on actual peak lists is established here.
+
+The [clustered-time bound](clustered-gram.md) does prove the signed operator target for lists covered by at most $q^{.440-\eta}$ unit intervals. Actual peak lists have not been shown to satisfy that restriction.
