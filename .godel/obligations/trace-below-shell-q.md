@@ -399,9 +399,40 @@ Independent fixed-statement review: `radial-bridge-review` (`CJtGPsL`)
 in that session. The pinned Markdown and layout readings remain
 provisional pending rendered-page inspection. These lemmas neither remove
 the witness's density premise nor evaluate a common global diagonal.
-For the full scalar witness, also specialize the real fold and finite-place
-prime-power expansion to support in $(-\log 2,0)$: Every prime sample is
-outside the support, and the norm-one contact term vanishes.
+For the actual below-one profile, the real and finite-place evaluations
+are checked together in
+[`Masullo.exists_rationalShortWindow_stripTrace_separation`](../../Proofs/Theorems/RationalShortWindowStripTrace.lean).
+On any $0\le L<U\le\log 2$, the conditional dyadic count at
+$0<\alpha<1/2$ gives one compact smooth $f$ supported in $(L,U)$.
+For $F(x)=f(-x)$, the normalized real cutoff tends to zero, **every**
+finite-place term is zero, both polar samples vanish, and the full-order
+open-strip series has sum zero. Yet the pairing with the modeled
+projected density $U_{2\alpha}$ is nonzero.
+
+Equation (B.4.4.22), p. 625, gives valuation shells. Equations
+(B.4.2.10–11), p. 615, locate the forward and inverse samples, but we
+use the checked normalized expansion, not the raw contour coefficients.
+For every prime $p$ and $m\ge1$, $\log(p^m)\ge\log 2$, so neither signed
+log sample can see $F$. For (12.5.1.1), p. 519, `RealLogHaarFold.fold`
+folds the signed half-Haar integral to the positive ray, leaving exactly
+$J(t)f(t)$ and no identity term. The proof selects a strictly positive
+lower support bound, so the integral is unchanged for every sufficiently
+small positive cutoff. The reflected Mellin formula and termwise
+omitted-zero transfer give the `HasSum` conclusion, without taking a
+zero-width limit or capping any interior order.
+
+Owning check session: Yah `01a20671-21b5-7330-a3a4-696e13ff136f`.
+Independent fixed-statement and manuscript review:
+`scalar-statement-review` (`otZSpjz`, output
+`ba016abdeae7de65f0cf2f9960d5da090077a59e`) in the same session, at base
+`39ee9109595caf1749566ed304ac03846c564047`. Its readings of
+(B.2.1.29), p. 599, (B.4.2.2), p. 614, (B.4.2.10–11), p. 615,
+(B.4.4.16, 22), pp. 623, 625, and (12.5.1.1–4), pp. 519–520, are
+provisional from the pinned Markdown and PDF text layout, not rendered
+pages. The reviewer distinguishes the scalar balance from the claimed
+identification of the local and orbital pieces with one global kernel.
+The missing below-one orbital coverage of Theorem 11.3.2.1, p. 495, is
+not needed for this scalar result.
 
 With the actual omitted samples killed and the model’s strip trace
 identified, the explicit formula gives $G(f)=\langle J,f\rangle=0$,
@@ -452,11 +483,20 @@ not a fresh rendered-page verification.
   separately justified global base with the *raw* value would fail on
   this witness, where both are zero.
 
-The conditional specialization to the actual omitted zeros and the
-one-test scalar transfer are checked above. The power-saving count, the
-comparison with the common global trace, and the necessity of the modeled
-projection for the manuscript remain separate. The obstruction is not
-machine-checked end to end.
+The conditional witness, its normalized real and finite-place terms,
+and the open-strip `HasSum` are checked above. The power-saving count,
+the comparison with the common global trace, and the necessity of the
+modeled projection for the manuscript remain separate. The obstruction
+is not machine-checked end to end.
+
+**Next operator-side target:** Check the cutoff-by-cutoff constant-copy
+weight split for a common localized diagonal, obtaining the two bounds
+by the absolute whole trace before taking either limit. The relevant
+starting point is `fixedAnnulus_traceDensity` for the actual rational
+band operator; first match its two localization legs against the operator
+in the paper calculation above. Do not identify its limit with a
+Mellin sum merely from having a fixed-cutoff density. The distinct-zero
+count in Lean remains an independent analytic obligation.
 
 ## Checked local scalar separation
 
