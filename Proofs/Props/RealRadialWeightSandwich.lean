@@ -202,4 +202,131 @@ public theorem real_log_profile_radial_pairing_tendsto {ι : Type*} {l : Filter 
       ae_real_radial_weight_brackets hp hq hBlo hB hDlo hD hpB hqD⟩
   · exact (real_log_profile_sharp_fourier_tendsto hf hc hzero).comp hK
 
+/-- Measurability by zero extension and pointwise upper-indicator brackets
+on the positive ray. Each endpoint interval belongs to one constituent
+profile, not to the annulus obtained by subtraction. -/
+@[expose] public def RealUpperProfileBracket (p : ℝ → ℝ) (lo hi : ℝ) : Prop :=
+  Measurable ((Ioi (0 : ℝ)).indicator p) ∧ 0 < lo ∧ lo ≤ hi ∧
+    ∀ s > 0, (Iic lo).indicator (fun _ ↦ (1 : ℝ)) s ≤ p s ∧
+      p s ≤ (Iic hi).indicator (fun _ ↦ (1 : ℝ)) s
+
+/-- The profile product integrated against `ds/s` on the positive radial
+quotient, as a function of the additive frequency, extended by zero at zero. -/
+@[expose] public noncomputable def realRadialWeight (p q : ℝ → ℝ) (w : ℝ) : ℝ :=
+  if w = 0 then 0 else ∫ s in Ioi (0 : ℝ), p s * q (|w| / s) * s⁻¹
+
+/-- Pair the retained real radial weight with the additive Fourier transform. -/
+@[expose] public noncomputable def realRadialPairing (u : ℝ → ℂ) (p q : ℝ → ℝ) : ℂ :=
+  ∫ w, (realRadialWeight p q w : ℂ) * 𝓕 u w
+
+private theorem radial_pairing_bound {u : ℝ → ℂ} (hu : Integrable u)
+    {p q : ℝ → ℝ} {Blo Bhi Dlo Dhi K : ℝ}
+    (hB : RealUpperProfileBracket p Blo Bhi) (hD : RealUpperProfileBracket q Dlo Dhi)
+    (hlo : Blo * Dlo ≤ K) (hhi : K ≤ Bhi * Dhi) :
+    Integrable (fun w ↦ (realRadialWeight p q w : ℂ) * 𝓕 u w) ∧
+      ‖realRadialPairing u p q - realSharpCutScalar u K‖ ≤
+        2 * (Bhi * Dhi - Blo * Dlo) * ∫ x, ‖u x‖ := by
+  obtain ⟨hp, hBlo, hBord, hpB⟩ := hB
+  obtain ⟨hq, hDlo, hDord, hqD⟩ := hD
+  exact integrable_real_radial_pairing_and_norm_sub_le hp hq hBlo hBord hDlo hDord hpB hqD hu hlo hhi
+
+/-- Split the smoothed two-annulus scalar into four upper-profile pairings.
+Both the signed radial density at positive radii and the signed Fourier
+integrand are absolutely integrable. No cutoff limit is needed. -/
+public theorem real_radial_pairing_sub_sub {u : ℝ → ℂ} (hu : Integrable u)
+    {pA pB qC qD : ℝ → ℝ} {Alo Ahi Blo Bhi Clo Chi Dlo Dhi : ℝ}
+    (hA : RealUpperProfileBracket pA Alo Ahi) (hB : RealUpperProfileBracket pB Blo Bhi)
+    (hC : RealUpperProfileBracket qC Clo Chi) (hD : RealUpperProfileBracket qD Dlo Dhi) :
+    (∀ r > 0, IntegrableOn (fun s ↦ (pB s - pA s) * (qD (r / s) - qC (r / s)) * s⁻¹)
+      (Ioi 0)) ∧
+    Integrable (fun w ↦ (realRadialWeight (pB - pA) (qD - qC) w : ℂ) * 𝓕 u w) ∧
+    realRadialPairing u (pB - pA) (qD - qC) =
+      realRadialPairing u pB qD - realRadialPairing u pA qD -
+        (realRadialPairing u pB qC - realRadialPairing u pA qC) := by
+  let g (p q : ℝ → ℝ) (r s : ℝ) := p s * q (r / s) * s⁻¹
+  have hg {p q : ℝ → ℝ} {lo hi lo' hi' r : ℝ} (hr : 0 < r)
+      (hp : RealUpperProfileBracket p lo hi) (hq : RealUpperProfileBracket q lo' hi') :
+      IntegrableOn (g p q r) (Ioi 0) := by
+    obtain ⟨hp, hl, hh, hp'⟩ := hp
+    obtain ⟨hq, hl', hh', hq'⟩ := hq
+    exact (real_radial_weight_sandwich hp hq hl hh hl' hh' hr hp' hq').1
+  have hs (r : ℝ) : g (pB - pA) (qD - qC) r =
+      (g pB qD r - g pA qD r) - (g pB qC r - g pA qC r) := by
+    funext s
+    simp only [g, Pi.sub_apply]
+    ring
+  refine ⟨fun r hr ↦ ?_, ?_⟩
+  · change IntegrableOn (g (pB - pA) (qD - qC) r) (Ioi 0)
+    rw [hs]
+    exact ((hg hr hB hD).sub (hg hr hA hD)).sub ((hg hr hB hC).sub (hg hr hA hC))
+  have hw (w : ℝ) : realRadialWeight (pB - pA) (qD - qC) w =
+      (realRadialWeight pB qD w - realRadialWeight pA qD w) -
+        (realRadialWeight pB qC w - realRadialWeight pA qC w) := by
+    by_cases hz : w = 0
+    · simp [realRadialWeight, hz]
+    simp only [realRadialWeight, ite_eq_right hz]
+    change (∫ s in Ioi 0, g (pB - pA) (qD - qC) |w| s) =
+      (∫ s in Ioi 0, g pB qD |w| s) - (∫ s in Ioi 0, g pA qD |w| s) -
+        ((∫ s in Ioi 0, g pB qC |w| s) - (∫ s in Ioi 0, g pA qC |w| s))
+    have hBD := hg (abs_pos.mpr hz) hB hD
+    have hAD := hg (abs_pos.mpr hz) hA hD
+    have hBC := hg (abs_pos.mpr hz) hB hC
+    have hAC := hg (abs_pos.mpr hz) hA hC
+    rw [hs]
+    simpa only [Pi.sub_apply, integral_sub hBD hAD, integral_sub hBC hAC] using
+      (integral_sub (hBD.sub hAD) (hBC.sub hAC))
+  let F (p q : ℝ → ℝ) (w : ℝ) := (realRadialWeight p q w : ℂ) * 𝓕 u w
+  have hF {p q : ℝ → ℝ} {lo hi lo' hi' : ℝ}
+      (hp : RealUpperProfileBracket p lo hi) (hq : RealUpperProfileBracket q lo' hi') :
+      Integrable (F p q) :=
+    (radial_pairing_bound hu hp hq le_rfl
+      (mul_le_mul hp.2.2.1 hq.2.2.1 hq.2.1.le (hp.2.1.trans_le hp.2.2.1).le)).1
+  have hsplit : F (pB - pA) (qD - qC) = (F pB qD - F pA qD) - (F pB qC - F pA qC) := by
+    funext w
+    simp only [F, Pi.sub_apply, hw, Complex.ofReal_sub, sub_mul]
+  change Integrable (F (pB - pA) (qD - qC)) ∧
+    (∫ w, F (pB - pA) (qD - qC) w) =
+      (∫ w, F pB qD w) - (∫ w, F pA qD w) - ((∫ w, F pB qC w) - (∫ w, F pA qC w))
+  have hBD := hF hB hD
+  have hAD := hF hA hD
+  have hBC := hF hB hC
+  have hAC := hF hA hC
+  rw [hsplit]
+  refine ⟨(hBD.sub hAD).sub (hBC.sub hAC), ?_⟩
+  simpa only [Pi.sub_apply, integral_sub hBD hAD, integral_sub hBC hAC] using
+    (integral_sub (hBD.sub hAD) (hBC.sub hAC))
+
+/-- On any filter, the signed sharp limit transfers to the smoothed
+annular pairing when each of the four product widths tends to zero.
+The Boolean labels select the positive (`true`) or negative (`false`)
+constituent of each profile. Only the ray brackets and intermediate
+cutoff conditions are required eventually. -/
+public theorem real_radial_pairing_sub_sub_tendsto {ι : Type*} {l : Filter ι}
+    {u : ℝ → ℂ} (hu : Integrable u)
+    {p q : ι → Bool → ℝ → ℝ} {Blo Bhi Dlo Dhi : ι → Bool → ℝ}
+    {K : ι → Bool → Bool → ℝ} {L : ℂ}
+    (hprofiles : ∀ᶠ i in l,
+      (∀ b, RealUpperProfileBracket (p i b) (Blo i b) (Bhi i b)) ∧
+      (∀ d, RealUpperProfileBracket (q i d) (Dlo i d) (Dhi i d)) ∧
+      ∀ b d, Blo i b * Dlo i d ≤ K i b d ∧ K i b d ≤ Bhi i b * Dhi i d)
+    (hwidth : ∀ b d, Tendsto (fun i ↦ Bhi i b * Dhi i d - Blo i b * Dlo i d) l (𝓝 0))
+    (hsharp : Tendsto (fun i ↦ realSharpCutScalar u (K i true true) -
+      realSharpCutScalar u (K i false true) -
+        (realSharpCutScalar u (K i true false) - realSharpCutScalar u (K i false false))) l (𝓝 L)) :
+    Tendsto (fun i ↦ realRadialPairing u (p i true - p i false) (q i true - q i false)) l (𝓝 L) := by
+  have herr (b d : Bool) : Tendsto
+      (fun i ↦ realRadialPairing u (p i b) (q i d) - realSharpCutScalar u (K i b d)) l (𝓝 0) := by
+    apply squeeze_zero_norm' (a := fun i ↦ 2 * (Bhi i b * Dhi i d - Blo i b * Dlo i d) * ∫ x, ‖u x‖)
+    · filter_upwards [hprofiles] with i ⟨hp, hq, hK⟩
+      exact (radial_pairing_bound hu (hp b) (hq d) (hK b d).1 (hK b d).2).2
+    · simpa only [mul_zero, zero_mul] using
+        (((hwidth b d).const_mul (2 : ℝ)).mul_const (∫ x, ‖u x‖))
+  have hdiff := ((herr true true).sub (herr false true)).sub ((herr true false).sub (herr false false))
+  have hsum := hdiff.add hsharp
+  simp only [sub_zero, zero_add] at hsum
+  apply hsum.congr'
+  filter_upwards [hprofiles] with i ⟨hp, hq, _⟩
+  rw [(real_radial_pairing_sub_sub hu (hp false) (hp true) (hq false) (hq true)).2.2]
+  ring
+
 end Masullo

@@ -493,22 +493,76 @@ real normalization at `17d3317e0ad178b1de22eac1ef5e591e93649223`.
 The same Yah records the owning build, fresh joint-import signatures,
 axiom reports, and disposition.
 
-**Next bounded check, formalization only.** For project annular
-profiles written as differences of two upper-bracketed profiles in
-each slot, distribute the product under the same $ds/s$ integral and
-then the outer Fourier pairing. The transfer above (general $u$)
-already gives the four constituent limits when each product width
-vanishes and the corresponding sharp limit is known. The missing
-step is the signed sum for the *actual smoothed annular pairing*,
-with both integral linearity obligations discharged by the accepted
-sandwich and finite pairing. `real_two_annuli_scalar_eq` already
-gives the signed sum for the *sharp* bands, not this splitting. This
-would formalize the smoothing component of the annular correction
-above, without requiring that the printed profiles admit the
-decomposition. For Definition 9.3.3.1, p. 427, inherit the rendered
-radiality, inversion exponent, reciprocal interval, and inward edge
-signs from the [clause-specific review](#review-and-continuation);
-the exact plateau symbols and remaining bounds are extraction-only.
-The sharp ranges and band have the separate inherited evidence cited
-above. Choosing or identifying the actual manuscript profiles and
-checking their cross-product limits remain separate premises.
+### Lean-checked signed split for smoothed annuli
+
+In [RealRadialWeightSandwich](../../Proofs/Props/RealRadialWeightSandwich.lean),
+`Masullo.real_radial_pairing_sub_sub` fixes $u\in L^1(\mathbb R;\mathbb C)$.
+Write $P(p,q)$ for `realRadialPairing u p q`, using the zero-extended
+weight $\int_0^\infty p(s)q(|w|/s)\,ds/s$. Assume
+`RealUpperProfileBracket` for each of $p_A,p_B,q_C,q_D$: Measurable
+positive-ray zero extensions, positive ordered endpoints for each
+constituent, and the two upper-indicator bounds at every $s>0$.
+Then the signed radial density at every $r>0$ and the signed outer
+Fourier integrand are absolutely integrable, and
+
+$$
+P(p_B-p_A,q_D-q_C)=P(p_B,q_D)-P(p_A,q_D)-P(p_B,q_C)+P(p_A,q_C).
+$$
+
+The four constituent inner integrabilities come from
+`real_radial_weight_sandwich`; the four outer ones come from
+`integrable_real_radial_pairing_and_norm_sub_le` at the lower products.
+These are proof-local uses of existing endpoints. The finite split
+needs no cutoff convergence, order between distinct profile labels,
+monotonicity, or integrable Fourier transform. In contrast,
+`real_two_annuli_scalar_eq` splits the sharp bands themselves.
+
+`Masullo.real_radial_pairing_sub_sub_tendsto` allows the four bracketed
+profiles and their endpoints to vary along an arbitrary filter. For
+each of the four profile pairs, $K_{bd}$ lies eventually between the
+lower and upper products, and the difference of those products tends
+to zero. The four finite error bounds make the signed difference
+between the smoothed pairing and the signed sum of $J(K_{bd})$ tend
+to zero. Thus any limit of that **sum** transfers to the actual
+smoothed annular pairing. No separate limit, divergence, or
+factorization of the four comparison values $K_{bd}$ is imposed;
+nominal sharp annulus products are one possible choice.
+
+**Source and review.** This is a conditional project repair on the
+positive radial quotient, not an evaluation of the projected trace.
+The [clause-specific review](#review-and-continuation) supplies the
+inherited rendered ranges in (12.4.1.22), p. 518, not the preceding
+smooth-to-sharp equality, which is extraction-only. The
+[real coefficient audit](trace-real-prime-q.md#the-chapter-12-real-coefficient)
+supplies the inherited rendered band in (12.4.1.24), p. 518, and the
+both-sign and counting normalization. Definition 9.3.3.1, p. 427,
+has inherited rendered radiality, inversion exponent, reciprocal
+interval, and inward edge signs; the exact plateau symbols and
+remaining bounds are extraction-only, as recorded in the
+[clause-specific review](#review-and-continuation). The p. 519 rate
+clause after (12.4.1.28) remains provisional. No passage was reread,
+and none of these clauses is a premise of the Lean statements.
+Independent exact-source review (`UybVQQF`, Yah
+`01a2067b-a612-7391-b112-4d5fd8a1f416`) checked the definitions,
+both signatures, and reuse of the accepted integrability estimates
+at `dc858f7dd104d89538391e1cccbeed427becacdc`. The same Yah records
+the owning builds, joint-import signatures, axioms, and adoption.
+
+**Next bounded check, formalization only.** In the same positive-ray
+coordinate, construct the two bracketed constituents of a *supplied*
+measurable $[0,1]$-valued annular profile, with zero outside its finite
+positive support band and one on a pointwise plateau. Split at a
+point in that plateau: Below the split take $p_B=1$ and $p_A=1-\rho$;
+above it take $p_B=\rho$ and $p_A=0$. Check zero-extension
+measurability and bracket inequalities at the endpoints, in particular
+that the lower indicator for $p_A$ ends at a point where $\rho=0$
+(in the absence of endpoint vanishing, choose it strictly below the
+support band). The
+[endpoint averaging comparison](trace-geometric.md#smooth-radial-bands-on-the-extended-domain)
+uses monotone transition profiles. The signed identity here already
+gives the pairing once the brackets are furnished; it does not
+construct them. The construction would need no monotonicity and would
+not identify the printed smooth factors. The applicability of their
+exact plateau clause, the four product widths and sharp sum limit,
+the projected-trace identification, and the Mellin corrections are
+separate obligations.
