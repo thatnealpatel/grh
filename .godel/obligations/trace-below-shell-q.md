@@ -180,17 +180,46 @@ including the reflected argument below norm one and the even-test use.
 The manuscript reading is provisional Markdown/layout, not rendered-page
 verification. Owner checks are in Yah `01a20624-d19d-7566-86d3-0dc22f4adc92`.
 
-Remaining for the scalar witness: First justify in Lean the integration
-by parts and Fubini identity transferring pairing against a density to
-pairing against the seed. Then prove nonproportionality for the two
-specific transformed densities, and supply the actual omitted-set
-budget and strip/full sum comparison. None of these follows from
-positivity of the real measure moments alone.
+### Checked dependency: Moving the filter to the density
 
-Integration by parts and translation send pairings with a density $D$
-(here $J$ or $U_\beta$) to pairings against $\phi$ with
+[`Masullo.integral_logPolynomialDeriv_logTranslateAverage`](../../Proofs/Props/CompactLogMellinAdjoint.lean)
+proves that pairing the filtered test with a density $ρ$ is the same
+as pairing the seed $φ$ with
 
-$$ K_D(t)=\int P_0(-\partial)D(t+u)\,d\mu(u). $$
+$$ K_ρ(t)=\int P(-\partial)ρ(t+u)\,d\mu(u). $$
+
+The theorem assumes $φ$ is smooth with topological support inside
+$[a,b]$ for $a>0$, $μ$ is finite and carried by $[0,D]$, and $ρ$
+is smooth on $(0,\infty)$. Both whole-line products are integrable.
+No smoothness at zero or bound at infinity is imposed on the density.
+The inner integral defining $K_ρ$ need only exist classically on the
+seed support; Lean uses the totalized integral elsewhere.
+First integration by parts moves the polynomial to the density with
+one minus sign per derivative. Then Fubini on compact carrying
+rectangles and Lebesgue translation replace the test shift $-u$ by
+the density shift $+u$.
+
+This step is an original argument for comparing the rational scalar
+densities entering the proposed repair of (12.5.1.3–4), pp. 519–520.
+Masullo gives integration by parts for a Mellin exponential in
+(B.2.1.31), p. 599, not this identity for the filtered test and a
+possibly singular density. The two densities here are the raw and
+projected densities of the rational model, not an asserted equality
+of Masullo's multiplier (p. 517, (12.4.1.8–12)) with the projection.
+Independent read-only review `adjoint-statement` (`CZRgWxT`, output
+`76bdb2dc039402979d592d5bf3ba53486aeb886c`) checked the fixed contract,
+both signs, the compact carrying rectangles, and the absence of a
+boundary at zero against `d17819758975e1028f23f72d46270931000adc11`.
+It checked the pinned digest and the passages above plus the above-one
+support in Theorem 11.3.2.1, pp. 495–496, using Markdown and layout,
+not rendered pages. The owning exact-candidate checks are recorded in
+Yah `01a20634-af61-7ca4-9490-2b578475735c`.
+
+### Remaining separation of the transformed densities
+
+For $ρ=J$ or $U_\beta$ and $P=P_0$, the next obligation is to prove
+that $K_{U_\beta}$ is not a scalar multiple of $K_J$ on the smaller
+open seed interval. The following argument is not yet checked in Lean.
 
 For $t>0$ these are real analytic by the normally convergent geometric
 exponential series, including after differentiation, on each
@@ -317,15 +346,6 @@ multiplier at (12.4.1.8–12), p. 517, by Markdown and layout extraction;
 this fresh reading is provisional, not rendered-page verification.
 The owning exact-candidate build, joint import, and axiom check are
 recorded in Yah session `01a20624-d19d-7566-86d3-0dc22f4adc92`.
-
-**Next proof obligation:** For a real polynomial $P$, implement
-$P(\partial_t)$ on a real smooth compact log profile without widening
-its support, and derive the multiplier $P(-z)$ from the existing
-[`compactLogMellin_iteratedDeriv`](../../Proofs/Lemmas/CompactLogMellin.lean).
-This will assemble the two parts of the filter. It will not yet prove
-the nonproportionality of the transformed $J$ and $U_\beta$, the
-density bound giving the budget for the actual omitted zeros, or the
-projected trace comparison.
 
 ## Exact successor for position-dependent weights
 
