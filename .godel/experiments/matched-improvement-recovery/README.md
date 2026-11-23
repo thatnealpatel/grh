@@ -329,3 +329,56 @@ checking the accepted statement and its operator before applying a
 suggested successor. It does not show that a separate routing node,
 additional status polling, or automatic proof recovery would improve
 this decision. No new router or Go change was tried.
+
+## Live follow-up: Recover the fixed-band copy split
+
+Run `01a20681-c656-7933-b6f0-af694ef70215` matches the input and
+final response of work Yah `01a20681-c84c-7800-81e4-b5411773b697`.
+The runtime baseline pins launch archive
+`20c4d6d47825b7d8f7456ef0aa0e7358a49a689f`, also the initial accepted
+tip. The `cmd/godel` tree and its tracked prompt inputs match those
+at the preceding two launch archives and at recovery's starting
+tip `62aec60d7d28345a085166185869d200dc8f76d3`.
+
+The matched lookup returned the previous improvement's already-landed
+global theta-band density. Work used that global operator rather than
+rebuilding the density or using the local projection named in the old
+stdout. Six failed draft builds exposed finite-sum API, coercion,
+warning, and basis-universe errors. The seventh passed (work seqs.
+42–106). Reviewer `DmJHSdg` checked the intended statement, then
+confirmed all three final signatures after the translate-weight
+endpoint was added. No rendered pages were checked.
+
+Direct output `657036487bf6bfb5d33e7d7a67785fda65111686` was replayed
+on three bases (work seqs. 123–169):
+
+| Candidate | Prebuild and outcome |
+| --- | --- |
+| `6e3df60deacdca2cd244c80348d0329a46d41481` | Current at seq. 132, built and checked, stale at seq. 141. |
+| `0c4fbbf2e7bb564d36a1861dae4c93a9c8d7e0cf` | Current at seq. 151, built and checked, stale at seq. 161. |
+| `bbe4a377698cd2ec30b8b9096a7402020cb136f1` | Already superseded at seq. 169, not built. |
+
+This repeats the [omitted-divisor budget race](#live-follow-up-budget-the-actual-omitted-divisor),
+not the [scalar-transfer run](#live-follow-up-separate-the-scalar-traces-below-one),
+which adopted its first candidate. No failed draft or stale candidate
+contains a different proof needed downstream.
+
+In improvement `01a2068e-dbb2-7b6d-9d57-092f0e571fa0`, the former
+output was readable in jj but not registered in the fresh campaign.
+Its unchanged Lean patch was restored in a direct workspace with its
+landing note, then integrated on
+`021fb6f55c65487e32d54130f5e1b0ebeda089f7`. The intervening class-Haar
+L² result did not change the fixed-band dependency or the pinned Lean
+inputs. Reviewer `yubqdyw` checked the exact statements independently.
+The exact candidate `85933a3338cd4d17662c07b9f27a3e6e818a6d38` passed
+the warning-fatal build and fresh joint import and was adopted. See the
+[branch handoff](../../obligations/trace-below-shell-q.md#checked-constant-copy-split-before-either-limit)
+for the mathematical scope and runnable successor.
+
+**Decision:** Keep the existing routing and recovery procedure. The
+single preflight avoided the third build and could not have detected
+the first two later moves. Recovery on a fresh base succeeded without
+rederiving the proof or reusing an old check verdict. No scheduler,
+polling, Go change, or hypothetical time saving was tested. The result
+controls only the modeled fixed-cutoff split; it does not identify
+Masullo's orbital pieces or show that his mechanism requires this lift.
