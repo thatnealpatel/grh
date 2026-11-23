@@ -1,0 +1,20 @@
+{
+  "key": "442a63c93f8ac5ece067f21dfcfd2252280ad1152203bb3468becfd7b63668e3",
+  "revision": "eadac3a1be18b2b4dfe52afdf55a37433b193175a4cc27e69ba1ea382738fe59",
+  "outcome": "landed",
+  "source": "Masullo, The Music of the Primes, SHA-256 e039d3f6cf0a4b14f03c7edb85097752dd65c0a2fe543c76fe992be234f97bf5. Chapter-01 §1.2.1(4), printed p. 15 / PDF ordinal 15, unnumbered φ(xy⁻¹) − kspec,I,φ(x,y) display and ensuing smoothability assertion (before the Trace Formula). Context: pp./ordinals 13–15, (1)(b) support gap, (2) degree zero and half-twisted fixed isotype, (1.2.1.1) and preceding transpose expansion, lift paragraph and (3); Definition A.1.4.1, p./ordinal 542, class quotient and norm; Definition A.3.2.1, pp./ordinals 559–560, class Haar; Definition 12.1.1.1 (12.1.1.1) and product boxes, pp./ordinals 498–499, and Theorem 12.1.1.2(1) (12.1.1.2), pp./ordinals 499–501. See idele-class-diagonal-average.md for rendered-source comparison and the later degree and weight conventions.",
+  "finding": "Partial proof of diagonal cancellation, not of the printed existence of a spectral or geometric smoothening. On the actual idèle class group, the translated product-Haar box (xUₙ)² has mass μ(Uₙ)². For the source support gap above norm 1+ε, ε>0, continuity of the quotient norm and the accepted support lemma in Theorems.IdeleClassConvolutionKernel give pointwise vanishing of φ(y/z) everywhere on each sufficiently small box, at every center x. Thus the normalized product-measure averages of φ(y/z)−k(y,z) eventually equal minus those of k, and either finite limit implies the opposite limit for the other. The exact equality is of Lean totalized averages; the source interpretation uses positive finite box masses and local integrability. The ordinary-import client uses counting quotient Haar and a nonzero constant test kernel with open relatively compact shrinking sets. No spectral representation, almost-everywhere diagonal convergence, nuclearity, or trace identity is established. The accepted rational-radial Hilbert operator lift and bare-kernel receipt distinguish projection after convolution and the missing test-dependent transpose rows; neither supplies a trace-class Haar kernel. The Q(i) box audit in .godel/obligations/trace-spectral.md prevents importing the printed global boxes as generally shrinking or valid trace-diagonal boxes.",
+  "retry": "For the nondegenerate symmetric base, half twist and fixed norm-one isotype at s=0, identify the actual weighted model and prove trace class of the descended convolution, with its orthogonal lift represented by the corrected transpose-convolution kernel against the same class Haar (not the bare input jets or the weighted-measure density). Supply genuinely shrinking positive finite mass D′ boxes, or prove the needed differentiation for the chosen boxes. Then prove diagonal convergence using a summable rank-one decomposition with a uniform L² bound for the tail-supremum maximal averages of absolute values, or an equally strong diagonal argument, with the continuous weight conversion controlled on these boxes. Product L² convergence or product-a.e. differentiation does not control the product-null diagonal; the later s≥3 singleton-kernel calculation cannot supply the required s=0 result.",
+  "evidence": [
+    {
+      "path": "Proofs/Theorems/IdeleClassDiagonalAverage.lean",
+      "declarations": [
+        "Masullo.ideleClassDiagonalBox",
+        "Masullo.ideleClassDiagonalAverage",
+        "Masullo.ideleClassDiagonalBox_measure",
+        "Masullo.ideleClassDiagonalAverage_sub_eventually_eq_neg",
+        "Masullo.ideleClassDiagonalAverage_sub_tendsto_iff"
+      ]
+    }
+  ]
+}
