@@ -215,30 +215,66 @@ support in Theorem 11.3.2.1, pp. 495–496, using Markdown and layout,
 not rendered pages. The owning exact-candidate checks are recorded in
 Yah `01a20634-af61-7ca4-9490-2b578475735c`.
 
-### Remaining separation of the transformed densities
+<a id="remaining-separation-of-the-transformed-densities"></a>
 
-For $ρ=J$ or $U_\beta$ and $P=P_0$, the next obligation is to prove
-that $K_{U_\beta}$ is not a scalar multiple of $K_J$ on the smaller
-open seed interval. The following argument is not yet checked in Lean.
+### Separation of the transformed densities
 
-For $t>0$ these are real analytic by the normally convergent geometric
-exponential series, including after differentiation, on each
-$\Re t\ge\delta>0$. The largest surviving exponent for $K_J$ is
-$-5/2$: The $-1/2$ term is killed by $P_0$, and the coefficient at
-$-5/2$ is $P_0(5/2)M_\mu(-5/2)\ne0$. For $K_U$ the largest exponent is
-$\beta-5/2$, with coefficient $P_0(5/2-\beta)M_\mu(\beta-5/2)\ne0$.
-The roots of $P_0$ have real parts in $[-1/2,1/2]$. These different
-exponents, by dividing by $e^{(\beta-5/2)t}$ and taking $t\to\infty$,
-exclude proportionality on $(0,\infty)$, hence by analyticity also on
-the smaller test interval. If the functional with density $K_U$ vanished
-on the kernel of the $K_J$ functional on bumps there, it would be a
-scalar multiple of the latter. Testing against all bumps would identify
-the continuous densities, contradicting the exponent comparison. Choose
-$\phi$ in that kernel with nonzero $K_U$ pairing.
+The adjoint identity reduces the kernel test to the two continuous seed
+densities $K_J$ and $K_{U_\beta}$. They must not be proportional on the
+smaller open seed interval: Otherwise every seed killing the filtered raw
+pairing would also kill the filtered projected pairing.
 
-For this same test $G(f)=\langle J,f\rangle=0$, but
-$\langle U_\beta,f\rangle\ne0$. Both constant-weight pieces of the actual
-project global diagonal tend to zero, so this orbital shell cannot
+[`Masullo.filteredLogDensity_not_eqOn_mul`](../../Proofs/Props/FilteredLogDensitySeparation.lean)
+proves this nonproportionality on any nonempty open subset of $(0,\infty)$.
+Its hypotheses are a probability $\mu$ carried by $[0,D]$, $\beta>0$,
+$P(1/2)=0$, and $P(5/2-\beta)\ne0$. The latter two hold in the proposed
+application to $P_0$: The polar factor gives the first, and all roots
+have real parts in $[-1/2,1/2]$, whereas $5/2-\beta>3/2$ for the model's
+$0<\beta<1$. The theorem does not require a nonzero coefficient at the
+first possible surviving raw rate.
+
+For $\rho_r(t)=e^{rt}/(1-e^{-2t})$, write $K_r$ for the average of
+$P(-\partial)\rho_r$ at positive shifts. The supporting results in
+[`Lemmas.FilteredLogDensity`](../../Proofs/Lemmas/FilteredLogDensity.lean)
+prove analyticity on positive logs, the exact change in $K_r$ when the
+$e^{rt}$ term is subtracted, and
+
+$$ e^{-rt}K_r(t)\longrightarrow P(-r)\int e^{ru}\,d\mu(u) \quad(t\to\infty). $$
+
+Here $K_J=K_{-1/2}$ and $K_{U_\beta}=K_{\beta-5/2}$. The identity
+principle extends a putative proportionality to all positive logs. The
+polar root makes $K_{-1/2}=K_{-5/2}$ there. After normalizing at the
+projected rate, the raw side has the extra factor $e^{-\beta t}$ and
+hence tends to zero. The projected side tends to a nonzero polynomial
+value times a strictly positive real moment. This is an original scalar
+argument for the proposed repair of (12.5.1.3–4), pp. 519–520. It uses
+the rational model pair, not an identification of the actual local
+projection with Masullo's Fourier multiplier (12.4.1.8–12), p. 517.
+Theorem 11.3.2.1, pp. 495–496, cannot supply the below-one comparison
+because its tests are strictly above one. These manuscript readings are
+provisional Markdown/layout readings, not rendered-page verification.
+
+Independent read-only Yah `density-review` (`EPtymgE`, output
+`becb9ac7a7141b730aa0e812a95e058f5b99eda0`) checked the fixed statement
+and supporting contracts, the two rates, the $P_0$ application, and the
+scope against the pinned manuscript at
+`47eb4b607ef17236bbc0e82d00a4346d7dc3d0a8`. Owning exact-candidate check:
+Yah `01a20642-dbdb-7b6d-b0e5-218cf3eaa9e9`.
+
+**Next Lean step:** If the projected pairing vanished on the kernel of
+the raw pairing on compactly supported smooth seeds, it would factor as
+a scalar multiple of the raw pairing. Use
+`compactSmooth_moment_relation` with a single constraint and
+`eqOn_of_compactSmooth_moments_eq` to turn that factorization into the
+excluded equality of continuous densities. Then the adjoint transfers
+the zero raw and nonzero projected pairing to the filtered seed. This
+still needs the actual omitted-zero summability budget, the full/strip
+trace comparison, and an argument that the modeled projection is
+necessary for the manuscript's mechanism.
+
+With this seed and the strip/full comparison, $G(f)=\langle J,f\rangle=0$,
+but $\langle U_\beta,f\rangle\ne0$. Both constant-weight pieces of the
+rational model's global diagonal tend to zero, so this orbital shell cannot
 supply the difference between the local projection and the multiplier
 in either sign convention. In particular, identifying the base with the
 local projection up to the two printed moments is impossible for this
