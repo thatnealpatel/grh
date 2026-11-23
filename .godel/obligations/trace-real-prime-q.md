@@ -295,20 +295,12 @@ and the Fourier, integrability, and Haar reductions at
 joint-import signatures and axioms, and adoption are recorded in Yah
 `01a205f3-2f52-7660-aae5-430d791e231d` against the exact candidate.
 
-**Next bounded check:** On the repaired radial domain, check whether the
-cutoffs in (12.4.1.12), p. 517, and (12.4.1.15), p. 518, control the
-lower edges well enough for the sharp replacement in (12.4.1.22),
-p. 518. These weight and replacement clauses are still extraction-only
-in the [smooth-band note](trace-geometric.md#smooth-radial-bands-on-the-extended-domain).
-The radiality clause of Definition 9.3.3.1(2), p. 427, has a separate
-[rendered reading](trace-circle-compression-qi.md#chapter-12-interface);
-it does not determine the endpoint rates or which cutoffs Step II uses.
-In the same real modulus coordinate, the existing informal comparison
-already reduces the repaired weighted scalar to differences of sharp
-integrals. It controls the lower terms if $A_+D_+\to0$ and, with a lower
-Fourier edge, $B_+C_+\to0$; independently growing cutoffs do not imply
-these products vanish. The sharp limit above evaluates the surviving
-upper term. Check the printed lower-edge prescription against this
-comparison rather than rederive the sharp limit. The identification
-of the volume domain in (12.4.1.23), the actual geometric operator, the
-global $S$-piece, and the Mellin corrections remain separate premises.
+**Lower-edge check:** The [real smooth-cutoff audit](trace-smooth-lower-edge-q.md)
+continues the scalar comparison on the repaired radial domain at
+(12.4.1.12) and (12.4.1.15), both p. 517, and (12.4.1.22), p. 518.
+Under the quoted joint rates, the bounded upper-only smoothings have
+vanishing upper-edge error, but a family using both symmetric annuli
+has the full signed correction $-2J(1)\ne0$. The separate proposal on
+p. 514 n. 2 does not force the single lower edge to vanish either.
+This is reviewed informal mathematics with clause-specific source
+qualifications, not a Lean proof or a trace identification.
