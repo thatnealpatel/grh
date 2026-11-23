@@ -163,7 +163,9 @@ private theorem eq_or_neg_of_det_eq_zero {x y : ℤ × ℤ}
   · exact Or.inr (Prod.ext (by simpa only [hk, Int.ofNat_one, neg_mul, one_mul] using h₁)
       (by simpa only [hk, Int.ofNat_one, neg_mul, one_mul] using h₂))
 
-private theorem card_le_two_of_primitive_collinear {S : Finset (ℤ × ℤ)}
+/-- A finite set of pairwise collinear primitive integer vectors has at most two
+members: any one vector and its negative. -/
+public theorem card_le_two_of_primitive_collinear {S : Finset (ℤ × ℤ)}
     (hprim : ∀ x ∈ S, IsCoprime x.1 x.2)
     (hdet : ∀ x ∈ S, ∀ y ∈ S, x.1 * y.2 - y.1 * x.2 = 0) : S.card ≤ 2 := by
   rcases S.eq_empty_or_nonempty with rfl | ⟨x, hx⟩
