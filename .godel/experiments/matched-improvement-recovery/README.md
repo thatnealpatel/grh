@@ -287,3 +287,45 @@ of a handoff or a demonstrated benefit from more polling. No new
 router, Go change, or policy experiment was run. The [branch handoff](../../obligations/trace-below-shell-q.md#conditional-budget-for-the-actual-omitted-divisor)
 separates the checked reduction from the unformalized density bound
 and the global trace hypotheses.
+
+## Live follow-up: Separate the scalar traces below one
+
+Run `01a20671-2002-708a-a50e-043f9c352d8e` matches both input and
+final response of Yah work `01a20671-21b5-7330-a3a4-696e13ff136f`.
+The launch archive was `af9feb89becffbe47f1fd261192c55fdd1c50c1c`;
+its `cmd/godel` tree matches the tip used for this improvement's
+source investigation, `dc858f7dd104d89538391e1cccbeed427becacdc`.
+The matched predecessor's improvement had already assembled the
+omitted-divisor witness. Work advanced to the scalar rational transfer
+rather than rebuilding it. Reviewer `otZSpjz` checked the fixed
+endpoint against the pinned manuscript extraction independently of
+the writer builds.
+
+Five failed draft checks (work seqs. 49, 56, 63, 71, and 78) and
+one unsuccessful isolated diagnostic (seq. 86) exposed issues in
+the real fold simplification and the local prime sign and coercions,
+not changes to the reviewed endpoint. A handoff edit missed its
+anchor and was applied with corrected context. The sixth draft check
+passed. The direct output `d82b5e2bdd53de0645419e8a9d7faf1200623db6`
+was integrated once, on `c8880d6c91dae3eb2905f3bd498af404bd31e200`.
+The adopted candidate `854d3946e90b25209366cb6b22b9a5139ae0d462`
+passed its owner build and joint-import signature and axiom checks
+(seqs. 104–122). Unlike the preceding run, no candidate was checked
+then stranded by a concurrent landing. Repeated identical status
+queries did trigger the harness warning (seq. 113); one prebuild
+comparison sufficed. None of the failed drafts supplies a needed
+alternative proof.
+
+The scalar result is conditional on the distinct-location zero count.
+Work's proposed operator successor named a local projector; the
+[branch follow-up](../../obligations/trace-below-shell-q.md#checked-fixed-cutoff-density-in-the-global-theta-chart)
+checks the required global version instead. Improvement owner
+`01a20678-b664-799c-ba54-9d0337bef822` used independent fixed-statement
+review `HPXDyeI`, while retaining responsibility for Lean checks.
+
+**Decision:** Keep the matched-handoff lookup and current work /
+improvement routing. The comparison across these live runs supports
+checking the accepted statement and its operator before applying a
+suggested successor. It does not show that a separate routing node,
+additional status polling, or automatic proof recovery would improve
+this decision. No new router or Go change was tried.

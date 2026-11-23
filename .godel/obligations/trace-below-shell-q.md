@@ -489,14 +489,11 @@ the comparison with the common global trace, and the necessity of the
 modeled projection for the manuscript remain separate. The obstruction
 is not machine-checked end to end.
 
-**Next operator-side target:** Check the cutoff-by-cutoff constant-copy
-weight split for a common localized diagonal, obtaining the two bounds
-by the absolute whole trace before taking either limit. The relevant
-starting point is `fixedAnnulus_traceDensity` for the actual rational
-band operator; first match its two localization legs against the operator
-in the paper calculation above. Do not identify its limit with a
-Mellin sum merely from having a fixed-cutoff density. The distinct-zero
-count in Lean remains an independent analytic obligation.
+**Operator-side successor:** Use the [global fixed-band density](#checked-fixed-cutoff-density-in-the-global-theta-chart),
+not the one-place `fixedAnnulus_traceDensity`. Check the cutoff-by-cutoff
+constant-copy weight split and bound both parts by the absolute whole
+trace before taking either limit. The distinct-zero count in Lean remains
+an independent analytic obligation.
 
 ## Checked local scalar separation
 
@@ -582,3 +579,69 @@ filtered witness, scalar signs, and weighted successor, and compared the
 interfaces with the pinned Markdown and numbered layout. The full
 constant-weight obstruction is not machine-checked, and neither review
 claims rendered-page inspection.
+
+## Checked fixed-cutoff density in the global theta chart
+
+[`Masullo.OperatorTrace.rationalThetaBand_traceDensity`](../../Proofs/Theorems/RationalThetaBandTraceDensity.lean)
+constructs the fixed-cutoff operator on the weighted **global rational
+theta** levels of `RationalThetaBandClosure`. In the Lebesgue $L^2$ chart
+let $W$ be `symmetricStripWeightRoot` at width $\alpha\ge0$ and index
+$s\ge0$, and $Q_Y$ the orthogonal projector onto the weighted even rational
+theta band. For continuous compactly supported $\rho$ and $C^2$ compactly
+supported $\phi$, the constructed bounded operator is
+
+$$ (Bz)(x)=\rho(x)W(x)\int\phi(x-y)(Q_Yz)(y)W(y)^{-1}\,dy. $$
+
+There is an integrable $d$ with basis trace $\int d$, and for every
+essentially bounded log multiplier $m$, the basis trace of $BM_m$ is
+$\int m d$ in the same chart. The proof periodizes $\phi$ on a window
+covering all relevant differences and uses the output $\rho W$ and the
+compact input window $1_{[-2R,2R]}/W$. The reciprocal weight acts on
+$Q_Yz$, while $M_m$ acts on $z$ **before** $Q_Y$. The rank-one series gives
+the diagonal in $L^1$, not by restricting a product-a.e. kernel identity.
+The reusable `annulus_kernel_ae_input_mul` retains the input factor;
+`annulus_kernel_ae` keeps its previous statement.
+
+**Source and repair:** Masullo specifies the cutoff and operator order
+in (10.4.1.6–7), p. 457, and the global level projection in (11.2.1.8–10),
+p. 489; compare his weighted kernel (10.4.3.48), p. 473. The latter level
+convergence citation is for support at or above one and does not give a
+density for our below-one test in the positive-width theta chart. The
+Lean construction gives the chart form of $M_\rho A Q_Y$, not an assertion
+that $PA=AP$ for the full geometric projector $P$. To compare to the
+printed $M_\rho P A Q_Y$ at half twist and positive width, use
+$\operatorname{ran}Q_Y\subseteq\operatorname{ran}P$ and prove that convolution
+preserves the **full** geometric range in that norm; no finite-band
+invariance is required. See the [reviewed order repair](trace-hardy-diagonal-q.md#removing-the-order-defect-in-the-weighted-rational-isotype).
+
+The earlier `RealLogLevel.fixedAnnulus_traceDensity` has a different
+right projection: Its range is built from individual two-moment
+real profiles, not their lattice theta sums. For positive finite $Y$,
+global band generators vanish on $e^{-x}>Y$ by
+`rationalTheta_eq_zero_of_inv_gt_band`, and this property is preserved
+by closure. Nonzero local band generators need not vanish there:
+Their additive profiles are entire. Weight multiplication does not
+remove this distinction.
+
+**Next:** At fixed $\rho,Y$, use the finite-copy model above to assign
+$M_{m_j} B M_{m_{j+\ell}}$ to relative input copy $\ell$, and verify the
+row sum under counting/Haar disintegration. A shell selector is not an
+ordinary log multiplier on the quotient. For constant probabilities the
+base factor is $b=\sum_jm_j^2$ and the positive-shell factor $1-b$;
+the printed decreasing-shell sign reverses the latter. Establish both
+absolute bounds on the common trace before removing the band at fixed
+position and then exhausting position. Do not substitute a joint local
+limit, and do not use Theorem 11.3.2.1, pp. 495–496, on a below-one test.
+Identifying the specified lift with Masullo's orbital pieces, or proving
+its constraints necessary for any repair, remains open. So does the
+identification of a limiting density with the strip sum in (12.5.1.4),
+p. 520. This fixed-cutoff construction is not a scalar incompatibility.
+
+**Evidence:** Independent `two-leg-review` (`HPXDyeI`, base
+`854d3946e90b25209366cb6b22b9a5139ae0d462`, review output
+`76e7e9c5049179ba19ff3906d91bf0ac377a27cc`) checked the fixed statement,
+weights, mask order, and the source dependencies through pp. 489,
+493–496, 508, and 517–520. Its pinned Markdown and layout readings are
+provisional, not a rendered-page review. Owning Yah session
+`01a20678-b664-799c-ba54-9d0337bef822` records the exact candidate diff,
+build, joint-import signatures, axiom reports, and adoption decision.
