@@ -1,0 +1,25 @@
+{
+  "key": "8d24a7b4b6c038674ad116416b312debc22b39b18d42997d30767a1847fc0040",
+  "revision": "c4e2aa533026da5e44701c36d62b6e10c4408501ba03af0b11a77ff7a5a82efd",
+  "outcome": "landed",
+  "source": "Alessandro Maria Masullo, The Music of the Primes, edition SHA-256 e039d3f6cf0a4b14f03c7edb85097752dd65c0a2fe543c76fe992be234f97bf5, chapter-01 §1.2.1 Fundamental Divisor Exact Sequence, printed p. 13/PDF ordinal 13: unnumbered Mellin display following ‘The Mellin transform turns the second exact sequence into’, together with its multiplicity and delta paragraph. Read with the completed L convention §1.2 p. 12/ordinal 12; §3.2.1 (3.2.1.2)–(3.2.1.4) and Proposition 3.2.1.3 p. 123/ordinal 123; Appendix D Lemma D.3.1.1 pp. 797–798/ordinals 797–798 and Definition D.3.1.3 pp. 800–801/ordinals 800–801 (uniform Schwartz bounds on bounded-width vertical strips, not compact-open topology); and the classical factorization cited in the proof of Theorem 7.1.4.2(1), (7.1.4.9) p. 327/ordinal 327.",
+  "finding": "The printed display retains AS(C) in both middle and left terms, with left term L(s+1/2,χ)((s+1/2)(s−1/2))^δ O(C) ∩ AS(C), right term the product of C^{N(z)} over completed zeros, and a final arrow to zero. Its prose invokes structure theorems and finite L-function estimates, not an argument for interpolating an unrestricted array in AS(C). For F=Q and χ=1 the Lean results identify the exact shifted, pole-cleared completed-zeta divisor and multiplicities and prove middle exactness as a set equality: the kernel of the normalized Taylor jets on the underlying strip-Schwartz entire space is exactly its intersection with the principal entire-function ideal. The quotient is analytic across generator zeros, and is not asserted to be Schwartz. The checked obstruction theorem excludes the array with all coefficients one given infinitude of the actual distinct open-strip zeros. That infinitude is classical, not a Lean instance here: (7.1.4.9) would make the entire pole-cleared completed zeta a polynomial under a finite divisor, contradicting its factorial growth at positive even integers. In the shifted strip the degree-one weight then rules out constant values one, even algebraically. This does not contradict entire interpolation after replacing AS(C) everywhere by O(C). The companion note rational-mellin-divisor-kernel.md gives the argument, exact source distinctions, and a rerunnable ordinary-import client. No theta range, general Hecke case, topological isomorphism, or intrinsic description of the Schwartz–Bergman jet image is proved.",
+  "retry": "For an unconditional Lean obstruction, supply a checked theorem that the distinct criticalStripZetaZeros form an infinite type (for example a multiplicity-aware zero count on bounded height intervals, or the cited product and a nonpolynomial-growth argument). The displayed unrestricted surjectivity on AS(C) cannot be retried as stated: specify an intrinsic target of interpolable arrays with an interpolation theorem and a verified topology, or explicitly change both occurrences of AS(C) to O(C) and prove entire interpolation there. The theta-image identification and general Hecke cases require their own comparison with the actual Mellin image and divisor.",
+  "evidence": [
+    {
+      "path": "Proofs/Lemmas/EntireDivisorDivision.lean",
+      "declarations": ["Masullo.entire_mul_iff_vanishing_jets"]
+    },
+    {
+      "path": "Proofs/Theorems/RationalMellinDivisorKernel.lean",
+      "declarations": [
+        "Masullo.rationalMellinDivisorGenerator_eq_mul",
+        "Masullo.rationalMellinDivisorGenerator_eq_zero_iff",
+        "Masullo.rationalMellinDivisorGenerator_order",
+        "Masullo.rationalMellinDivisorJet_eq_zero_iff",
+        "Masullo.rationalMellinDivisorJet_kernel",
+        "Masullo.rationalMellinDivisorJet_ne_one"
+      ]
+    }
+  ]
+}
