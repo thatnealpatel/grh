@@ -326,34 +326,60 @@ and the mathematical reduction. Its transcript and the owning build,
 fresh joint-import signatures, axiom report, and candidate disposition
 are in Yah `01a20628-35f8-7cc3-84eb-2ea8c1169911`.
 
-**Next bounded check, formalization only.** For measurable real upper
-profiles $p,q$ on $s>0$, bracket each by sharp upper indicators with
-positive bracketing endpoints $B_-\le B_+$ and $D_-\le D_+$. Check the
-pointwise weight sandwich, for $r=|w|>0$:
+### Lean-checked pointwise radial weight sandwich
+
+[RealRadialWeightSandwich](../../Proofs/Props/RealRadialWeightSandwich.lean)
+proves `real_radial_weight_sandwich` for real profiles $p,q$ measurable
+on $s>0$ (their zero extensions are measurable). At every $s>0$,
+bracket $p$ by the upper indicators with positive endpoints $B_-\le B_+$,
+and $q$ by those with positive endpoints $D_-\le D_+$. For every $r>0$,
+the weighted product is absolutely integrable and its integral satisfies
 
 $$
-L_{B_-D_-}(r)\ \le\ \int_0^\infty p(s)q(r/s)\,\frac{ds}{s}
-\ \le\ L_{B_+D_+}(r).
+L_{B_-D_-}(r)\ \le\ W(r)=\int_0^\infty p(s)q(r/s)\,\frac{ds}{s}
+\ \le\ L_{B_+D_+}(r),\qquad L_K(r)=\max(0,\log(K/r)).
 $$
 
-Here $L_K(r)=\mathbf 1_{r\le K}(\log K-\log r)$. The sharp comparison
-in the same coordinate already follows from
-`real_position_band_radial_volume` with $A=r/D$ when $r\le BD$:
-The lower-product log term is zero, and for $r>BD$ the radial set is
-empty. What remains in this check is the two comparisons against the
-profile product, using the support interval $[r/D_+,B_+]$ to make
-the inner integral finite. This is the first step to the [informal
-upper-only error estimate](#the-full-signed-scalar-comparison) without
-monotonicity or endpoint averaging. The outer measurability and norm
-comparison, and any projected trace or Mellin identification, are
-separate.
+The lower indicators force nonnegativity on the entire positive ray.
+On that ray the product of the two sharp indicators is the indicator
+of $[r/D,B]$. The upper band is bounded away from zero when nonempty,
+and gives the zero majorant when empty. The sharp integral follows
+from `real_position_band_radial_volume` with $A=r/D$ when $r\le BD$:
+The lower-product log term is zero. When $r>BD$ the band is empty.
+This compares the actual profile product, not just two sharp pairings,
+and needs no smoothness, monotonicity, or Fourier integrability.
 
-This next check takes the brackets as project hypotheses. The
+**Source and review.** The theorem takes the brackets as project
+hypotheses on the repaired positive radial quotient. It does not use
+the norm-one slice of (A.2.4.5), p. 554, alone. The
 [clause-specific review](#review-and-continuation) supplies inherited
-rendered evidence for Step II's two upper bounds, p. 516, and the
-sharp ranges in (12.4.1.22), p. 518, not the exact smoothening qualifier
-or the preceding equality. In (12.4.1.12) and (12.4.1.15), p. 517,
-the arguments and minus subscripts have rendered evidence, but the
-exact factor names and parameter subscripts are extraction-supported.
-None of these clauses establishes that the printed smooth profiles
-meet the project brackets. No joint-limit rate is needed for the check.
+rendered evidence for the two upper bounds of Step II, p. 516, and
+the sharp ranges in (12.4.1.22), p. 518; the exact smoothening qualifier
+and preceding equality remain extraction-supported. For (12.4.1.12)
+and (12.4.1.15), p. 517, the arguments and minus subscripts have
+rendered evidence, while exact factor names and parameter subscripts
+are extraction-supported. The [real coefficient audit](trace-real-prime-q.md#the-chapter-12-real-coefficient)
+supplies the rendered band in (12.4.1.24), p. 518, and the rational
+quotient normalization. The cited Definition 9.3.3.1, p. 427, gives an
+annular rather than an upper-only cutoff; see the clause-specific
+review for the evidence by clause. None of these clauses supplies the
+project brackets. No new manuscript reading is used. Independent
+exact-source review (`jEvVJoN`, Yah `01a20647-5156-773b-84a4-9ab7a31e49fd`,
+base `a388a0824177684ea01ff4dddc2d6f085d74e33f`) checked the hypotheses
+and the sharp-band reduction. The same Yah records the owning build,
+fresh joint-import signature and axioms, and candidate disposition.
+
+**Next bounded check, formalization only.** Prove measurability of the
+outer weight $w\mapsto W(|w|)$ off zero, extended by zero there, by
+integrating a jointly measurable product of the zero-extended profiles
+in the same $(w,s)$ coordinate with $s>0$. This measurability step need
+not use the indicator brackets. It is the first remaining inference
+for the [informal upper-only error estimate](#the-full-signed-scalar-comparison):
+The sandwich already gives pointwise domination under the brackets,
+and the proof of `norm_realSharpCutScalar_sub_le` supplies the sharp
+difference's mass as a proof-local consequence of the private
+`integral_sharp_cut_weight`. Do not recompute the band or assume global
+Fourier integrability for outer domination. The outer pairing and its
+norm estimate, recovery of the brackets or width rates from the printed
+prescriptions, and identification with any projected trace or Mellin
+term are separate.
