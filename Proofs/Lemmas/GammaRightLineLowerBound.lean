@@ -62,6 +62,96 @@ private theorem exp_le_norm_Gamma_one_add_mul_I (u : ℝ) :
     -(Real.pi * |u|) by ring, Real.exp_neg, ← one_div]
   exact (div_le_iff₀ (Real.exp_pos _)).mpr hsq
 
+private theorem norm_Gamma_half_add_mul_I_sq_mul_cosh (u : ℝ) :
+    ‖Gamma (1 / 2 + (u : ℂ) * I)‖ ^ 2 * Real.cosh (Real.pi * u) = Real.pi := by
+  let z : ℂ := 1 / 2 + (u : ℂ) * I
+  have hsin : sin ((Real.pi : ℂ) * z) = (Real.cosh (Real.pi * u) : ℂ) := by
+    rw [show (Real.pi : ℂ) * z = Real.pi / 2 + ((Real.pi * u : ℝ) : ℂ) * I by
+      dsimp [z]
+      push_cast
+      ring, sin_add, sin_pi_div_two, cos_pi_div_two, one_mul, zero_mul, add_zero,
+      cos_mul_I, ofReal_cosh]
+  have hs : sin ((Real.pi : ℂ) * z) ≠ 0 := by
+    rw [hsin]
+    exact ofReal_ne_zero.mpr (Real.cosh_pos _).ne'
+  have hconj : 1 - z = conj z := by
+    dsimp [z]
+    rw [map_add, map_div₀, map_one, map_ofNat, map_mul, conj_ofReal, conj_I]
+    ring
+  have href : Gamma z * Gamma (1 - z) * sin ((Real.pi : ℂ) * z) = Real.pi := by
+    rw [Gamma_mul_Gamma_one_sub, div_mul_cancel₀ _ hs]
+  have h := congrArg (fun w : ℂ ↦ ‖w‖) href
+  change ‖Gamma z * Gamma (1 - z) * sin ((Real.pi : ℂ) * z)‖ = ‖(Real.pi : ℂ)‖ at h
+  rw [hconj, Gamma_conj, norm_mul, norm_mul, norm_conj, hsin, norm_real, Real.norm_eq_abs,
+    abs_of_pos (Real.cosh_pos _), norm_real, Real.norm_eq_abs, abs_of_pos Real.pi_pos] at h
+  simpa only [z, pow_two] using h
+
+private theorem exp_le_norm_Gamma_half_add_mul_I (u : ℝ) :
+    Real.exp (-(Real.pi * |u| / 2)) ≤ ‖Gamma (1 / 2 + (u : ℂ) * I)‖ := by
+  have hcos : Real.cosh (Real.pi * u) ≤ Real.exp (Real.pi * |u|) := by
+    rw [← Real.cosh_abs (Real.pi * u), abs_mul, abs_of_pos Real.pi_pos, Real.cosh_eq]
+    have h := Real.exp_le_exp.mpr (show -(Real.pi * |u|) ≤ Real.pi * |u| by
+      linarith only [mul_nonneg Real.pi_pos.le (abs_nonneg u)])
+    linarith only [h]
+  have hsq : 1 ≤ ‖Gamma (1 / 2 + (u : ℂ) * I)‖ ^ 2 * Real.exp (Real.pi * |u|) :=
+    calc
+      1 ≤ Real.pi := by linarith only [Real.one_le_pi_div_two]
+      _ = ‖Gamma (1 / 2 + (u : ℂ) * I)‖ ^ 2 * Real.cosh (Real.pi * u) :=
+        (norm_Gamma_half_add_mul_I_sq_mul_cosh u).symm
+      _ ≤ _ := mul_le_mul_of_nonneg_left hcos (sq_nonneg _)
+  apply (sq_le_sq₀ (Real.exp_pos _).le (norm_nonneg _)).mp
+  rw [pow_two, ← Real.exp_add, show -(Real.pi * |u| / 2) + -(Real.pi * |u| / 2) =
+    -(Real.pi * |u|) by ring, Real.exp_neg, ← one_div]
+  exact (div_le_iff₀ (Real.exp_pos _)).mpr hsq
+
+private theorem Gamma_rightLine_recurrence {z : ℂ} {L : ℝ} (hz : 0 < z.re)
+    (hL : 0 ≤ L) (h : L ≤ ‖Gamma z‖) : z.re * L ≤ ‖Gamma (z + 1)‖ := by
+  have hz0 : z ≠ 0 := by
+    intro he
+    rw [he, zero_re] at hz
+    exact (lt_irrefl 0) hz
+  rw [Gamma_add_one _ hz0, norm_mul]
+  exact mul_le_mul (re_le_norm z) h hL (norm_nonneg _)
+
+/-- Both the integer and half-integer progressions at real part at least one
+have the same exponential bound, with a factor `1 / 2` for the first
+recurrence step starting at `1 / 2`. -/
+private theorem exp_le_norm_Gamma_one_add_nat_div_two (u : ℝ) (m : ℕ) :
+    Real.exp (-Real.log 2 - Real.pi * |u| / 2) ≤
+      ‖Gamma (((1 + (m : ℝ) / 2 : ℝ) : ℂ) + (u : ℂ) * I)‖ := by
+  induction m using Nat.twoStepInduction with
+  | zero =>
+    simp only [Nat.cast_zero, zero_div, add_zero, ofReal_one]
+    refine (Real.exp_le_exp.mpr ?_).trans (exp_le_norm_Gamma_one_add_mul_I u)
+    have hlog : 0 ≤ Real.log 2 := Real.log_nonneg (by norm_num)
+    linarith only [hlog]
+  | one =>
+    let z : ℂ := 1 / 2 + (u : ℂ) * I
+    have hre : z.re = 1 / 2 := by
+      rw [show z = ((1 / 2 : ℝ) : ℂ) + (u : ℂ) * I by dsimp [z]; push_cast; rfl]
+      simp
+    have hz : (((1 + (1 : ℕ) / 2 : ℝ) : ℂ) + (u : ℂ) * I) = z + 1 := by
+      simp only [z, Nat.cast_one]
+      push_cast
+      ring
+    rw [hz, sub_eq_add_neg, Real.exp_add, Real.exp_neg, Real.exp_log (by norm_num : (0 : ℝ) < 2),
+      ← one_div, ← hre]
+    exact Gamma_rightLine_recurrence (by rw [hre]; norm_num) (Real.exp_pos _).le
+      (exp_le_norm_Gamma_half_add_mul_I u)
+  | more m ih _ =>
+    let z : ℂ := ((1 + (m : ℝ) / 2 : ℝ) : ℂ) + (u : ℂ) * I
+    have hre : z.re = 1 + (m : ℝ) / 2 := by simp [z]
+    have h1 : 1 ≤ z.re := by
+      rw [hre]
+      exact le_add_of_nonneg_right (by positivity)
+    have hz : (((1 + ((m + 2 : ℕ) : ℝ) / 2 : ℝ) : ℂ) + (u : ℂ) * I) = z + 1 := by
+      dsimp [z]
+      push_cast
+      ring
+    rw [hz]
+    exact (le_mul_of_one_le_left (Real.exp_pos _).le h1).trans
+      (Gamma_rightLine_recurrence (zero_lt_one.trans_le h1) (Real.exp_pos _).le ih)
+
 private theorem exp_le_norm_Gamma_two_add_mul_I (t : ℝ) :
     Real.exp (-(Real.pi * |t| / 2)) ≤ ‖Gamma (2 + (t : ℂ) * I)‖ := by
   have hre : (1 + (t : ℂ) * I).re = 1 := by simp
@@ -136,5 +226,72 @@ public theorem exp_le_norm_archimedeanGammaFactor_complex_rightLine (t : ℝ) :
     (norm_archimedeanGammaFactor_complex_rightLine_lower_bound t)
   have hlog : 0 ≤ Real.log (2 * Real.pi) := Real.log_nonneg (by linarith [Real.one_le_pi_div_two])
   nlinarith only [Real.pi_pos, mul_nonneg hlog (abs_nonneg t)]
+
+private theorem exists_cpow_mul_Gamma_rightLine_lower_bound {B d : ℝ} (hB : 0 < B)
+    (τ : ℝ) (hd : 0 < d) (m : ℕ) :
+    ∃ A : ℝ, 0 < A ∧ ∀ t : ℝ,
+      let z : ℂ := ((1 + (m : ℝ) / 2 : ℝ) : ℂ) + (((t + τ) / d : ℝ) : ℂ) * I
+      Real.exp (-A * (1 + |t|)) ≤ ‖(B : ℂ) ^ (-z) * Gamma z‖ := by
+  let x : ℝ := 1 + (m : ℝ) / 2
+  let c : ℝ := Real.log B * x + Real.log 2
+  let a : ℝ := Real.pi / (2 * d)
+  have ha : 0 < a := div_pos Real.pi_pos (mul_pos two_pos hd)
+  refine ⟨|c| + a * (1 + |τ|), by positivity, fun t ↦ ?_⟩
+  let u : ℝ := (t + τ) / d
+  let z : ℂ := (x : ℂ) + (u : ℂ) * I
+  change _ ≤ ‖(B : ℂ) ^ (-z) * Gamma z‖
+  rw [norm_mul, norm_ofReal_cpow_neg hB, show z.re = x by simp [z]]
+  have hu : Real.pi * |u| / 2 = a * |t + τ| := by
+    dsimp [u, a]
+    rw [abs_div, abs_of_pos hd]
+    ring
+  have hloss : c + a * |t + τ| ≤ (|c| + a * (1 + |τ|)) * (1 + |t|) :=
+    calc
+      _ ≤ c + a * (|t| + |τ|) :=
+        add_le_add_right (mul_le_mul_of_nonneg_left (abs_add_le t τ) ha.le) _
+      _ ≤ _ := by
+        nlinarith only [le_abs_self c, ha, mul_nonneg (abs_nonneg c) (abs_nonneg t),
+          mul_nonneg (mul_nonneg ha.le (abs_nonneg τ)) (abs_nonneg t)]
+  calc
+    _ ≤ Real.exp (-(c + a * |t + τ|)) := Real.exp_le_exp.mpr (by linarith only [hloss])
+    _ = Real.exp (-Real.log B * x) * Real.exp (-Real.log 2 - Real.pi * |u| / 2) := by
+      rw [← Real.exp_add, hu]
+      congr 1
+      dsimp [c]
+      ring
+    _ ≤ _ := mul_le_mul_of_nonneg_left (exp_le_norm_Gamma_one_add_nat_div_two u m)
+      (Real.exp_pos _).le
+
+/-- The normalized real factor, including the power of `π`, is bounded
+below exponentially for both parities and any fixed frequency. -/
+public theorem exists_archimedeanGammaFactor_real_rightLine_lower_bound (b : ℕ) (τ : ℝ) :
+    ∃ A : ℝ, 0 < A ∧ ∀ t : ℝ, Real.exp (-A * (1 + |t|)) ≤
+      ‖archimedeanGammaFactor Real.pi 2 (b : ℝ) τ (2 + (t : ℂ) * I)‖ := by
+  obtain ⟨A, hA, h⟩ := exists_cpow_mul_Gamma_rightLine_lower_bound Real.pi_pos τ two_pos b
+  refine ⟨A, hA, fun t ↦ ?_⟩
+  rw [archimedeanGammaFactor_real]
+  dsimp only
+  rw [Gammaℝ_def, neg_div,
+    show (2 + (t : ℂ) * I + ((b : ℝ) : ℂ) + (τ : ℂ) * I) / 2 =
+      ((1 + (b : ℝ) / 2 : ℝ) : ℂ) + (((t + τ) / 2 : ℝ) : ℂ) * I by push_cast; ring]
+  exact h t
+
+/-- The normalized complex factor includes the power of `2π` and no extra
+factor of `2`. Its exponential lower bound allows every angular weight. -/
+public theorem exists_archimedeanGammaFactor_complex_rightLine_lower_bound (n : ℤ) (τ : ℝ) :
+    ∃ A : ℝ, 0 < A ∧ ∀ t : ℝ, Real.exp (-A * (1 + |t|)) ≤
+      ‖archimedeanGammaFactor (2 * Real.pi) 1 ((n.natAbs : ℝ) / 2) τ (2 + (t : ℂ) * I)‖ := by
+  have hB : 0 < 2 * Real.pi := by positivity
+  obtain ⟨A, hA, h⟩ := exists_cpow_mul_Gamma_rightLine_lower_bound hB τ one_pos (n.natAbs + 2)
+  refine ⟨A, hA, fun t ↦ ?_⟩
+  rw [archimedeanGammaFactor_complex]
+  dsimp only
+  rw [Gammaℂ_def, mul_assoc, mul_div_cancel_left₀ _ (by norm_num),
+    show (2 : ℂ) * (Real.pi : ℂ) = ((2 * Real.pi : ℝ) : ℂ) by push_cast; rfl,
+    show 2 + (t : ℂ) * I + (((n.natAbs : ℝ) / 2 : ℝ) : ℂ) + (τ : ℂ) * I =
+      ((1 + ((n.natAbs + 2 : ℕ) : ℝ) / 2 : ℝ) : ℂ) + (((t + τ) / 1 : ℝ) : ℂ) * I by
+      push_cast
+      ring]
+  exact h t
 
 end Masullo
