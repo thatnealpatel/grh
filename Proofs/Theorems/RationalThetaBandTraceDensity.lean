@@ -96,4 +96,29 @@ public theorem rationalThetaBand_trace_tendsto (a α s : ℝ) (hs : 0 ≤ s) (h�
     exact ⟨fun n => (windowKernel_trace b p q f hf (Q n)).2,
       (windowKernel_trace b p q f hf P).2⟩
 
+/-- At fixed position, the full right theta projection and its complement split
+one localized convolution, as in the complementary projections of Remark
+10.4.1.4, p. 457, used in the order of (10.4.1.12–13), p. 458. The ambient trace
+is computed by a summable Fourier expansion. For a below-one test, `φ 0 = 0`,
+so the complementary trace is the negative of the terminal geometric trace
+from `rationalThetaBand_trace_tendsto`. There is no position exhaustion. -/
+public theorem rationalTheta_fixedPosition_trace_split (a α s : ℝ) (hs : 0 ≤ s) (hα : 0 ≤ α)
+    {ρ φ : ℝ → ℂ} (hρ : Continuous ρ) (hρK : HasCompactSupport ρ)
+    (hφ : ContDiff ℝ 2 φ) (hφK : HasCompactSupport φ) {A : H →L[ℂ] H}
+    (hA : ∀ z : H, (A z : ℝ → ℂ) =ᵐ[volume] fun x =>
+      (ρ x * (symmetricStripWeightRoot α s x : ℂ)) *
+        ∫ y, φ (x - y) * z y * (symmetricStripWeightRoot α s y : ℂ)⁻¹)
+    {ι : Type*} (b : HilbertBasis ι ℂ H) {T : ℂ} :
+    let P := (rationalThetaWeightedEvenImage a hs hα univ).toSubmodule.starProjection
+    HasSum (fun i => ⟪b i, A (P (b i))⟫_ℂ) T →
+      HasSum (fun i => ⟪b i, A (b i)⟫_ℂ) (φ 0 * ∫ x, ρ x) ∧
+      HasSum (fun i => ⟪b i, A ((ContinuousLinearMap.id ℂ H - P) (b i))⟫_ℂ)
+        (φ 0 * (∫ x, ρ x) - T) := by
+  intro P hgeom
+  have hambient := weightedAnnulus_ambient_trace (continuous_symmetricStripWeightRoot α s)
+    (symmetricStripWeightRoot_pos α s) hρ hρK hφ hφK hA b
+  refine ⟨hambient, ?_⟩
+  simpa only [sub_apply, ContinuousLinearMap.id_apply,
+    map_sub, inner_sub_right] using hambient.sub hgeom
+
 end Masullo.OperatorTrace

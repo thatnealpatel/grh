@@ -382,3 +382,41 @@ rederiving the proof or reusing an old check verdict. No scheduler,
 polling, Go change, or hypothetical time saving was tested. The result
 controls only the modeled fixed-cutoff split; it does not identify
 Masullo's orbital pieces or show that his mechanism requires this lift.
+
+## Live follow-up: Use the recovered split without replaying it
+
+Run `01a20693-fc8c-707d-b21c-d5c97d6733ae` matches the input and
+final response of work Yah `01a20693-fe94-72ee-9f9f-a523d5c0785d`.
+Its baseline launch archive and initial accepted tip were
+`b3c013c0f661e3ed459db26e8f7a2cfeb4acbd29`, with the same `cmd/godel`
+and `internal/godel` trees as this improvement's inspected tip,
+`08fd2e8f3d0e183df048b670f49d5da031ab3675`. Work's matched lookup
+returned the previous improvement's copy-split recovery; work verified
+that `85933a3338cd4d17662c07b9f27a3e6e818a6d38` was already an ancestor
+and moved to the fixed-position global band limit (seqs. 14–21). It
+never tried to re-integrate the stale predecessor.
+
+Two draft builds failed (seqs. 46 and 53): The first caught warnings and
+a bad identifier, and the second caught a missing explicit introduction
+of an implicit basis index. The third passed all scoped targets (seq.
+62). Reviewer `Lfrixhx` checked the fixed statements and pinned text,
+not a moving build. Its registered output
+`65aa54379aa515b5859cb22c58968c261b491450` is review evidence, not a code
+patch. The direct output `c25eaa71a8fdcedbc39f141cc2566de0ffdd7a48`
+was replayed on `31e9d16b5376b23c54a34e4cff620b9c5a9dfabd`, after
+intervening note-only changes. Candidate
+`0587e951572b0a29ad52f70c14493344a19c2455` passed the prebuild status
+comparison, warning-fatal build, and joint-import binder and axiom
+checks and adopted on the first attempt (seqs. 75–90). No checked proof
+was stranded and no alternate proof candidate was built. The status
+calls triggered the same identical-arguments nudge as the scalar
+transfer run, but covered distinct decisions (startup, allocation,
+and prebuild); no repeated post-adoption query was needed.
+
+**Decision:** The contrast with the preceding copy split isolates a
+concurrent adoption race, not a failed proof-selection rule. Keep the
+current matched-handoff lookup, scoped direct integration, and prebuild
+comparison; no change to Go, router, or retry policy was tested. This
+improvement carried the next fixed-position inference into Lean rather
+than rerouting the proof. See the [trace split handoff](../../obligations/trace-below-shell-q.md#ambient-and-complementary-traces-at-fixed-position)
+for its evidence and open position-exhaustion premise.

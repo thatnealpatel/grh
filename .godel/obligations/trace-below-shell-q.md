@@ -740,3 +740,59 @@ full-order interior jet sum. See the [reviewed complementary trace
 argument](trace-spectral-strip-q.md#convolution-after-projection). The
 transport to the regular diagonal and necessity of the modeled local
 identification in (12.5.1.1–4), pp. 519–520, remain separate obligations.
+
+## Ambient and complementary traces at fixed position
+
+[`rationalTheta_fixedPosition_trace_split`](../../Proofs/Theorems/RationalThetaBandTraceDensity.lean)
+uses the very same weighted $L^2(dx)$ convolution $A_\rho$ and full theta
+projector $P$ as `rationalThetaBand_trace_tendsto`. For any Hilbert basis,
+its ambient basis trace is $C_\rho=\varphi(0)\int\rho(x)\,dx$. With the
+terminal $\operatorname{Tr}(A_\rho P)=T_\infty$ supplied by the preceding
+result, the complementary basis trace is
+$\operatorname{Tr}(A_\rho(1-P))=C_\rho-T_\infty$. In particular the
+below-one test gives $-T_\infty$. The operator is identified by its
+integral formula a.e. for each input vector, not by choosing an a.e.
+kernel representative on the diagonal.
+
+**Source and repair:** Theorem 9.3.3.5(2), p. 429, uses a smooth compact
+class test and a smooth position cutoff; (9.3.3.15–20), p. 431, give the
+identity-value diagonal integral. Remark 10.4.1.4, p. 457, supplies the
+complement relation; (10.4.2.2–3), pp. 458–459, split the trace with
+projections to the left of convolution. Here the band limit needs the
+right-projection order of (10.4.1.12–13), p. 458, in the normalized
+rational log chart, with a continuous compact position cutoff and a
+$C_c^2$ log test. `weightedAnnulus_ambient_trace` uses the same Fourier
+window construction as the band limit: Each periodic mode has modulus
+one, the input window covers the output support, and the two weights
+cancel in the rank-one diagonal. Summing the Fourier coefficients at
+zero gives $\varphi(0)$. Subtraction of convergent basis diagonals then
+supplies the split, without claiming the two projection orders agree
+at fixed position and without using a Hilbert-Schmidt kernel as a
+trace formula.
+
+**Evidence:** Independent Yah `ambient-trace-review` (`XewzjSE`, source
+base `08fd2e8f3d0e183df048b670f49d5da031ab3675`) reviewed both fixed
+statements and the sign, operator order, and manuscript dependencies
+from pinned Markdown and PDF layout extraction. The source reading
+remains provisional, not a rendered-page verification. Owning session
+`01a2069a-2698-74fe-a635-b149f9331696` records the candidate provenance,
+exact build, joint-import signature and axiom checks, and adoption.
+
+**Next inference:** Position exhaustion here requires the *unlocalized*
+$A(1-P)$ in the same norm to admit a summable rank-one expansion and have
+trace equal to the full-order open-strip sum (compare (10.4.2.20), p. 463).
+The [reviewed jet-model argument](trace-spectral-strip-q.md#convolution-after-projection)
+constructs the trace for the complement of the common jet kernel, not
+for an arbitrary projection. `rationalThetaWeightedLog_closure_subset_ker`
+only supplies the forward inclusion. To work on the reverse inclusion
+at $a=1/2$, $s=2r$, and the common full-measure set of $0<\alpha<1/2$, a
+runnable independent substep is the [Gaussian-division moment repair](trace-theta-density-q.md#gaussian-division-and-compact-theta-approximation):
+For fixed smooth compact $\beta$ normalized by $\int e^{x/2}\beta(x)dx=1$,
+show $m e^{-L/2}\beta(\cdot-L)$ has moment $m$ and tends to zero in the
+weighted derivative norm through order $2r$ (or any fixed finite order),
+using the factor $e^{-(1/2-\alpha)L}$ times a polynomial. This allows
+moment-zero approximants without asserting continuity of that moment
+in the strip norm. The quotient bounds and their weighted Fourier
+approximation, the complementary trace-class and zero-sum identification
+in Lean, transport to the regular diagonal, and necessity of the modeled
+geometric identification remain separate.
