@@ -89,3 +89,73 @@ Lean declaration, build, or formal refutation is claimed.
 [source]: ../sources/masullo/README.md
 [tensor]: primary-divisorial-tensor-cut.md
 [local]: local-unit-cut-mellin.md
+
+## Lean-checked raw Mellin multiplier at two distinct rational primes
+
+[`Masullo.rationalTwoPrimeMaskedZetaIntegral`](../../Proofs/Theorems/RationalThetaTwoPrimeMellin.lean)
+uses `rationalIdeleHaar` on the actual rational idele group with a Borel
+measurable-space instance. For distinct `p q : Nat.Primes`, complex
+Schwartz `b` on the real line, and `1 < z.re`, it gives absolute
+integrability of the joint-mask density and
+$$
+Z(M_{p,q}F_b,z)=(1-p^{-z})(1-q^{-z})Z(F_b,z),
+\qquad F_b=b\otimes 1_{\widehat{\mathbb Z}}.
+$$
+Here `M` retains integral units at the two places, and the weight in
+both raw integrals is the positive idelic norm to the complex power
+`z`. Neither an LF witness nor moment vanishing is required.
+
+The [accepted joint-cut theta theorem](primary-divisorial-theta-range.md#checked-small-norm-tail-at-any-two-distinct-primes)
+compares orbit sums on classes, while
+[`rationalUnramifiedZetaIntegral_eq_thetaMellin`](../../Proofs/Theorems/RationalThetaMellinKernel.lean)
+unfolds the raw integral only for the uncut tensor. The new proof stays
+upstairs. On the integral cylinder the excluded nonunits at a place
+are precisely its left translate by the uniformizer there: The local
+norm is an integral power of the inverse prime, so after lowering the
+norm by one step, strict inequality with one is equivalent to the
+original weak inequality. The Archimedean coordinate and all other
+finite coordinates are unchanged. Thus the second subtraction keeps the
+first unit predicate intact, and its intersection term is the double
+translate. Haar invariance integrates each translated density with
+its inverse-prime norm factor. Absolute integrability follows from the
+accepted uncut density and the translated differences; the proof does
+not need a separate measurability theorem for the cut.
+
+**Source scope:** The [filtration audit](divisorial-filtration.md)
+verifies the disjoint test set in (1.3.2.2), p. 25. The
+[tensor audit](primary-divisorial-tensor-cut.md) verifies the outside-`S`
+input in (11.3.1.1), p. 492, and the different printed right-hand
+index in §1.3.2, p. 26. Here the base is the real place only, and the
+unit factors go at the two finite primes, with integer-ring factors
+at the remaining places outside the base. The rendered reading at
+this note's start separately verifies the inverse-Euler-factor claim
+in §1.3.2, p. 26; the formal result uses the repaired support, not the
+printed indexing or an overlapping cut. The
+[global theta source review](../formalize/global-box-theta-operator.md#source-and-scope)
+identifies the kernel comparison in (5.1.2.1), p. 224. The new result
+is a raw convergence-half-plane input for that comparison, not a
+kernel theorem, descent, or continuation. No new manuscript reading
+was needed.
+
+**Review and checks:** Independent exact-source review
+`joint-mellin-statement` (`GfbBjjO`), housed in Yah
+`01a20691-c6d1-74e3-9211-0645f7562c15`, checked the statement, the
+inherited source scope, and the local shell, uniformizer, and Haar
+reduction against `021fb6f55c65487e32d54130f5e1b0ebeda089f7`, without
+elaboration. The owning session also records the checked dependency
+probes, exact integrated candidate, joint signature and axiom report,
+and adoption result.
+
+**Next bounded check (formalization only):** Show that if the joint
+masked class theta vanishes, then the uncut lattice theta vanishes at
+every positive norm. The accepted four-scale formula, evaluated on the
+positive norm section, already gives
+`(1 - D_p)(1 - D_q) θ_b = 0`, where `D_p f(t) = f(p*t)`. Prove
+injectivity of `1 - D_p` on profiles tending to zero at infinity by
+iterating the dilation, and use it twice. The needed limit for `θ_b`
+is already proved privately as `rationalTheta_tendsto_zero_atTop` in
+[`RationalThetaOrbitalConstant`](../../Proofs/Lemmas/RationalThetaOrbitalConstant.lean)
+from the accepted uniform tail; the limit for its `q`-difference then
+follows by scaling. No new theta computation is needed. Nonvanishing of
+the scalar factors on the fixed line, and assembly with the existing
+uncut line-kernel equivalence, are separate from this check.
