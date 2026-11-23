@@ -460,20 +460,70 @@ readings by exact-source inspection, not elaboration. The same owning
 transcript records the dependency probe, integrated build, joint
 signature and axiom reports, and adoption.
 
-**Next check:** At positive real norm $t$ and for $p\ne q$, compute the
-theta sum of the joint witness as the $p$-masked sum at $t$ minus the
-$p$-masked sum at $qt$. The two instances of
-`rationalAdelePrimeMasked_section_support_iff` already give the joint
-support by conjunction, with a single integer index. The proof of
-`rationalTheta_eq_primeMasked_idele_sum` already reindexes the terms
-removed at $q$ by $n=qm$ on this section. The remaining step is to
-carry that reindexing through the extra restriction $p\nmid n$, using
-$p\nmid qm\iff p\nmid m$, and subtract the absolutely summable
-restricted series. Substituting the two landed $p$-masked sum values
-then gives the four-term formula on the section. The [theta source
-interface][theta-sum] supplies the inherited rendered representative
-sum in (2.2.3.1), p. 81. Transport off the section and descent across
-arbitrary lifts are not part of this next check.
+**Continuation:** The [section comparison below](#checked-two-prime-theta-on-the-positive-norm-section)
+now evaluates the joint witness supplied here.
+
+## Checked two-prime theta on the positive norm section
+
+[`Masullo.rationalTheta_eq_twoPrimeMasked_idele_sum`][two-prime-section]
+takes distinct `p q : Nat.Primes`, `b : 𝓢(ℝ, ℂ)`, and `0 < t`. Write
+$\sigma(t)=(t,1,\ldots)$ and use the representative sum over
+$\mathbb Q^\times$. The norm series of the joint mask is summable, and
+
+$$
+\Theta_{p,q}(\sigma(t)) = \Theta_p(\sigma(t)) - \Theta_p(\sigma(qt)).
+$$
+
+The statement is for the underlying tensor functions, without any LF
+witness hypotheses. The companion
+[`Masullo.exists_rationalAdeleUnramifiedTwoPrimeCutSection`][two-prime-section]
+takes `f : RationalAdeleSchwartzLF` with `f.toUnion.val = rationalAdeleUnramified b`.
+It gives a single pair of LF tests for all positive $t$, with exact
+pointwise mask equalities on all additive adèles. No spatial or Fourier
+zero-mode condition, parity, or averaging is used.
+
+Both pieces at $q$ are dominated by the norm of the single-prime
+series. The two instances of
+`rationalAdelePrimeMasked_section_support_iff` identify the discarded
+indices as $n\in\mathbb Z\setminus\{0\}$ with $p\nmid n$ and $q\mid n$.
+Multiplication by $q$ in $\mathbb Q^\times$ pulls that index set back
+to the nonzero integers $m$ with $p\nmid m$, since $p\ne q$. It pulls
+the discarded summand back to the single-prime summand at $qt$,
+including the zero extensions off those index sets. No class transport
+or descent across arbitrary lifts is asserted.
+
+**Source scope:** The [ordinary filtration note][ordinary] supplies the
+inherited rendered disjointness clause (1.3.2.2), p. 25, applicable with
+$S=\{\infty\}$. The [tensor audit][tensor] separately verifies the
+outside-$S$ input in (11.3.1.1), p. 492, and the printed right-hand
+index in §1.3.2, p. 26. We use the repaired complement of
+$S\cup\{p,q\}$, not that printed index. The
+[theta source interface][theta-sum] supplies the inherited rendered
+nonzero representative sum (2.2.3.1), p. 81. The dilation identity is
+a Lean calculation on this repaired tensor, not a source reading or
+an assertion about an entire isotype.
+
+**Review and checks:** Fixed-statement independent source review
+`two-prime-section-review` (`OIzuCBZ`), in Yah
+`01a205e8-2171-719c-b51e-19e976a68a1f`, checked the two signatures, the
+reindexing and LF reductions, and the applicability of the inherited
+readings at `7b1cd58ee10636e87883a82168945cabd56d8c72` without
+elaboration. The owning transcript in that same session records the
+matching-workspace dependency probe and the integrated build and
+joint signature and axiom checks.
+
+**Next check:** Establish finite-unit invariance of the joint mask
+under multiplication on additive adèles. The one-prime file's
+private `primeMasked_finiteUnit_mul` already proves preservation of
+every finite valuation and the real coordinate locally in its proof.
+Factoring out that calculation gives the two unit tests and the
+integer-ring test simultaneously, even without distinctness. This
+would discharge the joint invariance premise of the existing
+`rationalIdeleClass_normOne_invariant_iff_finiteUnits` reduction;
+there is no new series calculation. It would not settle descent
+across arbitrary lifts.
+
+[two-prime-section]: ../../Proofs/Theorems/RationalThetaUnramifiedTwoPrimeCut.lean
 
 [unramified-prime-cut]: ../../Proofs/Theorems/RationalThetaUnramifiedPrimeCut.lean
 
