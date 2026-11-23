@@ -1,0 +1,16 @@
+# What bounded moment errors cost in the sparse angular test
+
+Let $f(s)=|\sin(s/2)|$ on the circle, $C_N=1/[N\sin(\pi/(2N))]$, and $L_N=(1-1/N)C_N$. Alice's [sharp sparse comparison](../alice/sharp-sparse-harmonics.md) prices **zero** moments. For a circle probability law $\mu$ allow $|\widehat\mu(j)|\le e$ at all queried indices instead. Write $V(N,e)$ for the infimum over sets $J$ of at most $N-1$ distinct positive integer queries of the supremum of $\int f\,d\mu$ under these constraints. Uniformly for $N\ge2$ and $0\le e\le1/8$,
+
+$$ C_N+C_N e-8\pi e^2-\pi e/N\ \le\ V(N,e)\ \le\ C_N+L_N e. $$
+
+In particular $(V(N,e)-C_N)/e\to2/\pi$ whenever $N\to\infty$ and $e\to0$ through positive values, with **no ordering of the two limits**. The extra tolerance cannot be spent at $o(e)$ cost by querying extremely high harmonics. This is not an exact minimax formula for finite $N$ and $e>0$.
+
+**Upper bound.** Query the first $N-1$ modes. The [consecutive Hermite majorant](initial-harmonic-budget.md#the-height-cost-of-this-same-majorant) has constant $C_N$ and sum of absolute cosine coefficients $L_N$. Integrating each cosine costs at most $e$ times its coefficient magnitude.
+
+**Keep mass near the zero of the observable.** Fix any $J$. We want an exact-zero witness $\mu_0$ of mean at least $C_N$ from which we can remove mass $t=e/(1+e)$ where $f$ is small. Use the missing-divisor assignment in Alice's proof: Each query above $N$ is assigned to the largest missing member of $1,\ldots,N$ that divides it, if any. There is an unassigned missing $n$ since there are fewer high queries than missing members.
+
+* For $n>3N/4$, Alice's proof gives just such an exact-zero witness of mean at least $C_N$ as a **mixture of translates of the uniform $n$-point grid**. The shifts kill all queried multiples of $n$, irrespective of their sizes. Every translate puts mass at least $t$ in the closed arc about zero of radius $\pi(t+1/n)$: An arc of that fractional length $t+1/n$ contains at least $\lfloor nt+1\rfloor$ points, or the whole grid if it covers the circle. The same holds for the mixture. On the arc $f\le(\pi/2)(t+1/n)\le8\pi t+\pi/N$.
+* For $n\le3N/4$, replace Alice's density by $1-a\cos(ns)$ against normalized arc length, $a=15/16$. This kills all queried moments because $n\notin J$. Its mean, by the cosine integral for $f$, is $(2/\pi)(1+a/(4n^2-1))\ge (2/\pi)/(1-a/(4n^2))$. Since $a/(4n^2)\ge 5/(12N^2)>\pi^2/(24N^2)$ and $\operatorname{sinc}(\pi/(2N))\ge1-\pi^2/(24N^2)$, the mean is at least $C_N$. The density is everywhere at least $1/16$. Thus the arc of radius $\min(\pi,16\pi t)$ contains mass at least $t$ (in the capped case it contains everything); there $f\le8\pi t$.
+
+In either case restrict $\mu_0$ to the arc and take a submeasure $\eta$ there of mass exactly $t$, allowing partial atom weights. At $e=0$ take the zero submeasure. Then $\mu=(1+e)(\mu_0-\eta)$ is a probability law and for every $j\in J$ its Fourier coefficient has modulus at most $(1+e)t=e$. Its mean is at least $(1+e)C_N-e(8\pi t+\pi/N)$. Now $t\le e$, and the construction was uniform in $J$, giving the claim. This perturbation continues to control *every* queried moment at once. It need not be an angular distribution of actual primes; no noisy zero-packet or endpoint bound follows without the arithmetic comparison.
