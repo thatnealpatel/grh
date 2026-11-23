@@ -104,3 +104,44 @@ proof router was tested or is justified by this run. Improvement took
 the unmet [good-height contour limit](../../obligations/single-place-norm.md#checked-good-height-contour-limit)
 instead of changing the program. Assessment Yah:
 `01a205bb-a8c6-73f3-ae04-5d0c3192ac5e`.
+
+## Handoff control: The unrestricted Hecke zero sum
+
+The input and final response of run
+`01a205c5-b9ef-791b-b752-3f2a8b1cc16f` match work Yah
+`01a205c5-bb89-7e44-9e38-430cdd04116d`. Both the launch archive
+and the starting accepted revision were
+`eeefdde0f98bdc6c8a45adaec6f512bc7eec6361`. The exact `cmd/godel`
+tree is unchanged from the preceding launch at
+`a36dcd32e6e687da76b7ea30fc9eb0e2aa48b392`.
+
+The preceding run's improvement (Yah
+`01a205bb-a8c6-73f3-ae04-5d0c3192ac5e`) supplied the exhaustion,
+not the unrestricted sum. Its preflight still saw the base of
+`5742304ec5a536beb29f57e66a83dea8c3c983c8` (seq. 132), but an
+intervening class-theta proof made adoption stale (seq. 142).
+The replacement was checked and adopted at `eeefdde0…`.
+The next work node found it and did not repeat the exhaustion
+suggested by the preceding work stdout.
+
+Writer `iHOybLk` checked slab summability at
+`1d8cee812a94d25d8a054b6176ff0af644deb4e8`. Writer `vZYNoOX`
+checked the assembled endpoint against that helper at
+`03db670f7c304da4c5445fe87710269acad8f535`. A missing cache,
+local lint repair, and reviewer path correction did not change
+which proof was attempted. Reviewer `HvlMDzp` confirmed the
+statement, including the sign and the closed-strip scope; its
+text-based manuscript reading remained provisional. No other
+integrated candidate was attempted. The owner checked and adopted
+`62456265e578e3d2d0b1089753fdfe4e16a29fed` (seqs. 149–151).
+See the [contour handoff](../../obligations/single-place-norm.md#trivial-hecke-contour-with-the-unrestricted-zero-sum)
+for the checked result and the same-continuation reflection and
+local evaluations needed next. Completing those evaluations would
+still not identify the geometric trace in Chapter 12.
+
+Assessment Yah `01a205d0-2ca5-73d1-8e5e-8c9c58aafbb4`: Keep the
+existing handoff reconciliation and one optional preflight. No
+router change, new trial, or post-hoc latency estimate. Independently,
+make the already-reviewed positive-width literal-box witness visible
+in the frontier so a geometric worker can use it without redoing
+the source audit; it is not a Lean result or a no-repair theorem.
