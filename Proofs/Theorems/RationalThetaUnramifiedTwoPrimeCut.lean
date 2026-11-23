@@ -3,12 +3,14 @@ module
 public import Theorems.RationalAdelePrimeMaskLF
 
 /-!
-# The successive two-prime theta cut on the positive norm section
+# The successive two-prime theta cut on rational idele classes
 
 For the corrected disjoint tensor cut (Masullo, §1.3.2, p. 26), the terms
 removed at `q` from the `p`-masked theta series ((2.2.3.1), p. 81) are
 reindexed by multiplication by `q`. This preserves the condition of
-being prime to `p` and replaces the real scale `t` by `q * t`.
+being prime to `p` and replaces the real scale `t` by `q * t`. Both masks
+are invariant under finite units, so the section identity gives the class
+identity with inverse-uniformizer translation.
 -/
 
 open NumberField IsDedekindDomain
@@ -18,6 +20,8 @@ namespace Masullo
 
 local notation "A" => AdeleRing (𝓞 ℚ) ℚ
 local notation "J" => IdeleGroup (𝓞 ℚ) ℚ
+local notation "C" => IdeleClassGroup (𝓞 ℚ) ℚ
+local notation "vₚ" => Equiv.symm (Rat.HeightOneSpectrum.primesEquiv (R := 𝓞 ℚ))
 local notation "E" => RationalAdeleSchwartzLF
 local notation "ιˣ" => IdeleGroup.unitEmbedding (𝓞 ℚ) ℚ
 local notation "σ" t => rationalIdeleLogSection (Multiplicative.ofAdd (Real.log t))
@@ -136,5 +140,67 @@ public theorem exists_rationalAdeleUnramifiedTwoPrimeCutSection (p q : Nat.Prime
   refine ⟨g, h, hg, hh, fun t ht ↦ ?_⟩
   rw [hh, hg, hf]
   exact rationalTheta_eq_twoPrimeMasked_idele_sum p q hpq b ht
+
+private theorem masked_theta_section (U : Set A)
+    (hU : ∀ (x y : A), (∀ v, Valued.v (y.2 v) = Valued.v (x.2 v)) → (y ∈ U ↔ x ∈ U))
+    (b : 𝓢(ℝ, ℂ)) (d : C) :
+    rationalAdeleClassTheta (U.indicator (rationalAdeleUnramified b)) d =
+      rationalAdeleTheta (U.indicator (rationalAdeleUnramified b)) (σ (ideleClassNorm d)) := by
+  classical
+  let f := U.indicator (rationalAdeleUnramified b)
+  have hmul (u : RationalFiniteUnits) (x : A) : f ((rationalFiniteUnitIdele u : A) * x) = f x := by
+    let y := (rationalFiniteUnitIdele u : A) * x
+    have hval (v : HeightOneSpectrum (𝓞 ℚ)) : Valued.v (y.2 v) = Valued.v (x.2 v) := by
+      change Valued.v ((rationalFiniteUnitIdele u : A).2 v * x.2 v) = _
+      rw [map_mul, rationalFiniteUnitIdele_apply_finite,
+        HeightOneSpectrum.adicCompletionIntegers.isUnit_iff_valued_eq_one.mp (u v).isUnit,
+        one_mul]
+    have hw : y ∈ (rationalIntegralAdeles : Set A) ↔ x ∈ (rationalIntegralAdeles : Set A) := by
+      change (∀ v, y.2 v ∈ v.adicCompletionIntegers ℚ) ↔
+        (∀ v, x.2 v ∈ v.adicCompletionIntegers ℚ)
+      simp only [HeightOneSpectrum.mem_adicCompletionIntegers, hval]
+    have hr : rationalAdeleReal y = rationalAdeleReal x := by
+      rw [rationalAdeleReal_apply, rationalAdeleReal_apply]
+      change InfinitePlace.Completion.ringEquivRealOfIsReal Rat.isReal_infinitePlace
+        (((rationalFiniteUnitIdele u : A).1 * x.1) Rat.infinitePlace) = _
+      rw [rationalFiniteUnitIdele_fst, one_mul]
+    change f y = f x
+    simp only [f, Set.indicator_apply, rationalAdeleUnramified, hU x y hval, hw, hr]
+  have hradial := (rationalIdeleClass_normOne_invariant_iff (rationalAdeleClassTheta f)).mp
+    ((rationalIdeleClass_normOne_invariant_iff_finiteUnits _).mpr (by
+      intro u c
+      obtain ⟨a, rfl⟩ := QuotientGroup.mk_surjective c
+      rw [rationalFiniteUnitClass_coe, ← QuotientGroup.mk_mul,
+        rationalAdeleClassTheta_mk, rationalAdeleClassTheta_mk]
+      refine tsum_congr fun r ↦ ?_
+      rw [mul_left_comm (ιˣ r), Units.val_mul, hmul]))
+  rw [hradial d]
+  change rationalAdeleClassTheta f (rationalIdeleClassLogSection
+    (Multiplicative.ofAdd (Real.log (ideleClassNorm d)))) = _
+  rw [rationalIdeleClassLogSection_apply, rationalAdeleClassTheta_mk]
+
+/-- The joint tensor cut at distinct `p` and `q` is the inverse-`q`-uniformizer
+class theta difference of the single cut at `p`. -/
+public theorem rationalAdeleClassTheta_twoPrimeMasked (p q : Nat.Primes) (hpq : p ≠ q)
+    (b : 𝓢(ℝ, ℂ)) (d : C) :
+    rationalAdeleClassTheta (Set.indicator (rationalAdelePrimeUnits p ∩ rationalAdelePrimeUnits q)
+      (rationalAdeleUnramified b)) d =
+        rationalAdeleClassTheta (rationalAdelePrimeMasked p b) d -
+          rationalAdeleClassTheta (rationalAdelePrimeMasked p b)
+            ((QuotientGroup.mk (rationalThetaRadialUniformizer (vₚ q)) : C)⁻¹ * d) := by
+  have hu (v : Nat.Primes) (x y : A) (hval : ∀ w, Valued.v (y.2 w) = Valued.v (x.2 w)) :
+      y ∈ rationalAdelePrimeUnits v ↔ x ∈ rationalAdelePrimeUnits v := by
+    change Valued.v (y.2 (vₚ v)) = 1 ↔ Valued.v (x.2 (vₚ v)) = 1
+    rw [hval]
+  have hsingle := masked_theta_section (rationalAdelePrimeUnits p) (hu p) b
+  have hjoint := masked_theta_section (rationalAdelePrimeUnits p ∩ rationalAdelePrimeUnits q)
+    (fun x y hv ↦ and_congr (hu p x y hv) (hu q x y hv)) b
+  have hq : Rat.HeightOneSpectrum.primesEquiv (vₚ q) = q :=
+    (Rat.HeightOneSpectrum.primesEquiv (R := 𝓞 ℚ)).apply_symm_apply q
+  have hnorm : ideleClassNorm ((QuotientGroup.mk (rationalThetaRadialUniformizer (vₚ q)) : C)⁻¹ * d) =
+      (q : ℝ) * ideleClassNorm d := by
+    rw [map_mul, map_inv, ideleClassNorm_mk, ideleNorm_rationalThetaRadialUniformizer, inv_inv, hq]
+  rw [hjoint d, rationalAdelePrimeMasked, hsingle d, hsingle _, hnorm]
+  exact (rationalTheta_eq_twoPrimeMasked_idele_sum p q hpq b (ideleClassNorm_pos d)).2
 
 end Masullo

@@ -512,16 +512,67 @@ elaboration. The owning transcript in that same session records the
 matching-workspace dependency probe and the integrated build and
 joint signature and axiom checks.
 
-**Next check:** Establish finite-unit invariance of the joint mask
-under multiplication on additive adèles. The one-prime file's
-private `primeMasked_finiteUnit_mul` already proves preservation of
-every finite valuation and the real coordinate locally in its proof.
-Factoring out that calculation gives the two unit tests and the
-integer-ring test simultaneously, even without distinctness. This
-would discharge the joint invariance premise of the existing
-`rationalIdeleClass_normOne_invariant_iff_finiteUnits` reduction;
-there is no new series calculation. It would not settle descent
-across arbitrary lifts.
+The [all-class result below](#checked-two-prime-theta-on-every-rational-idele-class)
+transports this identity without changing the tensor or redoing the
+series calculation.
+
+## Checked two-prime theta on every rational idele class
+
+[`Masullo.rationalAdeleClassTheta_twoPrimeMasked`][two-prime-section]
+takes `p q : Nat.Primes`, `hpq : p ≠ q`, `b : 𝓢(ℝ, ℂ)`, and
+`d : IdeleClassGroup (𝓞 ℚ) ℚ`. Let $M_p b$ and $M_{p,q}b$ be the
+single- and joint-unit masks of the supplied unramified tensor. Then
+
+$$
+\Theta(M_{p,q}b)(d) = \Theta(M_pb)(d) - \Theta(M_pb)([\varpi_q]^{-1}d).
+$$
+
+There is no LF witness, moment, parity, or section hypothesis. The
+proof-private `masked_theta_section` uses the one-prime valuation
+calculation for any mask predicate determined by the finite valuations.
+Finite-unit multiplication preserves those valuations, the integral
+support, and the real coordinate. This checks both unit tests at once,
+without using distinctness. On a representative, commute the finite
+unit past each principal multiplier and apply `tsum_congr`. The two
+norm-one invariance equivalences then reduce both class theta functions
+to the positive section. The translated norm is $qN(d)$, not $N(d)/q$,
+by `ideleNorm_rationalThetaRadialUniformizer`. At this point the accepted
+section identity applies with $t=N(d)>0$.
+
+**Source scope:** The inherited [ordinary filtration reading][ordinary]
+verifies disjointness in (1.3.2.2), p. 25, which holds here since both
+places are finite and $S=\{\infty\}$. The [tensor audit][tensor] verifies
+the outside-$S$ input in (11.3.1.1), p. 492, and separately the printed
+right-hand index in §1.3.2, p. 26. The checked identity uses the repaired
+complement of $S\cup\{p,q\}$, not that printed index. The
+[theta source interface][theta-sum] verifies the nonzero representative
+sum in (2.2.3.1), p. 81. No new source reading was needed. This is neither
+a descent theorem across arbitrary LF lifts nor a range theorem for the
+printed principal-value operator.
+
+**Review and checks:** `all-class-two-prime-statement` (`ZqTlhPv`),
+in Yah `01a20631-9b06-7231-a074-94229e60c07b`, independently checked
+the fixed signature, section reduction, norm direction, and application
+of the inherited readings against `998be47bb20823c621cf4f99969f980f41b8c39b`
+by exact-source review, without elaboration. The same owning transcript
+records the dependency probe and assembled candidate checks.
+
+**Next bounded check:** For $p=2$, $q=3$, identify the two integral
+level-six cells on which both masks are one. In the `j/6` coordinate of
+`rationalAdeleStageRepresentative`, the expected indices are $6$ and
+$30$ (residues $1$ and $5$ modulo $6$). The level-two proof of
+`rationalAdeleLiteralTwoCut_moments` already gives the zero-frequency
+reduction for a factorial-stage assembly: At the zero cell the character
+factor in `rationalAdeleStageFourier_apply` is one, and here each
+surviving profile would have weight $1/6$. What remains is the actual
+joint support identification using `mem_rationalAdeleStageCell_iff`
+and the local unit predicates, then application of the stage formula
+at level six. This would give the Fourier zero mode $\tfrac13\widehat b(0)$,
+not an assertion about arbitrary representatives. The
+[theta source interface][theta-sum] separately verifies the two-mode
+domain in (2.2.4.23), p. 91, and the Fourier integral convention in
+(2.2.4.32), p. 92, under which the phase is one at zero. The finite
+coefficient is a project calculation on the repaired tensor.
 
 [two-prime-section]: ../../Proofs/Theorems/RationalThetaUnramifiedTwoPrimeCut.lean
 
