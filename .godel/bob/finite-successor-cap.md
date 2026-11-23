@@ -47,3 +47,24 @@ $$ \left|\sum w_p s_p e^{i\phi_p}\right|
  \le 1-m+m(0.027+0.946F+0.0315/20)+0.63B+o(1). $$
 
 At the specified joint thresholds this is less than $0.882315+o(1)$. Conversely, if the modulus is $\ge8/9-o(1)$ and $F\le0.9005+o(1)$, then eventually $B>0.012825$. Both strict constant comparisons are checked. This limiting margin strengthens the previous asymptotic implication, but cannot replace a finite calibration on a selected list.
+
+## If the positive budget fails, keep the signed price
+
+Write $S=\sum_i t_i r_i$, the signed rank-two sum **before** taking a positive part in each gap class. For the same $25107\le X\le25108$ and all the same phases and real coefficients, define
+
+$$C(F,T)=0.8877+0.873(F-0.9005)+0.956(T-0.002389).$$
+
+Then the full signed modulus is **less than $C(F,S)$**, without either threshold as a hypothesis. Indeed the half-edge deficit bound above uses $1-F$ minus the two endpoint allowances; the local maxima $L_i$ and their interpolation errors do not depend on either measured scalar. Undoing their definition adds $+\beta S$, not $+\beta B$. Subtract the expression at the two calibration values from the one with the actual data: Only $+\alpha(F-0.9005)+\beta(S-0.002389)$ remains. The constant at calibration already includes all rounding and endpoint costs. As $S\le B$, the signed test retains every rejection by $C(F,B)<8/9$ and hence by the old rectangle. It needs the same consecutive prime triples but no grouping by gap. A lower bound on $B$ is **not** a lower bound on $S$.
+
+Two controls distinguish even the two affine tests with the **same** uniform intercept. Take the prime $q=170141183460547116246349746877629464647$, $y=q^{3/5}$, $X=(3\log y)^2$. Total mass exceeds $8/9$. Use the full prime support for the modulus and the earlier clip for the two statistics. Rounded values:
+
+| Phases at this cutoff | $F$ | $B$ | $S$ | $C(F,B)$ | $C(F,S)$ |
+|---|---:|---:|---:|---:|---:|
+| Actual $y\log p$ | .9022424 | .0027571 | .0018719 | .8895731 | .8887268 |
+| Residue control $6\pi p/17\pmod\pi$ | .8933503 | .0114424 | −.0003759 | .8901134 | .8788151 |
+
+For the actual phases **both** old thresholds fail, but the signed price beats $8/9$. The integer was located by a floating-point search near $2^{127}$; the [standalone measurement](check-signed-successor-price.py) uses outward intervals at the exact prime, not the search approximations. Its eight signed harmonic statistics at the named point are all below $0.1$. This is not evidence of a selected peak or a rejection unique to successor methods.
+
+The second row is a control on the *same weights*, not untwisted phases at any asserted height. Its signed $+17$ harmonic attains the full mass since $e^{34i\phi_p}=1$. The $d=6$ pool alone exceeds $0.002389$. Thus stopping at that pool correctly decides the old rectangle, but misses a certified raw-modulus cap, even in a phase model passing a selection harmonic outright. Failing $C(F,B)<8/9$ means this particular upper expression does not close, not that all bounds using $(F,B)$ must fail. Replay `check-finite-successor-cap.py` for the common majorant and `check-signed-successor-price.py` for the two strict comparisons, both with SageMath 10.9 Python and assertions enabled.
+
+**Next selected list.** Report the requested rectangle verdict, but if the purpose is raw exclusion, also accumulate $S$ and test the affine upper price with the actual $F$. Outside the calibrated slab one must certify the intercept at the new cutoffs before using a finite verdict. On a cell bound the score throughout, not only at the center; signed pooling has the same sum-of-absolute-coefficient variation allowance as the positive budget. The limiting proof above likewise uses the signed tapered sum before relaxing to $B$, but keeps its $o(1)$. Neither control resolves the margin on nonempty, nontrivial-mass, *actual* selected lists.
