@@ -1,0 +1,55 @@
+{
+  "key": "ca025562bbc746aad3f3e5c0772d328a2ac0fc7b289d406421aba548476187f3",
+  "revision": "2aa04d22e5867a292f2a2bc2e3c6799d81afe3198a90de95e5e893aaffac5444",
+  "outcome": "landed",
+  "source": "Masullo, The Music of the Primes, SHA-256 e039d3f6cf0a4b14f03c7edb85097752dd65c0a2fe543c76fe992be234f97bf5. Chapter 1, §1.2.1 item (1), printed p. 13, one-based PDF ordinal 13: Hilbert completion sequence following the two topologically exact sequence displays and Mellin discussion. See §1.1.4, printed p. 12/ordinal 12, global theta quotient and both zero modes; §9.2.2.9 and Lemma 9.2.2.10(2), printed pp. 416–417/ordinals 416–417, canonical Haar, (9.2.2.31) and (9.2.2.34); Definition 10.1.1.1(1) and (10.1.1.3), printed p. 434/ordinal 434, global twisted theta closure, distinct from the local (2); §10.2.2 opening extension and (10.2.2.1)–(10.2.2.2), printed p. 445/ordinal 445, symmetric base and right-hand Hilbert quotient. Cross-checked full-page rasters and crop OCR against the pinned PDF text.",
+  "finding": "Partial repair, not the printed all-isotype claim. Item (1) announces a short exact sequence obtained by Hardy–Sobolev completion of the three isotypic terms, all Hilbert; §10.2.2 presents the Hilbert quotient as equivalent by Open Mapping to the normed completion for the quotient norm. This comparison does not establish that the distance to the original theta range separates the original quotient classes, even if the range was closed for the finer test topology. The generic lemma gives the projection to the orthogonal complement, with kernel the ambient closure K, norm the distance to the original range, and a dense descended map on E/T with kernel e⁻¹(K)/T. For the represented rational global two-mode LF source in the trivial norm-one isotype, the accepted half-twisted class theta embeds modulo exactly its original theta kernel and densely into K. The middle is the weighted L² closure of the all-weight log stage, with the canonical rational class Haar formula and the same completion as the endpoint-profile model for a ≤ b, including singleton and symmetric bases, and s ≥ 0 (the Lean result also allows negative s). The right-hand separated completion is realized by the closed orthogonal complement with its inherited inner product and the exact distance seminorm. This does not assert an ordinary norm on E/T, identification of its intrinsic idelic quotient topology, all-character/field exactness, or operator descent, spectral or trace conclusions. See .godel/formalize/rational-radial-hilbert-quotient.md for exact inputs and residuals.",
+  "retry": "To replace the seminorm repair by an ordinary normed completion, prove saturation for the actual theta range: if an all-weight radial profile is a weighted L² limit of half-twisted two-mode class theta of represented LF tests, construct one represented LF test with both polar modes zero and the same half-twisted profile (or exhibit a profile giving a counterexample). To identify the original intrinsic isotypic sequence, supply norm-compatible equivariant idelic-to-profile identifications and prove the continuous lifting/quotient topology for the original LF theta/isotype arrows; for other isotypes and fields, prove the corresponding theta embedding and density of the isotypic test space before applying the Hilbert lemma.",
+  "evidence": [
+    {
+      "path": "Proofs/Lemmas/HilbertDenseQuotient.lean",
+      "declarations": [
+        "Masullo.hilbertQuotientProjection",
+        "Masullo.ker_hilbertQuotientProjection",
+        "Masullo.surjective_hilbertQuotientProjection",
+        "Masullo.norm_hilbertQuotientProjection",
+        "Masullo.exists_denseEmbedding_quotient_rangeClosure",
+        "Masullo.hilbertDenseQuotientMap",
+        "Masullo.hilbertDenseQuotientMap_mk",
+        "Masullo.norm_hilbertDenseQuotientMap_mk",
+        "Masullo.ker_hilbertDenseQuotientMap",
+        "Masullo.denseRange_hilbertDenseQuotientMap"
+      ]
+    },
+    {
+      "path": "Proofs/Theorems/RationalRadialHilbertQuotient.lean",
+      "declarations": [
+        "Masullo.rationalRadialHilbert",
+        "Masullo.coe_rationalRadialHilbert",
+        "Masullo.completeSpace_rationalRadialHilbert",
+        "Masullo.rationalRadialHilbertInclusion",
+        "Masullo.injective_rationalRadialHilbertInclusion",
+        "Masullo.denseRange_rationalRadialHilbertInclusion",
+        "Masullo.norm_rationalRadialHilbertInclusion",
+        "Masullo.norm_rationalRadialHilbertInclusion_positiveIntegral",
+        "Masullo.rationalRadialThetaProfiles",
+        "Masullo.rationalRadialThetaProfiles_apply",
+        "Masullo.rationalRadialThetaTestRange",
+        "Masullo.rationalRadialThetaToHilbert",
+        "Masullo.rationalRadialThetaToHilbert_ae_eq",
+        "Masullo.rationalRadialThetaToHilbert_eq_zero_iff",
+        "Masullo.rationalRadialThetaHilbertRange",
+        "Masullo.rationalRadialThetaHilbertRange_eq_range",
+        "Masullo.rationalRadialThetaClosure",
+        "Masullo.exists_rationalRadialThetaClosureEmbedding",
+        "Masullo.rationalRadialHilbertQuotient",
+        "Masullo.rationalRadialQuotientProjection",
+        "Masullo.rationalRadialQuotientProjection_exact",
+        "Masullo.rationalRadialQuotientMap",
+        "Masullo.norm_rationalRadialQuotientMap_mk",
+        "Masullo.ker_rationalRadialQuotientMap",
+        "Masullo.rationalRadialQuotientMap_dense_complete"
+      ]
+    }
+  ]
+}
