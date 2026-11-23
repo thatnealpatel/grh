@@ -44,7 +44,7 @@ func run(ctx context.Context, args []string) error {
 			return fmt.Errorf("empty task")
 		}
 		if args[0] == "think" {
-			text, err = infer(ctx, os.Getenv("ASTRA_PROXY"), args[1], string(input))
+			text, err = infer(ctx, "http://100.75.6.66:9001/v1/responses", args[1], string(input))
 		} else {
 			text, err = graph(ctx, string(input), func(ctx context.Context, instructions, payload string) (string, error) {
 				cmd := exec.CommandContext(ctx, exe, "think", instructions)

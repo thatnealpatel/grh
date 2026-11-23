@@ -1,6 +1,6 @@
 # Astra graph prototype
 
-From this directory, with `ASTRA_PROXY` set to the base URL of your yah inference proxy:
+From this directory, run the graph against the fixed tailnet proxy at `http://100.75.6.66:9001/v1/responses`:
 
 ```sh
 printf '%s\n' 'Your task here' | go run .

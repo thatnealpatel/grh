@@ -12,17 +12,14 @@ import (
 	"time"
 )
 
-func infer(ctx context.Context, proxy, instructions, input string) (string, error) {
-	if proxy == "" {
-		return "", fmt.Errorf("set ASTRA_PROXY to the yah proxy base URL")
-	}
+func infer(ctx context.Context, endpoint, instructions, input string) (string, error) {
 	body, err := json.Marshal(map[string]any{"model": "gpt-6.2-astra", "instructions": instructions, "input": []any{map[string]any{"role": "user", "content": input}}, "store": false, "stream": true})
 	if err != nil {
 		return "", err
 	}
 	ctx, cancel := context.WithTimeout(ctx, 30*time.Minute)
 	defer cancel()
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, strings.TrimRight(proxy, "/")+"/v1/responses", bytes.NewReader(body))
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, endpoint, bytes.NewReader(body))
 	if err != nil {
 		return "", err
 	}

@@ -54,7 +54,7 @@ func TestGraph(t *testing.T) {
 	}))
 	defer server.Close()
 	result, err := graph(t.Context(), "original", func(ctx context.Context, instructions, input string) (string, error) {
-		return infer(ctx, server.URL, instructions, input)
+		return infer(ctx, server.URL+"/v1/responses", instructions, input)
 	})
 	if err != nil || result != "output:synthesize" {
 		t.Fatalf("%q, %v", result, err)
@@ -113,7 +113,7 @@ func TestTruncatedStream(t *testing.T) {
 		fmt.Fprintln(w, `data: {"type":"response.output_text.delta","delta":"partial"}`)
 	}))
 	defer srv.Close()
-	out, err := infer(t.Context(), srv.URL, "answer", "task")
+	out, err := infer(t.Context(), srv.URL+"/v1/responses", "answer", "task")
 	if out != "" || err == nil || !strings.Contains(err.Error(), "without completion") {
 		t.Fatalf("%q %v", out, err)
 	}
