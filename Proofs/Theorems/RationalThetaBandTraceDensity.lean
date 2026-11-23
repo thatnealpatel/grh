@@ -2,6 +2,7 @@ module
 
 public import Theorems.FixedAnnulusTraceDensity
 public import Theorems.RationalThetaBandClosure
+import Lemmas.WeightedAnnulusTrace
 
 /-!
 # The fixed-position trace density in the global rational theta chart
@@ -19,8 +20,8 @@ reciprocal on the input. An additional right multiplier acts *before* the band
 projector. No input mask is commuted through the projector.
 -/
 
-open MeasureTheory Set InnerProductSpace
-open scoped InnerProductSpace ENNReal
+open Filter MeasureTheory Set InnerProductSpace
+open scoped InnerProductSpace ENNReal Topology
 
 namespace Masullo.OperatorTrace
 
@@ -48,50 +49,51 @@ public theorem rationalThetaBand_traceDensity (a α s Y : ℝ) (hs : 0 ≤ s) (h
           HasSum (fun i => ⟪b i, B (logMultiplier hm (b i))⟫_ℂ) (∫ x, m x * d x) := by
   let w := symmetricStripWeightRoot α s
   let P := (rationalThetaWeightedEvenImage a hs hα {ξ | |ξ| ≤ Y}).toSubmodule.starProjection
-  let p (x : ℝ) := ρ x * (w x : ℂ)
-  let v (x : ℝ) := (w x : ℂ)⁻¹
-  have hc : Continuous (fun x => (w x : ℂ)) :=
-    Complex.continuous_ofReal.comp (continuous_symmetricStripWeightRoot α s)
-  have hv : Continuous v := hc.inv₀ fun x =>
-    Complex.ofReal_ne_zero.mpr (symmetricStripWeightRoot_pos α s x).ne'
-  have hpK : HasCompactSupport p := hρK.mul_right
-  have hp : MemLp p 2 volume := (hρ.mul hc).memLp_of_hasCompactSupport hpK
-  obtain ⟨R, hR, hRsub⟩ := (hpK.union hφK).isBounded.subset_closedBall_lt 0 (0 : ℝ)
-  rw [Real.closedBall_eq_Icc, zero_sub, zero_add] at hRsub
-  have hpR : Function.support p ⊆ Icc (-R) R := fun _ hx => hRsub (Or.inl (subset_tsupport _ hx))
-  have hφR : Function.support φ ⊆ Icc (-R) R := fun _ hx => hRsub (Or.inr (subset_tsupport _ hx))
-  let D := Icc (-(2 * R)) (2 * R)
-  have hq : MemLp (D.indicator v) 2 volume := by
-    obtain ⟨C, hC⟩ := isCompact_Icc.bddAbove_image (f := fun y => ‖v y‖) hv.norm.continuousOn
-    have : IsFiniteMeasure ((volume : Measure ℝ).restrict D) :=
-      isFiniteMeasure_restrict.mpr (isCompact_Icc.measure_lt_top (μ := volume)).ne
-    apply (memLp_indicator_iff_restrict measurableSet_Icc.nullMeasurableSet).2
-    apply MemLp.of_bound hv.aestronglyMeasurable C
-    filter_upwards [ae_restrict_mem (μ := (volume : Measure ℝ)) (s := D) measurableSet_Icc] with y hy
-    exact hC (mem_image_of_mem _ hy)
-  let q : H := hq.toLp _
-  have hqint (F : ℝ → ℂ) : (∫ y, F y * star (q y)) = ∫ y in D, F y * v y := by
-    rw [← integral_indicator measurableSet_Icc]
-    apply integral_congr_ae
-    filter_upwards [hq.coeFn_toLp] with y hy
-    change q y = D.indicator v y at hy
-    rw [hy]
-    change F y * star (D.indicator v y) = D.indicator (fun y => F y * v y) y
-    by_cases h : y ∈ D <;> simp [h, v]
-  let : Fact (0 < 8 * R) := ⟨by positivity⟩
-  obtain ⟨f, hmatch, hf⟩ := exists_circleProfile_of_support (T := 8 * R) (a := -(4 * R))
-    hφ hφR (by linarith) (by linarith)
-  let B := (windowKernel (hp.toLp p) q f).comp P
-  let d := windowKernelTraceDensity (hp.toLp p) q f P
-  refine ⟨B, d, ?_, (windowKernel_traceDensity_integrable (hp.toLp p) q f hf P).1,
-    fun b => windowKernel_traceDensity b (hp.toLp p) q f hf P, ?_⟩
-  · intro z
-    simpa only [B, ContinuousLinearMap.comp_apply, p, v] using
-      annulus_kernel_ae_input_mul p φ v hp hpR hφR q hqint f hf (fun t ht =>
-        hmatch ⟨by linarith [(abs_le.mp ht).1], by linarith [(abs_le.mp ht).2]⟩) P z
+  obtain ⟨L, hL, p, q, f, hf, hA⟩ := exists_weightedAnnulus_window
+    (continuous_symmetricStripWeightRoot α s) (symmetricStripWeightRoot_pos α s) hρ hρK hφ hφK
+  let _ := hL
+  let B := (windowKernel p q f).comp P
+  let d := windowKernelTraceDensity p q f P
+  refine ⟨B, d, fun z => hA (P z), (windowKernel_traceDensity_integrable p q f hf P).1,
+    fun b => windowKernel_traceDensity b p q f hf P, ?_⟩
   · intro m hm
     refine ⟨hm.integrable_mul (memLp_one_iff_integrable.2
-      (windowKernel_traceDensity_integrable (hp.toLp p) q f hf P).1),
-      fun b => (windowKernel_localized_traceDensity b (hp.toLp p) q f hf P hm).2⟩
+      (windowKernel_traceDensity_integrable p q f hf P).1),
+      fun b => (windowKernel_localized_traceDensity b p q f hf P hm).2⟩
+
+/-- At fixed position cutoff, exhaust the global rational theta Fourier band.
+The same localized convolution acts on every projected vector and on the full
+weighted theta projection. This is the chart trace analogue of (11.2.1.10),
+p. 489, also for tests supported below norm one. No position limit is taken. -/
+public theorem rationalThetaBand_trace_tendsto (a α s : ℝ) (hs : 0 ≤ s) (hα : 0 ≤ α)
+    {Y : ℕ → ℝ} (hY : Monotone Y) (hcofinal : ∀ R : ℝ, ∃ n, R ≤ Y n)
+    {ρ φ : ℝ → ℂ} (hρ : Continuous ρ) (hρK : HasCompactSupport ρ)
+    (hφ : ContDiff ℝ 2 φ) (hφK : HasCompactSupport φ) :
+    let w := symmetricStripWeightRoot α s
+    let Q (n : ℕ) :=
+      (rationalThetaWeightedEvenImage a hs hα {ξ | |ξ| ≤ Y n}).toSubmodule.starProjection
+    let P := (rationalThetaWeightedEvenImage a hs hα univ).toSubmodule.starProjection
+    ∃ (A : H →L[ℂ] H) (T : ℕ → ℂ) (Tlim : ℂ),
+      (∀ z : H, (A z : ℝ → ℂ) =ᵐ[volume] fun x =>
+        (ρ x * (w x : ℂ)) * ∫ y, φ (x - y) * z y * (w y : ℂ)⁻¹) ∧
+      Tendsto T atTop (𝓝 Tlim) ∧
+      ∀ {ι : Type*} (b : HilbertBasis ι ℂ H),
+        (∀ n, HasSum (fun i => ⟪b i, A (Q n (b i))⟫_ℂ) (T n)) ∧
+        HasSum (fun i => ⟪b i, A (P (b i))⟫_ℂ) Tlim := by
+  intro w Q P
+  -- The period and the summable expansion do not depend on the band.
+  obtain ⟨L, hL, p, q, f, hf, hA⟩ := exists_weightedAnnulus_window
+    (continuous_symmetricStripWeightRoot α s) (symmetricStripWeightRoot_pos α s) hρ hρK hφ hφK
+  let _ := hL
+  let trace (S : H →L[ℂ] H) :=
+    ∑' k : ℤ, ⟪W q (fourier (T := L) k), S (outputMode p f k)⟫_ℂ
+  refine ⟨windowKernel p q f, fun n => trace (Q n), trace P, hA, ?_, ?_⟩
+  · -- Strong projector convergence supplies the termwise limits in the trace series.
+    exact tendsto_windowKernel_trace p q f hf
+      (tendsto_rationalThetaWeightedEvenBand_projection a hs hα hY hcofinal)
+      (fun n z => Submodule.norm_starProjection_apply_le _ z)
+  · intro ι b
+    exact ⟨fun n => (windowKernel_trace b p q f hf (Q n)).2,
+      (windowKernel_trace b p q f hf P).2⟩
 
 end Masullo.OperatorTrace

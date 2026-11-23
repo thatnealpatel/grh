@@ -686,3 +686,57 @@ supply. It does not exhaust position or identify $T_\infty$ with a zero
 sum. Separately, the required transport to the regular diagonal and the
 orbital and raw-local identifications in (12.5.1.1–4), pp. 519–520,
 remain open. The model does not impose these copy weights on other lifts.
+
+## Fixed-position convergence of the same global band trace
+
+[`rationalThetaBand_trace_tendsto`](../../Proofs/Theorems/RationalThetaBandTraceDensity.lean)
+fixes $\rho\in C_c(\mathbb R)$ and $\phi\in C_c^2(\mathbb R)$, and takes
+any monotone cofinal sequence of real additive Fourier bands in the global
+weighted rational even theta chart ($a$ arbitrary, $\alpha,s\ge 0$). With
+$Q_n$ the band projectors and $P$ the full weighted theta projector, it
+constructs one localized weighted convolution $A_\rho$ on the ambient
+$L^2(dx)$. The basis traces of $A_\rho Q_n$ converge to the basis trace
+of $A_\rho P$. The $L^2$ kernel formula determines the localized operator
+uniquely up to a.e. representatives, so this is the same whole trace as
+in the fixed-band density and copy split, by uniqueness of `HasSum`.
+
+**Source and repair:** (11.2.1.8–10), p. 489, state the exhaustion order
+and a fixed-position trace limit in $W^{s,2}$ with support at norm at
+least one. The band inclusion cited there is (7.3.2.20), with its zero-mode
+version (7.3.2.21), p. 356. Corollary C.3.5.5, pp. 702–703, treats a
+dense exhaustion of the identity in its Hilbert space; it does not delete
+the terminal projection on the ambient space. Proposition C.3.6.5,
+pp. 705–706, permits a proper self-adjoint strong limit for the right
+factor when the initial operator is already nuclear. The Lean repair
+uses `tendsto_rationalThetaWeightedEvenBand_projection` in the desired
+weighted norm, `exists_weightedAnnulus_window` for a single Fourier window
+before projection, and `tendsto_windowKernel_trace` to sum the strongly
+converging scalar terms using the same summable majorant. No assumption
+on the sign of the log support is required. This is the after-projection
+chart model, compare (10.4.1.12), p. 458, and the weighted Hilbert-Schmidt
+kernel (10.4.3.48), p. 473. It is not an assertion that $M_\rho PA$ in
+(10.4.1.6–7), p. 457, equals $M_\rho AP$. Range invariance would identify
+the printed band compositions, not justify dropping the right $P$ in
+the ambient limit.
+
+**Evidence:** Independent Yah `trace-limit-statement` (`Lfrixhx`) reviewed
+the exact endpoint, the two supporting interfaces, and the cited
+manuscript dependencies at `b3c013c0f661e3ed459db26e8f7a2cfeb4acbd29`.
+The source reading is provisional: Pinned Markdown and PDF layout, not
+rendered pages. Owning session `01a20693-fe94-72ee-9f9f-a523d5c0785d`
+contains the exact candidate diff, warnings-as-errors build, fresh joint
+import with signatures and axiom reports, and adoption decision.
+
+**Next inference:** For the below-one witness, prove the ambient trace
+identity $\operatorname{Tr}(A_\rho)=\phi(0)\int\rho=0$ in this *same*
+chart and use $P+(1-P)=1$ to transfer the terminal geometric trace to
+minus the complementary trace at fixed $\rho$. The window series at the
+identity uses $\sum_k\widehat\phi_{\mathrm{per}}(k)=\phi(0)$ and cancellation
+of $W$ against $W^{-1}$ on the output support. This prepares, but does
+not provide, position exhaustion: It still needs a summable expansion
+for the unlocalized convolution on the complementary projection in the
+same norm, and an identification of that complement and its trace with the
+full-order interior jet sum. See the [reviewed complementary trace
+argument](trace-spectral-strip-q.md#convolution-after-projection). The
+transport to the regular diagonal and necessity of the modeled local
+identification in (12.5.1.1–4), pp. 519–520, remain separate obligations.
