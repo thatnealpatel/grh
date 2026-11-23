@@ -548,21 +548,55 @@ both signatures, and reuse of the accepted integrability estimates
 at `dc858f7dd104d89538391e1cccbeed427becacdc`. The same Yah records
 the owning builds, joint-import signatures, axioms, and adoption.
 
-**Next bounded check, formalization only.** In the same positive-ray
-coordinate, construct the two bracketed constituents of a *supplied*
-measurable $[0,1]$-valued annular profile, with zero outside its finite
-positive support band and one on a pointwise plateau. Split at a
-point in that plateau: Below the split take $p_B=1$ and $p_A=1-\rho$;
-above it take $p_B=\rho$ and $p_A=0$. Check zero-extension
-measurability and bracket inequalities at the endpoints, in particular
-that the lower indicator for $p_A$ ends at a point where $\rho=0$
-(in the absence of endpoint vanishing, choose it strictly below the
-support band). The
-[endpoint averaging comparison](trace-geometric.md#smooth-radial-bands-on-the-extended-domain)
-uses monotone transition profiles. The signed identity here already
-gives the pairing once the brackets are furnished; it does not
-construct them. The construction would need no monotonicity and would
-not identify the printed smooth factors. The applicability of their
-exact plateau clause, the four product widths and sharp sum limit,
-the projected-trace identification, and the Mellin corrections are
-separate obligations.
+### Lean-checked decomposition of a supplied annular profile
+
+`Masullo.exists_real_upper_profile_bracket_sub` in
+[RealRadialWeightSandwich](../../Proofs/Props/RealRadialWeightSandwich.lean)
+assumes $0<a_-\le a_+\le b_-\le b_+$ and a real profile
+$\rho:\mathbb R\to\mathbb R$ with measurable positive-ray zero
+extension. On the positive ray, assume $0\le\rho\le1$, zero on
+$(0,a_-]\cup(b_+,\infty)$, and one on $[a_+,b_-]$. It constructs
+`RealUpperProfileBracket pA aLo aHi` and
+`RealUpperProfileBracket pB bLo bHi` and proves $\rho=p_B-p_A$ at
+**every** positive argument. With $\rho_0$ the zero extension, use
+$(p_B,p_A)=(1,1-\rho_0)$ for $s\le a_+$ and $(\rho_0,0)$ above it.
+Measurability uses only that extension and the measurable half-line
+split. No continuity, smoothness, inversion symmetry, or monotonicity
+is required. For these endpoints both constituents must be one at
+$a_-$ because their lower indicators are closed. Thus closed support of
+$\rho$ is not enough by itself: Require vanishing at the edge or put
+$a_-$ strictly below the support.
+
+Applying the theorem separately to the position and frequency profiles
+supplies the four brackets for `real_radial_pairing_sub_sub`. The
+pointwise equality can be used under the radial integral: If $w\ne0$
+and $s>0$, both $s$ and $|w|/s$ are positive, and the weight at $w=0$
+is defined to be zero. This congruence is a reduction, not a new Lean
+endpoint. The decomposition alone has no test-function or cutoff-limit
+hypothesis.
+
+**Source and review.** This is a project repair for supplied hypotheses.
+The [clause-specific review](#review-and-continuation) supplies the
+inherited rendered radiality, reciprocal interval, and inward edge
+signs in Definition 9.3.3.1(2), (5)–(6), p. 427, and the sharp ranges
+in (12.4.1.22), p. 518. The exact plateau notation and preceding
+smooth-to-sharp equality remain extraction-only, not Lean premises.
+No manuscript factor is identified. Independent exact-source review
+(`rGuyddG`, Yah `01a20687-60a0-7f85-9d48-75f008a3aab7`) checked the
+signature, the closed lower endpoint, the measurable split, and the
+positive arguments in the accepted weight at revision
+`3af4b680f2aeee0e75197220ab9c710f04d53d6e`. The same Yah records the
+owning build, joint-import signature and axioms, and candidate disposition.
+
+**Next bounded check, formalization only.** Use the already evaluated
+symmetric family in [the full signed comparison](#the-full-signed-scalar-comparison).
+For $T\to\infty$, put $V=T-T^{-3}/2$ and use the same lower brackets
+$[1/T,1/V]$ and upper brackets $[V,T]$ for both factors. The four
+widths reduce to $T^2-V^2$, the same ratio difference $T/V-V/T$ twice,
+and $V^{-2}-T^{-2}$. The existing informal uniform product limits
+already give their vanishing; formalize just these product-width
+limits for the accepted signed transfer theorem. The nominal comparison
+products $T^2,1,1,T^{-2}$ lie in the respective product intervals
+by eventual positive ordering. Assembling the signed sharp limit and
+identifying the printed factors, projected trace, and Mellin
+corrections remain separate.

@@ -210,6 +210,46 @@ profile, not to the annulus obtained by subtraction. -/
     ∀ s > 0, (Iic lo).indicator (fun _ ↦ (1 : ℝ)) s ≤ p s ∧
       p s ≤ (Iic hi).indicator (fun _ ↦ (1 : ℝ)) s
 
+/-- Decompose an annular profile on the positive ray into the difference of
+upper-bracketed profiles. The lower support condition includes `aLo`, as
+required by the closed lower indicator for the subtracted constituent. -/
+public theorem exists_real_upper_profile_bracket_sub {ρ : ℝ → ℝ} {aLo aHi bLo bHi : ℝ}
+    (hρ : Measurable ((Ioi (0 : ℝ)).indicator ρ))
+    (haLo : 0 < aLo) (ha : aLo ≤ aHi) (hab : aHi ≤ bLo) (hb : bLo ≤ bHi)
+    (hrange : ∀ s > 0, ρ s ∈ Icc (0 : ℝ) 1)
+    (hlower : ∀ s > 0, s ≤ aLo → ρ s = 0)
+    (hupper : ∀ s > bHi, ρ s = 0)
+    (hplateau : ∀ s ∈ Icc aHi bLo, ρ s = 1) :
+    ∃ pA pB : ℝ → ℝ, RealUpperProfileBracket pA aLo aHi ∧
+      RealUpperProfileBracket pB bLo bHi ∧ ∀ s > 0, ρ s = pB s - pA s := by
+  let ρ₀ := (Ioi (0 : ℝ)).indicator ρ
+  let pA (s : ℝ) := if s ≤ aHi then 1 - ρ₀ s else 0
+  let pB (s : ℝ) := if s ≤ aHi then 1 else ρ₀ s
+  have hρ₀ (s : ℝ) (hs : 0 < s) : ρ₀ s = ρ s := indicator_of_mem hs _
+  have hmA : Measurable pA :=
+    Measurable.ite measurableSet_Iic (measurable_const.sub hρ) measurable_const
+  have hmB : Measurable pB := Measurable.ite measurableSet_Iic measurable_const hρ
+  refine ⟨pA, pB, ⟨hmA.indicator measurableSet_Ioi, haLo, ha, ?_⟩,
+    ⟨hmB.indicator measurableSet_Ioi, (haLo.trans_le ha).trans_le hab, hb, ?_⟩, ?_⟩
+  · intro s hs
+    by_cases hslo : s ≤ aLo
+    · simp [pA, hslo, hslo.trans ha, hρ₀ s hs, hlower s hs hslo]
+    · by_cases hshi : s ≤ aHi
+      · obtain ⟨h0, h1⟩ := hrange s hs
+        simp [pA, hslo, hshi, hρ₀ s hs, sub_nonneg.mpr h1, sub_le_self 1 h0]
+      · simp [pA, hslo, hshi]
+  · intro s hs
+    by_cases hsc : s ≤ aHi
+    · simp [pB, hsc, hsc.trans hab, (hsc.trans hab).trans hb]
+    · by_cases hslo : s ≤ bLo
+      · have h1 := hplateau s ⟨(lt_of_not_ge hsc).le, hslo⟩
+        simp [pB, hsc, hslo, hslo.trans hb, hρ₀ s hs, h1]
+      · by_cases hshi : s ≤ bHi
+        · simpa [pB, hsc, hslo, hshi, hρ₀ s hs] using hrange s hs
+        · simp [pB, hsc, hslo, hshi, hρ₀ s hs, hupper s (lt_of_not_ge hshi)]
+  · intro s hs
+    by_cases hsc : s ≤ aHi <;> simp [pA, pB, hsc, hρ₀ s hs]
+
 /-- The profile product integrated against `ds/s` on the positive radial
 quotient, as a function of the additive frequency, extended by zero at zero. -/
 @[expose] public noncomputable def realRadialWeight (p q : ℝ → ℝ) (w : ℝ) : ℝ :=
