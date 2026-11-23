@@ -1,0 +1,64 @@
+# One pulse and accumulating translates for the rational strip trace
+
+**Independently reviewed paper theorem, not Lean.** Fix a nonempty open interval $I$ compactly contained in $(0,(\log 2)/2)$. There is one explicit $h\in C_c^\infty(I,\mathbb R)$ of mass zero with the following property. Write $h_t(x)=h(x-t)$. For *any* sequence of distinct real shifts $t_j\to0$ with $\operatorname{supp}h_{t_j}\subset I$, the real span of the translates on **every tail** has the full negative index of the rational open-strip trace form, at **every** fixed width $0<a<1/2$. In particular one can use rational $t_j=\eta 2^{-2^j}$, $j\ge1$, with a rational $\eta>0$ smaller than the available support slack. Neither the pulse nor these shifts depends on the zeros or the width. No density of shifts in an interval is needed. The same index is obtained on the real span of the derivatives of $h$ at the single position $t=0$.
+
+## Exact matrix endpoint
+
+Use $M_u(z)=\int e^{zx}u(x)\,dx$, $w=\rho-1/2$ for a nontrivial zeta zero of order $m_w$, and $Z_a(f)=\sum_{|\Re w|<a}m_w M_f(w)$. Write $B_a(u,v)=-Z_a(u*v)$ for ordinary convolution, and put
+
+$$K_a(t)=-Z_a((h*h)_t),\qquad K_a^+(t)=K_a(t)+M_h(1/2)^2 e^{t/2}.$$
+
+Only a neighborhood where the translated test remains below $\log 2$ is needed for these kernels. Let $k_a$ count the **distinct upper-half-plane points** with $|\Re w|\ge a$, not their orders. If $n_-$ counts strictly negative eigenvalues, then for every starting index $J$,
+
+$$\sup_{N\ge J} n_-\big((K_a(t_i+t_j))_{J\le i,j\le N}\big)
+=\sup_{N\ge0} n_-\big((K_a^{(i+j)}(0))_{0\le i,j\le N}\big)=1+k_a.$$
+
+Both equalities hold with $K_a^+$ and right side $k_a$. Infinity means unbounded finite index. Thus at a single positive width either of two conditions on **all finite sections** of the chosen tail (or derivative family) is equivalent to `RationalRadialStripTrace a`: Every rank-one-corrected matrix is positive semidefinite, or, equivalently, the supremum of the uncorrected negative indices is at most two. Indeed, at this width there are either no omissions or at least two upper-half-plane omitted points, by zeta reflection and conjugation. Here and below zero-containment is for the **open** strip. [The checked rational specialization](../../Proofs/Theorems/RationalRadialStripTrace.lean) identifies that containment with the scalar trace proposition. Along any sequence of positive widths tending to zero, either matrix condition at every width is equivalent to RH. Good widths are needed only for the geometric identification. The [ordered trace identification](../obligations/trace-hardy-diagonal-q.md#removing-the-order-defect-in-the-weighted-rational-isotype) is a separate, reviewed paper argument in the rational weighted model (even degree at least four, common good widths, band limit at fixed position before exhaustion). No matrix bound has been derived here from the geometric projection.
+
+## Why accumulating shifts work
+
+**1. Choose the pulse to match a quantitative density bound.** Choose $\tau,d>0$ with $[\tau,\tau+d]$ compactly inside $I$. Set $d_j=d\log 2\,(1/\log(j+1)-1/\log(j+2))$, $j\ge1$. These lengths sum to $d$ by telescoping and are comparable to $1/(j\log^2(j+1))$ by the mean value theorem. Let $b$ be the law of $\tau$ plus the sum of independent uniforms on $[0,d_j]$. Its transform is
+
+$$M_b(z)=e^{\tau z}\prod_{j\ge1}\frac{e^{d_jz}-1}{d_jz}.$$
+
+The factors are $1+O_z(d_j)$ and none vanishes off the imaginary axis. On $|\Re z|\le1/2$, the $j$th factor is bounded by $e^{d_j/2}$ and by $(1+e^{d/2})/(d_j|z|)$. For each $0<r<1$, $d_j\ge c_r j^{-1/r}$, so at least $\lfloor c'_r|z|^r\rfloor$ factors have modulus at most $1/2$ for large $|z|$. The product of the other bounds is at most $e^{d/2}$. On the imaginary axis this gives integrability against every polynomial, hence the law has a smooth density $b$ by Fourier inversion. Set $h=b'$. It has mass zero, $M_h(z)=-zM_b(z)\ne0$ for $\Re z\ne0$, and, after absorbing the linear factor in the bound,
+
+$$|M_h(\sigma+iT)|\le C_r\exp(-c''_r|T|^r)\qquad(|\sigma|\le1/2,\ 0<r<1).$$
+
+The choice of widths $d_j$ matters to the proof: Merely smooth compact support gives no specified stretched-exponential bound. The pulse need not, and cannot, have true exponential Fourier decay.
+
+**2. Work in the norm in which the trace is continuous.** Write $W_a$ for the omitted upper points, $\lambda_n=-2n-1/2$, $n\ge1$, and
+
+$$E(u)=\big((M_u(\lambda_n))_n,\ M_u(1/2),\ (M_u(w))_{w\in W_a}\big)\in H=\ell^2(\mathbb R)\oplus\mathbb R\oplus\ell^2(W_a,m;\mathbb C)$$
+
+as a real Hilbert space, weighting the last squared norm by $m_w$. The [short-window normalization](../obligations/trace-even-separator-q.md) gives, for real tests supported in $I$,
+
+$$-Z_a(u*u)=\sum_{n\ge1}M_u(\lambda_n)^2-M_u(1/2)^2+2\sum_{w\in W_a}m_w\Re(M_u(w)^2).$$
+
+Indeed the prime powers and identity do not meet $I+I$, and the $n=0$ term of the half-Haar archimedean density cancels the negative-exponent pole. There are no real zeta zeros here. This quadratic form is continuous in $H$, and its negative index in $H$ is $1+k_a$, from the polar coordinate and one imaginary part per pair. The corrected form lacks the polar direction.
+
+Let $D$ be the closed real span in $H$ of $E((-\partial_x)^j h)$, $j\ge0$. For every tail of shifts, $D$ lies in the closed span of the $E(h_{t_j})$ on that tail. Indeed the trajectory $t\mapsto E(h_t)$ is smooth near zero with derivatives given by multiplication of each coordinate by the corresponding power of its exponent. On the archimedean coordinates this follows from $\inf\operatorname{supp}h\ge\tau>0$; on the omitted coordinates use the pulse decay and the ordinary multiplicity-weighted $O(T\log(2+T))$ zero count. For any real continuous functional annihilating the tail, the resulting scalar smooth function has zeros accumulating at zero. A first nonvanishing Taylor coefficient would contradict those zeros. All its derivatives at zero therefore vanish. This proves the inclusion by orthogonal complementation. It does **not** assert that a smooth function is determined by its derivatives.
+
+**3. Use polynomials to remove the infinite unwanted set in $H$.** Fix any finite $S\subset W_a$. Ingham's estimate at $\sigma=1/2+\min(a,1/8)$, reflection, and conjugation give $N_a(T)\ll_a(1+T)^q$ for some $0<q=q(a)<1$, counting omitted points up to modulus $T$, even with orders. The exponent $3(1-\sigma)/(2-\sigma)$ is strictly below one; absorb the logarithms by slightly increasing it. See [Chourasiya and Simonič, Corollary 1](https://arxiv.org/abs/2507.15184v2) and the [project's fixed-width separation argument](../obligations/trace-carving-weight-q.md#the-short-window-detects-any-omitted-zero). It is important not to replace this power saving with a uniform-in-$a$ claim.
+
+Over $(W_a\setminus S)$ and its conjugates take the polynomial products $C_R(z)=\prod_{|w|\le R}(1-z/w)$, using distinct roots only. They are real and converge locally uniformly to a product $C$ which does not vanish at any selected point or $1/2$, since $\sum |w|^{-1}<\infty$. Uniformly in $R$,
+
+$$\log|C_R(z)|\le\sum_w\log(1+|z|/|w|)\le A_a(1+|z|)^q.$$
+
+For the last bound put $x=|z|$, integrate the counting function against $x\,dt/[t(t+x)]$, and use $N_a(t)\ll_a t^q$ for $t>0$ (there are no atoms below $a$). Scaling $t=xv$ leaves a constant times $x^q\int_0^\infty v^{q-1}/(1+v)\,dv$ for $x>0$.
+
+For each real polynomial $P$, the coordinate vectors of $(PC_R)(-\partial_x)h$ belong to $D$. They converge **in $H$**, not merely coordinatewise: On the omitted slab choose $q<r<1$ and dominate their absolute values by $O_P((1+|w|)^{\deg P}\exp(A_a(1+|w|)^q-c_r|\Im w|^r))$, square-summable with orders. At the archimedean samples $|M_h(\lambda_n)|\le\|h\|_1 e^{\tau\lambda_n}$ dominates the same sublinear product growth times any fixed polynomial. The polar coordinate is scalar. The limit has coordinates $P(z)C(z)M_h(z)$ on the archimedean, polar, and selected points, and zero on every other omitted point.
+
+**4. Separate what remains.** A continuous real functional annihilating $D$ kills all those limit vectors. Applying this with $P(z)=z^j$ says that every derivative at zero of the following analytic function vanishes: An archimedean series $\sum_{n\ge1}A_n C(\lambda_n)M_h(\lambda_n)e^{\lambda_n t}$, $(A_n)\in\ell^2$, plus the finite exponential polynomial with exponents $1/2$, $w$, and $\bar w$ for $w\in S$ induced by the other functional coefficients. For a complex coordinate use the conjugate pair of coefficients, extending its real part on the real axis holomorphically. The archimedean bounds above give normal convergence on compact subsets of $\Re t>-\tau$. Only **after removing the unwanted coordinates** do we use analyticity. On the positive ray the archimedean series is $O(e^{-5t/2})$. The finite exponential polynomial cannot decay this fast unless all coefficients vanish: Divide out the largest real exponential, take the long-interval mean square of the finite sum at this real part, and repeat at the next real part. All its exponents have real part strictly greater than $-1/2$. Since $C(z)M_h(z)$ is nonzero on the selected and polar coordinates, the functional is zero on these coordinate axes. Orthogonal complementation shows that $D$ contains the whole finite selected and polar coordinate subspace with archimedean and other coordinates **zero**.
+
+Now approximate the polar axis and the imaginary axes at any $k$ selected points simultaneously by real linear combinations of derivatives, or by combinations from any specified shift tail. Strict negative definiteness on their span persists under sufficiently close finite approximation of the Gram matrix. Omitting the polar axis proves the corresponding lower bound for the corrected form. The ambient upper bounds in step 2 give exact equality. The derivative matrix comes from $M_{(-\partial_x)^j h}(z)=z^j M_h(z)$ and differentiation of $K_a$ under its absolutely convergent sum; the translate matrix comes from multiplication by $e^{t_jz}$. Restriction to an increasing finite generating list gives the negative index of its Gram matrix even if it has a kernel. The proof bounds neither the number of samples needed for a witness nor the size of the signed coefficients. In particular a very tightly clustered sample family is a theorem about **exact data**, not a stable floating-point test.
+
+## A common finite witness and a conditioning obstruction
+
+Two observations from the `cmd/ff` fixed-pulse investigation also apply to the accumulating-shift proof. First, fix a floor $e>0$, a finite $S\subset W_e$, and any prescribed shift tail. A **single finite list of test directions with rational coefficients** on that tail spans a strictly negative subspace at every width $e\le a<1/2$ retaining $S\subset W_a$. To see this, perform steps 2–4 at $e$. For any such $a$, drop the omitted coordinates in $W_e\setminus W_a$ from $H_e$; this restriction has norm at most one and leaves the chosen targets unchanged. The trace forms on the resulting spaces have a common operator-norm bound of two with the stated Hilbert norms. Consequently one approximation tolerance around the same negative Gram matrix works at all these widths. Rational rounding of finitely many real coefficients then preserves the strict inequality in the floor norm. One obtains $1+|S|$ directions for $K_a$ or $|S|$ for $K_a^+$. This is not monotonicity of the form in $a$, and it gives no one witness down to $a=0$.
+
+Second, normalize translate coefficients as a real atomic measure $\nu$ on a bounded interval of admissible shifts. If a $k$-dimensional coefficient space satisfies $-B_a(h*\nu,h*\nu)\ge\delta\|\nu\|_{\rm TV}^2$, then for each $0<r<1$ there are constants depending on the pulse, the shift interval, and $r$, but **not** the width or nodes, such that
+
+$$\delta\le C_r\exp\!\left[-c_r\left(\frac{k}{\log(2+k)}\right)^r\right].$$
+
+For large $k$ put $T=\gamma k/\log(2+k)$ with $\gamma>0$ sufficiently small. There are fewer than $k$ real linear conditions to kill the polar coordinate and all omitted imaginary coordinates of $h*\nu$ through height $T$, by the full zero count. A nonzero vector remains; normalize it to unit total variation. The archimedean terms and surviving low pairs are nonnegative. At the high pairs, $|M_\nu(w)|$ is bounded by a constant from the bounded shift interval. The entire negative margin is therefore at most a constant times $\sum_{\Im w>T}m_w|M_h(w)|^2$. Summing the stretched-exponential bound in dyadic shells against the full count proves the estimate; enlarging $C_r$ covers bounded $k$. This is an **upper** bound on a possible margin, not a guarantee of numerical detection. At a fixed positive width one can replace the full count in the dimension argument with the fixed-width density bound, at the cost of width-dependent constants.
