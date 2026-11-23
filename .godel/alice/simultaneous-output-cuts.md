@@ -65,3 +65,5 @@ Thus the old $1.4685-\delta$ pair exponent would suffice on this smaller region,
 $$d\,[y_i(c)h_i(c')-y_i(c')h_i(c)]=F_i h_i(c)h_i(c')(c-c')-q[\delta_i(c)h_i(c')-\delta_i(c')h_i(c)] .$$
 
 In both equations the rightmost bracket has size $O(HU)$, not the product-output scale. Try to count admissible lifts of these two brackets for fixed $c-c'$ with the same $d$ and smooth cofactors, retaining both large-discrepancy tests. A count after summing over $c-c'$ and all anchors must be below $q^{1.4685}$ by a fixed power; charging a free anchor per lift will not suffice. The unrestricted average, the all-gcd estimate, and the fixed-window conclusion remain open.
+
+**After Work:** [One actual reference per denominator](one-reference-lifts.md) retains both lift equations without summing over all anchors. For that reference one can also charge either signed bracket of size at most $q^{.935}$, or $(c-c_0,d)\ge q^{.120}$, at the same partner budget. What remains is a count of distinct far endpoints with two large brackets and small common gcd; the all-pairs estimate above is an alternative, not a prerequisite.
