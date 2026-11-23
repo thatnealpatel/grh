@@ -205,6 +205,9 @@ func TestPrimaryGateAndPublication(t *testing.T) {
 		}
 		n = step(t, n, challenger, v)
 		p = handoff(t, n, publisher)
+		if !strings.Contains(n.Args[6], ".godel/conjectures: ") {
+			t.Error("publisher prompt omits the commit subject prefix")
+		}
 		if n.Directory != r.root || !slices.Contains(n.Env, "YAH_CAMPAIGN_TARGET="+r.target) || p.Choice != nil || p.Card == nil || p.Card.Path != ".godel/conjectures/open/uniform-bound.md" || !strings.HasPrefix(p.Card.Markdown, "---\nevidence_revision: "+revision+"\n---\n\n") {
 			t.Fatalf("wrong publication handoff: %+v", p)
 		}

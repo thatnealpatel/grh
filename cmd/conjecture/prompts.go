@@ -139,6 +139,13 @@ adopt the card-only candidate immediately. If adoption is stale, reapply on
 current accepted under the same rule; no further research, review, Lean build,
 or remote upload. Do not claim success on a stale result.
 
+For every tool_campaign integrate, including a restack, supply a description
+in the style of ~/p/proofs. Start the subject with the literal prefix
+".godel/conjectures: " and a short, capitalized imperative naming the
+mathematical change, for example, ".godel/conjectures: Track the capped Gaussian tail".
+Match the verb to the evidence; do not imply an open claim is proved. Omit a
+body unless it explains scope or reasoning; wrap body prose at 60 columns.
+
 Return only {"status":"adopted","adopted_revision":"full accepted commit from
 successful adoption","reason":"brief result"} or {"status":"not_adopted",
 "reason":"why it did not land, with candidate ID if one remains"}. Claim adoption
