@@ -100,6 +100,24 @@ candidate. A superseded accepted commit is not a pending candidate.
 Explicit pending-candidate stacks and conflict repair use the campaign
 tool's separate `on` and Change-Id rules.
 
+### Integrating proof source with its landing note
+
+When a new note only records the Lean declarations, review, or owning
+check session for a proof being landed now, include it in the same
+integration candidate. If the owner drafted it in a direct workspace,
+finalize that output with the normal direct `integrate` call, then
+integrate the resulting registered note output together with the proof
+outputs on the accepted target, in dependency order, with no `on`.
+Do not build the note-only candidate or use it as the proof's `on`.
+Check and adopt the combined candidate, with the usual just-before-build
+base comparison. A check of a child on a pending parent does not make
+that child directly adoptable while the parent remains pending.
+
+Keep an independently useful source or mathematical result separate
+if it is ready to land before the proof. Keep a true stack when a proof
+relies on a pending parent that is intended to land first; check and
+adopt that parent before adopting the child.
+
 ### Recovering a checked but unadopted proof
 
 After a conflict, stale adoption, or ambiguous error, inspect `tool_campaign status` and the current accepted source. Recover only what is still needed.
