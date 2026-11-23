@@ -145,7 +145,7 @@ confirms that the assigned base `e58cab0cc9def603bd473be0bbd71da3a24ceff4`
 adds only a separate same-width comparison note to the reviewed base;
 the tail obligation is identical there.
 
-### Applying the measure to the short test (not yet checked here)
+### Applying the measure to the short test
 
 For a real bump $\phi$ supported in the smaller interval let
 $f=P_0(\partial_t)(\mu*\phi)$, where
@@ -155,6 +155,37 @@ all omitted samples, hence also the sum weighted by their multiplicities;
 no derivatives at zeros are needed for this scalar. By the
 [rational explicit formula](rational-explicit-formula.md#checked-rational-radial-idelic-explicit-formula)
 we have $G(f)=-Z_{\rm full}(f)=\langle J,f\rangle$ on these tests.
+
+[`Masullo.exists_compactLogMellin_filter`](../../Proofs/Props/CompactLogMellinFilter.lean)
+checks the filter construction given the tail sequence, budget, finite
+polynomial, and seed support. One probability works for every polynomial
+and seed. Translation enlarges $[a,b]$ only to $[a,b+D]$; the polynomial
+differential operator does not enlarge support. The theorem states the
+product and both vanishing implications, not the zero-density estimate
+or the application of the explicit formula. If the omitted set is finite
+or empty, use only the polynomial and the unaveraged seed; do not pad a
+finite sequence by repeating a nonreal frequency.
+
+Masullo gives the log-Mellin convention and iterated integration by
+parts on PDF p. 599, (B.2.1.29–31), not the filter for the omitted samples
+in (12.5.1.3–4), pp. 519–520. The existing
+`Masullo.compactLogMellin_iteratedDeriv` proves the monomial multiplier
+without division. `Masullo.compactLogMellin_logPolynomialDeriv` applies
+it to the real finite combination, including the negative sign at the
+Mellin argument. The composed filter uses that result and the
+translation factor below. Independent Yah review `polynomial-filter-review`
+(`xmWuntj`, output `77bf31be2d1dfccffa014992d94b8457ad1fc38b`) affirmed
+all three fixed contracts at `42ed4c4b060b7bce6e750cd95a540f9e4d5f9935`,
+including the reflected argument below norm one and the even-test use.
+The manuscript reading is provisional Markdown/layout, not rendered-page
+verification. Owner checks are in Yah `01a20624-d19d-7566-86d3-0dc22f4adc92`.
+
+Remaining for the scalar witness: First justify in Lean the integration
+by parts and Fubini identity transferring pairing against a density to
+pairing against the seed. Then prove nonproportionality for the two
+specific transformed densities, and supply the actual omitted-set
+budget and strip/full sum comparison. None of these follows from
+positivity of the real measure moments alone.
 
 Integration by parts and translation send pairings with a density $D$
 (here $J$ or $U_\beta$) to pairings against $\phi$ with
@@ -225,9 +256,9 @@ not a fresh rendered-page verification.
   this witness, where both are zero.
 
 The full witness with omitted-sample filtering and its trace comparison
-are reviewed ordinary mathematics, not Lean declarations. The compact
-tail-measure dependency is checked above; it does not machine-check this
-obstruction end to end.
+are reviewed ordinary mathematics, not Lean declarations. The conditional
+filter is checked above; it does not machine-check this obstruction end
+to end.
 
 ## Checked local scalar separation
 
