@@ -268,22 +268,90 @@ Independent exact-statement and applicability review:
 the same owning session checked elaboration, including the finite-sum
 interchange without importing a separate finite-unit Haar transport.
 
-**Next check:** Use one unramified tensor over $\mathbf Q$ and a
-single tested prime outside $S=\{\infty\}$ as a positive control for
-the disjoint convention (1.3.2.2), p. 25, inherited from the
-[ordinary filtration note][ordinary]. The [tensor check][tensor]
-already identifies the repaired cut locally, and
-`rationalTheta_eq_primeMasked_idele_sum` gives its shift identity
-on the positive norm section, before any Haar averaging. The cut and
-the input are finite-unit invariant by their finite-coordinate
-conditions, so compact averaging is redundant once the cut is
-realized as an LF test. Check this LF realization and transport the
-section identity to class theta; on two-moment inputs the accepted
-`rationalThetaRadialProfile_uniformizer` then supplies the same shift
-for the represented inverse-uniformizer difference. This is a
-comparison of the project operators on a supplied unramified
-representative, not a proof for arbitrary fixed-$S$ representatives,
-the printed principal-value operator, or closedness.
+## Checked disjoint prime-two positive control
+
+[`Masullo.exists_rationalAdeleUnramifiedTwoCut`][unramified-two-cut]
+assumes a supplied LF test $f$ whose underlying function is
+$b\otimes1_{\widehat{\mathbb Z}}$, with $b$ a complex-valued Schwartz
+function on $\mathbb R$. It realizes the literal prime-two unit cut $g$ as an LF
+representative, with the pointwise cut equality on all additive
+adèles. The level-two assembly uses just cell $2$, of profile $b$.
+For every rational idele class $d$, Lean proves
+
+$$
+\Theta(g)(d)=\Theta(f)(d)-\Theta(f)([\varpi_2]^{-1}d).
+$$
+
+There are no measurability, moment, or parity hypotheses on this
+endpoint. The cut is invariant under finite-unit multiplication:
+It preserves the real coordinate and all finite valuations. The
+class-theta pullback and finite-unit description of the norm-one
+classes transport the section formula to $d$. Unramified theta
+already depends only on the norm, and the inverse uniformizer
+multiplies that norm by $2$. This uses the norm formula, which has
+weaker hypotheses than `rationalThetaRadialProfile_uniformizer`.
+
+For the two-moment specialization, the input theta is already
+norm-one invariant, so it belongs to the represented radial
+core. The right side is the class theta of the represented
+`rationalThetaRadialPrimeDifference`, by applying
+`rationalThetaRadialPrimeDifferences_class_insert` to the empty set.
+Both the cut and uncut class theta are fixed by compact Haar
+averaging, by `rationalAdeleClassThetaFiniteUnitAverage_of_invariant`
+and `rationalAdeleClassThetaFiniteUnitAverage_eq_integral`. The joint
+check specializes to a
+`RationalThetaRadialInput` for these two comparisons; the Haar
+rewrite uses the Borel structure on the idele class group. The
+claim here does not identify an operator on arbitrary choices of
+representatives, the printed principal-value operator, or any
+closure. It does not contradict the overlap obstruction above:
+The latter's input finite factor at $2$ is not the integral-ball
+indicator.
+
+**Source scope.** For $\mathbb Q$ and the trivial compact character,
+$S=\{\infty\}$ contains the archimedean and ramified places and has
+trivial $S$-class group, on the intended reading of a finite set
+of places. The [fixed-stage note][stage] verifies the printed
+requirements and the tensor shape in (1.3.2.1), p. 25;
+we assume the tensor, not the uniform supply of representatives.
+The [ordinary filtration note][ordinary] verifies (1.3.2.2),
+p. 25, with $P_1=\{2\}$ disjoint from $S$. The [tensor audit][tensor]
+verifies the outside-$S$ input in (11.3.1.1), p. 492, and the
+printed index in §1.3.2, p. 26. We use its repair with complement
+of $S\cup P_1$, not the right-hand index as printed. The defining
+nonzero rational theta sum in (2.2.3.1), p. 81, and the two moments
+in (2.2.4.23), p. 91, inherit the [rendered theta readings][theta-sum].
+The compact averaging evidence and its limits are as in the
+previous section. These source readings are inherited, not new
+verification or premises of the Lean equality.
+
+Independent fixed-statement and applicability review:
+`two-cut-statement` (`tViZcAs`), Yah
+`01a205bb-627a-797f-84e6-d6e639142d5e`. The review checked exact
+source, not elaboration. The same owning transcript records the
+integrated build, fresh signature and axiom report, and both
+specialization checks.
+
+**Next check:** Realize `rationalAdelePrimeMasked p b` in the rational
+LF space for any single finite prime $p$, with the same supplied
+tensor and disjoint convention. The accepted prime-mask sum is
+already general in $p$ on the positive section, and the invariance
+and norm reductions above are general apart from substituting $2$
+for $p$. The invariant class transport for the masked output is
+proof-local, not a new public API. The first missing step is the
+LF witness: Apply `exists_rationalAdeleLF_of_compactOpenStage` with
+support the compact integral finite subgroup $W_f$ and additive
+invariance subgroup $pW_f$, open by
+`rationalAdeleBoxStage_isCompact_isOpen`. Check
+that adding an element of $pW_f$ preserves both membership in
+$W_f$ and the unit condition at $p$, using that its coordinate
+at $p$ has valuation strictly below $1$. The real fibers are
+$b$ or zero. This extends the test realization beyond the
+level-two cell without rederiving the section sum. It does not
+supply descent or a fixed stage for arbitrary representatives.
+
+[unramified-two-cut]: ../../Proofs/Theorems/RationalThetaUnramifiedTwoCut.lean
+[theta-sum]: ../obligations/trace-theta-density-qi.md#source-interface
 
 [finite-average]: ../../Proofs/Theorems/RationalThetaFiniteUnitAverage.lean
 [average-zero]: ../../Proofs/Theorems/RationalThetaAverageFourierZero.lean
