@@ -8,10 +8,12 @@ import Mathlib.MeasureTheory.Integral.Prod
 
 On the repaired positive radial domain for (12.4.1.22) and
 (12.4.1.24), p. 518, the retained radial weight is Borel measurable.
-Sharp indicator brackets on the two profiles also bound its values.
+Sharp indicator brackets on the two profiles also bound its values
+and its pairing with the Fourier transform of an integrable test.
 -/
 
 open MeasureTheory Set
+open scoped FourierTransform
 
 namespace Masullo
 
@@ -128,5 +130,30 @@ public theorem measurable_real_radial_weight {p q : ℝ → ℝ}
     intro s hs
     have hqpos : |w| / s ∈ Ioi 0 := mem_Ioi.mpr (div_pos (abs_pos.mpr hw) hs)
     simp [g, indicator_of_mem hs, indicator_of_mem hqpos]
+
+/-- Under upper-indicator brackets, the zero-extended real radial weight
+pairs absolutely with the Fourier transform of an integrable test. Its
+pairing differs from the sharp scalar at any intermediate cutoff product
+by at most twice the product width times the test's `L¹` norm. -/
+public theorem integrable_real_radial_pairing_and_norm_sub_le {p q : ℝ → ℝ}
+    (hp : Measurable ((Ioi (0 : ℝ)).indicator p))
+    (hq : Measurable ((Ioi (0 : ℝ)).indicator q))
+    {Blo Bhi Dlo Dhi : ℝ} (hBlo : 0 < Blo) (hB : Blo ≤ Bhi)
+    (hDlo : 0 < Dlo) (hD : Dlo ≤ Dhi)
+    (hpB : ∀ s > 0, (Iic Blo).indicator (fun _ ↦ (1 : ℝ)) s ≤ p s ∧
+      p s ≤ (Iic Bhi).indicator (fun _ ↦ (1 : ℝ)) s)
+    (hqD : ∀ s > 0, (Iic Dlo).indicator (fun _ ↦ (1 : ℝ)) s ≤ q s ∧
+      q s ≤ (Iic Dhi).indicator (fun _ ↦ (1 : ℝ)) s)
+    {u : ℝ → ℂ} (hu : Integrable u) {K : ℝ} (hlo : Blo * Dlo ≤ K) (hhi : K ≤ Bhi * Dhi) :
+    let W := fun w : ℝ ↦ if w = 0 then 0 else ∫ s in Ioi (0 : ℝ), p s * q (|w| / s) * s⁻¹
+    Integrable (fun w ↦ (W w : ℂ) * 𝓕 u w) ∧
+      ‖(∫ w, (W w : ℂ) * 𝓕 u w) - realSharpCutScalar u K‖ ≤
+        2 * (Bhi * Dhi - Blo * Dlo) * ∫ x, ‖u x‖ := by
+  dsimp only
+  refine integrable_mul_fourier_and_norm_sub_le_of_sharp_cut_brackets
+    (measurable_real_radial_weight hp hq).aestronglyMeasurable hu (mul_pos hBlo hDlo) hlo hhi ?_
+  filter_upwards [volume.ae_ne (0 : ℝ)] with w hw
+  simpa only [ite_eq_right hw] using
+    (real_radial_weight_sandwich hp hq hBlo hB hDlo hD (abs_pos.mpr hw) hpB hqD).2
 
 end Masullo

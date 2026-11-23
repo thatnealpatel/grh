@@ -182,41 +182,93 @@ private theorem integral_sharp_cut_weight {K : ℝ} (hK : 0 ≤ K) :
   simp only [Real.log_abs, integral_log, Real.log_neg_eq_log, smul_eq_mul]
   ring
 
+private theorem sharpCutWeight_eq_max_log {K w : ℝ} (hK : 0 < K) (hw : w ≠ 0) :
+    sharpCutWeight K w = max 0 (Real.log (K / |w|)) := by
+  have hr := abs_pos.mpr hw
+  by_cases h : |w| ≤ K
+  · have hlog := Real.log_nonneg ((le_div_iff₀ hr).2 (by simpa using h))
+    rw [sharpCutWeight, indicator_of_mem h, max_eq_right hlog, Real.log_div hK.ne' hr.ne']
+  · have hlog := Real.log_nonpos (div_nonneg hK.le hr.le)
+      ((div_le_iff₀ hr).2 (by simpa using (le_of_not_ge h)))
+    rw [sharpCutWeight, indicator_of_notMem h, max_eq_left hlog]
+
+private theorem sharpCutWeight_mono {K L w : ℝ} (hK : 0 < K) (hKL : K ≤ L) (hw : w ≠ 0) :
+    sharpCutWeight K w ≤ sharpCutWeight L w := by
+  rw [sharpCutWeight_eq_max_log hK hw, sharpCutWeight_eq_max_log (hK.trans_le hKL) hw]
+  exact max_le_max le_rfl (Real.log_le_log (div_pos hK (abs_pos.mpr hw))
+    (div_le_div_of_nonneg_right hKL (abs_nonneg w)))
+
+private theorem realSharpCutScalar_eq_integral (u : ℝ → ℂ) (K : ℝ) :
+    realSharpCutScalar u K = ∫ w, (sharpCutWeight K w : ℂ) * 𝓕 u w := by
+  rw [realSharpCutScalar, sharpCutWeight_mul_fourier,
+    integral_indicator (measurableSet_sharp_cut K)]
+
+/-- A real weight between two sharp log bands can be paired absolutely with
+an `L¹` test's bounded Fourier transform. Its error relative to any sharp
+cutoff between the endpoints is controlled by the mass of the band difference. -/
+public theorem integrable_mul_fourier_and_norm_sub_le_of_sharp_cut_brackets
+    {W : ℝ → ℝ} (hW : AEStronglyMeasurable W volume)
+    {u : ℝ → ℂ} (hu : Integrable u)
+    {Klo K Khi : ℝ} (hKlo : 0 < Klo) (hlo : Klo ≤ K) (hhi : K ≤ Khi)
+    (hbracket : ∀ᵐ w : ℝ ∂volume,
+      max 0 (Real.log (Klo / |w|)) ≤ W w ∧ W w ≤ max 0 (Real.log (Khi / |w|))) :
+    Integrable (fun w ↦ (W w : ℂ) * 𝓕 u w) ∧
+      ‖(∫ w, (W w : ℂ) * 𝓕 u w) - realSharpCutScalar u K‖ ≤
+        2 * (Khi - Klo) * ∫ x, ‖u x‖ := by
+  have hKhi := hKlo.trans_le (hlo.trans hhi)
+  have hbounds : ∀ᵐ w : ℝ, 0 ≤ W w ∧ sharpCutWeight Klo w ≤ W w ∧
+      W w ≤ sharpCutWeight Khi w := by
+    filter_upwards [hbracket, volume.ae_ne (0 : ℝ)] with w ⟨hl, hh⟩ hw
+    exact ⟨(le_max_left ..).trans hl, (sharpCutWeight_eq_max_log hKlo hw).le.trans hl,
+      hh.trans (sharpCutWeight_eq_max_log hKhi hw).ge⟩
+  have hWi : Integrable W := by
+    refine (integrable_sharp_cut_weight Khi).mono' hW ?_
+    filter_upwards [hbounds] with w ⟨hn, _, hupper⟩
+    simpa only [Real.norm_eq_abs, abs_of_nonneg hn] using hupper
+  have hf : Continuous (𝓕 u) := VectorFourier.fourierIntegral_continuous
+    Real.continuous_fourierChar continuous_inner hu
+  have hpair : Integrable (fun w ↦ (W w : ℂ) * 𝓕 u w) :=
+    hWi.ofReal.mul_bdd hf.aestronglyMeasurable (.of_forall (Real.norm_fourier_le_integral_norm u))
+  have hsharp : Integrable (fun w ↦ (sharpCutWeight K w : ℂ) * 𝓕 u w) := by
+    rw [sharpCutWeight_mul_fourier]
+    exact integrable_sharp_cut_pairing hu K
+  let E : ℝ → ℝ := fun w ↦ sharpCutWeight Khi w - sharpCutWeight Klo w
+  have hE : Integrable E := (integrable_sharp_cut_weight Khi).sub (integrable_sharp_cut_weight Klo)
+  have hmass : (∫ w, E w) = 2 * (Khi - Klo) := by
+    change (∫ w, sharpCutWeight Khi w - sharpCutWeight Klo w) = _
+    rw [integral_sub (integrable_sharp_cut_weight Khi) (integrable_sharp_cut_weight Klo),
+      integral_sharp_cut_weight hKhi.le, integral_sharp_cut_weight hKlo.le]
+    ring
+  refine ⟨hpair, ?_⟩
+  rw [realSharpCutScalar_eq_integral, ← integral_sub hpair hsharp]
+  simp only [← sub_mul, ← Complex.ofReal_sub]
+  rw [← hmass, ← integral_mul_const]
+  refine norm_integral_le_of_norm_le (hE.mul_const _) ?_
+  filter_upwards [hbounds, volume.ae_ne (0 : ℝ)] with w ⟨_, hl, hh⟩ hw
+  have hsl := sharpCutWeight_mono hKlo hlo hw
+  have hsh := sharpCutWeight_mono (hKlo.trans_le hlo) hhi hw
+  have hdiff : |W w - sharpCutWeight K w| ≤ E w := by
+    change |W w - sharpCutWeight K w| ≤ sharpCutWeight Khi w - sharpCutWeight Klo w
+    exact abs_sub_le_iff.mpr ⟨sub_le_sub hh hsl, sub_le_sub hsh hl⟩
+  rw [norm_mul, Complex.norm_real, Real.norm_eq_abs]
+  exact mul_le_mul hdiff (Real.norm_fourier_le_integral_norm u w)
+    (norm_nonneg _) ((abs_nonneg _).trans hdiff)
+
 /-- The sharp scalar is Lipschitz in the positive cutoff product, with
 constant twice the `L¹` norm of the additive test. No integrability of
 its Fourier transform on the whole line is assumed. -/
 public theorem norm_realSharpCutScalar_sub_le {u : ℝ → ℂ} (hu : Integrable u)
     {K K' : ℝ} (hK : 0 < K) (hKK' : K ≤ K') :
     ‖realSharpCutScalar u K' - realSharpCutScalar u K‖ ≤ 2 * (K' - K) * ∫ x, ‖u x‖ := by
-  let W : ℝ → ℝ := fun w ↦ sharpCutWeight K' w - sharpCutWeight K w
-  have hW : Integrable W := (integrable_sharp_cut_weight K').sub (integrable_sharp_cut_weight K)
-  have hmass : (∫ w, W w) = 2 * (K' - K) := by
-    change (∫ w, sharpCutWeight K' w - sharpCutWeight K w) = _
-    rw [integral_sub (integrable_sharp_cut_weight K')
-      (integrable_sharp_cut_weight K), integral_sharp_cut_weight (hK.le.trans hKK'),
-      integral_sharp_cut_weight hK.le]
-    ring
-  have hnonneg : ∀ᵐ w : ℝ, 0 ≤ W w := by
+  rw [realSharpCutScalar_eq_integral u K']
+  have hbracket : ∀ᵐ w : ℝ ∂volume,
+      max 0 (Real.log (K / |w|)) ≤ sharpCutWeight K' w ∧
+        sharpCutWeight K' w ≤ max 0 (Real.log (K' / |w|)) := by
     filter_upwards [volume.ae_ne (0 : ℝ)] with w hw
-    have hradial := real_position_band_radial_volume hK hKK' (D := 1) one_pos (abs_pos.mpr hw)
-    simp only [div_one, mul_one] at hradial
-    simp only [W, sharpCutWeight, indicator_apply, mem_ofPred_eq, ← hradial]
-    exact setIntegral_nonneg measurableSet_Icc fun s hs ↦
-      inv_nonneg.mpr (hK.le.trans ((le_max_left ..).trans hs.1))
-  have hJ (L : ℝ) : realSharpCutScalar u L = ∫ w, (sharpCutWeight L w : ℂ) * 𝓕 u w := by
-    rw [realSharpCutScalar, sharpCutWeight_mul_fourier,
-      integral_indicator (measurableSet_sharp_cut L)]
-  have hq (L : ℝ) : Integrable (fun w ↦ (sharpCutWeight L w : ℂ) * 𝓕 u w) := by
-    rw [sharpCutWeight_mul_fourier]
-    exact integrable_sharp_cut_pairing hu L
-  rw [hJ, hJ, ← integral_sub (hq K') (hq K)]
-  simp only [← sub_mul, ← Complex.ofReal_sub]
-  change ‖∫ w, (W w : ℂ) * 𝓕 u w‖ ≤ _
-  rw [← hmass, ← integral_mul_const]
-  refine norm_integral_le_of_norm_le (hW.mul_const _) ?_
-  filter_upwards [hnonneg] with w hw
-  rw [norm_mul, Complex.norm_real, Real.norm_eq_abs, abs_of_nonneg hw]
-  exact mul_le_mul_of_nonneg_left (Real.norm_fourier_le_integral_norm u w) hw
+    rw [← sharpCutWeight_eq_max_log hK hw, ← sharpCutWeight_eq_max_log (hK.trans_le hKK') hw]
+    exact ⟨sharpCutWeight_mono hK hKK' hw, le_rfl⟩
+  exact (integrable_mul_fourier_and_norm_sub_le_of_sharp_cut_brackets
+    (integrable_sharp_cut_weight K').aestronglyMeasurable hu hK le_rfl hKK' hbracket).2
 
 /-- The sharp scalar on the repaired positive radial quotient, retaining
 both the position band `[A,B]` and the frequency band `[C,D]`. -/

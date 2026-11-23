@@ -400,20 +400,69 @@ checked this scope and the product integration reduction. The same Yah
 records the owning build, fresh joint-import signatures and axioms,
 and candidate disposition.
 
-**Next bounded check, formalization only.** With the sandwich
-hypotheses, put $K_-=B_-D_-$ and $K_+=B_+D_+$. For $u\in L^1$,
-bound the difference between the outer pairing of the zero-extended
-weight with $\widehat u$ and the sharp pairing at $K\in[K_-,K_+]$
-by $2(K_+-K_-)\|u\|_1$. In the same $w$ coordinate, both weights
-lie in the same envelope for $w\ne0$, so their absolute difference
-is bounded by $L_{K_+}(|w|)-L_{K_-}(|w|)$. Reuse the sharp
-integrability and mass calculations behind
-`norm_realSharpCutScalar_sub_le`: `integrable_sharp_cut_weight` and
-`integral_sharp_cut_weight` are private, and the envelope mass
-$2(K_+-K_-)$ is proof-local. The published scalar norm estimate alone
-does not imply a bound against an arbitrary intermediate weight.
-The remaining check is to use that envelope with measurability and
-the $L^1$ Fourier bound for the actual outer pairing, without assuming
-that $\widehat u$ is globally integrable. The manuscript cutoff
-applicability, width rates, and projected-trace or Mellin
+### Lean-checked finite outer pairing
+
+[RealRadialWeightSandwich](../../Proofs/Props/RealRadialWeightSandwich.lean)
+proves `Masullo.integrable_real_radial_pairing_and_norm_sub_le` under
+`real_radial_weight_sandwich`'s positive upper-indicator brackets and
+measurability hypotheses. Write $K_-=B_-D_-$, $K_+=B_+D_+$, and let
+$W(w)$ be the zero extension at $w=0$ of the paired profile weight at
+$r=|w|$. For $u\in L^1(\mathbb R;\mathbb C)$ and $K_-\le K\le K_+$,
+the integrand $W(w)\widehat u(w)$ is absolutely integrable, and
+
+$$
+\left|\int_{\mathbb R} W(w)\widehat u(w)\,dw-J(K)\right|
+\le 2(K_+-K_-)\|u\|_1,
+\qquad J(K)=\texttt{realSharpCutScalar}\ u\ K.
+$$
+
+The reusable endpoint
+`Masullo.integrable_mul_fourier_and_norm_sub_le_of_sharp_cut_brackets`
+in [RealSharpLowerEdges](../../Proofs/Props/RealSharpLowerEdges.lean)
+needs only that the real weight $W$ is a.e. strongly measurable and
+lies a.e. between the sharp log weights at positive ordered endpoints.
+The upper weight controls absolute integrability. Off the null
+origin the sharp weight at $K$ is also in this interval, so the
+absolute weight error is bounded by the difference of the two sharp
+weights in the same $w$ coordinate. The proof reuses their private
+integrability and mass calculations, giving envelope mass
+$2(K_+-K_-)$, and multiplies by $\|\widehat u\|_\infty\le\|u\|_1$.
+The original sharp Lipschitz estimate is now its endpoint
+specialization, with unchanged hypotheses. No global $L^1$ assumption
+on $\widehat u$, profile smoothness, or profile monotonicity is needed.
+
+**Source and review.** This is a finite pairing on the repaired
+positive radial domain. The [clause-specific review](#review-and-continuation)
+supplies inherited rendered evidence for the sharp ranges in
+(12.4.1.22), p. 518; the preceding smooth-to-sharp equality is
+extraction-supported and unused. The
+[real coefficient audit](trace-real-prime-q.md#the-chapter-12-real-coefficient)
+supplies inherited rendered evidence for the band in (12.4.1.24),
+p. 518. Neither supplies the project brackets. No manuscript passage
+was reread. Independent exact-source review in Yah
+`01a2065a-ccba-7885-83d7-d3e838c1ab62`, agent `bXKcOxk`, checked
+both statements and the use of the accepted definitions and source
+notes at `61dce3be3e3f28c1c140e6454fd2a630cb6895fc`. The a.e.
+bracket and same-coordinate envelope were checked mathematically;
+elaboration was the owner's check, not the reader's. The same Yah
+records the candidate, owning builds, fresh joint-import signatures,
+axioms, and disposition.
+
+**Next bounded check, formalization only.** For a cutoff family with
+eventual upper-indicator brackets, $K$ between the endpoint products,
+$K\to\infty$, and $K_+-K_-\to0$, transfer the sharp limit to the
+actual outer pairing of the fixed reflected additive test
+$u=\texttt{realLogProfileAdditive}(f\circ(-\mathrm{id}))$, with
+$f$ smooth, compactly supported, and $f(0)=0$. In the same additive
+coordinate, `real_log_profile_sharp_fourier_tendsto` composed with
+$K$ already gives the sharp scalar limit
+$\tfrac12\int u(z)/|z|\,dz$; `real_log_profile_additive_test` gives
+smoothness and compact support, hence integrability of $u$. What
+remains is the filter-level transfer using the finite error bound,
+not a new evaluation of the sharp scalar. The product-width
+convergence is a project hypothesis here. The exact rate clause after
+(12.4.1.28), p. 519, remains provisional as in the
+[clause-specific review](#review-and-continuation) and is not needed
+for the conditional transfer. Applicability of the printed cutoffs,
+the width rate for those cutoffs, and projected-trace or Mellin
 identification remain separate.
