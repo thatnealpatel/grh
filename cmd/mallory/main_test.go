@@ -34,6 +34,10 @@ func TestPass(t *testing.T) {
 	if err != nil || n != nil {
 		t.Fatalf("no target: got (%v, %v)", n, err)
 	}
+	n, err = a.Next(godel.Result{Text: "NO CARD\nCard adoption failed"})
+	if err != nil || n != nil {
+		t.Fatalf("no card: got (%v, %v)", n, err)
+	}
 }
 
 func TestRejectInvalidHandoff(t *testing.T) {
