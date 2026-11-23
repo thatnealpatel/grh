@@ -182,7 +182,7 @@ func TestDispatchAndOperationalStop(t *testing.T) {
 		t.Fatalf("request not private: %v, %v", info, err)
 	}
 	var b batch
-	if err := json.Unmarshal(data, &b); err != nil || b.Edition != edition || b.AcceptedTip != base || b.Target != r.target || len(b.Assignments) != 1 || b.Assignments[0].Revision != work[0].Revision {
+	if err := json.Unmarshal(data, &b); err != nil || b.Edition != edition || b.AcceptedTip != base || b.Target != r.target || len(b.Assignments) != 1 || b.Assignments[0].Revision != work[0].Revision || b.Assignments[0].Lane != proofLane {
 		t.Fatalf("wrong request: %+v, %v", b, err)
 	}
 	firstRequest := request
@@ -201,6 +201,17 @@ func TestDispatchAndOperationalStop(t *testing.T) {
 	})
 	if next, err := n.Next(godel.Result{Text: "unstructured handoff"}); next != nil || err != nil || request != "" {
 		t.Fatalf("accepted outcome did not enable continuation: %+v, %v, request=%q", next, err, request)
+	}
+	n = start("old proof handoff")
+	data, err = os.ReadFile(request)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := json.Unmarshal(data, &b); err != nil || len(b.Assignments) != 1 || b.Assignments[0].Key != work[0].Key || b.Assignments[0].Revision != work[0].Revision || b.Assignments[0].Lane != statementLane {
+		t.Fatalf("wrong statement request: %+v, %v", b, err)
+	}
+	if next, err := n.Next(godel.Result{Text: "old proof outcome"}); next != nil || err == nil || !strings.Contains(err.Error(), work[0].Key+"-"+work[0].Revision+"-statement.json: no accepted receipt") {
+		t.Fatalf("proof receipt acknowledged a statement request: %+v, %v", next, err)
 	}
 }
 
@@ -285,18 +296,20 @@ func TestAcceptedRecoveryAndIndependentOutcomes(t *testing.T) {
 	if err := r.acknowledge(t.Context(), b, accepted); err == nil || !strings.Contains(err.Error(), work[1].path()) || strings.Contains(err.Error(), work[2].path()) {
 		t.Fatalf("wrong unresolved assignments: %v", err)
 	}
+	blocked := statementOf(work[3])
+	expectBatch(t, r, accepted, work[3:], blocked)
+	files[blocked.path()] = note(t, blocked, "statement_blocked", "need the real source definition of the operator")
 	files["unrelated.md"] = "target movement"
 	moved := snapshot(t, r, accepted, files)
-	pending, err = r.selectBatch(t.Context(), moved, []assignment{work[3]}, batchCap)
-	if err != nil || len(pending) != 0 {
-		t.Fatalf("unrelated movement retried substantive failure: %+v, %v", pending, err)
-	}
+	expectBatch(t, r, moved, work[3:])
 	writeChapter(t, dir, "chapter-01", strings.Replace(recordJSON("blocked", "open"), "claims P", "claims P assuming Q", 1))
 	revised := readAssignments(t, dir)
 	pending, err = r.selectBatch(t.Context(), moved, revised, batchCap)
-	if err != nil || len(pending) != 1 || pending[0].Key != work[3].Key || pending[0].Revision == work[3].Revision {
+	if err != nil || len(pending) != 1 || pending[0].Key != work[3].Key || pending[0].Revision == work[3].Revision || pending[0].Lane != proofLane {
 		t.Fatalf("meaningfully revised record not selected: %+v, %v", pending, err)
 	}
+	files[revised[0].path()] = note(t, revised[0], "substantive_failure", "need a proof of the revised claim")
+	expectBatch(t, r, snapshot(t, r, moved, files), revised, statementOf(revised[0]))
 }
 
 func TestCoverageRequiresAcceptedRevision(t *testing.T) {
@@ -324,4 +337,152 @@ func TestCoverageRequiresAcceptedRevision(t *testing.T) {
 	if err != nil || len(pending) != 1 {
 		t.Fatalf("stale evidence suppressed work: %+v, %v", pending, err)
 	}
+}
+func statementOf(a assignment) assignment {
+	a.Lane = statementLane
+	return a
+}
+
+func expectBatch(t *testing.T, r repository, tip string, work []assignment, want ...assignment) {
+	t.Helper()
+	got, err := r.selectBatch(t.Context(), tip, work, batchCap)
+	if err != nil || len(got) != len(want) {
+		t.Fatalf("batch = %+v, %v; want %+v", got, err, want)
+	}
+	for i, a := range want {
+		if got[i].Key != a.Key || got[i].Revision != a.Revision || got[i].Lane != a.Lane {
+			t.Fatalf("batch = %+v; want %+v", got, want)
+		}
+	}
+}
+
+func TestWrongLaneOutcomes(t *testing.T) {
+	dir := t.TempDir()
+	writeChapter(t, dir, "chapter-01", recordJSON("claim", "open"))
+	work := readAssignments(t, dir)
+	proof, statement := work[0], statementOf(work[0])
+	r := newRepo(t)
+	failure := note(t, proof, "substantive_failure", "need a proof of the displayed implication")
+	blocked := note(t, statement, "statement_blocked", "need the exact source quotient definition")
+	for _, tc := range []struct {
+		want  assignment
+		files map[string]string
+	}{
+		{proof, map[string]string{proof.path(): blocked, statement.path(): blocked}},
+		{statement, map[string]string{proof.path(): failure, statement.path(): failure}},
+	} {
+		t.Run(string(tc.want.Lane), func(t *testing.T) {
+			tip := snapshot(t, r, "", tc.files)
+			expectBatch(t, r, tip, work, tc.want)
+			b := batch{Assignments: []assignment{tc.want}}
+			if err := r.acknowledge(t.Context(), b, tip); err == nil || !strings.Contains(err.Error(), "invalid outcome for assignment lane") {
+				t.Fatalf("wrong-lane outcome = %v", err)
+			}
+		})
+	}
+}
+
+func TestStatementFallbackAndProofRemainder(t *testing.T) {
+	dir := t.TempDir()
+	writeChapter(t, dir, "chapter-01", recordJSON("landed", "open"), recordJSON("covered", "open"), recordJSON("partial", "open"), recordJSON("failed", "open"), recordJSON("pending", "open"))
+	work := readAssignments(t, dir)
+	landed, covered, partial, failed, pending := work[0], work[1], work[2], work[3], work[4]
+	r := newRepo(t)
+	const existing = "Proofs/Theorems/Existing.lean"
+	const added = "Proofs/Theorems/Added.lean"
+	const retry = "need a closed embedding for the opposite implication"
+	files := map[string]string{existing: "theorem existing : True := trivial\n"}
+	base := snapshot(t, r, "", files)
+	files[added] = "theorem full : True := trivial\ntheorem part : True := trivial\n"
+	files[landed.path()] = note(t, landed, "landed", "", evidence{Path: added, Declarations: []string{"full"}})
+	files[covered.path()] = note(t, covered, "already_covered", "", evidence{Path: existing, Revision: base, Declarations: []string{"existing"}})
+	files[partial.path()] = note(t, partial, "landed", retry, evidence{Path: added, Declarations: []string{"part"}})
+	files[failed.path()] = note(t, failed, "substantive_failure", "need a missing hypothesis of the printed implication")
+	tip := snapshot(t, r, base, files)
+	expectBatch(t, r, tip, work, pending)
+	files[pending.path()] = note(t, pending, "already_covered", "", evidence{Path: existing, Revision: base, Declarations: []string{"existing"}})
+	tip = snapshot(t, r, tip, files)
+	p, f := statementOf(partial), statementOf(failed)
+	expectBatch(t, r, tip, work, p)
+	// A blocker without a retry condition is not a
+	// disposition.
+	files[p.path()] = note(t, p, "statement_blocked", "")
+	tip = snapshot(t, r, tip, files)
+	expectBatch(t, r, tip, work, p)
+	files[p.path()] = note(t, p, "statement_blocked", "need the real quotient object from display 1")
+	tip = snapshot(t, r, tip, files)
+	expectBatch(t, r, tip, work, f)
+	files[f.path()] = note(t, f, "statement_blocked", "need the real source operator on the printed test class")
+	tip = snapshot(t, r, tip, files)
+	if err := r.acknowledge(t.Context(), batch{Assignments: []assignment{f}}, tip); err != nil {
+		t.Fatal(err)
+	}
+	files["unrelated.md"] = "accepted movement"
+	tip = snapshot(t, r, tip, files)
+	expectBatch(t, r, tip, work)
+	// The distinct statement receipt has not overwritten the
+	// proof remainder.
+	got, err := r.git(t.Context(), "show", tip+":"+partial.path())
+	if err != nil || !strings.Contains(string(got), retry) || string(got) != files[partial.path()] {
+		t.Fatalf("partial proof receipt = %s, %v", got, err)
+	}
+	// Retire only the obsolete proof
+	// disposition once its retry condition
+	// is met.
+	delete(files, partial.path())
+	tip = snapshot(t, r, tip, files)
+	expectBatch(t, r, tip, work, partial)
+}
+
+func TestCheckedStatementExactEvidence(t *testing.T) {
+	dir := t.TempDir()
+	writeChapter(t, dir, "chapter-01", recordJSON("claim", "open"))
+	work := readAssignments(t, dir)
+	proof, statement := work[0], statementOf(work[0])
+	r := newRepo(t)
+	b := batch{Assignments: []assignment{statement}}
+	const artifact = "Proofs/Props/Statement.lean"
+	const original = "namespace Fixture\ndef Claim (n : Nat) : Prop := 0 ≤ n\nend Fixture\n"
+	ref := evidence{Path: artifact, Declarations: []string{"Fixture.Claim"}}
+	files := map[string]string{proof.path(): note(t, proof, "substantive_failure", "need a proof of the claimed bound"), artifact: original}
+	base := snapshot(t, r, "", files)
+
+	files[statement.path()] = note(t, statement, "statement_checked", "", ref)
+	tip := snapshot(t, r, base, files)
+	// With no explicit revision, the
+	// defining file must change in the
+	// receipt candidate.
+	expectBatch(t, r, tip, work, statement)
+	ref.Revision = base
+	files[statement.path()] = note(t, statement, "statement_checked", "", ref)
+	tip = snapshot(t, r, tip, files)
+	if err := r.acknowledge(t.Context(), b, tip); err != nil {
+		t.Fatal(err)
+	}
+	expectBatch(t, r, tip, work)
+
+	// A new definition and receipt can instead land together.
+	files[artifact] = strings.Replace(original, "0 ≤ n", "0 ≤ n + 1", 1)
+	ref.Revision = ""
+	files[statement.path()] = note(t, statement, "statement_checked", "", ref)
+	tip = snapshot(t, r, tip, files)
+	files["Proofs/Lemmas/Unrelated.lean"] = "theorem unrelated : True := trivial\n"
+	tip = snapshot(t, r, tip, files)
+	if err := r.acknowledge(t.Context(), b, tip); err != nil {
+		t.Fatal(err)
+	}
+	expectBatch(t, r, tip, work)
+
+	// A valid statement receipt is still
+	// present if the proof is retried.
+	delete(files, proof.path())
+	expectBatch(t, r, snapshot(t, r, tip, files), work, proof)
+	files[proof.path()] = note(t, proof, "substantive_failure", "need a proof of the claimed bound")
+
+	files[artifact] = original
+	tip = snapshot(t, r, tip, files)
+	if err := r.acknowledge(t.Context(), b, tip); err == nil || !strings.Contains(err.Error(), "cited Lean file changed") {
+		t.Fatalf("changed defining file acknowledged: %v", err)
+	}
+	expectBatch(t, r, tip, work, statement)
 }

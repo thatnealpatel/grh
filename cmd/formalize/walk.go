@@ -24,14 +24,28 @@ type passage struct {
 	PrintedPage int    `json:"printed_page"`
 }
 
+type lane string
+
+const (
+	proofLane     lane = "proof"
+	statementLane lane = "statement"
+)
+
 type assignment struct {
 	Chapter  string         `json:"chapter"`
 	Key      string         `json:"key"`
 	Revision string         `json:"revision"`
+	Lane     lane           `json:"lane"`
 	Record   jsontext.Value `json:"record"`
 }
 
-func (a assignment) path() string { return noteDir + "/" + a.Key + "-" + a.Revision + ".json" }
+func (a assignment) path() string {
+	suffix := ".json"
+	if a.Lane == statementLane {
+		suffix = "-statement.json"
+	}
+	return noteDir + "/" + a.Key + "-" + a.Revision + suffix
+}
 
 func digest(data []byte) string {
 	sum := sha256.Sum256(data)
@@ -128,7 +142,7 @@ func appendChapter(work []assignment, id string, data []byte) ([]assignment, err
 		if err := raw.Canonicalize(jsontext.CanonicalizeRawInts(false)); err != nil {
 			return nil, err
 		}
-		work = append(work, assignment{id, digest(identity), digest(raw), raw})
+		work = append(work, assignment{id, digest(identity), digest(raw), proofLane, raw})
 	}
 	return work, nil
 }

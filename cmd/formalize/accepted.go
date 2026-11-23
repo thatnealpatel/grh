@@ -79,9 +79,9 @@ func (r repository) tip(ctx context.Context) (string, error) {
 }
 
 // A receipt is authoritative only in the
-// accepted tree. A landed receipt is part
-// of the proof candidate itself, not a
-// post-adoption write.
+// accepted tree. A landed Lean artifact
+// and its receipt are part of the same
+// candidate.
 type receipt struct {
 	Key      string     `json:"key"`
 	Revision string     `json:"revision"`
@@ -90,6 +90,15 @@ type receipt struct {
 	Finding  string     `json:"finding"`
 	Retry    string     `json:"retry,omitempty"`
 	Evidence []evidence `json:"evidence,omitempty"`
+}
+
+// A valid proof receipt can dispose of
+// the assignment without covering the
+// passage. Preserve the legacy retry
+// field as the marker of a partial
+// landing.
+func (d receipt) coversPassage() bool {
+	return d.Outcome == "already_covered" || (d.Outcome == "landed" && d.Retry == "")
 }
 
 type evidence struct {
@@ -118,96 +127,107 @@ func (r repository) receiptTree(ctx context.Context, tip string) (map[string]str
 
 // disposition distinguishes absent/invalid evidence (still pending) from a
 // plumbing error (we could not observe the accepted tree).
-func (r repository) disposition(ctx context.Context, tip string, notes map[string]string, a assignment) (outcome, problem string, err error) {
+func (r repository) disposition(ctx context.Context, tip string, notes map[string]string, a assignment) (receipt, string, error) {
+	if a.Lane != proofLane && a.Lane != statementLane {
+		return receipt{}, "unknown assignment lane", nil
+	}
 	oid, ok := notes[a.path()]
 	if !ok {
-		return "", "no accepted receipt", nil
+		return receipt{}, "no accepted receipt", nil
 	}
 	data, err := r.git(ctx, "cat-file", "blob", oid)
 	if err != nil {
-		return "", "", err
+		return receipt{}, "", err
 	}
 	var d receipt
 	if err := json.Unmarshal(data, &d, json.RejectUnknownMembers(true)); err != nil {
-		return "", "invalid receipt JSON: " + err.Error(), nil
+		return receipt{}, "invalid receipt JSON: " + err.Error(), nil
 	}
 	if d.Key != a.Key || d.Revision != a.Revision || blank(d.Source) || blank(d.Finding) {
-		return "", "wrong identity or missing source/finding", nil
+		return receipt{}, "wrong identity or missing source/finding", nil
+	}
+	statementOutcome := d.Outcome == "statement_checked" || d.Outcome == "statement_blocked"
+	if (a.Lane == statementLane) != statementOutcome {
+		return receipt{}, "invalid outcome for assignment lane", nil
 	}
 	switch d.Outcome {
-	case "substantive_failure":
+	case "substantive_failure", "statement_blocked":
 		if blank(d.Retry) || len(d.Evidence) != 0 {
-			return "", "failure requires a retry condition and no structured Lean evidence", nil
+			return receipt{}, "failure requires a retry condition and no structured Lean evidence", nil
 		}
-		return d.Outcome, "", nil
+		return d, "", nil
 	case "landed", "already_covered":
 		if len(d.Evidence) == 0 || (d.Outcome == "already_covered" && d.Retry != "") {
-			return "", "success requires Lean evidence; coverage cannot have a retry condition", nil
+			return receipt{}, "success requires Lean evidence; coverage cannot have a retry condition", nil
+		}
+	case "statement_checked":
+		if d.Retry != "" || len(d.Evidence) != 1 || len(d.Evidence[0].Declarations) != 1 {
+			return receipt{}, "checked statement requires one defining Lean path and declaration and no retry condition", nil
 		}
 	default:
-		return "", "unknown disposition", nil
+		return receipt{}, "unknown disposition", nil
 	}
 	var landing string
 	for _, e := range d.Evidence {
 		if !strings.HasPrefix(e.Path, "Proofs/") || path.Clean(e.Path) != e.Path || !strings.HasSuffix(e.Path, ".lean") || strings.ContainsAny(e.Path, "\x00\r\n") || len(e.Declarations) == 0 {
-			return "", "invalid Lean path or missing declarations", nil
+			return receipt{}, "invalid Lean path or missing declarations", nil
 		}
 		for _, name := range e.Declarations {
 			if blank(name) {
-				return "", "empty declaration name", nil
+				return receipt{}, "empty declaration name", nil
 			}
 		}
 		rev := e.Revision
-		if d.Outcome == "landed" {
+		if d.Outcome == "landed" || (d.Outcome == "statement_checked" && rev == "") {
 			if rev != "" {
-				return "", "landed evidence must be in the receipt candidate", nil
+				return receipt{}, "landed evidence must be in the receipt candidate", nil
 			}
 			if landing == "" {
 				out, err := r.git(ctx, "log", "-1", "--first-parent", "--format=%H", tip, "--", a.path())
 				if err != nil {
-					return "", "", err
+					return receipt{}, "", err
 				}
 				landing = strings.TrimSpace(string(out))
 				if !commitID(landing) {
-					return "", "cannot locate receipt candidate", nil
+					return receipt{}, "cannot locate receipt candidate", nil
 				}
 			}
 			rev = landing
 			changed, err := r.git(ctx, "diff-tree", "--root", "--no-commit-id", "-r", "--name-only", rev, "--", e.Path)
 			if err != nil {
-				return "", "", err
+				return receipt{}, "", err
 			}
 			if len(changed) == 0 {
-				return "", "landing did not change the cited Lean path", nil
+				return receipt{}, "landing did not change the cited Lean path", nil
 			}
 		} else {
 			if !commitID(rev) {
-				return "", "coverage requires an exact accepted evidence revision", nil
+				return receipt{}, "coverage requires an exact accepted evidence revision", nil
 			}
 			_, err := r.git(ctx, "merge-base", "--is-ancestor", rev, tip)
 			if err != nil {
 				// A missing object and an unaccepted object are both insufficient evidence.
-				return "", "coverage revision not proved accepted: " + err.Error(), ctx.Err()
+				return receipt{}, "coverage revision not proved accepted: " + err.Error(), ctx.Err()
 			}
 		}
 		original, err := r.leanBlob(ctx, rev, e.Path)
 		if err != nil {
-			return "", "", err
+			return receipt{}, "", err
 		}
 		if original == "" {
-			return "", "cited Lean path missing from evidence revision", nil
+			return receipt{}, "cited Lean path missing from evidence revision", nil
 		}
 		if rev != tip {
 			current, err := r.leanBlob(ctx, tip, e.Path)
 			if err != nil {
-				return "", "", err
+				return receipt{}, "", err
 			}
 			if original != current {
-				return "", "cited Lean file changed since evidence revision; reconcile coverage", nil
+				return receipt{}, "cited Lean file changed since evidence revision; reconcile coverage", nil
 			}
 		}
 	}
-	return d.Outcome, "", nil
+	return d, "", nil
 }
 
 func (r repository) leanBlob(ctx context.Context, rev, file string) (string, error) {
@@ -233,22 +253,59 @@ func (r repository) selectBatch(ctx context.Context, tip string, work []assignme
 		return nil, err
 	}
 	var pending []assignment
-	for _, a := range work {
-		if len(pending) == limit {
-			break
-		}
-		outcome, problem, err := r.disposition(ctx, tip, notes, a)
+	proofs := make([]receipt, len(work))
+	for i, a := range work {
+		a.Lane = proofLane
+		proof, err := r.pendingDisposition(ctx, tip, notes, a)
 		if err != nil {
 			return nil, err
 		}
-		if outcome == "" {
-			if notes[a.path()] != "" {
-				log.Printf("formalize: %s: %s", a.path(), problem)
-			}
+		proofs[i] = proof
+		if proof.Outcome == "" {
 			pending = append(pending, a)
+			if len(pending) == limit {
+				return pending, nil
+			}
+		}
+	}
+	// Scheduling policy, not statement
+	// eligibility: drain pending proofs
+	// first.
+	if len(pending) > 0 {
+		return pending, nil
+	}
+	for i, a := range work {
+		candidate, needed, err := r.statementCandidate(ctx, tip, notes, a, proofs[i])
+		if err != nil {
+			return nil, err
+		}
+		if needed {
+			pending = append(pending, candidate)
+			if len(pending) == limit {
+				break
+			}
 		}
 	}
 	return pending, nil
+}
+
+func (r repository) pendingDisposition(ctx context.Context, tip string, notes map[string]string, a assignment) (receipt, error) {
+	d, problem, err := r.disposition(ctx, tip, notes, a)
+	if err == nil && d.Outcome == "" && notes[a.path()] != "" {
+		log.Printf("formalize: %s: %s", a.path(), problem)
+	}
+	return d, err
+}
+
+// Statement eligibility is independent of proof priority. Only full proof
+// coverage or a valid statement disposition suppresses this candidate.
+func (r repository) statementCandidate(ctx context.Context, tip string, notes map[string]string, a assignment, proof receipt) (assignment, bool, error) {
+	if proof.coversPassage() {
+		return assignment{}, false, nil
+	}
+	a.Lane = statementLane
+	d, err := r.pendingDisposition(ctx, tip, notes, a)
+	return a, err == nil && d.Outcome == "", err
 }
 
 func (r repository) acknowledge(ctx context.Context, b batch, tip string) error {
@@ -258,15 +315,15 @@ func (r repository) acknowledge(ctx context.Context, b batch, tip string) error 
 	}
 	var missing []string
 	for _, a := range b.Assignments {
-		outcome, problem, err := r.disposition(ctx, tip, notes, a)
+		d, problem, err := r.disposition(ctx, tip, notes, a)
 		if err != nil {
 			return err
 		}
-		if outcome == "" {
+		if d.Outcome == "" {
 			missing = append(missing, a.path()+": "+problem)
 			continue
 		}
-		log.Printf("formalize: %s at %s: %s", a.path(), tip, outcome)
+		log.Printf("formalize: %s at %s: %s", a.path(), tip, d.Outcome)
 	}
 	if len(missing) > 0 {
 		return fmt.Errorf("formalize: unresolved assignments (operational stop; restart after reconciliation): %s", strings.Join(missing, "; "))
