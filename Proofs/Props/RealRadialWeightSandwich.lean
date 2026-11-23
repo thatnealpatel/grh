@@ -2,12 +2,13 @@ module
 
 public import Props.RealSharpLowerEdges
 import Mathlib.Analysis.SpecialFunctions.Integrability.Basic
+import Mathlib.MeasureTheory.Integral.Prod
 
-/-! # The pointwise real radial cutoff comparison
+/-! # The real radial cutoff weight
 
 On the repaired positive radial domain for (12.4.1.22) and
-(12.4.1.24), p. 518, bracket each upper cutoff profile by two sharp
-indicators. Their products bracket the retained radial weight.
+(12.4.1.24), p. 518, the retained radial weight is Borel measurable.
+Sharp indicator brackets on the two profiles also bound its values.
 -/
 
 open MeasureTheory Set
@@ -100,5 +101,32 @@ public theorem real_radial_weight_sandwich {p q : ℝ → ℝ}
     ← integral_radialBandDensity (hBlo.trans_le hB) hDhi hr]
   exact ⟨hint, setIntegral_mono_on hlow hint measurableSet_Ioi fun s hs ↦ (hcmp s hs).2.1,
     setIntegral_mono_on hint hupp measurableSet_Ioi fun s hs ↦ (hcmp s hs).2.2⟩
+
+/-- The retained radial weight, extended by zero at the origin, is Borel
+measurable given measurable zero extensions of the profiles. No convergence
+hypothesis is needed for this statement about the total Bochner integral. -/
+public theorem measurable_real_radial_weight {p q : ℝ → ℝ}
+    (hp : Measurable ((Ioi (0 : ℝ)).indicator p))
+    (hq : Measurable ((Ioi (0 : ℝ)).indicator q)) :
+    Measurable (fun w : ℝ ↦ if w = 0 then 0 else
+      ∫ s in Ioi (0 : ℝ), p s * q (|w| / s) * s⁻¹) := by
+  let g (ws : ℝ × ℝ) := (Ioi (0 : ℝ)).indicator p ws.2 *
+    (Ioi (0 : ℝ)).indicator q (|ws.1| / ws.2) * ws.2⁻¹
+  have hd : Measurable (fun ws : ℝ × ℝ ↦ |ws.1| / ws.2) :=
+    (continuous_abs.measurable.comp measurable_fst).div measurable_snd
+  have hg : Measurable g :=
+    ((hp.comp measurable_snd).mul (hq.comp hd)).mul measurable_snd.inv
+  have hi : Measurable (fun w : ℝ ↦ ∫ s in Ioi (0 : ℝ), g (w, s)) :=
+    (hg.stronglyMeasurable.integral_prod_right' (ν := volume.restrict (Ioi 0))).measurable
+  convert hi using 1
+  funext w
+  by_cases hw : w = 0
+  · subst w
+    simp [g]
+  · rw [ite_eq_right hw]
+    apply setIntegral_congr_fun measurableSet_Ioi
+    intro s hs
+    have hqpos : |w| / s ∈ Ioi 0 := mem_Ioi.mpr (div_pos (abs_pos.mpr hw) hs)
+    simp [g, indicator_of_mem hs, indicator_of_mem hqpos]
 
 end Masullo

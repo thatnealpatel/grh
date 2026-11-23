@@ -369,17 +369,51 @@ base `a388a0824177684ea01ff4dddc2d6f085d74e33f`) checked the hypotheses
 and the sharp-band reduction. The same Yah records the owning build,
 fresh joint-import signature and axioms, and candidate disposition.
 
-**Next bounded check, formalization only.** Prove measurability of the
-outer weight $w\mapsto W(|w|)$ off zero, extended by zero there, by
-integrating a jointly measurable product of the zero-extended profiles
-in the same $(w,s)$ coordinate with $s>0$. This measurability step need
-not use the indicator brackets. It is the first remaining inference
-for the [informal upper-only error estimate](#the-full-signed-scalar-comparison):
-The sandwich already gives pointwise domination under the brackets,
-and the proof of `norm_realSharpCutScalar_sub_le` supplies the sharp
-difference's mass as a proof-local consequence of the private
-`integral_sharp_cut_weight`. Do not recompute the band or assume global
-Fourier integrability for outer domination. The outer pairing and its
-norm estimate, recovery of the brackets or width rates from the printed
-prescriptions, and identification with any projected trace or Mellin
-term are separate.
+### Lean-checked measurability of the outer radial weight
+
+`Masullo.measurable_real_radial_weight` in
+[RealRadialWeightSandwich](../../Proofs/Props/RealRadialWeightSandwich.lean)
+assumes only that the zero extensions of $p,q:\mathbb R\to\mathbb R$
+from $(0,\infty)$ are Borel measurable. The function equal to $W(|w|)$
+for $w\ne0$ and to zero at $w=0$ is Borel measurable. On $(w,s)$,
+the product of the two extended profiles at $s$ and $|w|/s$, times
+$s^{-1}$, is jointly measurable. Mathlib's
+`StronglyMeasurable.integral_prod_right'` integrates in $s$ against
+Lebesgue measure restricted to $(0,\infty)$. Off zero the integrand
+agrees on that ray with the one in the sandwich at $r=|w|$; at zero
+the extended second profile vanishes. No brackets, smoothness, or
+slice integrability enter this proof. The conclusion concerns the total
+Bochner integral and does not give absolute convergence without the
+separate hypotheses of the sandwich.
+
+**Source and review.** This is a project interface on the repaired
+positive radial domain, not a deduction of the printed smooth-to-sharp
+step. The [clause-specific review](#review-and-continuation) supplies
+the inherited rendered sharp ranges in (12.4.1.22), p. 518; the exact
+preceding equality is extraction-supported and unused. The
+[real coefficient audit](trace-real-prime-q.md#the-chapter-12-real-coefficient)
+supplies the inherited rendered band in (12.4.1.24), p. 518. No new
+manuscript reading was needed. Independent exact-source statement
+review (Yah `01a20652-75ff-7c4f-8017-0a6f9bb3a358`, agent `XfYfowB`,
+reviewed revision `b5269d20c97d233c924b199d6670244f012036f7`)
+checked this scope and the product integration reduction. The same Yah
+records the owning build, fresh joint-import signatures and axioms,
+and candidate disposition.
+
+**Next bounded check, formalization only.** With the sandwich
+hypotheses, put $K_-=B_-D_-$ and $K_+=B_+D_+$. For $u\in L^1$,
+bound the difference between the outer pairing of the zero-extended
+weight with $\widehat u$ and the sharp pairing at $K\in[K_-,K_+]$
+by $2(K_+-K_-)\|u\|_1$. In the same $w$ coordinate, both weights
+lie in the same envelope for $w\ne0$, so their absolute difference
+is bounded by $L_{K_+}(|w|)-L_{K_-}(|w|)$. Reuse the sharp
+integrability and mass calculations behind
+`norm_realSharpCutScalar_sub_le`: `integrable_sharp_cut_weight` and
+`integral_sharp_cut_weight` are private, and the envelope mass
+$2(K_+-K_-)$ is proof-local. The published scalar norm estimate alone
+does not imply a bound against an arbitrary intermediate weight.
+The remaining check is to use that envelope with measurability and
+the $L^1$ Fourier bound for the actual outer pairing, without assuming
+that $\widehat u$ is globally integrable. The manuscript cutoff
+applicability, width rates, and projected-trace or Mellin
+identification remain separate.
