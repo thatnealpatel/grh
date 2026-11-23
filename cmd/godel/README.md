@@ -81,7 +81,8 @@ investigation separated the initial `status` from allocation, refresh
 status and check intervening changes for overlap. Before editing, compare
 the base returned by `new` with the revision you inspected. If it has
 moved again, check that delta too. Reserve explicit `on` for deliberate
-pending-candidate stacks and conflict repair.
+pending-candidate stacks and in-place conflict repair of an attempt
+with an existing Change-Id.
 
 If allocation fails with `unknown integration candidate`, stop repository
 edits and use one read-only `status` check to distinguish an observed
@@ -104,7 +105,17 @@ tool's separate `on` and Change-Id rules.
 After a conflict, stale adoption, or ambiguous error, inspect `tool_campaign status` and the current accepted source. Recover only what is still needed.
 
 - **Stale adoption:** The candidate did not land. If it is still pending on its intended parent, land the parent through its normal checks, then retry the same child without rebuilding it only if the candidate ID is unchanged and its evidence meets the landing checks above. If the base or parent was superseded, reconcile the needed changes with its successor. Integrate the registered outputs on the intended base; do not replay a child alone on accepted if it still needs an unlanded parent's changes. If an output is readable in jj but no longer registered in this campaign (`status` with `verbose=true`), restore the needed changes from its clean patch in a fresh workspace on the intended base.
-- **Content conflict:** Replaying the same outputs on the same base will not resolve the conflict. Even if the outputs are registered, open a fresh direct workspace on the intended base: Use the pending parent if the change still depends on it, or the current accepted revision otherwise. Compare the clean saved outputs with their original bases and reconcile the intended changes with intervening work. Do not use the conflicted integration tree as the source of the patch.
+- **Content conflict during replay:** If the intended base is accepted
+  source, open a fresh direct workspace with `tool_campaign new`
+  **without `on`**. Compare the clean output against its original base,
+  restore the still-needed changes, and merge overlaps against the new
+  base. If the patch genuinely depends on an unlanded parent, use that
+  parent as the base instead. Do not use the conflicted tree as the
+  source of the patch or replay the same output on the same base.
+  Opening the conflicted candidate itself as `on` is a different
+  operation: In-place repair requires the original attempt to have a
+  Change-Id. If it lacks one, choose the fresh-workspace route before
+  making a setup call.
 
 For any replacement integration candidate, compare its exact diff against the new base with the reviewed work, then repeat the proof landing checks on that candidate. Have any added endpoints or changed statements independently reviewed. An old handoff's audit or build-cache directions do not override this recipe.
 

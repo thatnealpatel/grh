@@ -65,5 +65,58 @@ Work advanced to shifted fractional-ideal Poisson and adopted
 `aca6533d21b24a10276e26e59845e83e83f43a64`. Do not repeat the earlier
 proof or change the router. This is a live control for recognizing
 accepted work, not evidence that the prompt recovers a missing artifact
-or that the lookup was necessary to choose Poisson. The live test with
-an unlanded artifact is still outstanding.
+or that the lookup was necessary to choose Poisson.
+
+## Live recovery: The rational sharp lower edge
+
+Run `01a2060d-0cde-786e-bed0-d345aa820e8f` matches work Yah
+`01a2060d-0e81-7500-b3fb-99f77cce99e8` by input and final response.
+Its launch archive and initial accepted tip were both
+`820e31dc3ac7d12f8a2a55428be5301e79be5fc4`. The exact `cmd/godel`
+tree did not change from launch through the proof landing.
+
+The matching predecessor was run `01a205f3-b042-70c5-b4ee-11c828c73b83`.
+Its work Yah `01a205f3-b1d1-7885-8c36-002f23511cea` landed the
+base-normalized shell obstruction and sent work to the real cutoff.
+Before the relay, its improvement Yah
+`01a20600-0b90-72df-9dc0-e6ee02533f8c` had already drafted, built, and
+jointly checked both sharp cutoff modules after fixing six draft
+failures. Child `hczFLOo` reviewed the mathematics and checked rendered
+crops of the lower endpoint, integration range, and width conditions.
+The original owner's preflight caught candidate
+`3b34914c41c52999fe80312a7f2bcb936cb94848` already stale (seq. 176).
+The replay `47e0d12f3bd4b90d9cdd62a6f0b6587cc31c80b6` conflicted with
+an intervening smooth-cutoff audit in overlapping documentation
+(seq. 182). Opening that candidate as `on` failed because the attempt
+had no Change-Id (seq. 189). Neither candidate landed. The improvement
+response identified clean output `967aa271265557474a73e96f97da65573da13640`.
+
+Work recovered the matching response after correcting a `jq` filter
+(seq. 16–23). Neither Lean module had landed. It allocated without
+`on`, restored both files from the clean output, reconciled the notes
+with the smooth-cutoff audit, and got a fresh fixed-statement review
+from child `LsYRkSt`. The review was text-based this time; the earlier
+rendered evidence was retained only for the clauses it covered.
+The first integration `c7f97b887a47ee2c9957804defdf9c050696ee9e`
+passed the preflight and exact checks but became stale before adoption
+(seq. 57–72). The intervening strip-trace statement added three unrelated
+Lean files. Work replayed the now registered output, checked the new
+base, rebuilt both targets, inspected all nine declarations together,
+and adopted `d78f64c53d86b5cb609c78286007e2311b63f03c` (seq. 75–90).
+The accepted Lean files are identical to the original clean output;
+all nine declaration checks showed only the three allowed axioms.
+
+**Decision (improvement Yah `01a20611-b76e-7946-91c9-23d09590b3b1`):**
+Keep the matched-handoff lookup. It recovered an actual missing result,
+not just an already landed proof. Clarify the existing recovery guide:
+Reapplying a clean patch in a fresh workspace on accepted source is not
+opening a conflicted candidate for in-place repair. The former worked in
+the successor; the latter requires a Change-Id. Neither path removes
+exact-candidate checks or the adoption race. No new router, automated
+restacker, or prospective timing claim.
+
+The [accepted proof handoff](../../obligations/trace-real-prime-q.md#lean-checked-path-dependence-of-the-retained-position-edge)
+records the scope: The reconstructed scalar is path-dependent, but a
+rate-controlled repair is not excluded. The next test is the orbital
+term of one specified common global diagonal on below-one two-moment
+profiles, not another lower-edge scalar computation.
