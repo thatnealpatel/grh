@@ -1,0 +1,200 @@
+# A below-one test for the constant-weight orbital repair
+
+**Scope.** Work over $\mathbb Q$ in the trivial compact isotype, with
+$S=\{\infty\}$, the half twist, even Sobolev index $s\ge4$, and one of the
+[common good widths](trace-theta-density-q.md#bounds-for-division-by-zeta)
+$0<\alpha<1/2$. Put $\beta=2\alpha$. This tests the two-leg lift of a
+specified projected global diagonal. This transfer needs the base of the same global diagonal to equal the
+local projection modulo the two polar moments, since that is the local
+operator the transfer proposes to use in the p. 520 identification. We
+prove that the requirement is impossible for class-constant copy weights.
+This does not exclude shells formed before projection or other lifts.
+
+## Split the same diagonal before taking limits
+
+Let $A_f$ denote convolution by the log profile of the test, $P$ the full
+weighted geometric projection, $Q_B$ the increasing real-band theta
+projector, and $M_\rho$ a compact smooth log position multiplier. Take the
+Haar diagonal of $T_{\rho,B}=M_\rho P A_f Q_B=M_\rho A_f Q_B$, with the
+[trace-class kernel and shrinking averaging repair](trace-spectral.md#from-the-weighted-kernel-to-the-haar-diagonal).
+At fixed $\rho$ the band limit retains the terminal geometric projection,
+giving $M_\rho A_fP$. Exhaust position only then. On tests away from one,
+the [global model theorem](trace-even-separator-q.md) gives the whole
+limiting trace $G(f)=-Z_{\rm strip}(f)$ with full interior orders. No claim
+about a joint global limit is used.
+
+Take the [rational positive-real, finite-unit window](../../Proofs/Theorems/RationalIdeleFundamentalDomain.lean)
+$D$ and use the normalized counting/Haar splitting $\mathbb Q^\times D$.
+Choose finitely many principal copies $2^jD$, $j\in\mathbb Z$, with
+nonnegative weights $m_j$ summing to one; when a weight is constant on a
+copy it is the same at every quotient point. Apply (12.2.2.1–2)'s
+simultaneous two-leg averaging to the already formed kernel. In the lift
+from a base output to input translate $2^\ell D$, the factor at classes
+$x,y$ is $\sum_j m_j(x)m_{j+\ell}(y)$, allowing for now radial weights
+that depend on the class. Summing over $\ell$ gives one. Input $y$ has
+unit component at $2$ exactly when $\ell=0$, and every such translate is
+unit at every prime outside $2$. Use the repaired right unit mask outside
+$2$, not the original decreasing right mask that kills the shell.
+
+For the base input block, the resulting operator is
+$\sum_j M_{m_j}T_{\rho,B}M_{m_j}$. Its trace is
+$\operatorname{Tr}(M_bT_{\rho,B})$, where $b=\sum_j m_j^2$, by trace
+cyclicity. The positive shell $1-1_{D_0}$, restricted to these translates
+where $D_0$ is the stage with all finite components units, gives the
+complementary trace $\operatorname{Tr}(M_{1-b}T_{\rho,B})$. The sign
+$\alpha_{k+1}-\alpha_k$ in (11.3.1.4) instead gives the negative of this
+shell. Thus the additive decomposition is base plus positive shell, or
+base minus literal signed shell. The angular integration at fixed norm has mass one in the trivial
+isotype. No mask is moved through a Paley–Wiener projector, and no
+additional norm-only right multiplier is identified with this projector.
+Adding such a common input mask would factor out the same copy weights,
+but around a different whole trace whose limiting value would first
+need to be established.
+
+Thus for constant weights the base and positive shell are exactly $b$
+and $1-b$ times the **same** fixed-cutoff trace, with $0\le b\le1$.
+This holds cutoff by cutoff even if the finitely many translates or
+probabilities vary between cutoffs, provided the same already formed
+quotient operator and regular diagonal are used. A zero whole iterated limit forces
+zero for both pieces, by the bound by the absolute whole trace. For
+moving weights the position limit of the inner limsup of absolute values
+is zero, without a claim that the weighted inner limits exist. The point-mass lift is included.
+
+## A short test with zero whole trace and nonzero local trace
+
+Write $t=-\log |g|$ and choose a real $f\in C_c^\infty(I)$, where $I$
+is any nonempty open interval inside $(0,\log 2)$. The test on class
+space has profile $f(-\log|g|)$; in the equation for $T_{\rho,B}$ use
+convolution by that profile in the ordinary log coordinate. Set
+$M_f(z)=\int e^{zt} f(t)\,dt$, so the class-space Mellin samples at $z$
+use $M_f(-z)$. The two polar moments are $M_f(\pm1/2)$. The support
+misses identity and every finite-prime norm power, including the inverse
+powers below one. The [joint local model](trace-joint-local-q.md#below-norm-one-the-defect-is-not-a-sum-of-mellin-moments)
+gives raw and genuine projected densities, respectively,
+
+$$J(t)=\frac{e^{-t/2}}{1-e^{-2t}},\qquad
+U_\beta(t)=\frac{e^{(\beta-5/2)t}}{1-e^{-2t}}.$$
+
+We need $G=0$, not just zero raw pairing, because the two share a common
+cutoff only on the global side. We arrange equality $G=\langle J,f\rangle$
+on the witness **without assuming RH or the absence of omitted zeros**.
+The [fixed-width zero-density estimate](trace-carving-weight-q.md#the-short-window-detects-any-omitted-zero)
+used in the [short even test](trace-even-separator-q.md) gives
+$\sum_{|\Im w|>1}|\Im w|^{-1}<\infty$ for the distinct omitted shifted
+zeros $w$ at this fixed width, with the set invariant under negation and
+conjugation. Split off a finite subset, stable under these symmetries, so
+that $\sum \pi/|\Im w|$ for the tail is smaller than the slack from a
+smaller open test interval to the right endpoint of $I$. For each tail
+$w=a_w+i\gamma_w$, use the two-atom probability supported at $0$ and
+$d_w=\pi/|\gamma_w|$, of masses proportional to $1$ and $e^{-a_wd_w}$.
+Its Mellin transform at $w$ is zero. The law $\mu$ of the sum of the
+independent displacements is a compact probability supported in the
+reserved slack; the sum is absolutely bounded by $\sum d_w$. By
+independence and bounded convergence, $M_\mu(w)=0$ at every tail
+location, and $M_\mu(\lambda)>0$ for real $\lambda$.
+
+For a real bump $\phi$ supported in the smaller interval let
+$f=P_0(\partial_t)(\mu*\phi)$, where
+$P_0(z)=(z^2-1/4)\prod_{w\,\mathrm{finite}}(z+w)$ has real coefficients.
+Then $M_f(z)=P_0(-z)M_\mu(z)M_\phi(z)$. This kills both polar moments and
+all omitted samples, hence also the sum weighted by their multiplicities;
+no derivatives at zeros are needed for this scalar. By the
+[rational explicit formula](rational-explicit-formula.md#checked-rational-radial-idelic-explicit-formula)
+we have $G(f)=-Z_{\rm full}(f)=\langle J,f\rangle$ on these tests.
+
+Integration by parts and translation send pairings with a density $D$
+(here $J$ or $U_\beta$) to pairings against $\phi$ with
+
+$$ K_D(t)=\int P_0(-\partial)D(t+u)\,d\mu(u). $$
+
+For $t>0$ these are real analytic by the normally convergent geometric
+exponential series, including after differentiation, on each
+$\Re t\ge\delta>0$. The largest surviving exponent for $K_J$ is
+$-5/2$: The $-1/2$ term is killed by $P_0$, and the coefficient at
+$-5/2$ is $P_0(5/2)M_\mu(-5/2)\ne0$. For $K_U$ the largest exponent is
+$\beta-5/2$, with coefficient $P_0(5/2-\beta)M_\mu(\beta-5/2)\ne0$.
+The roots of $P_0$ have real parts in $[-1/2,1/2]$. These different
+exponents, by dividing by $e^{(\beta-5/2)t}$ and taking $t\to\infty$,
+exclude proportionality on $(0,\infty)$, hence by analyticity also on
+the smaller test interval. If the functional with density $K_U$ vanished
+on the kernel of the $K_J$ functional on bumps there, it would be a
+scalar multiple of the latter. Testing against all bumps would identify
+the continuous densities, contradicting the exponent comparison. Choose
+$\phi$ in that kernel with nonzero $K_U$ pairing.
+
+For this same test $G(f)=\langle J,f\rangle=0$, but
+$\langle U_\beta,f\rangle\ne0$. Both constant-weight pieces of the actual
+project global diagonal tend to zero, so this orbital shell cannot
+supply the difference between the local projection and the multiplier
+in either sign convention. In particular, identifying the base with the
+local projection up to the two printed moments is impossible for this
+family of lifts. The conclusion is independent of whether the orbital
+circle quotient is the intended shell: Its twisted circle trace sums
+vanish separately by Poisson summation because every point sample at
+$j\log p$ vanishes. This does not make the individual Fourier–Mellin
+coefficients vanish, or identify the circle with the lifted diagonal.
+
+## Manuscript correspondence and exact scope
+
+Provisional text/layout reading of the [pinned manuscript](../sources/masullo/README.md),
+not a fresh rendered-page verification.
+
+- Equations (11.2.1.8–10), p. 489, supply a named right projector and a
+  fixed-position band limit on tests supported at norms at least one.
+  Here we use the checked rational real-band exhaustion in a repaired
+  weighted model, with the retained right projection, not the extension
+  of the printed limit to tests below one.
+- Equation (11.3.1.4), p. 494, supplies the signed input shell.
+  Theorem 11.3.2.1, pp. 495–496, assumes support strictly above one and
+  invokes the **orbital quotient** trace of Theorem 7.4.2.1, p. 367, via
+  (11.3.2.5). That input does not evaluate the projected shell on these
+  tests. Proposition 12.2.2.2, p. 508, (12.2.2.1–7), supplies the
+  pattern for the simultaneous two-leg lift and diagonal unfolding.
+  We use the direct counting/Haar disintegration on the rational window,
+  not the proposition's connected fundamental-domain setup. The lift
+  replaces (11.3.2.2), and using the outside-$2$ mask fixes the shell
+  annihilation of (11.3.2.3); neither is a reading of the printed limit.
+- Theorem 12.4.1.1, p. 514, is proved on pp. 515–519. The step
+  (12.4.1.8–12), p. 517, uses a Fourier multiplier and the trace calculation
+  gives the raw scalar, not our projected local value. Theorem 12.5.1.1, pp. 519–520, needs the
+  pieces of one common diagonal, invokes orbital vanishing, and
+  identifies its base with local terms minus the polar moments. Our
+  test has support in $(1/2,1)$ in norm, admits $T<2$ in its support
+  condition, and has both moments zero. Its vanishing at log norm zero
+  is the value condition in §12.5, not a vanishing-integral condition. The obstruction is to using this
+  fixed class-constant transfer to reconcile the **projected** local
+  model with the raw scalar there. It is not a new application of the
+  printed above-one orbital theorem. Nor does it say that identifying a
+  separately justified global base with the *raw* value would fail on
+  this witness, where both are zero.
+
+The witness with omitted-sample filtering and its trace comparison are
+reviewed ordinary mathematics, not Lean declarations. Lean dependencies
+are identified in the linked proof records; they do not machine-check
+this obstruction end to end.
+
+## Exact successor for position-dependent weights
+
+For fixed smooth bounded radial probabilities $m_j(x)$, the preceding
+cyclicity argument instead gives an exact weighted trace at each cutoff.
+Its level-first base limit is
+
+$$ -\operatorname{Tr}\bigl(M_b A_f(1-P)\bigr),\qquad b=\sum_j m_j^2, $$
+
+and the positive shell has the same formula with $1-b$. Indeed the band
+limit at fixed $\rho$ first gives $\operatorname{Tr}(M_{b\rho} A_fP)$.
+Inserting $P=1-(1-P)$ gives no unprojected term: $M_{b\rho} A_f$ is
+trace class by compact convolution smoothing, with zero continuous
+kernel diagonal since the test vanishes at the identity. Exhaustion of
+position then converges in the trace-class ideal on $A_f(1-P)$.
+A position-dependent lift must test this new weighted functional (and
+justify its orbital identification), not merely choose another constant
+spread. The off-diagonal block of $A_f(1-P)$ cannot be discarded under
+$M_b$ just because it has trace zero without $M_b$. An upstream shell
+inside the projected operator lies outside this calculation.
+
+**Independent review:** `shell-review` (`nGRsVZp`), in Yah session
+`01a20615-9d61-7879-bfbb-bb714a7cbca9`, checked the fixed-cutoff split,
+filtered witness, scalar signs, and weighted successor, and compared the
+interfaces with the pinned Markdown and numbered layout. No rendered
+inspection or new Lean verification is claimed.
