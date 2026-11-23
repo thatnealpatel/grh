@@ -12,8 +12,8 @@ Sharp indicator brackets on the two profiles also bound its values
 and its pairing with the Fourier transform of an integrable test.
 -/
 
-open MeasureTheory Set
-open scoped FourierTransform
+open Filter MeasureTheory Set
+open scoped ContDiff FourierTransform Topology
 
 namespace Masullo
 
@@ -131,6 +131,23 @@ public theorem measurable_real_radial_weight {p q : ℝ → ℝ}
     have hqpos : |w| / s ∈ Ioi 0 := mem_Ioi.mpr (div_pos (abs_pos.mpr hw) hs)
     simp [g, indicator_of_mem hs, indicator_of_mem hqpos]
 
+private theorem ae_real_radial_weight_brackets {p q : ℝ → ℝ}
+    (hp : Measurable ((Ioi (0 : ℝ)).indicator p))
+    (hq : Measurable ((Ioi (0 : ℝ)).indicator q))
+    {Blo Bhi Dlo Dhi : ℝ} (hBlo : 0 < Blo) (hB : Blo ≤ Bhi)
+    (hDlo : 0 < Dlo) (hD : Dlo ≤ Dhi)
+    (hpB : ∀ s > 0, (Iic Blo).indicator (fun _ ↦ (1 : ℝ)) s ≤ p s ∧
+      p s ≤ (Iic Bhi).indicator (fun _ ↦ (1 : ℝ)) s)
+    (hqD : ∀ s > 0, (Iic Dlo).indicator (fun _ ↦ (1 : ℝ)) s ≤ q s ∧
+      q s ≤ (Iic Dhi).indicator (fun _ ↦ (1 : ℝ)) s) :
+    let W := fun w : ℝ ↦ if w = 0 then 0 else ∫ s in Ioi (0 : ℝ), p s * q (|w| / s) * s⁻¹
+    ∀ᵐ w : ℝ ∂volume,
+      max 0 (Real.log (Blo * Dlo / |w|)) ≤ W w ∧ W w ≤ max 0 (Real.log (Bhi * Dhi / |w|)) := by
+  dsimp only
+  filter_upwards [volume.ae_ne (0 : ℝ)] with w hw
+  simpa only [ite_eq_right hw] using
+    (real_radial_weight_sandwich hp hq hBlo hB hDlo hD (abs_pos.mpr hw) hpB hqD).2
+
 /-- Under upper-indicator brackets, the zero-extended real radial weight
 pairs absolutely with the Fourier transform of an integrable test. Its
 pairing differs from the sharp scalar at any intermediate cutoff product
@@ -150,10 +167,39 @@ public theorem integrable_real_radial_pairing_and_norm_sub_le {p q : ℝ → ℝ
       ‖(∫ w, (W w : ℂ) * 𝓕 u w) - realSharpCutScalar u K‖ ≤
         2 * (Bhi * Dhi - Blo * Dlo) * ∫ x, ‖u x‖ := by
   dsimp only
-  refine integrable_mul_fourier_and_norm_sub_le_of_sharp_cut_brackets
-    (measurable_real_radial_weight hp hq).aestronglyMeasurable hu (mul_pos hBlo hDlo) hlo hhi ?_
-  filter_upwards [volume.ae_ne (0 : ℝ)] with w hw
-  simpa only [ite_eq_right hw] using
-    (real_radial_weight_sandwich hp hq hBlo hB hDlo hD (abs_pos.mpr hw) hpB hqD).2
+  exact integrable_mul_fourier_and_norm_sub_le_of_sharp_cut_brackets
+    (measurable_real_radial_weight hp hq).aestronglyMeasurable hu (mul_pos hBlo hDlo) hlo hhi
+    (ae_real_radial_weight_brackets hp hq hBlo hB hDlo hD hpB hqD)
+
+/-- Eventual upper-indicator brackets of vanishing product width transfer
+ the real half-Haar limit to the retained profile-product pairing on the
+ repaired radial domain. The brackets and width are not source conclusions. -/
+public theorem real_log_profile_radial_pairing_tendsto {ι : Type*} {l : Filter ι}
+    {f : ℝ → ℂ} (hf : ContDiff ℝ ∞ f) (hc : HasCompactSupport f) (hzero : f 0 = 0)
+    {p q : ι → ℝ → ℝ} {Blo Bhi Dlo Dhi K : ι → ℝ}
+    (hprofiles : ∀ᶠ i in l, Measurable ((Ioi (0 : ℝ)).indicator (p i)) ∧
+      Measurable ((Ioi (0 : ℝ)).indicator (q i)) ∧
+      0 < Blo i ∧ Blo i ≤ Bhi i ∧ 0 < Dlo i ∧ Dlo i ≤ Dhi i ∧
+      (∀ s > 0, (Iic (Blo i)).indicator (fun _ ↦ (1 : ℝ)) s ≤ p i s ∧
+        p i s ≤ (Iic (Bhi i)).indicator (fun _ ↦ (1 : ℝ)) s) ∧
+      (∀ s > 0, (Iic (Dlo i)).indicator (fun _ ↦ (1 : ℝ)) s ≤ q i s ∧
+        q i s ≤ (Iic (Dhi i)).indicator (fun _ ↦ (1 : ℝ)) s) ∧
+      Blo i * Dlo i ≤ K i ∧ K i ≤ Bhi i * Dhi i)
+    (hwidth : Tendsto (fun i ↦ Bhi i * Dhi i - Blo i * Dlo i) l (𝓝 0))
+    (hK : Tendsto K l atTop) :
+    let u := realLogProfileAdditive (fun t ↦ f (-t))
+    let W := fun i (w : ℝ) ↦ if w = 0 then 0 else
+      ∫ s in Ioi (0 : ℝ), p i s * q i (|w| / s) * s⁻¹
+    Tendsto (fun i ↦ ∫ w, (W i w : ℂ) * 𝓕 u w) l
+      (𝓝 ((1 / 2 : ℂ) * ∫ z, u z / ((|z| : ℝ) : ℂ))) := by
+  intro u W
+  obtain ⟨hd, hk, _⟩ := real_log_profile_additive_test (hf.comp contDiff_neg)
+    (hc.comp_homeomorph (Homeomorph.neg ℝ))
+  refine tendsto_integral_mul_fourier_of_sharp_cut_brackets (W := W) (K := K)
+    (hd.continuous.integrable_of_hasCompactSupport hk) ?_ hwidth ?_
+  · filter_upwards [hprofiles] with i ⟨hp, hq, hBlo, hB, hDlo, hD, hpB, hqD, hlo, hhi⟩
+    exact ⟨(measurable_real_radial_weight hp hq).aestronglyMeasurable, mul_pos hBlo hDlo, hlo, hhi,
+      ae_real_radial_weight_brackets hp hq hBlo hB hDlo hD hpB hqD⟩
+  · exact (real_log_profile_sharp_fourier_tendsto hf hc hzero).comp hK
 
 end Masullo

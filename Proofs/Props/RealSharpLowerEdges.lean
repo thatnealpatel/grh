@@ -254,6 +254,29 @@ public theorem integrable_mul_fourier_and_norm_sub_le_of_sharp_cut_brackets
   exact mul_le_mul hdiff (Real.norm_fourier_le_integral_norm u w)
     (norm_nonneg _) ((abs_nonneg _).trans hdiff)
 
+/-- A vanishing sharp-bracket width transfers a sharp cutoff limit to the
+weighted pairing for a fixed integrable test. The measurability and bracket
+conditions are only required eventually along the given filter. -/
+public theorem tendsto_integral_mul_fourier_of_sharp_cut_brackets {ι : Type*} {l : Filter ι}
+    {W : ι → ℝ → ℝ} {u : ℝ → ℂ} (hu : Integrable u)
+    {Klo K Khi : ι → ℝ} {L : ℂ}
+    (hbrackets : ∀ᶠ i in l, AEStronglyMeasurable (W i) volume ∧
+      0 < Klo i ∧ Klo i ≤ K i ∧ K i ≤ Khi i ∧
+      ∀ᵐ w : ℝ ∂volume, max 0 (Real.log (Klo i / |w|)) ≤ W i w ∧
+        W i w ≤ max 0 (Real.log (Khi i / |w|)))
+    (hwidth : Tendsto (fun i ↦ Khi i - Klo i) l (𝓝 0))
+    (hsharp : Tendsto (fun i ↦ realSharpCutScalar u (K i)) l (𝓝 L)) :
+    Tendsto (fun i ↦ ∫ w, (W i w : ℂ) * 𝓕 u w) l (𝓝 L) := by
+  have hdiff : Tendsto (fun i ↦ (∫ w, (W i w : ℂ) * 𝓕 u w) - realSharpCutScalar u (K i))
+      l (𝓝 0) := by
+    apply squeeze_zero_norm' (a := fun i ↦ 2 * (Khi i - Klo i) * ∫ x, ‖u x‖)
+    · filter_upwards [hbrackets] with i ⟨hW, hKlo, hlo, hhi, hbracket⟩
+      exact (integrable_mul_fourier_and_norm_sub_le_of_sharp_cut_brackets
+        hW hu hKlo hlo hhi hbracket).2
+    · simpa only [mul_zero, zero_mul] using
+        ((hwidth.const_mul (2 : ℝ)).mul_const (∫ x, ‖u x‖))
+  simpa only [zero_add, sub_add_cancel] using hdiff.add hsharp
+
 /-- The sharp scalar is Lipschitz in the positive cutoff product, with
 constant twice the `L¹` norm of the additive test. No integrability of
 its Fourier transform on the whole line is assumed. -/

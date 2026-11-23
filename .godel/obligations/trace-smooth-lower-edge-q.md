@@ -448,21 +448,67 @@ elaboration was the owner's check, not the reader's. The same Yah
 records the candidate, owning builds, fresh joint-import signatures,
 axioms, and disposition.
 
-**Next bounded check, formalization only.** For a cutoff family with
-eventual upper-indicator brackets, $K$ between the endpoint products,
-$K\to\infty$, and $K_+-K_-\to0$, transfer the sharp limit to the
-actual outer pairing of the fixed reflected additive test
-$u=\texttt{realLogProfileAdditive}(f\circ(-\mathrm{id}))$, with
-$f$ smooth, compactly supported, and $f(0)=0$. In the same additive
-coordinate, `real_log_profile_sharp_fourier_tendsto` composed with
-$K$ already gives the sharp scalar limit
-$\tfrac12\int u(z)/|z|\,dz$; `real_log_profile_additive_test` gives
-smoothness and compact support, hence integrability of $u$. What
-remains is the filter-level transfer using the finite error bound,
-not a new evaluation of the sharp scalar. The product-width
-convergence is a project hypothesis here. The exact rate clause after
-(12.4.1.28), p. 519, remains provisional as in the
-[clause-specific review](#review-and-continuation) and is not needed
-for the conditional transfer. Applicability of the printed cutoffs,
-the width rate for those cutoffs, and projected-trace or Mellin
-identification remain separate.
+### Lean-checked conditional radial cutoff limit
+
+`Masullo.tendsto_integral_mul_fourier_of_sharp_cut_brackets` in
+[RealSharpLowerEdges](../../Proofs/Props/RealSharpLowerEdges.lean)
+fixes an additive $u\in L^1(\mathbb R;\mathbb C)$ along an arbitrary
+filter. Assume eventual a.e. strong measurability of the real $W_i$,
+a.e. sharp log brackets, and $0<K_{-,i}\le K_i\le K_{+,i}$. If
+$K_{+,i}-K_{-,i}\to0$ and $J(K_i)\to L$, then
+$\int W_i(w)\widehat u(w)\,dw\to L$. The finite bound above squeezes
+the difference to zero, with no hypothesis that $K_i$ diverges or
+that $\widehat u$ is globally integrable. The same finite lemma gives
+absolute integrability eventually.
+
+`Masullo.real_log_profile_radial_pairing_tendsto` in
+[RealRadialWeightSandwich](../../Proofs/Props/RealRadialWeightSandwich.lean)
+applies this to the actual profile integral at $r=|w|$, extended by
+zero at $w=0$. Its hypotheses are eventual measurable positive-ray
+extensions by zero, positive ordered upper-indicator brackets for
+both profiles, and $B_-D_-\le K_i\le B_+D_+$, together with
+$B_+D_+-B_-D_-\to0$ and $K_i\to+\infty$. The positive-ray profiles
+need neither smoothness nor monotonicity. For smooth compactly
+supported log $f$ with $f(0)=0$, the accepted additive test theorem
+gives integrability of $u=\texttt{realLogProfileAdditive}(t\mapsto f(-t))$,
+and the accepted sharp theorem gives $L=\tfrac12\int u(z)/|z|\,dz$.
+No support gap at norm one or Mellin moment is assumed.
+
+**Source and review.** This is a conditional transfer on the repaired
+positive radial quotient. The [clause-specific review](#review-and-continuation)
+supplies inherited rendered evidence for the sharp ranges in
+(12.4.1.22), p. 518; the smooth-to-sharp equality is extraction-only
+and unused. For (12.4.1.12) and (12.4.1.15), p. 517, that review saw
+the retained arguments and minus subscripts, not the exact names or
+parameter subscripts. The [real coefficient audit](trace-real-prime-q.md#the-chapter-12-real-coefficient)
+supplies the rendered band in (12.4.1.24), p. 518, and the both-sign
+and counting normalization from (12.4.1.17)–(21). None supplies the
+assumed brackets or width convergence. The rate clause after
+(12.4.1.28), p. 519, remains provisional and is not a premise. No
+passages were reread. The projected trace, literal norm-one domain,
+and Mellin identification are not conclusions. Independent exact-source
+review in Yah `01a2066f-054b-7e28-a138-ed80909bf1ff`, agent `puwWIxv`,
+checked the statements, finite estimate, profile reduction, and sharp
+real normalization at `17d3317e0ad178b1de22eac1ef5e591e93649223`.
+The same Yah records the owning build, fresh joint-import signatures,
+axiom reports, and disposition.
+
+**Next bounded check, formalization only.** For project annular
+profiles written as differences of two upper-bracketed profiles in
+each slot, distribute the product under the same $ds/s$ integral and
+then the outer Fourier pairing. The transfer above (general $u$)
+already gives the four constituent limits when each product width
+vanishes and the corresponding sharp limit is known. The missing
+step is the signed sum for the *actual smoothed annular pairing*,
+with both integral linearity obligations discharged by the accepted
+sandwich and finite pairing. `real_two_annuli_scalar_eq` already
+gives the signed sum for the *sharp* bands, not this splitting. This
+would formalize the smoothing component of the annular correction
+above, without requiring that the printed profiles admit the
+decomposition. For Definition 9.3.3.1, p. 427, inherit the rendered
+radiality, inversion exponent, reciprocal interval, and inward edge
+signs from the [clause-specific review](#review-and-continuation);
+the exact plateau symbols and remaining bounds are extraction-only.
+The sharp ranges and band have the separate inherited evidence cited
+above. Choosing or identifying the actual manuscript profiles and
+checking their cross-product limits remain separate premises.
