@@ -302,5 +302,82 @@ Under the quoted joint rates, the bounded upper-only smoothings have
 vanishing upper-edge error, but a family using both symmetric annuli
 has the full signed correction $-2J(1)\ne0$. The separate proposal on
 p. 514 n. 2 does not force the single lower edge to vanish either.
-This is reviewed informal mathematics with clause-specific source
-qualifications, not a Lean proof or a trace identification.
+That audit is reviewed informal mathematics with clause-specific source
+qualifications. The checked result below treats the sharp single-edge
+case, not a trace identification.
+
+
+### Lean-checked path dependence of the retained position edge
+
+Page 514 n. 2 proposes smoothing a position annulus with an independent
+lower endpoint $A=1/\lambda''$. Equation (12.4.1.22), p. 518, instead
+uses sharp upper ranges after the position and frequency multipliers
+of (12.4.1.12) and (12.4.1.15), both p. 517. In (12.4.1.23)–(24),
+p. 518, the change to $w=xu$ exposes the radial volume. We use the
+extended positive radial domain, not the norm-one set alone: See
+(A.2.4.5), p. 554, and the extension preceding (A.4.1.7), p. 563.
+The original note asks about convergence and does not assert that
+this change of cutoff preserves it.
+
+[RealSharpLowerEdges](../../Proofs/Props/RealSharpLowerEdges.lean)
+proves that retaining the sharp position lower edge on that domain
+subtracts a second copy of the scalar:
+
+$$
+\int_{\mathbb R}\widehat u(w)
+   \int_{[\max(A,|w|/D),B]}\frac{ds}{s}\,dw
+ = S_u(BD)-S_u(AD),\qquad 0<A\le B,\ D>0.
+$$
+
+Here $B=\lambda$, $D=\lambda'$, and $S_u$ is the normalized
+sharp upper scalar above. `real_position_band_radial_volume` uses
+an empty set, not a reversed integral, when the band is inverted.
+`real_position_band_scalar_eq` uses the integrability of $\widehat u$
+and $\log|\cdot|\,\widehat u$, ignoring only the null frequency
+$w=0$. `real_log_profile_position_lower_edge_limits` combines the
+accepted large-radius evaluation with a new small-radius limit by
+dominated convergence. Omitting the lower edge asymptotically needs
+$S_u(AD)\to0$, not merely $A\to0$.
+
+`real_position_band_scalar_path_dependence` uses the same smooth
+compactly supported log test $f$, with $f(0)=0$, for both paths:
+
+| $(A,B,D)$ as $t\to\infty$ | $(BD,AD)$ | Limit |
+| --- | --- | --- |
+| $(t^{-2},t,t)$ | $(t^2,t^{-1})$ | $H_u=\tfrac12\int u(z)\,dz/|z|\ne0$ |
+| $(t^{-1},t^2,t^2)$ | $(t^4,t)$ | $0$ |
+
+The witness does not assert short support or Mellin moment vanishing.
+The printed width conditions after (12.4.1.28), p. 519, do not control
+$AD$; both paths permit, for example, $\varepsilon=t^{-4}$. The
+change of variables upstream of the radial scalar, and transfer from
+sharp to smooth annuli, are reviewed ordinary mathematics, not part
+of this Lean theorem. For the latter, monotone transitions can be
+averaged over nearby sharp endpoints, with their products tending
+uniformly to the same respective limits. See the
+[smooth-cutoff audit](trace-smooth-lower-edge-q.md) for separate
+upper-only and two-edge comparisons, including its source qualifications.
+The Lean `real_log_profile_two_annuli_erase` proves a limit of the
+four signed sharp terms, not their identification with a two-annulus
+operator. This scalar correction excludes the unrestricted joint
+sharp limit, not a rate-controlled or upper-only repair.
+
+**Evidence.** Both modules were recovered unchanged from reviewed
+output `967aa271265557474a73e96f97da65573da13640`. The original
+Yah review (`hczFLOo`, `01a20600-0b90-72df-9dc0-e6ee02533f8c`)
+independently read rendered crops of p. 514 n. 2, the bounds in
+(12.4.1.22), and the p. 519 width conditions. The other manuscript
+clauses use text or the earlier normalization review above. The
+owning Yah `01a2060d-0e81-7500-b3fb-99f77cce99e8` records the fresh
+independent exact-statement review, integrated build, joint-import
+signatures and axioms, and adoption against the full candidate ID.
+
+**Remaining bridge.** Neither rate control nor this obstruction
+identifies the invariant Paley–Wiener projection with the actual
+projected global $S$-diagonal, including the Mellin corrections in
+(12.5.1.3), p. 519. The [below-one projection defect](trace-joint-local-q.md#below-norm-one-the-defect-is-not-a-sum-of-mellin-moments)
+persists for a joint cutoff family even when the radial replacement
+has the right limit. A next bounded test is to derive the orbital
+term of a specified global diagonal on $(1/2,1)$ with both Mellin
+moments zero, and check whether it supplies that defect. Vanishing
+of finite norm samples alone does not identify this orbital term.

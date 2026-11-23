@@ -100,9 +100,9 @@ and the passage dependencies and scope above. Owner session
 `01a205f3-b1d1-7885-8c36-002f23511cea` records the exact integrated
 candidate, scoped build, signatures and axioms, and adoption if successful.
 
-**Runnable successor.** For the scalar route, the remaining lower-edge
-check in [the Chapter 12 real-prime comparison](trace-real-prime-q.md#lean-checked-sharp-limit-without-a-support-gap)
-is independent of the eliminated lift. On this branch, do not test another
-kernel in the same lift. Any proposed new transfer should first specify
-which kernel or diagonal it actually represents and why its inputs and
-order of limits give the identification that the consuming trace needs.
+**Successor.** The [checked sharp lower-edge test](trace-real-prime-q.md#lean-checked-path-dependence-of-the-retained-position-edge)
+is independent of the eliminated lift and distinguishes two joint limits.
+On this branch, do not test another kernel in the same lift. Any proposed
+new transfer should first specify which kernel or diagonal it actually
+represents and why its inputs and order of limits give the identification
+that the consuming trace needs.
