@@ -31,7 +31,8 @@ public theorem qSqrtNegFive_discr : NumberField.discr QSqrtNegFive = -20 := by
 private theorem qSqrtNegFive_finrank : Module.finrank ℚ QSqrtNegFive = 2 :=
   QuadraticAlgebra.finrank_eq_two _ _
 
-private theorem qSqrtNegFive_nrRealPlaces : nrRealPlaces QSqrtNegFive = 0 := by
+/-- The field `ℚ(√-5)` has no real places. -/
+public theorem qSqrtNegFive_nrRealPlaces : nrRealPlaces QSqrtNegFive = 0 := by
   classical
   refine Fintype.card_eq_zero_iff.mpr ⟨fun ⟨w, hw⟩ ↦ ?_⟩
   let φ := w.embedding_of_isReal hw
@@ -42,7 +43,8 @@ private theorem qSqrtNegFive_nrRealPlaces : nrRealPlaces QSqrtNegFive = 0 := by
   norm_num only [map_mul, map_neg, map_ofNat] at h
   nlinarith [sq_nonneg (φ a)]
 
-private theorem qSqrtNegFive_nrComplexPlaces : nrComplexPlaces QSqrtNegFive = 1 := by
+/-- The field `ℚ(√-5)` has one complex place. -/
+public theorem qSqrtNegFive_nrComplexPlaces : nrComplexPlaces QSqrtNegFive = 1 := by
   have h := card_add_two_mul_card_eq_rank QSqrtNegFive
   rw [qSqrtNegFive_nrRealPlaces, qSqrtNegFive_finrank] at h
   omega
