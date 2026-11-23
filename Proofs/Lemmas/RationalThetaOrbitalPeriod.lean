@@ -8,7 +8,8 @@ open scoped FourierTransform SchwartzMap
 
 namespace Masullo
 
-private theorem summable_rationalTheta_log_translates {B L : ℝ} (hL : 0 < L)
+/-- A two-moment theta profile is absolutely summable on each log orbit. -/
+public theorem summable_rationalTheta_log_translates {B L : ℝ} (hL : 0 < L)
     {b : 𝓢(ℝ, ℂ)} (hb : b ∈ rationalThetaBandInput B) (u : ℝ) :
     Summable (fun k : ℤ ↦ rationalTheta b (Real.exp (u + (k : ℝ) * L))) := by
   obtain ⟨C, hC, h⟩ := rationalTheta_uniform_log_bound
