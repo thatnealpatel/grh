@@ -54,3 +54,39 @@ for the difference between that split and evaluating its pieces. The
 restricted factorization reading and the separation of the mass
 comparisons are the reviewer's. No Lean declaration is used to
 establish or refute the preview.
+
+## The use of Connes's local calculation in §1.5.1
+
+**Status: Open.** Printed p. 32, preview from “The calculations in
+Connes’ S-local trace formula” through “and much expanded.” Masullo
+says those calculations are used to compute the diagonal mass of
+$k_{S,\varphi}$ and that he expands observations from Connes's paper.
+This previews the evaluation of the residual itself, not merely its
+separation from the global kernel. It gives no normalization, cutoff
+regime, or new test hypothesis. The next sentence, on the singleton
+strip, is a separate claim. The chapter Markdown and layout extraction
+located the prose; raster OCR and direct inspection of rendered crops
+of the digest-verified PDF checked the attribution and kernel notation.
+
+In the proof on p. 520, Masullo invokes Theorem 12.4.1.1 for this
+mass, subtracting the two polar Mellin values from the local sum, as
+recorded in the [source reading](../obligations/trace-assembly.json).
+The theorem on p. 514 describes a different object: A normalized
+cutoff Paley–Wiener diagonal integral on $J_{F,S}$, with the term
+$\varphi(1)\log(\lambda\lambda')+o(1)$ in (12.4.1.3). The
+normalization, local kernel, and cutoff terms were spot-checked in
+rendered crops. Even granting that local asymptotic, at the introductory
+half twist, positive symmetric strip width, degree zero, and a fixed
+norm-one isotype with test supported strictly above norm one, the
+missing step is to compare the actual averaged residual on $C_F$
+with that local cutoff limit. Show the descent of the chosen lift with
+compatible diagonal averages and Haar normalizations, justify removal
+of the cutoffs in this comparison, and derive the two polar Mellin
+subtractions in the trivial isotype. Vanishing of $\varphi(1)$ kills
+the logarithmic term, not the polar Mellin values.
+
+The local adaptation and its application on p. 520 are Masullo's;
+§12.4 attributes the underlying calculation to Connes and its reprise
+to Meyer. This checks the attribution in Masullo's manuscript, not the
+original papers or the validity of the operator comparison. No Lean
+statement is invoked.
