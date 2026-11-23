@@ -37,4 +37,4 @@ These are necessary congruences for the exact lifts, obtained by subtracting the
 
 All four allowances are uniform at a given denominator. Thus the all-references reduction can also impose tests 3 and 4: Subtract their additional $q^{.4675+o(1)}$ allowance from $n_d$ before squaring, not from the resulting pair count.
 
-The [joint bracket count](joint-reference-brackets.md) prices three further subsets at this same local cost: A short bracket after division by reference overlaps, a small product of the two primitive bracket coordinates, and a small signed quotient in their common congruence. The far complement is still open.
+The [joint bracket count](joint-reference-brackets.md) prices three further subsets at this same local cost: A short bracket after division by reference overlaps, a small product of the two primitive bracket coordinates, and a small signed quotient in their common congruence. One may also require $\|F_1h_1^0z\|_q\|F_2h_2^0z\|_q>q^{1.800}$ by the [moving-row estimate](moving-row-product.md). This is in addition to tests 1–4, at no change in the aggregate exponent for one reference per denominator. The far complement is still open.
