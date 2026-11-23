@@ -231,31 +231,68 @@ the dependency probe (including the local quotient instances),
 integrated build, fresh signatures and axiom reports, and adoption.
 No new manuscript reading was used.
 
-**Next check:** Identify the project finite mean on rational LF
-class theta with the normalized `rationalNormOneHaar` integral of
-$k\mapsto\Theta(h)(kd)$ at a class $d$. Class theta is continuous by
-`continuous_rationalAdeleClassTheta_LF`, so the compact slices are
-integrable. The existing averaging theorem gives the averaged LF
-test, and the pullback and test invariance theorems already give
-norm-one invariance of its theta (the calculation in
-`rationalAdeleLFFiniteUnitAverage_mem_radial` does not use the
-moment conditions for that step). Integrating the resulting constant
-slice and commuting the original finite sum with the integral by
-Haar translation would check the remaining equality; no new theta
-limit or finite-quotient topology is needed for this route. The
-[weighted pairing note][pairing] maps the integral to (2.2.5.2),
-p. 95, and counting Haar to (2.2.5.7), p. 96; the
-[rational Haar note][unit-haar] maps normalization to
-(A.3.2.1)–(A.3.2.2), pp. 559–560. These specific mappings are based
-on extraction, not newly verified readings. For the trivial
-character, inversion of the compact translation does not change
-the Haar integral. Agreement with the printed principal-value
-operator and closedness are separate obligations.
+## Checked identification with the compact Haar average
 
+In [RationalThetaFiniteUnitAverage.lean][finite-average],
+`Masullo.rationalAdeleClassThetaFiniteUnitAverage_eq_integral` gives
+$$
+\Theta_{\rm av}(h)(d)=\int_{C_{\mathbf Q}^1}\Theta(h)(kd)\,dk
+$$
+with `rationalNormOneHaar`. This holds pointwise for every rational
+adelic LF test $h$ and every idele class $d$, with no moment or parity
+hypotheses. The only measurable-space binders are on the idele class
+group, with its Borel structure. The averaged LF test has norm-one
+invariant theta without moment conditions. The continuous compact
+slices are integrable; integrating the constant averaged slice and
+using translation invariance on each term of the finite mean gives
+the identity. No topology on the theta image is involved.
+
+Replacing the finite mean by this integral on **both** sides of the
+range comparison transfers the checked literal prime-two obstruction
+to compact Haar averaging. The rewrite works by function extensionality
+and was checked in Lean. It does not identify the printed
+principal-value operator or its closure.
+
+**Source scope.** The [theta-jet note][theta-jets] supplies the inherited
+rendered compact averaging display (2.2.5.2), p. 95; with trivial
+character, inversion of the compact translator does not affect the
+average. The [weighted pairing note][pairing] maps (2.2.5.7), p. 96,
+to counting Haar on extraction evidence only. The [rational moment
+note][unit-haar] supplies the inherited rendered mass-one specialization
+of (A.3.2.1), pp. 559–560. These are source mappings, not premises of
+the Lean equality. No new manuscript reading was used.
+
+Independent exact-statement and applicability review:
+`theta-haar-statement` (`pklqvoL`), transcript in Yah
+`01a205ae-4590-795b-a902-0051e8cce501`. The review was source-only;
+the same owning session checked elaboration, including the finite-sum
+interchange without importing a separate finite-unit Haar transport.
+
+**Next check:** Use one unramified tensor over $\mathbf Q$ and a
+single tested prime outside $S=\{\infty\}$ as a positive control for
+the disjoint convention (1.3.2.2), p. 25, inherited from the
+[ordinary filtration note][ordinary]. The [tensor check][tensor]
+already identifies the repaired cut locally, and
+`rationalTheta_eq_primeMasked_idele_sum` gives its shift identity
+on the positive norm section, before any Haar averaging. The cut and
+the input are finite-unit invariant by their finite-coordinate
+conditions, so compact averaging is redundant once the cut is
+realized as an LF test. Check this LF realization and transport the
+section identity to class theta; on two-moment inputs the accepted
+`rationalThetaRadialProfile_uniformizer` then supplies the same shift
+for the represented inverse-uniformizer difference. This is a
+comparison of the project operators on a supplied unramified
+representative, not a proof for arbitrary fixed-$S$ representatives,
+the printed principal-value operator, or closedness.
+
+[finite-average]: ../../Proofs/Theorems/RationalThetaFiniteUnitAverage.lean
 [average-zero]: ../../Proofs/Theorems/RationalThetaAverageFourierZero.lean
 [lf-tails]: ../obligations/theta-inversion-q.md#checked-uniform-theta-estimates-for-rational-lf-bounded-families
+[theta-jets]: ../obligations/trace-theta-jets-qi.md
 [pairing]: ../obligations/single-place-norm.md#weighted-gaussian-decay-at-small-norm
-[unit-haar]: ../obligations/theta-inversion-q.md#checked-product-of-local-haar-probabilities-on-the-rational-quotient
+[unit-haar]: ../obligations/trace-moment-codimension-q.md#printed-statement-and-domain
+[ordinary]: divisorial-filtration.md
+[tensor]: primary-divisorial-tensor-cut.md
 
 [two-cut]: ../../Proofs/Theorems/RationalAdeleLiteralTwoCut.lean
 [stage]: fixed-stage-theta-representatives.md

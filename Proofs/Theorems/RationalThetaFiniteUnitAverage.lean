@@ -1,13 +1,17 @@
 module
 
 public import Theorems.RationalThetaRadialCore
+public import Theorems.RationalIdeleClassHaar
 import Lemmas.RationalAdeleAffineIntegral
+import Mathlib.MeasureTheory.Function.LocallyIntegrable
+import Mathlib.MeasureTheory.Group.Integral
 
 /-! # Finite-unit averaging of rational adelic theta
 
 On a box stage, finite units act on the cells of `M⁻¹ ℤ̂ / M ℤ̂`. We average
 through this finite permutation image, without imposing a topology on the
-algebraic theta image.
+algebraic theta image. Pointwise on idele classes this mean agrees with
+probability Haar averaging over the compact norm-one group.
 -/
 
 open NumberField IsDedekindDomain MeasureTheory
@@ -378,19 +382,65 @@ modes removed, with no invariance imposed. -/
 public abbrev RationalThetaTwoModeInput :=
   {f : E // f.toUnion.val 0 = 0 ∧ rationalAdeleFourier f.toUnion.val 0 = 0}
 
-/-- The two-mode average is represented in the existing radial input space. -/
-public theorem rationalAdeleLFFiniteUnitAverage_mem_radial (f : RationalThetaTwoModeInput) :
-    rationalAdeleLFFiniteUnitAverage f.val ∈ rationalThetaRadialInputSubmodule := by
-  obtain ⟨h₀, hF⟩ := rationalAdeleLFFiniteUnitAverage_zero_modes f.val
-  let g := rationalAdeleLFFiniteUnitAverage f.val
-  apply (mem_rationalThetaRadialInputSubmodule g).mpr
-  refine ⟨h₀.trans f.property.1, hF.trans f.property.2,
-    (rationalIdeleClass_normOne_invariant_iff_finiteUnits Θ[g]).mpr fun u d ↦ ?_⟩
+omit [MeasurableSpace A] [BorelSpace A] in
+private theorem theta_average_invariant (f : E) (k : rationalIdeleClassNormOne) (d : C) :
+    Θ[rationalAdeleLFFiniteUnitAverage f] ((k : C) * d) =
+      Θ[rationalAdeleLFFiniteUnitAverage f] d := by
+  let g := rationalAdeleLFFiniteUnitAverage f
+  apply (rationalIdeleClass_normOne_invariant_iff_finiteUnits Θ[g]).mpr _ k d
+  intro u c
   have h : rationalAdeleLFFiniteUnitPull u g = g := by
     apply RationalAdeleSchwartzLF.ext
     funext x
     rw [rationalAdeleLFFiniteUnitPull_apply, rationalAdeleLFFiniteUnitAverage_invariant]
   rw [← rationalAdeleClassTheta_LFFiniteUnitPull, h]
+
+omit [MeasurableSpace A] [BorelSpace A] in
+/-- The finite-unit theta mean equals the compact Haar average at each class,
+without any assumptions on the two zero modes. -/
+public theorem rationalAdeleClassThetaFiniteUnitAverage_eq_integral
+    [MeasurableSpace C] [BorelSpace C] (f : E) (d : C) :
+    rationalAdeleClassThetaFiniteUnitAverage f d =
+      ∫ k : rationalIdeleClassNormOne, Θ[f] ((k : C) * d) ∂rationalNormOneHaar := by
+  let : MeasurableSpace A := borel A
+  let : BorelSpace A := ⟨rfl⟩
+  let : CompactSpace rationalIdeleClassNormOne := compactSpace_rationalIdeleClassNormOne
+  let := isHaarMeasure_rationalNormOneHaar
+  let := isProbabilityMeasure_rationalNormOneHaar
+  let T (k : rationalIdeleClassNormOne) := Θ[f] ((k : C) * d)
+  let b (i : StageGroup (stageIndex f)) := rationalFiniteUnitClass (stageLift i)
+  have hcoe : Continuous (fun k : rationalIdeleClassNormOne ↦ (k : C)) := continuous_subtype_val
+  have hd : Continuous (fun _ : rationalIdeleClassNormOne ↦ d) := continuous_const
+  have hT : Continuous T := (continuous_rationalAdeleClassTheta_LF f).comp (hcoe.mul hd)
+  have hInt (i : StageGroup (stageIndex f)) :
+      Integrable (fun k ↦ T (b i * k)) rationalNormOneHaar :=
+    (hT.comp (continuous_const.mul continuous_id)).integrable_of_hasCompactSupport
+      (HasCompactSupport.of_compactSpace _)
+  -- View each finite translate as a left translation on the compact group.
+  have hmean (k : rationalIdeleClassNormOne) :
+      rationalAdeleClassThetaFiniteUnitAverage f ((k : C) * d) =
+        mean (fun i ↦ T (b i * k)) := by
+    unfold rationalAdeleClassThetaFiniteUnitAverage classStageAverage
+    congr 1
+    funext i
+    exact congrArg Θ[f] (mul_assoc (b i : C) (k : C) d).symm
+  calc
+    _ = ∫ k : rationalIdeleClassNormOne,
+        rationalAdeleClassThetaFiniteUnitAverage f ((k : C) * d) ∂rationalNormOneHaar := by
+      simp only [← rationalAdeleClassTheta_LFFiniteUnitAverage, theta_average_invariant]
+      simp
+    _ = ∫ k : rationalIdeleClassNormOne, T k ∂rationalNormOneHaar := by
+      simp only [hmean, mean]
+      rw [integral_smul, integral_finsetSum _ (fun i _ ↦ hInt i)]
+      simp only [integral_mul_left_eq_self]
+      exact mean_const _
+
+/-- The two-mode average is represented in the existing radial input space. -/
+public theorem rationalAdeleLFFiniteUnitAverage_mem_radial (f : RationalThetaTwoModeInput) :
+    rationalAdeleLFFiniteUnitAverage f.val ∈ rationalThetaRadialInputSubmodule := by
+  obtain ⟨h₀, hF⟩ := rationalAdeleLFFiniteUnitAverage_zero_modes f.val
+  exact (mem_rationalThetaRadialInputSubmodule _).mpr
+    ⟨h₀.trans f.property.1, hF.trans f.property.2, theta_average_invariant f.val⟩
 
 /-- The class-theta image of all represented two-mode tests after finite-unit
 averaging is exactly the class-theta image of the radial input space. -/
