@@ -31,3 +31,5 @@ To price the long gaps put $g_j=p_j-p_{j-2}$. Each elementary prime interval is 
 **Fixture and decision.** The [interval checker](check-rank-box.py) at the named center $q=2^{127}-1$ gives $0.899035<F<0.899036$ and $0.0014475<\sum b_d(E_{2,d})_+<0.0014476$ for $C=40$. These are measurements of the new observables; (1) is asymptotic, not a finite exclusion rule. For the raw endpoint, test the upper tail of $F$ and the rank-two budget **jointly with the one-prime hit**. A generic principal peak does not supply the $8/9$ premise, and neither pointwise arithmetic estimate follows from this reduction.
 
 For the subsequent interval test on the original projection, see [the triple endpoint cap](triple-endpoint-cap.md). It certifies a moving-height interval at the fixture, not control of the cells on the principal list.
+
+[Overlapping three-prime allocations](finite-successor-cap.md) now calibrate the two thresholds finitely over the fixture cutoff interval and strengthen the asymptotic raw-hit alternative to $B>0.012825$ eventually. For a separate finite comparison on buffered cells see [the small block scan](selected-cell-comparison.md).
