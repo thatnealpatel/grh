@@ -416,20 +416,64 @@ without elaboration. The owning transcript in that same session
 records the variable-prime dependency probe and the integrated
 build and joint signature and axiom checks.
 
-**Next check:** Realize the joint unit mask of the same unramified
-tensor at two distinct rational primes $p,q$ as a single LF test,
-using compact support $W_f$ and open translation subgroup $pqW_f$.
-The one-prime LF proof already gives preservation of each mask
-under its own $pW_f$ or $qW_f$ (proof-local), so restriction to
-$pqW_f$ gives both, once the subgroup inclusions are checked. Reuse
-`exists_rationalAdeleLF_of_compactOpenStage` with the same real fibers
-$b$ or zero. This would supply the literal joint witness for a later
-two-prime theta comparison: The one-prime theorem cannot be iterated
-on its output, since that output is no longer unramified. The section
-support test already gives both nondivisibilities by conjunction;
-inclusion-exclusion at the level of the sum remains to be formalized.
-The same inherited disjointness and tensor readings apply with
-$P=\{p,q\}$ outside $S=\{\infty\}$.
+The [joint LF realization below](#checked-joint-lf-realization-at-two-rational-primes)
+supplies the witness for a two-prime theta comparison.
+
+## Checked joint LF realization at two rational primes
+
+[`Masullo.exists_rationalAdeleUnramifiedTwoPrimeMaskLF`][prime-mask-lf]
+takes `p q : Nat.Primes`, `b : 𝓢(ℝ, ℂ)`, and a supplied
+`f : RationalAdeleSchwartzLF` with `f.toUnion.val = rationalAdeleUnramified b`.
+It gives a single `g : RationalAdeleSchwartzLF` with
+`g.toUnion.val = Set.indicator (rationalAdelePrimeUnits p ∩ rationalAdelePrimeUnits q) f.toUnion.val`.
+This is equality on **all additive adèles**, including zeros and
+nonintegral finite coordinates. No distinctness, moment, parity, or
+measurability premises are needed. When $p=q$ the indicator is the
+one-prime cut. The earlier one-prime signatures are unchanged.
+
+For $W_f=\widehat{\mathbb Z}$, use the open additive subgroup
+$pW_f\cap qW_f\subseteq W_f$. The one-prime proof's valuation-one
+invariance is now a shared private lemma: Addition and subtraction of
+an element of $pW_f$ preserve the unit predicate at $p$, without
+requiring the starting adèle to be integral. On the intersection,
+both invariances hold. Translation also preserves integrality and
+the real coordinate. The joint function vanishes off finite support
+$W_f$, and each real fiber is $b$ or zero. The existing compact-open
+stage assembly then supplies $g$. This is not an iteration of the
+one-prime theorem, which does not take a masked tensor as input.
+
+**Source scope:** The [ordinary filtration note][ordinary] gives the
+inherited rendered disjointness in (1.3.2.2), p. 25, satisfied by
+$S=\{\infty\}$ and $P=\{p,q\}$. The [tensor audit][tensor] gives the
+inherited rendered outside-$S$ input in (11.3.1.1), p. 492, and
+separately verifies the printed right-hand index in §1.3.2, p. 26.
+This is the **repair** with integer rings indexed by the complement
+of $S\cup P$, not the printed right-hand index. The Lean result is LF
+existence for the supplied tensor, not supply of representatives for
+an isotype, moment preservation, descent across arbitrary lifts, or
+an evaluation of the principal-value operator.
+
+**Review and checks:** `joint-mask-statement` (`jwapTMz`), in Yah
+`01a205df-58d2-785b-a3a7-c3e6a3d2093e`, independently checked the fixed
+statement, stage reduction, and applicability of the inherited
+readings by exact-source inspection, not elaboration. The same owning
+transcript records the dependency probe, integrated build, joint
+signature and axiom reports, and adoption.
+
+**Next check:** At positive real norm $t$ and for $p\ne q$, compute the
+theta sum of the joint witness as the $p$-masked sum at $t$ minus the
+$p$-masked sum at $qt$. The two instances of
+`rationalAdelePrimeMasked_section_support_iff` already give the joint
+support by conjunction, with a single integer index. The proof of
+`rationalTheta_eq_primeMasked_idele_sum` already reindexes the terms
+removed at $q$ by $n=qm$ on this section. The remaining step is to
+carry that reindexing through the extra restriction $p\nmid n$, using
+$p\nmid qm\iff p\nmid m$, and subtract the absolutely summable
+restricted series. Substituting the two landed $p$-masked sum values
+then gives the four-term formula on the section. The [theta source
+interface][theta-sum] supplies the inherited rendered representative
+sum in (2.2.3.1), p. 81. Transport off the section and descent across
+arbitrary lifts are not part of this next check.
 
 [unramified-prime-cut]: ../../Proofs/Theorems/RationalThetaUnramifiedPrimeCut.lean
 
