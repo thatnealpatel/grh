@@ -15,4 +15,10 @@ Statement lane (`<key>-<revision>-statement.json`):
 
 A statement disposition never closes or retires a proof assignment or a partial proof's recorded remainder. The Go gate uses the lane, record revision, and accepted defining-file evidence; the coordinator's exact Lean checks and independent review establish what the artifact is and whether it matches the passage.
 
+Each selected lane is integrated, checked, and adopted separately. Go
+acknowledges the primary and any bound optional lane only against the
+accepted tree. A missing sibling does not invalidate a receipt that already
+landed. Restart needs only the accepted receipts, not the temporary
+selection or coordinator's report.
+
 If later accepted changes invalidate evidence, explicitly retire the affected receipt as part of reconciliation. Do not overwrite an unchanged failure to trigger automatic attempts. Where the recorded retry evidence has actually changed, prefer a new Walk review via its normal process or explicitly retire the obsolete receipt via the campaign with the reason. Nothing here instructs a reader to edit Walk's private checkpoints.

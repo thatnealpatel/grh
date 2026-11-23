@@ -244,49 +244,47 @@ func (r repository) leanBlob(ctx context.Context, rev, file string) (string, err
 
 func blank(s string) bool { return strings.TrimSpace(s) == "" }
 
-func (r repository) selectBatch(ctx context.Context, tip string, work []assignment, limit int) ([]assignment, error) {
-	if limit <= 0 {
-		return nil, fmt.Errorf("nonpositive formalize batch limit %d", limit)
-	}
+// offerCap bounds the lookahead, not the
+// number of lanes that may run.
+const offerCap = 3
+
+// planBatch returns the mandatory primary followed by optional offers. Walk
+// supplies one entry per passage, in forward order; an entry contributes to
+// at most one lane in this plan.
+func (r repository) planBatch(ctx context.Context, tip string, work []assignment) ([]assignment, error) {
 	notes, err := r.receiptTree(ctx, tip)
 	if err != nil {
 		return nil, err
 	}
-	var pending []assignment
-	proofs := make([]receipt, len(work))
-	for i, a := range work {
+	var proofs, statements []assignment
+	for _, a := range work {
 		a.Lane = proofLane
 		proof, err := r.pendingDisposition(ctx, tip, notes, a)
 		if err != nil {
 			return nil, err
 		}
-		proofs[i] = proof
-		if proof.Outcome == "" {
-			pending = append(pending, a)
-			if len(pending) == limit {
-				return pending, nil
+		// Reserve the oldest pending proof as primary and
+		// up to two further proof offers, irrespective of
+		// older statement work. Leave at least one offer
+		// slot for an eligible statement on a different
+		// passage, even when more proofs are pending.
+		if proof.Outcome == "" && len(proofs) < offerCap {
+			proofs = append(proofs, a)
+		} else if len(statements) < 1+offerCap {
+			candidate, needed, err := r.statementCandidate(ctx, tip, notes, a, proof)
+			if err != nil {
+				return nil, err
+			}
+			if needed {
+				statements = append(statements, candidate)
 			}
 		}
-	}
-	// Scheduling policy, not statement
-	// eligibility: drain pending proofs
-	// first.
-	if len(pending) > 0 {
-		return pending, nil
-	}
-	for i, a := range work {
-		candidate, needed, err := r.statementCandidate(ctx, tip, notes, a, proofs[i])
-		if err != nil {
-			return nil, err
-		}
-		if needed {
-			pending = append(pending, candidate)
-			if len(pending) == limit {
-				break
-			}
+		if len(proofs) == offerCap && len(statements) > 0 {
+			break
 		}
 	}
-	return pending, nil
+	// Without a pending proof, the oldest statement becomes primary.
+	return append(proofs, statements[:min(len(statements), 1+offerCap-len(proofs))]...), nil
 }
 
 func (r repository) pendingDisposition(ctx context.Context, tip string, notes map[string]string, a assignment) (receipt, error) {
@@ -308,13 +306,13 @@ func (r repository) statementCandidate(ctx context.Context, tip string, notes ma
 	return a, err == nil && d.Outcome == "", err
 }
 
-func (r repository) acknowledge(ctx context.Context, b batch, tip string) error {
+func (r repository) acknowledge(ctx context.Context, selected []assignment, tip string) error {
 	notes, err := r.receiptTree(ctx, tip)
 	if err != nil {
 		return err
 	}
 	var missing []string
-	for _, a := range b.Assignments {
+	for _, a := range selected {
 		d, problem, err := r.disposition(ctx, tip, notes, a)
 		if err != nil {
 			return err

@@ -21,8 +21,9 @@ import (
 )
 
 const (
-	batchCap  = 1
 	idleDelay = 10 * time.Minute
+
+	selectionFile = "selection.json"
 )
 
 //go:embed coordinator.md
@@ -66,14 +67,14 @@ func run(ctx context.Context) error {
 		return err
 	}
 	log.Printf("formalize target %q; reading Walk ledger %s", repo.target, ledger)
-	var request string
+	var dispatchDir string
 	defer func() {
-		if request != "" {
-			os.Remove(request)
+		if dispatchDir != "" {
+			os.RemoveAll(dispatchDir)
 		}
 	}()
 	g := godel.New("Formalize individual Masullo passages from Walk with checked, independently reviewed campaign landings.")
-	_, err = g.Run(ctx, &godel.Params{Node: startNode(ctx, repo, repo.tip, ledger, batchCap, &request), Loop: true, SelfImprove: nil})
+	_, err = g.Run(ctx, &godel.Params{Node: startNode(ctx, repo, repo.tip, ledger, &dispatchDir), Loop: true, SelfImprove: nil})
 	return err
 }
 
@@ -81,10 +82,11 @@ type batch struct {
 	Edition     string       `json:"edition"`
 	Target      string       `json:"target"`
 	AcceptedTip string       `json:"accepted_tip"`
-	Assignments []assignment `json:"assignments"`
+	Primary     assignment   `json:"primary"`
+	Offers      []assignment `json:"offers"`
 }
 
-func startNode(ctx context.Context, repo repository, tip func(context.Context) (string, error), ledger string, limit int, request *string) *godel.Node {
+func startNode(ctx context.Context, repo repository, tip func(context.Context) (string, error), ledger string, dispatchDir *string) *godel.Node {
 	// Next holds Gödel's per-source lock, including idle waits. Walk uses a
 	// different lock and publishes complete chapter files by atomic rename.
 	return &godel.Node{Exec: "cat", Args: []string{"/dev/null"}, Next: func(godel.Result) (*godel.Node, error) {
@@ -98,22 +100,21 @@ func startNode(ctx context.Context, repo repository, tip func(context.Context) (
 				if err != nil {
 					return nil, err
 				}
-				pending, err := repo.selectBatch(ctx, base, work, limit)
+				plan, err := repo.planBatch(ctx, base, work)
 				if err != nil {
 					return nil, err
 				}
-				if len(pending) > 0 {
-					b := batch{edition, repo.target, base, pending}
-					return coordinator(repo.root, b, request, func(godel.Result) (*godel.Node, error) {
-						if err := os.Remove(*request); err != nil {
-							return nil, err
+				if len(plan) > 0 {
+					b := batch{edition, repo.target, base, plan[0], plan[1:]}
+					return coordinator(repo.root, b, dispatchDir, func(selected []assignment) error {
+						if err := ctx.Err(); err != nil {
+							return err
 						}
-						*request = ""
 						head, err := tip(ctx)
 						if err != nil {
-							return nil, err
+							return err
 						}
-						return nil, repo.acknowledge(ctx, b, head)
+						return repo.acknowledge(ctx, selected, head)
 					})
 				}
 			}
@@ -135,7 +136,40 @@ func waitForWork(ctx context.Context) error {
 	return ctx.Err()
 }
 
-func coordinator(root string, b batch, request *string, next func(godel.Result) (*godel.Node, error)) (*godel.Node, error) {
+// readSelection reads the coordinator's predispatch choice, not
+// its final report. The selection is disposable; only accepted
+// receipts survive restart.
+func (b batch) readSelection(file string) ([]assignment, error) {
+	info, err := os.Lstat(file)
+	if err != nil {
+		return nil, fmt.Errorf("read formalize selection: %w", err)
+	}
+	if !info.Mode().IsRegular() || info.Size() > 1024 {
+		return nil, errors.New("formalize selection must be a regular JSON file of at most 1024 bytes")
+	}
+	data, err := os.ReadFile(file)
+	if err != nil {
+		return nil, fmt.Errorf("read formalize selection: %w", err)
+	}
+	var paths []string
+	if err := json.Unmarshal(data, &paths); err != nil {
+		return nil, fmt.Errorf("invalid formalize selection: %w", err)
+	}
+	if len(paths) < 1 || len(paths) > 2 || paths[0] != b.Primary.path() {
+		return nil, errors.New("formalize selection must name the primary first and at most one optional offer")
+	}
+	if len(paths) == 1 {
+		return []assignment{b.Primary}, nil
+	}
+	for _, offer := range b.Offers {
+		if offer.Key != b.Primary.Key && offer.path() == paths[1] {
+			return []assignment{b.Primary, offer}, nil
+		}
+	}
+	return nil, fmt.Errorf("formalize selection is not a distinct offered passage/lane: %q", paths[1])
+}
+
+func coordinator(root string, b batch, dispatchDir *string, acknowledge func([]assignment) error) (*godel.Node, error) {
 	data, err := json.Marshal(b)
 	if err != nil {
 		return nil, fmt.Errorf("encode formalize batch: %w", err)
@@ -155,20 +189,32 @@ func coordinator(root string, b batch, request *string, next func(godel.Result) 
 	if rel != ".." && !strings.HasPrefix(rel, ".."+string(filepath.Separator)) {
 		return nil, errors.New("formalize batch temp directory must be outside the launch checkout")
 	}
-	f, err := os.CreateTemp(dir, "grh-formalize-*.json")
+	dispatch, err := os.MkdirTemp(dir, "grh-formalize-*")
 	if err != nil {
 		return nil, err
 	}
-	*request = f.Name()
-	_, err = f.Write(data)
-	if err := errors.Join(err, f.Close()); err != nil {
+	*dispatchDir = dispatch
+	request := filepath.Join(dispatch, "request.json")
+	if err := os.WriteFile(request, data, 0600); err != nil {
 		return nil, err
 	}
-	// Gödel normally passes its original stdin, possibly a recycled old
-	// response. Replace it with a fixed seed. Only the fresh file is input.
-	return &godel.Node{Directory: root, Exec: "sh", Next: next, Args: []string{
+	selection := filepath.Join(dispatch, selectionFile)
+	// Gödel normally passes its original stdin, possibly a recycled
+	// old response. Replace it with a fixed seed. Only the fresh
+	// request is input.
+	return &godel.Node{Directory: root, Exec: "sh", Args: []string{
 		"-c", `exec timeout --kill-after=30s 2h yah -yolo -effort high -append "$1" <<'SEED'
 Process the supplied Formalize batch.
-SEED`, "formalize-yah", protocol + "\n" + grhgodel.ScratchPolicy + "\n\nRead the fresh batch JSON at " + fmt.Sprintf("%q", *request) + ".",
+SEED`, "formalize-yah", protocol + "\n" + grhgodel.ScratchPolicy + fmt.Sprintf("\n\nRead the fresh batch JSON at %q. Bind selection at %q.", request, selection),
+	}, Next: func(godel.Result) (*godel.Node, error) {
+		selected, err := b.readSelection(selection)
+		if cleanupErr := os.RemoveAll(dispatch); cleanupErr != nil {
+			return nil, errors.Join(err, cleanupErr)
+		}
+		*dispatchDir = ""
+		if err != nil {
+			return nil, err
+		}
+		return nil, acknowledge(selected)
 	}}, nil
 }
