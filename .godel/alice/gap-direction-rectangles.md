@@ -32,6 +32,14 @@ At determinant zero, $v_2=\pm v_1$ and $r_2\le r_1$, so the same calculation wit
 
 More generally, after fixing the first incidence, the boxes, and the second pair of $h_i$, one can impose **any** centred convex restriction on $v_2$ of area $O(B_0)$ for $1\le B_0\le 2H^2$. The sieve by $e\mid d_2$ costs $q^{o(1)}\sqrt{B_0}$ directions. It need not be a strip parallel to $v_1$. An affine strip cannot be substituted without checking the collinear case.
 
+## Why angular pigeonholing alone does not cover the complement
+
+Consider just the box $r_1=r_2=1$, $\|v_1\|_\infty,\|v_2\|_\infty\asymp H$. One might partition the full circle into $B\asymp H^2/K$ equal sectors, $1\le K\le H^2$, so that two incidences in the same sector have $S\ll K$. On a fixed label list let $m_b$ be its occupancy in sector $b$ in this box, with $m=\sum_b m_b$. The bound $m^2\le B\sum_b m_b^2$ converts same-sector control to control of all pairs, but it costs the full sector count unless one exploits the actual occupancies. After summing over lists the repeated-column terms in $\sum_b m_b^2$ cost at most $q^{1.835+o(1)}$; the distinct terms are covered by the strip proof, which did not use reciprocal freshness. For $K=q^\kappa$, $0\le\kappa\le .780$ up to subpower endpoint factors, the resulting all-angle exponent is
+
+$$ (.780-\kappa)+(2.500+\kappa/2)=3.280-\kappa/2\ \ge\ 2.890.$$
+
+Thus using narrower equal sectors with only this Cauchy bound moves in the wrong direction, even if only a bound for fresh pairs is ultimately wanted. This is a limitation of the estimate, not evidence that many actual smooth columns occupy each sector.
+
 ## What the other determinant does not supply
 
 Set $a_\ell=h_{1\ell}y_{2\ell}$, $b_\ell=h_{2\ell}y_{1\ell}$, and $D=b_1a_2-a_1b_2$. The within-column relations $F_1a_\ell-F_2b_\ell=qt_\ell$ already give $F_2D=q(a_1t_2-a_2t_1)$. Thus $q\mid D$ is not another independent cycle congruence. Reciprocal freshness excludes $D=0$: It would give $a_1t_2=a_2t_1$, hence the full part of $a_1$ outside column 2's support would divide $t_1$, impossible since it is at least $q^{1.880}$ and $0<|t_1|\le W$. This argument does not exclude parallel **gap** vectors.
