@@ -784,15 +784,12 @@ trace equal to the full-order open-strip sum (compare (10.4.2.20), p. 463).
 The [reviewed jet-model argument](trace-spectral-strip-q.md#convolution-after-projection)
 constructs the trace for the complement of the common jet kernel, not
 for an arbitrary projection. `rationalThetaWeightedLog_closure_subset_ker`
-only supplies the forward inclusion. To work on the reverse inclusion
-at $a=1/2$, $s=2r$, and the common full-measure set of $0<\alpha<1/2$, a
-runnable independent substep is the [Gaussian-division moment repair](trace-theta-density-q.md#gaussian-division-and-compact-theta-approximation):
-For fixed smooth compact $\beta$ normalized by $\int e^{x/2}\beta(x)dx=1$,
-show $m e^{-L/2}\beta(\cdot-L)$ has moment $m$ and tends to zero in the
-weighted derivative norm through order $2r$ (or any fixed finite order),
-using the factor $e^{-(1/2-\alpha)L}$ times a polynomial. This allows
-moment-zero approximants without asserting continuity of that moment
-in the strip norm. The quotient bounds and their weighted Fourier
-approximation, the complementary trace-class and zero-sum identification
-in Lean, transport to the regular diagonal, and necessity of the modeled
-geometric identification remain separate.
+only supplies the forward inclusion. For the reverse inclusion at $a=1/2$,
+$s=2r$, and the common full-measure set of $0<\alpha<1/2$, Lean now checks
+the [half-Mellin moment correction](trace-theta-density-q.md#checked-half-mellin-moment-correction)
+for compact log approximants. Next turn a corrected profile into an even
+rational `RationalThetaInput` with the required Mellin product. The
+quotient bounds and weighted Fourier approximation, the complementary
+trace-class and zero-sum identification in Lean, transport to the regular
+diagonal, and necessity of the modeled geometric identification remain
+separate.
