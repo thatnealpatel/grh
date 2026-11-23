@@ -4,10 +4,11 @@
 $S=\{\infty\}$, the half twist, even Sobolev index $s\ge4$, and one of the
 [common good widths](trace-theta-density-q.md#bounds-for-division-by-zeta)
 $0<\alpha<1/2$. Put $\beta=2\alpha$. This tests the two-leg lift of a
-specified projected global diagonal. This transfer needs the base of the same global diagonal to equal the
-local projection modulo the two polar moments, since that is the local
-operator the transfer proposes to use in the p. 520 identification. We
-prove that the requirement is impossible for class-constant copy weights.
+specified projected global diagonal. The transfer needs the base of
+that same diagonal to equal the local projection modulo the two polar
+moments, since that is the local operator the transfer proposes to use
+in the p. 520 identification. We prove that this requirement is
+impossible for class-constant copy weights.
 This does not exclude shells formed before projection or other lifts.
 
 ## Split the same diagonal before taking limits
@@ -44,8 +45,8 @@ where $D_0$ is the stage with all finite components units, gives the
 complementary trace $\operatorname{Tr}(M_{1-b}T_{\rho,B})$. The sign
 $\alpha_{k+1}-\alpha_k$ in (11.3.1.4) instead gives the negative of this
 shell. Thus the additive decomposition is base plus positive shell, or
-base minus literal signed shell. The angular integration at fixed norm has mass one in the trivial
-isotype. No mask is moved through a Paley–Wiener projector, and no
+base minus literal signed shell. The angular integration at fixed norm
+has mass one in the trivial isotype. No mask is moved through a Paley–Wiener projector, and no
 additional norm-only right multiplier is identified with this projector.
 Adding such a common input mask would factor out the same copy weights,
 but around a different whole trace whose limiting value would first
@@ -55,10 +56,11 @@ Thus for constant weights the base and positive shell are exactly $b$
 and $1-b$ times the **same** fixed-cutoff trace, with $0\le b\le1$.
 This holds cutoff by cutoff even if the finitely many translates or
 probabilities vary between cutoffs, provided the same already formed
-quotient operator and regular diagonal are used. A zero whole iterated limit forces
-zero for both pieces, by the bound by the absolute whole trace. For
-moving weights the position limit of the inner limsup of absolute values
-is zero, without a claim that the weighted inner limits exist. The point-mass lift is included.
+quotient operator and regular diagonal are used. A zero whole iterated
+limit forces zero for both pieces, by the bound by the absolute whole
+trace. For moving weights the position limit of the inner limsup of
+absolute values is zero, without a claim that the weighted inner limits
+exist. The point-mass lift is included.
 
 ## A short test with zero whole trace and nonzero local trace
 
@@ -156,13 +158,15 @@ not a fresh rendered-page verification.
   annihilation of (11.3.2.3); neither is a reading of the printed limit.
 - Theorem 12.4.1.1, p. 514, is proved on pp. 515–519. The step
   (12.4.1.8–12), p. 517, uses a Fourier multiplier and the trace calculation
-  gives the raw scalar, not our projected local value. Theorem 12.5.1.1, pp. 519–520, needs the
-  pieces of one common diagonal, invokes orbital vanishing, and
+  gives the raw scalar, not our projected local value. Theorem 12.5.1.1,
+  pp. 519–520, needs the pieces of one common diagonal, invokes orbital
+  vanishing, and
   identifies its base with local terms minus the polar moments. Our
   test has support in $(1/2,1)$ in norm, admits $T<2$ in its support
   condition, and has both moments zero. Its vanishing at log norm zero
-  is the value condition in §12.5, not a vanishing-integral condition. The obstruction is to using this
-  fixed class-constant transfer to reconcile the **projected** local
+  is the value condition in §12.5, not a vanishing-integral condition.
+  The obstruction is to using this class-constant transfer to reconcile
+  the **projected** local
   model with the raw scalar there. It is not a new application of the
   printed above-one orbital theorem. Nor does it say that identifying a
   separately justified global base with the *raw* value would fail on
@@ -172,6 +176,31 @@ The witness with omitted-sample filtering and its trace comparison are
 reviewed ordinary mathematics, not Lean declarations. Lean dependencies
 are identified in the linked proof records; they do not machine-check
 this obstruction end to end.
+
+## Checked local scalar separation
+
+Lean's
+[`Masullo.exists_smooth_test_trace_scalar_separation`](../../Proofs/Props/TraceScalarSeparation.lean)
+separates the local pairings in every nonempty open $I\subset(0,\log 2)$:
+There is a real smooth $f$ with compact topological support in $I$, both
+polar moments zero, $\langle J,f\rangle=0$, and
+$\langle U_\beta,f\rangle\ne0$. All four products are Lebesgue
+integrable. The density formulas come from the rational local model,
+not from treating the manuscript's projection as its multiplier.
+
+The Lean proof first factors a putative kernel inclusion through the
+three moment functionals, then tests against all bumps to obtain an
+identity of continuous densities. After multiplication by $1-e^{-2t}$,
+the exponent $\beta-5/2$ is distinct from the four constraint exponents.
+A differentiation argument excludes the resulting exponential relation.
+This closes the local scalar separation only: The filtered witness above
+requires a different independence argument and the omitted-zero input.
+
+`scalar-statement-review` (`IolcisX`) independently checked the exact
+statement, $g=e^{-t}$ and its Haar measure, the exponents and signs, and
+the p. 517 and pp. 519–520 interfaces against the pinned text/layout.
+The owning candidate build, joint import, signatures, and axiom report
+are recorded in Yah session `01a20615-9d61-7879-bfbb-bb714a7cbca9`.
 
 ## Exact successor for position-dependent weights
 
@@ -196,5 +225,6 @@ inside the projected operator lies outside this calculation.
 **Independent review:** `shell-review` (`nGRsVZp`), in Yah session
 `01a20615-9d61-7879-bfbb-bb714a7cbca9`, checked the fixed-cutoff split,
 filtered witness, scalar signs, and weighted successor, and compared the
-interfaces with the pinned Markdown and numbered layout. No rendered
-inspection or new Lean verification is claimed.
+interfaces with the pinned Markdown and numbered layout. The full
+constant-weight obstruction is not machine-checked, and neither review
+claims rendered-page inspection.
