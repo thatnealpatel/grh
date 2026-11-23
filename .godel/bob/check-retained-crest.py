@@ -65,3 +65,45 @@ assert QQ(4286)/10000 < s and s < QQ(4311)/10000
 assert QQ(446)/10 < excess and excess < QQ(448)/10
 assert 155000000 < ratio and ratio < 1240000000
 assert QQ(966)/10000 < far and far < QQ(982)/10000
+
+# Test the integer-gap decomposition at the exact crest center and at
+# one genuine node of the fine grid starting at t+L/sqrt(n).
+assert 0 < X/(n*D**4) and X/(n*D**4) < 1
+
+def gap_test(height, parity_control=False):
+    angles = [height*f for f in omega]
+    terms = [b*C(y.cos(), y.sin()) for b, y in zip(w, angles)]
+    groups = {}
+    counts = {}
+    for i, p in enumerate(starts):
+        for j in range(bisect_right(starts, p+cut), len(starts)):
+            g = starts[j]-p
+            counts[g] = counts.get(g, 0)+1
+            cross = 2*(terms[i]*terms[j].conjugate()).real()
+            groups[g] = groups.get(g, 0)+cross
+    assert len(groups) == 11141 and max(counts.values()) == 184
+    signed = sum(groups.values())
+    many = sum(y for g, y in groups.items() if counts[g] >= 10)
+    unsigned_many = sum(abs(y) for g, y in groups.items() if counts[g] >= 10)
+    if parity_control:
+        # The common quadratic vertex twist beta=pi/8 at d=18 changes
+        # the edge by (-1)^((p-1)/2) up to one constant unit factor.
+        assert d % 4 == 2 and all(p % 2 for p in starts)
+        invariant = sum(y for g, y in groups.items() if g % 4 == 0)
+        twisted = 2*invariant-signed
+        ztw = sum((1 if p % 4 == 1 else -1)*x for p, x in zip(starts, terms))
+        return abs(sum(terms)), signed, abs(ztw), twisted, invariant
+    return abs(sum(terms)), signed, many, unsigned_many
+
+for height, bounds in [(v, [(429, 431), (97, 98), (98, 99), (515, 516)]),
+                       (t+2*L/R(n).sqrt(), [(28, 29), (-6, -5), (-6, -5), (515, 516)])]:
+    row = gap_test(height)
+    assert all(lo < 1000*x and 1000*x < hi for (lo, hi), x in zip(bounds, row))
+    print('gap test', *(RealIntervalField(32)(x).str(style='brackets') for x in row))
+
+node44 = t+44*L/R(n).sqrt()
+assert node44 < 5*t/4-L/R(n).sqrt()
+row = gap_test(node44, parity_control=True)
+bounds44 = [(178, 179), (16, 17), (52, 53), (-3, -2), (7, 8)]
+assert all(lo < 1000*x and 1000*x < hi for (lo, hi), x in zip(bounds44, row))
+print('parity control', *(RealIntervalField(32)(x).str(style='brackets') for x in row))
