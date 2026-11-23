@@ -98,8 +98,9 @@ bridge](single-place-norm.md#checked-finite-box-fourier-support-and-phase)
 and the [actual global Fourier integral](single-place-norm.md#global-fourier-integral-for-a-translated-finite-box).
 The global character is built separately; the Fourier comparison here
 samples diagonal frequencies, not arbitrary off-diagonal frequencies.
-Counting-quotient normalization, ramified Gaussian inversion, and GRH
-remain open.
+For the global additive quotient, see the [counting normalization](single-place-norm.md#global-counting-quotient-normalization-for-the-box-fourier-measure);
+for ramified tests, see the [pointwise inversion for the corrected Hecke Gaussian](single-place-norm.md#corrected-archimedean-schwartz-factor-and-pointwise-hecke-theta-inversion).
+Neither result establishes GRH.
 
 ## Local checks and integration replay
 

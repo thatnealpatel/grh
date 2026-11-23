@@ -1291,15 +1291,12 @@ go run ./cmd/godel audit-local "$CANDIDATE" \
   Masullo.schwartz_lattice_poisson Masullo.archimedeanIdeal_poisson
 ```
 
-**Next finite-to-global obligation:** The
-[diagonal coset](#checked-diagonal-pullback-of-a-finite-box) and
-[Fourier support and positive phase](#checked-finite-box-fourier-support-and-phase)
-are checked. The centered Haar masses still need to multiply to the
-reciprocal of the trace-normalized Archimedean covolume. Then combine
-these inputs in the Fourier formula and extend by finite linearity to
-the ramified tests, after proving their finite-coset decomposition.
-Retain both zero modes in the passage to the nonzero-orbit sums, before
-norm-one averaging.
+**Finite-to-global status:** The [centered mass product](#centered-finite-box-mass-and-trace-covolume)
+is the reciprocal trace covolume used in the [full diagonal Poisson sums](#full-diagonal-poisson-sums-for-one-translated-finite-box).
+The [pointwise Hecke Gaussian inversion](#corrected-archimedean-schwartz-factor-and-pointwise-hecke-theta-inversion)
+retains both zero modes. The [norm-one reflection](#checked-reflection-of-the-norm-one-gaussian-average)
+is for the trivial character; its [scalar explicit formula](#trivial-hecke-scalar-explicit-formula)
+still does not identify the global projected trace.
 
 #### Checked diagonal pullback of a finite box
 
