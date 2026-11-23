@@ -261,18 +261,61 @@ scope against the pinned manuscript at
 `47eb4b607ef17236bbc0e82d00a4346d7dc3d0a8`. Owning exact-candidate check:
 Yah `01a20642-dbdb-7b6d-b0e5-218cf3eaa9e9`.
 
-**Next Lean step:** If the projected pairing vanished on the kernel of
-the raw pairing on compactly supported smooth seeds, it would factor as
-a scalar multiple of the raw pairing. Use
-`compactSmooth_moment_relation` with a single constraint and
-`eqOn_of_compactSmooth_moments_eq` to turn that factorization into the
-excluded equality of continuous densities. Then the adjoint transfers
-the zero raw and nonzero projected pairing to the filtered seed. This
-still needs the actual omitted-zero summability budget, the full/strip
-trace comparison, and an argument that the modeled projection is
-necessary for the manuscript's mechanism.
+### Checked short filtered separator
 
-With this seed and the strip/full comparison, $G(f)=\langle J,f\rangle=0$,
+[`Masullo.exists_smooth_test_filtered_density_separation`](../../Proofs/Props/FilteredLogTraceSeparation.lean)
+fixes any carried probability $\mu$, polynomial $P$, and rate $\beta$
+from the preceding nonproportionality theorem, and any $0<a<b$. If the
+projected seed pairing vanished on the kernel of the raw seed pairing
+in $C_c^\infty((a,b))$, `compactSmooth_moment_relation` would express the
+projection as a scalar multiple on bumps. `eqOn_of_compactSmooth_moments_eq`
+would then give the excluded equality of continuous densities on $(a,b)$.
+The adjoint transfers the selected seed's zero and nonzero pairings to
+one smooth filtered test, with support in $[a,b+D]$ and both products
+integrable on the whole real line.
+
+`Masullo.exists_compactLogMellin_filter_trace_separation` chooses the
+measure using a given sequence of nonreal tail frequencies with
+summable displacement budget $D=\sum_n\pi/|\Im w_n|$. The *same* test
+has the two different pairings and kills all those Mellin samples and
+all samples at roots of $P(-z)$. For the below-one band the application
+must choose $b+D<\log 2$. The construction also works without a tail
+by applying the first theorem with the probability point mass at zero.
+
+This assembles an original short-test argument for the comparison in
+Theorem 12.5.1.1, pp. 519–520, (12.5.1.3–4). The source supplies the
+Mellin integration-by-parts template (p. 599, (B.2.1.29–31)), but neither
+the simultaneous witness nor the identification of the weighted local
+projection with the multiplier in (12.4.1.8–12), p. 517. The above-one
+hypothesis at pp. 495–496, Theorem 11.3.2.1, still excludes these tests.
+Independent read-only Yah review `filtered-test-review` (`mndmHjP`)
+checked the exact contracts and the pinned manuscript at
+`65c47377eac2080b1310073604660fd6d3f64ae1`. The source reading is
+provisional (Markdown and numbered layout, not rendered pages).
+The owning exact-candidate checks are in Yah
+`01a2064d-01df-7985-9550-7d5295c124ee`.
+
+**Next:** Supply the actual fixed-width tail budget for the distinct
+shifted zeta zeros outside the open strip, including boundary zeros.
+For a fixed $0<\alpha<1/2$, the [reviewed upper counting bound](trace-carving-weight-q.md#the-short-window-detects-any-omitted-zero)
+at $\sigma=1/2+\min(\alpha,1/8)$ is sublinear with a power saving;
+a Lean proof must supply that bound or another proof of summability of
+$1/|\Im w|$ for the omitted $|\Im w|>1$. Use reflection and conjugation,
+then a dyadic sum and a sufficiently high finite split to fit the slack.
+The checked full-divisor quadratic summability does not imply this
+reciprocal-height bound. Use a real polynomial with both polar roots and the finite omitted
+roots at the negative Mellin argument. The below-one log coordinate
+reflects the class sample, so use the negation symmetry of the omitted
+set (or explicitly enumerate the reflected frequencies).
+The already checked rational strip index and conditional RH endpoint
+(`rationalRadialStripIndexEquiv` and
+`riemannHypothesis_of_ideleClassTraceFormula`) do not supply this bound
+or identify the analyzed global operator with either scalar trace.
+In particular, killing zeros outside the open strip only matches a
+strip sum with full interior orders, not an interior Sobolev-capped sum.
+
+With the actual omitted samples killed and the model’s strip trace
+identified, the explicit formula gives $G(f)=\langle J,f\rangle=0$,
 but $\langle U_\beta,f\rangle\ne0$. Both constant-weight pieces of the
 rational model's global diagonal tend to zero, so this orbital shell cannot
 supply the difference between the local projection and the multiplier
@@ -320,10 +363,10 @@ not a fresh rendered-page verification.
   separately justified global base with the *raw* value would fail on
   this witness, where both are zero.
 
-The full witness with omitted-sample filtering and its trace comparison
-are reviewed ordinary mathematics, not Lean declarations. The conditional
-filter is checked above; it does not machine-check this obstruction end
-to end.
+The conditional filtered witness is checked above. Its specialization to the
+actual omitted samples, the comparison with the common global trace, and
+the necessity of the modeled projection for the manuscript remain separate.
+The obstruction is not machine-checked end to end.
 
 ## Checked local scalar separation
 

@@ -24,7 +24,8 @@ private theorem positiveLogDenom_ne_zero {s : ℝ} (hs : 0 < s) :
     1 - Real.exp (-2 * s) ≠ 0 :=
   sub_ne_zero.mpr ((Real.exp_lt_one_iff.mpr (by linarith : -2 * s < 0)).ne.symm)
 
-private theorem logKernel_smooth (r : ℝ) :
+/-- The geometric log density is smooth away from its possible pole at zero. -/
+public theorem contDiffOn_rationalLogTraceDensity (r : ℝ) :
     ContDiffOn ℝ ∞ (fun x ↦ Real.exp (r * x) / (1 - Real.exp (-2 * x))) (Ioi 0) := by
   refine (Real.contDiff_exp.comp (contDiff_const.mul contDiff_id)).contDiffOn.div
     ((contDiff_const.sub (Real.contDiff_exp.comp (contDiff_const.mul contDiff_id))).contDiffOn) ?_
@@ -56,7 +57,7 @@ private theorem adjoint_logKernel_split (P : Polynomial ℝ) (r : ℝ) {s : ℝ}
   have hf : ContDiffAt ℝ ∞ f s :=
     (Real.contDiff_exp.comp (contDiff_const.mul contDiff_id)).contDiffAt
   have hg : ContDiffAt ℝ ∞ g s :=
-    ((logKernel_smooth (r - 2)) s hs).contDiffAt (isOpen_Ioi.mem_nhds hs)
+    ((contDiffOn_rationalLogTraceDensity (r - 2)) s hs).contDiffAt (isOpen_Ioi.mem_nhds hs)
   change _ = P.eval (-r) * Real.exp (r * s) + logPolynomialAdjoint P g s
   rw [← adjoint_exp]
   simp only [logPolynomialAdjoint, ← Finset.sum_add_distrib]
@@ -83,7 +84,7 @@ public theorem filteredLogDensity_sub_exp {μ : Measure ℝ} [IsFiniteMeasure μ
   let g : ℝ → ℝ := fun u ↦ logPolynomialAdjoint P
     (fun x ↦ Real.exp ((r - 2) * x) / (1 - Real.exp (-2 * x))) (t + u)
   have hg : Integrable g μ := integrable_of_continuousOn_carrying hD
-    ((logPolynomialAdjoint_continuousOn P (logKernel_smooth (r - 2))).comp
+    ((logPolynomialAdjoint_continuousOn P (contDiffOn_rationalLogTraceDensity (r - 2))).comp
       (continuous_const.add continuous_id).continuousOn
       (fun _ hu ↦ add_pos_of_pos_of_nonneg ht' hu.1))
   have hi : Integrable (fun u ↦ (Real.exp (r * t) * P.eval (-r)) * Real.exp (r * u)) μ :=
