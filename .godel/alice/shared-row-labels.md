@@ -1,0 +1,34 @@
+# Count columns sharing fresh row divisors
+
+Fix one sufficiently large prime $q$ and $g=1$ in the [rich-column reduction](rich-column-rows.md). There is a second way to use successive rows: Group *different columns* by the same ordered list of large, pairwise coprime divisors of their row coordinates. A popular list forces fresh factors in the opposite direction as well, when moving from one column to the next. Here are the counts and the remaining test. None uses independence.
+
+Write $s$ for the degree of a column $(c,d)$, rich if $s>q^{.334}$. Use $W=2A_+HX/Z=q^{.78+o(1)}$, so $|(x_i y_j-x_j y_i)/q|\le W$ for any two rows of a column. Here $A_-=q^{1.445+o(1)}\le x_i,y_i\le A_+=q^{1.445+o(1)}$, $Z/X<c,d\le Z$, and all row and column coordinates are eligible-prime products. In this note $r=2$ or $3$ is the number of row positions, not a gap gcd.
+
+**One label per position.** Fix an anchor row on each rich column. Choose ordered rows successively, excluding the anchor. At each step take $S$ to contain the primes of $cd$, the anchor, and both coordinates of all previously chosen rows. This has $O(k)$ primes. At most $q^{.3325+o(1)}$ choices of the next row $(x,y)$ have full $S$-part $m$ of $xy$ at least $q^{.115}$: Their determinant quotient with the anchor has absolute value at most $W\le (W/q^{.115})m$, so the normalized determinant lemma applies with $J=W/q^{.115}$ (the gap gcd is at least one). The remaining $x$ has outside-$S$ part at least $A_-/q^{.115}>WX$. In that part take the shortest sorted prime prefix with product $F_i>W$. Then $W<F_i\le WX$, $F_i\mid x_i$, and the labels in the list are pairwise coprime. In particular, the large label need not be split between the coordinates.
+
+There are at most $q^{.39r+o(1)}$ lists, by the half-power smooth count. On a given column a label identifies its row: For two such rows $qF_i$ divides their determinant (use $q\nmid F_i$), while the absolute determinant is at most $qW$. Zero determinant forces equality by positivity and primitivity. Hence $(1-o(1))s^r$ distinct lists occur on this column. Only count the incidences actually constructed in this manner.
+
+**Bounded recovery on a list.** Fix the entire list, write $h_i=x_i/F_i$, and let $m_{\boldsymbol F}$ be the number of columns realizing it. *Each* of the $r^2+1$ positive integers
+$$cd,\qquad w_{ij}=h_i y_j\quad(1\le i,j\le r)$$
+separately identifies the column up to $q^{o(1)}$ choices. For $cd$ simply split the product. For $w_{ii}$ split it and recover the row, which has at most one column by [row uniqueness](shared-complement-count.md). For $i\ne j$ put $z=F_i w_{ij}$. The actual column congruence gives
+$$z-F_j w_{ji}=qt,\qquad |t|\le W.$$
+Thus $t$ lies in one residue class modulo $F_j>W$, at cost at most three choices, and $w_{ji}$ is then known. Split the two known products to recover the rows. All split counts are subpower by the divisor bound. This works without treating either cross-product as squarefree. Each recovery integer is smooth and at most $q^{2.11+o(1)}$, so unconditionally $m_{\boldsymbol F}\le q^{1.055+o(1)}$.
+
+For any one set $P$ of $O(k)$ primes, the number of realizing columns for which *some* recovery integer has outside-$P$ part less than $q^{2\lambda}$ is at most $q^{\lambda+o(1)}$, for fixed $\lambda>0$. Indeed the full $P$-part has $q^{o(1)}$ choices by the exponent-vector count (at most $2k$ factors), and the outside part has at most $q^{\lambda+o(1)}$ by Rankin. Take the union over the fixed number of recovery integers. In particular $P$ may include all primes of the labels and of all rows and complements in a fixed number of previously chosen realizations of this list. The assertion concerns the product outside $P$, with multiplicities, not a lower bound on the radical.
+
+**Which lists can matter?** A column gives each of its constructed lists weight $s^{1-r}$. Summing weights counts $(1-o(1))s$ edges per rich column. Lists realized by at most $q^\theta$ columns have total weight at most
+$$q^{.39r+\theta-.334(r-1)+o(1)}.$$
+For the other lists choose $\lambda<\theta$. After any first realization, all but $o(m_{\boldsymbol F})$ second realizations have *every* recovery integer with outside-$P$ part at least $q^{2\lambda}$, where $P$ is the support of the first complement and all its selected rows (including the labels). This counts columns, not candidate divisors. Two useful choices are:
+
+| Positions $r$ | Popularity cutoff $\theta$ | $\lambda$ | Light-list weight exponent | Minimum outside-product exponent on popular lists |
+|---:|---:|---:|---:|---:|
+| 2 | .942 | .940 | 1.388 | 1.880 |
+| 3 | .886 | .884 | 1.388 | 1.768 |
+
+In particular the rich edges *on columns without even one such second realization for any list they produce* cost at most $q^{1.388+o(1)}$. This does not bound all rich edges. It pays for light list incidences, not all edges on columns that have one light incidence.
+
+**A two-column test.** Let $R_r$ count lists together with ordered pairs of distinct realizing columns on the popular lists, imposing the stated outside-product cut in *both* orders. On each popular list the number of ordered pairs failing in the forward order is at most $m_{\boldsymbol F}q^{\lambda+o(1)}$, and reversing the order has the same cost. Thus $R_r\ge(1-o(1))\sum_{\rm popular}m_{\boldsymbol F}^2$. Cauchy-Schwarz on lists bounds the remaining edge weight by
+$$q^{.195r-.334(r-1)+o(1)}\sqrt{R_r}.$$
+Thus at $g=1$ either $R_2\le q^{2.668-\epsilon}$ or $R_3\le q^{2.946-\epsilon}$ would suffice for a power saving below $1.39$. These are alternatives, not estimates proved here. For comparison the unrestricted row collision count bounds total pair-list incidences by $q^{1.835+o(1)}$, and an unrestricted third row costs a further $q^{.39+o(1)}$. Multiplying these by the maximum fiber $q^{1.055+o(1)}$ gives only $2.890$ and $3.280$, respectively.
+
+A concrete next test is the two-position rectangle. Both columns have $c_\ell F_i h_{i\ell}-d_\ell y_{i\ell}=q\delta_{i\ell}$ for the **same** $F_1,F_2$, with $|\delta_{i\ell}|\le H$. In particular, for both positions $i$, $c_1d_2 h_{i1}y_{i2}\equiv c_2d_1 h_{i2}y_{i1}\pmod q$. Count the simultaneous lifts, keeping the individual short gaps and reciprocal freshness. Counting the first incidence and then only divisor choices for the second misses by $.222$ in the rectangle exponent. No bound for these simultaneous lifts, result over all gcds, or fixed-window floor follows here.
