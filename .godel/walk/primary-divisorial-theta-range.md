@@ -557,22 +557,68 @@ of the inherited readings against `998be47bb20823c621cf4f99969f980f41b8c39b`
 by exact-source review, without elaboration. The same owning transcript
 records the dependency probe and assembled candidate checks.
 
-**Next bounded check:** For $p=2$, $q=3$, identify the two integral
-level-six cells on which both masks are one. In the `j/6` coordinate of
-`rationalAdeleStageRepresentative`, the expected indices are $6$ and
-$30$ (residues $1$ and $5$ modulo $6$). The level-two proof of
-`rationalAdeleLiteralTwoCut_moments` already gives the zero-frequency
-reduction for a factorial-stage assembly: At the zero cell the character
-factor in `rationalAdeleStageFourier_apply` is one, and here each
-surviving profile would have weight $1/6$. What remains is the actual
-joint support identification using `mem_rationalAdeleStageCell_iff`
-and the local unit predicates, then application of the stage formula
-at level six. This would give the Fourier zero mode $\tfrac13\widehat b(0)$,
-not an assertion about arbitrary representatives. The
-[theta source interface][theta-sum] separately verifies the two-mode
-domain in (2.2.4.23), p. 91, and the Fourier integral convention in
-(2.2.4.32), p. 92, under which the phase is one at zero. The finite
-coefficient is a project calculation on the repaired tensor.
+## Checked Fourier zero mode of the rational joint unit cut at 2 and 3
+
+[`rationalAdeleStageCell_six_eq_jointPrimeUnits` and
+`rationalAdeleJointUnit_fourier_zero`][joint-unit-zero] compute the
+support and Fourier zero mode of the same repaired tensor at $2,3$.
+Intersecting the integral-finite cylinder with the two unit predicates
+leaves exactly the union of the level-six cells with indices $6$ and
+$30$ in the $j/6$ coordinate. Residue coverage puts every integral
+finite part in a cell $n+6\widehat{\mathbb Z}$ with $0\le n<6$.
+At $p=2,3$ a term in $6\widehat{\mathbb Z}$ has valuation strictly
+below one in multiplicative notation, so the sum is a unit exactly
+when $p\nmid n$. Both tests hold just for $n=1,5$.
+
+For every complex Schwartz $b$, the proof assembles $M_{2,3}b$ with
+profile $b$ on those two cells and zero on all others. The level-six
+stage Fourier formula at zero has phase equal to one and weight $1/6$
+for each retained cell, giving
+$$
+\widehat{M_{2,3}b}(0)=\tfrac13\int_{\mathbb R}b(t)\,dt.
+$$
+The Fourier statement uses the Borel measurable-space instances on
+the rational adeles, but no LF witness, parity, section, or moment
+premise. The Fourier half of the two-mode condition holds precisely
+when the real integral vanishes. The spatial half is automatic by
+unit exclusion at the zero adele. These are tests on the tensor itself,
+not a descent or principal-value range assertion.
+
+**Source scope:** The repaired support uses the inherited disjointness
+reading (1.3.2.2), p. 25, and differs from the printed index in §1.3.2,
+p. 26, as above. The [theta source interface][theta-sum] separately
+verifies the two-mode domain in (2.2.4.23), p. 91, and the Fourier
+integral convention in (2.2.4.32), p. 92. The coefficient $1/3$ is a
+project calculation; the phase convention does not change it. No new
+manuscript reading was needed.
+
+**Review and checks:** `joint-six-statement` (`jPFRzXF`), in Yah
+`01a2063a-8c08-7c9b-8add-af6076ee4bad`, independently reviewed the
+statements, residue and zero-frequency reductions, and inherited source
+scope at `b7adbad2eb6a2a2080cd83aae93661471ee9c936`. This was exact-source
+review, not elaboration. See the owning transcript for the dependency
+probe and integrated candidate checks.
+
+**Next bounded check (formalization only):** Specialize the corrected
+small-norm estimate to this same masked tensor on all rational idele
+classes: For each $m\in\mathbb N$ and $t=N(d)\le1$, bound
+$|\Theta(M_{2,3}b)(d)-t^{-1}(\int b)/3|$ by $K t^m$. No new tail or
+reflection argument is needed. The Fourier proof already constructs the
+required level-six assembly, but locally. Expose that equality without
+measurable-space, moment, or parity hypotheses, use
+`rationalAdeleStageCoordinates_symm_eq_boxSum` for its box sum, and apply
+the singleton-profile specialization of
+`rationalAdeleBoxSum_uniform_theta_tails` with the computed modes.
+`rationalAdeleBoxSum_theta_small_norm` states only an existential
+threshold, so use the uniform theorem for the explicit threshold one.
+The [fixed-test tail note](../obligations/theta-inversion-q.md#checked-fixed-test-tails-on-rational-idele-classes)
+maps the corrected estimate (2.2.3.5), p. 83, by provisional extraction;
+the verified readings of the zero-mode domain and normalization above
+are separate. The estimate applies to the repaired project kernel and
+does not give range membership or a theorem for the literal printed
+inversion convention.
+
+[joint-unit-zero]: ../../Proofs/Theorems/RationalAdeleJointUnitZeroMode.lean
 
 [two-prime-section]: ../../Proofs/Theorems/RationalThetaUnramifiedTwoPrimeCut.lean
 
