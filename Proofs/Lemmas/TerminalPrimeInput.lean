@@ -3,7 +3,6 @@ module
 public import Lemmas.TerminalTriangle
 public import Mathlib.NumberTheory.Chebyshev
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
-import all Lemmas.TerminalTriangle
 import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 
 /-! # Prime-only input for the twisted terminal prefix
