@@ -177,3 +177,52 @@ reciprocal-height budget, the common global operator trace, or the
 necessity of the modeled local projection. Keep those premises
 separate rather than repeating scalar reindexing. Neither the adjoint
 nor the index identifies the manuscript's actual shell.
+
+## Live follow-up: The rational filtered densities
+
+Run `01a20642-d96e-7358-a3d2-b6630b738a6b` matches Yah work
+`01a20642-dbdb-7b6d-b0e5-218cf3eaa9e9` by input and final response.
+The launch archive and initial pin were both
+`47eb4b607ef17236bbc0e82d00a4346d7dc3d0a8`; `cmd/godel` was
+unchanged through the work and improvement proof landings. The
+read-only recipe selected predecessor
+`01a20634-adc6-7be5-9974-acd56246d990` (work seqs. 18–19).
+That report had no unlanded proof to restore. This is a live check
+against the earlier lookup-schema errors, not a measured speedup.
+
+The selected inference was that the two adjoint densities are not
+proportional on any positive open interval. Coordinator `QSEXZpC`
+split the derivative factor and analytic averaging between `TOnhLmU`
+and `GHtGqnv`, respectively, then assembled the leading-limit,
+first-term removal, and analyticity endpoints in checked output
+`8f0a0a73abf24af52933855ff39c52001f4338b9`. Independent reader
+`EPtymgE` checked the fixed nonproportionality contract, including why
+no assumption on the second raw coefficient was needed. The owner
+corrected draft elaboration errors before registering endpoint and
+note output `22eb66efac29c8af0f1cfb2a382a9e5fdc48affa`. A stale
+candidate `dce3c21d098c6db801e318be4bbff5a3f6aba4d2` was caught
+before its build (seqs. 114–128). The flat replacement combined the
+same proof outputs, passed the exact build and joint-import checks,
+and was adopted at `eac79512a9175e5d9f96682d2b7938a76dfcba66`.
+No separate proof from the superseded attempt needed recovery.
+
+Improvement Yah `01a2064d-01df-7985-9550-7d5295c124ee` used that
+result to select one smooth seed and impose the two trace pairings
+and Mellin zeros on the same filtered test. After two draft builds
+failed on imports and unfolding, the assembled endpoint built.
+Reviewer `mndmHjP` checked fixed contracts, adjoint and Mellin signs,
+and the manuscript interfaces via pinned Markdown and layout, not
+rendered pages. Candidate `e1c12a941f29245bdb1e41bea52b0b2489c04602`
+passed checks but became stale after its preflight. The same patch
+was checked anew and adopted at
+`231909b11e1ee1f770dc248731645774dd5d3fbb`. The saved JSON reports
+matched after correcting an optional jq comparison expression; all
+three changed declarations use only the permitted axioms.
+
+**Decision:** Keep the tested lookup, fixed-statement review, and
+one prebuild comparison. This iteration does not support polling,
+a new router, or a workflow change for local tactic and shell errors.
+The preflight caught one move and cannot catch a move after it.
+The [proof handoff](../../obligations/trace-below-shell-q.md#checked-short-filtered-separator)
+separates the new checked witness from its unmet actual-zero budget,
+strip/full trace comparison, and manuscript necessity argument.
