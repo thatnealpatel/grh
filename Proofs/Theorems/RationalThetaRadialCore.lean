@@ -145,6 +145,17 @@ public noncomputable def rationalThetaRadialTwistedProfile (a : ℝ) (f : Ration
     (x : ℝ) : ℂ :=
   (Real.exp (a * x) : ℂ) * rationalThetaRadialProfile f x
 
+/-- Every radial input has both theta polar modes zero. -/
+public theorem rationalThetaRadialInput_zero_modes (f : RationalThetaRadialInput) :
+    f.val.toUnion.val 0 = 0 ∧ rationalAdeleFourier f.val.toUnion.val 0 = 0 :=
+  ⟨f.property.1, f.property.2.1⟩
+
+/-- Pointwise formula for the once-twisted profile. -/
+public theorem rationalThetaRadialTwistedProfile_apply (a : ℝ) (f : RationalThetaRadialInput)
+    (x : ℝ) : rationalThetaRadialTwistedProfile a f x =
+      (Real.exp (a * x) : ℂ) * rationalThetaRadialProfile f x := by
+  rw [rationalThetaRadialTwistedProfile]
+
 omit [MeasurableSpace A] [BorelSpace A] in
 /-- Theta invariance under the norm-one subgroup is exactly descent to the norm.
 This applies to any function on rational idele classes, in particular to theta. -/

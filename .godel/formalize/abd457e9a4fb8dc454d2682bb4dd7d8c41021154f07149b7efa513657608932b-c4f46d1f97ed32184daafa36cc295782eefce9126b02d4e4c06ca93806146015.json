@@ -1,0 +1,27 @@
+{
+  "key": "abd457e9a4fb8dc454d2682bb4dd7d8c41021154f07149b7efa513657608932b",
+  "revision": "c4f46d1f97ed32184daafa36cc295782eefce9126b02d4e4c06ca93806146015",
+  "outcome": "landed",
+  "source": "Masullo, The Music of the Primes, SHA-256 e039d3f6cf0a4b14f03c7edb85097752dd65c0a2fe543c76fe992be234f97bf5. Chapter 1, §1.2.1, printed p. 13, PDF ordinal 13: opening paragraph and first two exact-sequence displays, before the Mellin jet display. See also §1.1.4, printed p. 12/ordinal 12, global theta quotient and two-zero-mode bullets; (6.3.2.3)–(6.3.2.5), p. 304/ordinal 304, fixed-character closed-range claims and restricted quotient topology; (D.3.3.1)–(D.3.3.2), p. 805/ordinal 805, all-weight fixed stages and ambient inductive topology; Remark D.3.3.6, p. 806/ordinal 806, norm multiplication. Checked against rasterized pages from the pinned PDF.",
+  "finding": "The printed first diagram asserts a short exact sequence of Hausdorff locally convex spaces, with left map the global two-zero-mode theta realization multiplied by the positive half-norm; the second is the norm-one isotype sequence, described as nuclear Fréchet and later as linearly and topologically exact. These assertions are announced here. The later Global Converse Theorem argues fixed-character closed range in the unshifted Mellin coordinate, which must be shifted by +1/2 for the twisted arrow. It does not by itself supply simultaneous global preimages. This is a partial landing on the actual left arrow: for all represented rational adelic LF tests with both polar modes zero and class theta invariant under the rational norm-one subgroup, the exact half-twisted theta profile is a linear element of the genuine all-real-weight radial Schwartz stage. Iterating the real dilation generator with the weight shift and using the existing two-mode tails controls every weighted Schwartz seminorm on each bounded LF family. The map kills precisely the original class-theta kernel, so it realizes the algebraic injection of the radial theta quotient, without proving continuity on its intrinsic quotient, a closed range/topological embedding, full LF exactness, or nuclearity. This is not an L² completion or a fixed unramified source. See .godel/formalize/rational-theta-weighted-stage.md for source cross-checks and the remaining lifting problem.",
+  "retry": "For the rational trivial isotype, formalize continuity on the intrinsic two-mode quotient and use the accepted finite-unit average to reduce to finite-unit invariant tests. Show that these have even real unramified representatives with the same global theta and both zero modes zero; then prove a Schwartz-seminorm estimate for a representative from the ambient weighted theta seminorms (the two-tail Poisson estimate in the handoff is one candidate). For full LF closed range, give a simultaneous lift of a stage-supported limit with compatible angular components into one permitted source stage, with estimates adequate for that stage's Schwartz topology, or a different direct range characterization. Separately identify the quotient-isotype topology by compatible continuous projectors and establish nuclear Fréchet properties, not just closedness in a Hilbert space.",
+  "evidence": [
+    {
+      "path": "Proofs/Theorems/RationalThetaWeightedStage.lean",
+      "declarations": [
+        "Masullo.rationalThetaRadialWeightedProfiles",
+        "Masullo.rationalThetaRadialWeightedStage",
+        "Masullo.rationalThetaRadialWeightedStage_apply",
+        "Masullo.rationalThetaRadialWeightedStage_uniform_seminorm",
+        "Masullo.rationalThetaRadialWeightedStage_eq_zero_iff"
+      ]
+    },
+    {
+      "path": "Proofs/Theorems/RationalThetaRadialCore.lean",
+      "declarations": [
+        "Masullo.rationalThetaRadialInput_zero_modes",
+        "Masullo.rationalThetaRadialTwistedProfile_apply"
+      ]
+    }
+  ]
+}
