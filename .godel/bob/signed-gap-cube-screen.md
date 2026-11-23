@@ -89,3 +89,5 @@ The common signed contribution from the groups $4\mid g$ lies in $(.007,.008)$, 
 $$ B_d(\beta)=\sum_{g\ {\rm dense}}\Re(e^{-2i\beta dg}P_{d,g}(u)). $$
 
 The genuine value is $B_d(0)$, not a random evaluation. One can first test whether the violating angles for the candidate shifts overlap at all: If the superlevel sets on the *same* $\beta$ cannot meet with the required multiplicity, that excludes simultaneous overshoots at zero. If they do overlap, locate them relative to zero, rather than merely pricing their measure. The control shows the limit of any translation-invariant answer to this angular test. The screen and finite signed test give neither a uniform arithmetic exclusion nor the weighted budget for smaller excursions.
+
+For the common dip **after** a modulus overlap survives, see [the real projection test](real-gap-projection.md). Even all complex gap profiles leave a shared linear vertex phase invisible. The extra sum-frequency term is for the real problem, not a replacement for the per-shift modulus cap.
