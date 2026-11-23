@@ -1,115 +1,141 @@
 #!/usr/bin/env python3
-# Run with the Python from SageMath 10.9. NumPy/SciPy only propose L;
-# all acceptance tests use Arb enclosures or exact integers.
+"""Whole-window certificate for chi4 at diameter 2 or 11/5.
+Run with SageMath 10.9's Python (not the Sage preparser), assertions enabled.
+SciPy Cholesky and rounding by float are only proposals. The certificate
+uses Arb for analytic quantities and exact integers/rationals for the residual.
+"""
 import argparse
-from sage.all import RealBallField, ComplexBallField, ZZ, matrix
+if not __debug__:
+    raise RuntimeError("run without Python optimization so that certificate assertions execute")
 import numpy as np
 from scipy.linalg import cholesky
+from sage.all import RealBallField, ComplexBallField, ZZ, QQ, matrix
 
 R, C = RealBallField(100), ComplexBallField(100)
 pi = R.pi()
-parser = argparse.ArgumentParser(description="Certify the chi4 form at support diameter two.")
-parser.add_argument("--period", type=int, choices=[14, 16], default=14)
-p = parser.parse_args().period
-if p == 14:
-    q, K, cn, cd = 50, 80000, 5, 1
-    even_num, even_den, even_target = 5818, 10**10, 5817
-    image_limit = R(61)/10**9
+parser = argparse.ArgumentParser(description=__doc__)
+parser.add_argument('--period', type=int, choices=[14,16,17], default=14,
+                    help='14 and 16 certify diameter two; 17 certifies diameter 11/5')
+P = parser.parse_args().period
+if P == 17:
+    diameter, K, c_exact, q = QQ(11)/5, 247000, QQ(263)/50, 52
+    even_sigma, even_floor = QQ(44)/10**10, QQ(4368)/10**12
+    odd_sigma, odd_floor, image_upper = QQ(3)/10**6, QQ(2)/10**6, QQ(1005)/10**12
 else:
-    q, K, cn, cd = 52, 150000, 11, 2
-    even_num, even_den, even_target = 59295, 10**11, 5929
-    image_limit = R(31)/10**10
+    diameter = QQ(2)
+    odd_sigma, odd_floor = QQ(1)/5000, QQ(1)/6000
+    if P == 14:
+        K, c_exact, q, image_upper = 80000, QQ(5), 50, QQ(61)/10**9
+        even_sigma, even_floor = QQ(5818)/10**10, QQ(5817)/10**10
+    else:
+        K, c_exact, q, image_upper = 150000, QQ(11)/2, 52, QQ(31)/10**10
+        even_sigma, even_floor = QQ(59295)/10**11, QQ(5929)/10**10
 D = 1 << q  # Dyadic denominator, not support diameter.
-c = R(cn)/cd
-ln = [R(n).log() for n in (3, 5, 7)]
-a = [t/R(n).sqrt() for t,n in zip(ln,(3,5,7))]
-c0 = pi/2 - R.euler_constant() - (2*pi).log()
-ycut = 2*pi*(K+1)/p
-hc = c0 + (1 + (2*ycut/3)**2).log()/2 - 2*sum(a)
-assert hc > c
-r = R(3)/2
-assert 4*(-r*(p-2)).exp()/(1-(-2*R(p-2)).exp())/(1-(-r*p).exp()) < image_limit
-assert R(1)/6000 - image_limit > R(even_target)/10**10
-# Digamma recurrence, then four terms of Euler--Maclaurin.
-# The error for all k is at most 1/(240*(32+3/4)^8) < 1/10^14.
-err = R(1)/10**14
-assert 1/(240*(32+R(3)/4)**8) < err
+d, c = R(diameter), R(c_exact)
+t = [R(n).log() for n in (3, 5, 7)]
+b = [2*t[0]/R(3).sqrt(), -2*t[1]/R(5).sqrt(), 2*t[2]/R(7).sqrt()]
+if P == 17:
+    t.append(R(9).log())
+    b.append(-2*t[0]/3)
+    assert t[-1] < d < R(11).log()
+else:
+    assert t[-1] < d < R(9).log()
+assert d+t[-1] < P
 A = R(3)/4
-B = [C(R(1)/12), C(-R(1)/120), C(R(1)/252), C(-R(1)/240)]
+h0 = pi/2 - R.euler_constant() - (2*pi).log()
+yfac = 2*pi/P
+ycut = yfac*(K+1)
+cutoff_floor = h0 + (1 + (ycut/(2*A))**2).log()/2 - sum(map(abs,b))
+assert cutoff_floor > c
+u = P-d
+image = 2*d*(-3*u/2).exp()/(1-(-2*u).exp())/(1-(-R(3)*P/2).exp())
+assert image < R(image_upper)
+print('P, d, c, K, cutoff lower bound, image penalty bound:', P, d, c_exact, K, cutoff_floor, image, flush=True)
+
+J = []
+W = []
 logcond = (4/pi).log()
-yfac = 2*pi/p
-freq = [yfac*t for t in ln]
-ls = [2*a[0],-2*a[1],2*a[2]]
-J = []; W=[]
+freq = [yfac*x for x in t]
 for k in range(K+1):
-    z = C(A,yfac*k/2)
-    Z = z+32
-    v = 1/Z
-    v2 = v*v
-    dg = Z.log() - v/2 - (((B[3]*v2+B[2])*v2+B[1])*v2+B[0])*v2
-    for i in range(32):
-        dg -= 1/(z+i)
-    # m >= m_lower, as a real comparison certified by the ball.
-    m_lower = dg.real() + logcond + sum(b*(f*k).cos() for b,f in zip(ls,freq)) - err
-    if m_lower > c:
+    m = C(A,yfac*k/2).psi().real() + logcond + sum(bi*(fi*k).cos() for bi,fi in zip(b,freq))
+    if m > c:
         continue
-    d_upper = c-m_lower
-    # Propose a weight using the midpoint; check the exact dyadic square.
-    w = max(1, round(float(d_upper.mid())**0.5*D)) if d_upper.mid()>0 else 1
-    while not R(ZZ(w*w))/D**2 > d_upper:
+    deficit = c-m
+    w = max(1,round(max(0.,float(deficit.mid()))**0.5*D))
+    while not R(ZZ(w*w))/D**2 > deficit:
         w += 1
     assert 0 < w < 3*D
-    J.append(k); W.append(w)
+    J.append(k)
+    W.append(w)
 assert J[0] == 0
-print('K, positive deficient indices incl. zero, last:', K,len(J),J[-1],flush=True)
-print('cutoff lower enclosure:', hc,flush=True)
+print('retained nonnegative indices, last:',len(J),J[-1],flush=True)
 
 def rnd(x):
-    b = round(float(x.mid())*D)
-    assert abs(x-R(b)/D) < R(1)/D
-    return b
-sines = [(2*pi*i/p).sin() for i in range(p)]
-g = [rnd(R(2)/p)] + [rnd(sines[k%p]/(pi*k)) for k in range(1,2*J[-1]+1)]
+    h = round(float(x.mid())*D)
+    assert abs(x-R(h)/D) < R(1)/D
+    return h
+
+cycle = int(2*diameter.denominator()*P)
+sines = [(pi*d*i/P).sin() for i in range(cycle)]
+g = [rnd(d/P)] + [rnd(sines[k%cycle]/(pi*k)) for k in range(1,2*J[-1]+1)]
 r2 = rnd(R(2).sqrt())
 assert abs(R(r2)/D) < R(3)/2
+assert d/P < R(1)/2
 
-def rshift(x, bits):
+def rshift(x,bits):
     return (x+(1 << (bits-1))) >> bits
 
-def verify(parity, num, den):
-    # sigma=num/den. U consists of rounded entries of D*((c-sigma)I-H).
-    positive = parity==1
-    start = 0 if positive else 1
-    js, ws = J[start:], W[start:]
+def verify(parity,sigma,target):
+    # U approximates D*((c-sigma)*I-H), where the Gram weights are
+    # W/D exactly, not rounded approximations to be backed out later.
+    start = int(parity == -1)
+    js,ws = J[start:],W[start:]
     n = len(js)
-    off = ((cn*den-cd*num)*D*2+cd*den)//(2*cd*den)
-    U = []
+    off = int(((c_exact-sigma)*D+QQ(1)/2).floor())
+    U = np.empty((n,n),dtype=np.int64)
     for i,(j,w) in enumerate(zip(js,ws)):
-        for k,(l,v) in enumerate(zip(js,ws)):
-            if positive and (j==0 or l==0):
-                if j==l:
-                    s = rshift(w*v*g[0],2*q)
-                else:
-                    s = rshift(w*v*g[j+l]*r2,3*q)
+        row = []
+        for l,v in zip(js[:i+1],ws[:i+1]):
+            if j == 0:  # j=l=0, since this is lower triangular
+                s = rshift(w*v*g[0],2*q)
+            elif l == 0:  # exactly one index zero
+                s = rshift(w*v*g[j]*r2,3*q)
             else:
-                s = rshift(w*v*(g[abs(j-l)]+parity*g[j+l]),2*q)
-            U.append((off if i==k else 0)-s)
-    npu = np.asarray(U,dtype=np.float64).reshape(n,n)/D
-    L = cholesky(npu,lower=True)
-    Li = np.rint(L*D)
-    assert np.isfinite(Li).all() and np.max(np.abs(Li)) < 2**62
-    Lv = matrix(ZZ,n,n,Li.astype(np.int64).ravel().tolist())
-    Uv = matrix(ZZ,n,n,U)
-    Hmax = (D*Uv-Lv*Lv.transpose()).height()
-    # Each unscaled-interval entry of B-U/D differs by less than 20/D.
-    # Hence B>= -epsilon I, even if the proposed Cholesky is inaccurate.
-    from sage.all import QQ
-    epsilon = n*(QQ(20)/D + QQ(Hmax)/D**2)
-    target = QQ(even_target)/10**10 if positive else QQ(1)/6000
-    assert QQ(num)/den - epsilon > target
-    print('parity, n, exact residual height, epsilon upper via ball, certified circle floor:',
-          parity,n,Hmax,R(epsilon),target,flush=True)
+                s = rshift(w*v*(g[j-l]+parity*g[j+l]),2*q)
+            row.append(-s)
+        row[-1] += off
+        U[i,:i+1] = row
+        U[:i,i] = row[:-1]
+    print('assembled parity, n:',parity,n,flush=True)
+    proposal = np.array(U,dtype=np.float64,order='F')
+    proposal /= D
+    L = cholesky(proposal,lower=True,overwrite_a=True,check_finite=False)
+    del proposal
+    L *= D
+    np.rint(L,out=L)
+    assert np.isfinite(L).all() and L.max() < 2**62 and L.min() > -2**62
+    Li = L.astype(np.int64)
+    del L
+    Lv = matrix(ZZ,n,n,Li.ravel().tolist())
+    del Li
+    Lt = Lv.transpose()
+    # Exact, in row panels to bound peak space for large integer entries.
+    height = ZZ(0)
+    block = 384
+    for lo in range(0,n,block):
+        hi = min(lo+block,n)
+        Uv = matrix(ZZ,hi-lo,n,U[lo:hi,:].ravel().tolist())
+        residual = D*Uv - Lv[lo:hi,:]*Lt
+        height = max(height,residual.height())
+        del Uv,residual
+    epsilon = n*(QQ(20)/D + QQ(height)/D**2)
+    assert sigma-epsilon > target
+    print('parity, n, sigma, residual height, epsilon, circle floor:',
+          parity,n,sigma,height,R(epsilon),target,flush=True)
+    return target
 
-verify(1,even_num,even_den)
-verify(-1,1,5000)
-print('Certified line floor >', even_target, '/ 10^10.', flush=True)
+verify(1, even_sigma, even_floor)
+verify(-1, odd_sigma, odd_floor)
+# Paired archimedean images are PSD on even tests. Only odd pays this cost.
+assert odd_floor-image_upper > even_floor
+print('certified normalized line bound:',even_floor,R(even_floor),flush=True)

@@ -1,4 +1,6 @@
 # Sage 10.9 Python. Fixed rational sine trials, rigorous ball integrals for the chi4 Weil form.
+if not __debug__:
+ raise RuntimeError("run without Python optimization")
 from sage.all import QQ, ComplexBallField, RealBallField
 C=ComplexBallField(128); R=RealBallField(128); pi=C.pi(); eps=QQ(1)/2**30
 
@@ -21,5 +23,7 @@ def ray(D,coef,primes):
  z=arch
  for p,base,chi in primes:z-=2*chi*C(base).log()/C(p).sqrt()*A(C(p).log())
  rad=small+tail.abs(); result=z.real().add_error(rad); print('D=',D,'normalized Rayleigh quotient=',result,flush=True);return result
-atoms=[(3,3,-1),(5,5,1),(7,7,-1)];a=ray(2,[1000000000,-186110045,-48485074,-5218948,-2540012,-503751,-622741,-233042],atoms); assert a>0 and a<QQ(82)/10**8
-b=ray(QQ(9)/4,[1000000000,-278522309,-40499780,4956501,1026591,650431,31674,58855],atoms+[(9,3,1)]);assert b>0 and b<QQ(38)/10**10
+atoms=[(3,3,-1),(5,5,1),(7,7,-1)];a=ray(2,[1000000000,-186110045,-48485074,-5218948,-2540012,-503751,-622741,-233042],atoms); assert a>0 and a<QQ(8184)/10**10
+b=ray(QQ(9)/4,[1000000000,-278522309,-40499780,4956501,1026591,650431,31674,58855],atoms+[(9,3,1)]);assert b>0 and b<QQ(3797)/10**12
+
+c=ray(QQ(11)/5,[1000000000,-260640723,-43488119,2448857,332316,425612,-61877,7756,-38417,-42093,-24085,-11499,-9964,-9872,-3283,-11393],atoms+[(9,3,1)]);assert c>0 and c<QQ(58)/10**10
