@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"os/exec"
 	"os/signal"
 	"strings"
 	"syscall"
@@ -35,7 +34,7 @@ func run(ctx context.Context, args []string) error {
 			return err
 		}
 		text = result.Text
-	case len(args) == 1 && args[0] == "graph", len(args) == 2 && args[0] == "think":
+	case len(args) == 1 && args[0] == "graph":
 		input, err := io.ReadAll(os.Stdin)
 		if err != nil {
 			return err
@@ -43,22 +42,14 @@ func run(ctx context.Context, args []string) error {
 		if strings.TrimSpace(string(input)) == "" {
 			return fmt.Errorf("empty task")
 		}
-		if args[0] == "think" {
-			text, err = infer(ctx, "http://100.75.6.66:9001/v1/responses", args[1], string(input))
-		} else {
-			text, err = graph(ctx, string(input), func(ctx context.Context, instructions, payload string) (string, error) {
-				cmd := exec.CommandContext(ctx, exe, "think", instructions)
-				cmd.Stdin = strings.NewReader(payload)
-				cmd.Stderr = os.Stderr
-				output, err := cmd.Output()
-				return string(output), err
-			})
-		}
+		text, err = graph(ctx, string(input), func(ctx context.Context, instructions, payload string) (string, error) {
+			return infer(ctx, "http://100.75.6.66:9001/v1/responses", instructions, payload)
+		})
 		if err != nil {
 			return err
 		}
 	default:
-		return fmt.Errorf("usage: ff [graph | think INSTRUCTIONS]")
+		return fmt.Errorf("usage: ff [graph]")
 	}
 	_, err = fmt.Print(text)
 	return err
