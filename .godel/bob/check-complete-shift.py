@@ -160,14 +160,15 @@ def fits_y(delta, v, t5=T5):
     return t5*abs(delta)**5 <= (8*v)**5
 
 
-def possible_min_block(pool, d):
-    # Put the pool minimum on the plus side (just for the bound). Factors
-    # (p+d)/p decrease in p, so the smallest possible ratio uses the three
-    # largest remaining starts upstairs, and four smallest downstairs.
-    # If R>1 is this lower bound, a block or its reversal has |s| >= 1-1/R.
-    R = prod(Fraction(p+d, p) for p in (pool[0], *pool[-3:]))
-    R /= prod(Fraction(p+d, p) for p in pool[1:5])
-    return R, R <= 1 or fits_y(R.numerator-R.denominator, R.numerator)
+def possible_min_block(pool, d, h=HPLUS, t5=T5):
+    # Orient the minimum plus only for this unsigned bound. All other plus
+    # factors are >= those at the h-1 largest starts; all minus factors are
+    # <= those at the h smallest remaining starts. If R>1, both the ratio
+    # and its reciprocal have absolute defect at least 1-1/R.
+    assert h >= 2 and len(pool) >= 2*h
+    R = prod(Fraction(p+d, p) for p in (pool[0], *pool[1-h:]))
+    R /= prod(Fraction(p+d, p) for p in pool[1:h+1])
+    return R, R <= 1 or fits_y(R.numerator-R.denominator, R.numerator, t5)
 
 
 def rounded_count(plus, u, v, d):
