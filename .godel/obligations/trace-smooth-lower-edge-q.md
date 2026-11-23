@@ -255,20 +255,56 @@ and applicability review (`juHIOEc`, reviewed base
 `0ae6cd4b47baded506e8c8449a7ce74ce28485e9`) and the owning build,
 joint-import signatures, axiom report, and candidate disposition.
 
-**Bounded next check, formalization only:** Identify the sharp
-position and frequency **annular scalar** with the four-term
-combination, before taking any smooth or joint limit. For
-$0<A\le B$ and $0<C\le D$, its radial weight at $r=|w|>0$ is the
-$ds/s$ volume of $[A,B]\cap[r/D,r/C]$. Subtract the weight for the
-upper Fourier cutoff $C$ from that for $D$, ignoring the single
-radial boundary $s=r/C$. Apply `real_position_band_scalar_eq` at
-$D$ and $C$ to get both terms in the same coordinate; no fresh
-one-edge calculation is needed. The accepted
-`real_log_profile_two_annuli_erase` starts from this four-term
-combination, so the missing check is the integral identification,
-not the limit. The accepted subtraction theorem can be reused as-is
-for the smooth witness; its global Fourier integrability premises need
-not be necessary for the bounded calculation. This is a project repair
-of the scalar based on the inherited display (12.4.1.24), not a new
-reading of the footnote or a projected operator identity.
+### Lean-checked finite two-annulus scalar
 
+On the repaired positive radial quotient, for $0<A\le B$, $0<C\le D$,
+and $u\in L^1(\mathbb R;\mathbb C)$,
+[RealSharpLowerEdges](../../Proofs/Props/RealSharpLowerEdges.lean)
+defines `realTwoAnnuliScalar` and proves `real_two_annuli_scalar_eq`:
+
+$$
+\int_{\mathbb R}\left(\int_{[A,B]\cap[|w|/D,|w|/C]}\frac{ds}{s}\right)
+  \widehat u(w)\,dw
+= J(BD)-J(AD)-J(BC)+J(AC),\qquad J(K)=\texttt{realSharpCutScalar}\ u\ K.
+$$
+
+Subtract the two nested upper-band volumes, dropping just the radial
+boundary $s=|w|/C$, and use `real_position_band_radial_volume` at $D$
+and $C$ off the null frequency $w=0$. The four truncated log weights
+are integrable and $\widehat u$ is bounded, so the subtraction is of
+absolutely integrable pairings. Unlike `real_position_band_scalar_eq`,
+this does not require global integrability of $\widehat u$ or
+$\log|\cdot|\,\widehat u$. Both degenerate bands are allowed. In a
+joint import, the existing `real_log_profile_two_annuli_erase` transfers
+to the actual integral by eventual equality: Use eventual endpoint
+positivity and order, a smooth compactly supported log profile with
+$f(0)=0$, and the four product limits of that theorem. The finite
+identity itself needs none of the profile or limit assumptions.
+
+**Source and review.** This closes the finite integral identification
+in the informal comparison above. It inherits the rendered scalar
+band (12.4.1.24), p. 518, and the both-sign sum and counting-quotient
+normalization of (12.4.1.17)–(21) from the
+[real coefficient audit](trace-real-prime-q.md#the-chapter-12-real-coefficient).
+It does not reread the footnote, verify any of the smoothing wording
+or rates, or identify the radial extension with the literal norm-one
+domain. The independent exact-statement and applicability review at
+`fa6d75e6321d814e967cf00c03887c32fffa7765` (`WZdYcsm`) and the owning
+build, joint-import signatures, axiom report, and adoption against
+the full candidate ID are recorded in Yah
+`01a2061d-6bc7-725a-b079-14f4d6c12d36`.
+
+**Next bounded check, formalization only.** For $0<K\le K'$ and
+$u\in L^1$, prove the bound $|J(K')-J(K)|\le 2\|u\|_1(K'-K)$
+in the same frequency coordinate. The private
+`integrable_sharp_cut_pairing` already gives finite integrability
+and uses the Fourier bound; the finite-band positivity theorem
+controls a sign, not the variation in $K$. The remaining inference
+is that the difference of the two nested log weights is nonnegative
+almost everywhere and has integral $2(K'-K)$ (compute each band
+mass using the real log antiderivative). This supplies the uniform
+endpoint error for the four-term sum by the triangle inequality.
+It uses the same inherited scalar display only, with no new source
+claim. Representing smooth profiles as endpoint averages and
+transferring those estimates to a projected or global trace,
+including the two Mellin corrections, remain separate problems.

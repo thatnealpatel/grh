@@ -3,6 +3,7 @@ module
 public import Props.RealSharpFourierCutoff
 public import Lemmas.RealSharpLowerEdges
 import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
+import Mathlib.Analysis.SpecialFunctions.Integrability.Basic
 
 /-! # Lower cutoff edges in the rational real scalar integral
 
@@ -115,6 +116,81 @@ public theorem real_position_band_scalar_eq {u : ℝ → ℂ} (huf : Integrable 
   filter_upwards [volume.ae_ne (0 : ℝ)] with w hw
   rw [real_position_band_radial_volume hA hAB hD (abs_pos.mpr hw), Complex.ofReal_sub, sub_mul]
   congr 1 <;> split_ifs <;> simp_all [s, g, indicator_apply]
+
+private theorem annular_band_radial_volume {A B C D r : ℝ}
+    (hA : 0 < A) (hC : 0 < C) (hCD : C ≤ D) (hr : 0 ≤ r) :
+    (∫ s in Icc A B ∩ Icc (r / D) (r / C), s⁻¹) =
+      (∫ s in Icc (max A (r / D)) B, s⁻¹) -
+        (∫ s in Icc (max A (r / C)) B, s⁻¹) := by
+  have hcut : r / D ≤ r / C := div_le_div_of_nonneg_left hr hC hCD
+  have hsub : Icc (max A (r / C)) B ⊆ Icc (max A (r / D)) B :=
+    Icc_subset_Icc_left (max_le_max le_rfl hcut)
+  have hint : IntegrableOn (fun s : ℝ ↦ s⁻¹) (Icc (max A (r / D)) B) := by
+    refine (continuous_id.continuousOn.inv₀ ?_).integrableOn_Icc
+    intro s hs
+    exact (hA.trans_le ((le_max_left ..).trans hs.1)).ne'
+  rw [← setIntegral_sdiff measurableSet_Icc hint hsub]
+  apply setIntegral_congr_set
+  filter_upwards [volume.ae_ne (r / C)] with s hs
+  simp only [mem_inter_iff, mem_Icc, Set.mem_sdiff, max_le_iff]
+  constructor
+  · rintro ⟨⟨ha, hb⟩, hd, hc⟩
+    exact ⟨⟨⟨ha, hd⟩, hb⟩, fun h ↦ hs (hc.antisymm h.1.2)⟩
+  · rintro ⟨⟨⟨ha, hd⟩, hb⟩, hc⟩
+    exact ⟨⟨ha, hb⟩, hd, (lt_of_not_ge (fun h ↦ hc ⟨⟨ha, h⟩, hb⟩)).le⟩
+
+private theorem integrable_sharp_cut_pairing {u : ℝ → ℂ} (hu : Integrable u) (K : ℝ) :
+    Integrable ({w : ℝ | |w| ≤ K}.indicator
+      (fun w ↦ ((Real.log K - Real.log |w| : ℝ) : ℂ) * 𝓕 u w)) := by
+  have hs : {w : ℝ | |w| ≤ K} = Icc (-K) K := by
+    ext w
+    change |w| ≤ K ↔ -K ≤ w ∧ w ≤ K
+    exact abs_le
+  have hl : IntegrableOn (fun w : ℝ ↦ Real.log K - Real.log |w|) {w : ℝ | |w| ≤ K} := by
+    rw [hs, integrableOn_Icc_iff_integrableOn_Ioc (μ := volume)]
+    have hlog : IntervalIntegrable (fun w : ℝ ↦ Real.log K - Real.log w) volume (-K) K :=
+      intervalIntegrable_const.sub intervalIntegral.intervalIntegrable_log'
+    simpa only [Real.log_abs] using hlog.1
+  have hm : MeasurableSet {w : ℝ | |w| ≤ K} := hs.symm ▸ measurableSet_Icc
+  have hg : Integrable ({w : ℝ | |w| ≤ K}.indicator
+      (fun w ↦ ((Real.log K - Real.log |w| : ℝ) : ℂ))) :=
+    (integrable_indicator_iff hm).2 hl.ofReal
+  have hf : Continuous (𝓕 u) := VectorFourier.fourierIntegral_continuous
+    Real.continuous_fourierChar continuous_inner hu
+  simpa only [← Set.indicator_mul_left] using
+    hg.mul_bdd hf.aestronglyMeasurable (.of_forall (Real.norm_fourier_le_integral_norm u))
+
+/-- The sharp scalar on the repaired positive radial quotient, retaining
+both the position band `[A,B]` and the frequency band `[C,D]`. -/
+@[expose] public noncomputable def realTwoAnnuliScalar (u : ℝ → ℂ) (A B C D : ℝ) : ℂ :=
+  ∫ w : ℝ, ((∫ s in Icc A B ∩ Icc (|w| / D) (|w| / C), s⁻¹ : ℝ) : ℂ) * 𝓕 u w
+
+/-- The finite sharp annular scalar is an alternating sum of upper
+cutoff scalars. Only integrability of the test is needed: Each finite
+log band is integrable and the Fourier transform is bounded. -/
+public theorem real_two_annuli_scalar_eq {u : ℝ → ℂ} (hu : Integrable u) {A B C D : ℝ}
+    (hA : 0 < A) (hAB : A ≤ B) (hC : 0 < C) (hCD : C ≤ D) :
+    realTwoAnnuliScalar u A B C D = realSharpCutScalar u (B * D) - realSharpCutScalar u (A * D) -
+      (realSharpCutScalar u (B * C) - realSharpCutScalar u (A * C)) := by
+  let s (K : ℝ) : Set ℝ := {w | |w| ≤ K}
+  let g (K : ℝ) (w : ℝ) : ℂ := ((Real.log K - Real.log |w| : ℝ) : ℂ) * 𝓕 u w
+  let q (K : ℝ) := (s K).indicator (g K)
+  have hq (K : ℝ) : Integrable (q K) := integrable_sharp_cut_pairing hu K
+  have hJ (K : ℝ) : realSharpCutScalar u K = ∫ w, q K w :=
+    (integral_indicator (measurableSet_le (by fun_prop) measurable_const)).symm
+  have hqsub (K L : ℝ) : Integrable (fun w ↦ q K w - q L w) := (hq K).sub (hq L)
+  simp only [realTwoAnnuliScalar, hJ]
+  rw [← integral_sub (hq _) (hq _), ← integral_sub (hq _) (hq _),
+    ← integral_sub (hqsub _ _) (hqsub _ _)]
+  apply integral_congr_ae
+  filter_upwards [volume.ae_ne (0 : ℝ)] with w hw
+  have hedge (E : ℝ) (hE : 0 < E) :
+      ((∫ s in Icc (max A (|w| / E)) B, s⁻¹ : ℝ) : ℂ) * 𝓕 u w =
+        q (B * E) w - q (A * E) w := by
+    rw [real_position_band_radial_volume hA hAB hE (abs_pos.mpr hw), Complex.ofReal_sub, sub_mul]
+    congr 1 <;> split_ifs <;> simp_all [s, g, q, indicator_apply]
+  rw [annular_band_radial_volume hA hC hCD (abs_nonneg w), Complex.ofReal_sub, sub_mul,
+    hedge D (hC.trans_le hCD), hedge C hC]
 
 /-- The annular position repair proposed on p. 514 n. 2 does not have a
 path-independent joint limit at the level of the retained sharp scalar.
