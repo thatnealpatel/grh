@@ -332,23 +332,60 @@ source, not elaboration. The same owning transcript records the
 integrated build, fresh signature and axiom report, and both
 specialization checks.
 
-**Next check:** Realize `rationalAdelePrimeMasked p b` in the rational
-LF space for any single finite prime $p$, with the same supplied
-tensor and disjoint convention. The accepted prime-mask sum is
-already general in $p$ on the positive section, and the invariance
-and norm reductions above are general apart from substituting $2$
-for $p$. The invariant class transport for the masked output is
-proof-local, not a new public API. The first missing step is the
-LF witness: Apply `exists_rationalAdeleLF_of_compactOpenStage` with
-support the compact integral finite subgroup $W_f$ and additive
-invariance subgroup $pW_f$, open by
-`rationalAdeleBoxStage_isCompact_isOpen`. Check
-that adding an element of $pW_f$ preserves both membership in
-$W_f$ and the unit condition at $p$, using that its coordinate
-at $p$ has valuation strictly below $1$. The real fibers are
-$b$ or zero. This extends the test realization beyond the
-level-two cell without rederiving the section sum. It does not
-supply descent or a fixed stage for arbitrary representatives.
+## Checked LF realization at any single rational prime
+
+[`Masullo.exists_rationalAdelePrimeMaskedLF`][prime-mask-lf] takes any
+`p : Nat.Primes` and `b : 𝓢(ℝ, ℂ)` and gives
+`∃ g : RationalAdeleSchwartzLF, g.toUnion.val = rationalAdelePrimeMasked p b`.
+This is function equality on **all additive adèles**. In particular, if
+an LF test $f$ has underlying function `rationalAdeleUnramified b`, then
+the same $g$ is the indicator of `rationalAdelePrimeUnits p` times $f$.
+No moment, parity, or measurability premises are required, nor does the
+endpoint require an LF witness for the uncut tensor as input.
+
+The compact-open-stage assembly uses support contained in
+$W_f=\widehat{\mathbb Z}$ and translation subgroup $pW_f$. Adding a
+translation preserves $W_f$ membership in both directions. Its local
+valuation at $p$ is strictly less than one in the multiplicative
+convention, so the valuation-one condition is preserved by addition
+and recovered by subtraction. Neither direction assumes the starting
+adèle integral. The translation does not change the real coordinate,
+and each real fiber is $b$ or zero. This replaces the level-two cell
+assembly for LF existence, not the all-class calculation above.
+
+**Source scope:** The [ordinary filtration note][ordinary] supplies the
+inherited rendered disjointness clause in (1.3.2.2), p. 25, applicable
+because $S=\{\infty\}$ and the tested place is finite. The [tensor
+audit][tensor] supplies the inherited rendered outside-$S$ input in
+(11.3.1.1), p. 492. Its separate rendered reading of §1.3.2, p. 26,
+verifies the printed index, which this realization does not use: The
+untested integer-ring factors are indexed by the complement of
+$S\cup\{p\}$. The scope is a supplied tensor, not a theorem furnishing
+such representatives for an entire isotype.
+
+**Review and checks:** `prime-mask-lf-statement` (`QWROJwZ`), in Yah
+`01a205c8-dccc-7772-b80f-9b4e18bba3ee`, independently checked the fixed
+statement, compact-open-stage reduction, and applicability of the
+inherited readings against accepted source, without elaboration.
+The same owning transcript records the integrated build, fresh
+signature and axiom report, and supplied-tensor application check.
+
+**Next check:** Extend the prime-two all-class identity above to this
+same supplied tensor at arbitrary $p$. The positive-section sum
+`rationalTheta_eq_primeMasked_idele_sum` already gives the difference
+at norm $t>0$, with the removed term at $pt$. The [rendered theta
+note][theta-sum] supplies the definition (2.2.3.1), p. 81, on an
+idele representative. No new manuscript identity is presumed. The
+remaining Lean step is to reuse the prime-two proof's class transport:
+Its finite-unit invariance and unramified norm reduction are already
+general in $p$ but proof-local. Combine them with the new LF witness
+and `ideleNorm_rationalThetaRadialUniformizer`, which gives inverse
+translation of norm $t$ to $pt$ at the place corresponding to $p$.
+This uses no two-moment radial-input hypothesis. Independence under
+arbitrary changes of theta representative and identification of the
+printed principal-value operator remain separate.
+
+[prime-mask-lf]: ../../Proofs/Theorems/RationalAdelePrimeMaskLF.lean
 
 [unramified-two-cut]: ../../Proofs/Theorems/RationalThetaUnramifiedTwoCut.lean
 [theta-sum]: ../obligations/trace-theta-density-qi.md#source-interface
