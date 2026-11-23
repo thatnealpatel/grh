@@ -1,5 +1,5 @@
 ---
-evidence_revision: a36dcd32e6e687da76b7ea30fc9eb0e2aa48b392
+evidence_revision: fd9b420ec415046d03028c1929d0b349ac0f7426
 ---
 
 # An effective capped-tail bound for the singleton Gaussian spectral trace
@@ -31,6 +31,6 @@ The correction is material: The draft's alternative coefficient \(kC/(k-2)\) is 
 
 This supplies a precise conditional analytic bridge from a quadratic capped zero-count bound and a certified derivative norm of the fixed bump to a truncation error. If a complete, rigorously enclosed zero list through height \(T\) gives a finite-head enclosure \(|S_T-\widetilde S_T|\le\varepsilon\), then \(|\widetilde S_T|>\varepsilon+E_T\), with \(E_T\) equal to the displayed tail bound, proves that the actual singleton trace is nonzero.
 
-The accepted Gaussian spectral evidence identifies the actual convolution-first trace with the capped jet sum and establishes qualitative trace-classness, absolute convergence, and a qualitative Jensen-type zero count. It does not yet supply an explicit all-height constant \(C\), a certified complete zero list through a chosen height, rigorous Fourier-transform enclosures for the prescribed bump, or a lower bound for the finite head. The cited family-density and general Hecke zero estimates do not provide these missing individual inputs for this fixed quartic character.
+For the prescribed bump and $T=8192$, the [checked quartic Gaussian tail](../../../Proofs/Lemmas/QuarticGaussianTail.lean) now provides an alternative to the all-height Stieltjes route above. `Masullo.quarticGaussianTail_bound` proves summability and an absolute tail at most $425984/10^{12}$ for the concrete Gaussian Mellin transform, with both signs retained and endpoints excluded. It uses the Fourier integral **without** $\mu$. The [Gaussian singleton evaluation](../../obligations/trace-spectral-sum-qi.md) identifies the spectral normalization in ordinary mathematics, not in this Lean theorem. In the card’s units the error budget is therefore $E_{8192}=|\mu|\,425984/10^{12}$.
 
-The concrete test is to certify \(\|b_0^{(k)}\|_1\) for one or more \(k\ge3\), derive an explicit all-height bound \(M(R)\le C(1+R^2)\) including the small-height range, compute and enclose every relevant zero through an explicit \(T\), and evaluate the finite Fourier sum with rigorous error control. The claim remains open unless these data yield \(|\widetilde S_T|>\varepsilon+E_T\). A finite numerical scan without a complete zero certificate and a universal tail estimate is insufficient.
+**Remaining test:** Enclose the inclusive, signed head with $|S_{8192}-c|\le\varepsilon$ and $|c|>\varepsilon+E_{8192}$. Account for capped orders and for any ordinates not individually enclosed. The tail estimate alone does not separate the full sum from zero; this card remains open.
