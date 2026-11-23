@@ -1,0 +1,33 @@
+{
+  "key": "f3c1b67400b3d180a586a682ceec1a8b140f9f1480d372e489b4f455be29f4da",
+  "revision": "80bba492258d64988564cb13bf3138c3a60eb8d9a2866a8c1a7d268b558c2a73",
+  "outcome": "landed",
+  "source": "Masullo, The Music of the Primes, SHA-256 e039d3f6cf0a4b14f03c7edb85097752dd65c0a2fe543c76fe992be234f97bf5, chapter-01, §1.2.1, printed p. 14 (PDF ordinal 14), paragraph beginning “This is the trace of the effect of the convolution operator” including its unlabeled inverse-left convolution display and the nuclearity/trace assertion. The following Schauder-basis paragraph is separate. Context: printed p./PDF ordinal 13, §1.2.1(1)–(2), its Hilbert sequence, support, degree and trace displays; Definition 9.3.1.1 (9.3.1.1)–(9.3.1.2) and Lemma 9.3.1.3, pp./ordinals 419–420; Definition 10.1.1.1 and Lemma 10.1.1.3(2), (10.1.1.6), pp./ordinals 434–435; §10.2.2 (10.2.2.1)–(10.2.2.2), p./ordinal 445; Theorems 10.3.1.1 (p./ordinal 448), 10.3.2.1 (pp./ordinals 453–455), and 10.4.2.1 (10.4.2.3)–(10.4.2.8), p./ordinal 459. See rational-radial-hilbert-convolution.md.",
+  "finding": "Partial landing of the bounded convolution descent, not the nuclearity or trace assertion. Over Q, in the trivial norm-one isotype, on the accepted rationalRadialHilbertQuotient of 777c661f54b612d4d69309a45b16c07e62a4122b, with half twist, symmetric base [−α,α] (0≤α, in particular positive width), and real 0≤s, the actual inverse translation u(x−y) extends boundedly and strongly continuously. Its lift to the two-mode LF theta image is exp(−y/2) times dilation at −y. For continuous compactly supported radial kernels, including smooth radial tests supported strictly at norm >1, the Bochner convolution uses the normalized class-Haar integral. It preserves the actual closed theta image and intertwines the quotient projection on every ambient lift. This does not compare all idelic test operators or prove a Fréchet-topology statement. The untruncated quotient trace-class assertion and evaluation, already at s=0, remain open here: the proof on p. 459 cites a singleton theorem with s>1; the interval theorem also needs s>1. The degree-zero interior trace, boundary multiplicity, and wider field/isotype descent are not obtained.",
+  "retry": "For degree zero on this same quotient, identify the actual theta closure as the joint kernel of the continuous interior zero jets (with any necessary edge treatment), then give summable trace-norm control of a finite-rank approximation to the same quotient convolution or a trace-ideal factorization. Show that the finite-dimensional zero-block traces exhaust its trace, with full interior orders and justified boundary terms, for the prescribed supported tests. To transfer to all class tests, identify their norm-one Haar averages as the relevant radial kernels and prove the corresponding operator equality; other isotypes and fields need equivariant weighted and LF models.",
+  "evidence": [
+    {
+      "path": "Proofs/Theorems/RationalRadialHilbertTranslation.lean",
+      "declarations": [
+        "Masullo.rationalRadialProfileTranslate_apply",
+        "Masullo.rationalRadialHilbertTranslate_inclusion",
+        "Masullo.norm_rationalRadialHilbertTranslate_le",
+        "Masullo.continuous_rationalRadialHilbertTranslate",
+        "Masullo.rationalRadialProfileTranslate_theta",
+        "Masullo.rationalRadialHilbertTranslate_mem_thetaClosure",
+        "Masullo.rationalRadialQuotientTranslate_projection"
+      ]
+    },
+    {
+      "path": "Proofs/Theorems/RationalRadialHilbertConvolution.lean",
+      "declarations": [
+        "Masullo.integrable_rationalRadialConvolution",
+        "Masullo.rationalRadialHilbertConvolution_apply",
+        "Masullo.rationalRadialHilbertConvolution_haar",
+        "Masullo.rationalRadialHilbertConvolution_mem_thetaClosure",
+        "Masullo.rationalRadialQuotientConvolution",
+        "Masullo.rationalRadialQuotientConvolution_projection"
+      ]
+    }
+  ]
+}
