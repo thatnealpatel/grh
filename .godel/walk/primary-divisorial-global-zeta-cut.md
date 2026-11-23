@@ -188,17 +188,61 @@ elaboration. The owning session records the dependency probe, exact
 integrated candidate, warning-failing build, joint signature and axiom
 report, and adoption result.
 
-**Next bounded check (formalization only):** Show that the scalar factors
-of the checked raw multiplier are nonzero on the same fixed convergence
-line as `rationalUnramifiedMellinLine_eq_zero_iff_classTheta_eq_zero`
-($\operatorname{Re}z=\sigma>1$). The raw identity already isolates them
-as $1-r^{-z}$, and Mathlib's `Complex.norm_cpow_eq_rpow_re_of_pos`
-reduces the question to $r^{-\operatorname{Re}z}<1$ for $r>1$ (in fact
-$\operatorname{Re}z>0$ suffices). This would let vanishing of the masked
-Mellin values detect the uncut Mellin values at the same points.
-[`rationalAdeleClassTheta_unramified`](../../Proofs/Theorems/RationalThetaRealProfile.lean)
-already identifies uncut class theta with the lattice profile at the
-class norm, for the same input and without a measurable-space premise.
-Combining that result with the four-scale identity and the new
-vanishing implication would be kernel assembly, not a new norm-fiber
-calculation. Assembly and continuation are separate from nonvanishing.
+## Lean-checked cancellation of the two reciprocal Euler factors
+
+[`Masullo.one_sub_ofReal_cpow_neg_ne_zero` and
+`Masullo.rationalTwoPrimeMaskedZetaIntegral_eq_zero_iff`](../../Proofs/Theorems/RationalThetaTwoPrimeMellin.lean)
+separate scalar nonvanishing from its adelic application. For any
+real $r>1$ and complex $z$ with $\operatorname{Re}z>0$, Mathlib's
+`Complex.norm_cpow_eq_rpow_re_of_pos` and
+`Real.rpow_lt_one_of_one_lt_of_neg` give $\|r^{-z}\|=r^{-\operatorname{Re}z}<1$.
+Thus $1-r^{-z}\ne0$, with no adelic hypotheses.
+
+For distinct `p q : Nat.Primes`, arbitrary `b : 𝓢(ℝ, ℂ)`, and
+`1 < z.re`, the [raw identity above](#lean-checked-raw-mellin-multiplier-at-two-distinct-rational-primes)
+then gives $Z(M_{p,q}F_b,z)=0$ if and only if $Z(F_b,z)=0$, where
+$F_b=b\otimes1_{\widehat{\mathbb Z}}$. Both integrals use
+`rationalIdeleHaar` with the rational idele group's measurable-space
+and Borel instances, and the same complex power of the positive norm.
+This is pointwise on the entire convergence half-plane, hence at each
+point of any line $\operatorname{Re}z=\sigma>1$. There are no LF,
+parity, or moment hypotheses.
+
+**Source scope:** This note's opening rendered reading supplies the
+§1.3.2 multiplier claim, p. 26. The [tensor audit](primary-divisorial-tensor-cut.md)
+separately verifies the printed indices there and the input in
+(11.3.1.1), p. 492. The Lean unit indicators go at the two distinct
+finite places, disjoint from the real base, with integral support at
+the other finite places. Cancellation is for this repaired cut, not
+the printed indexing. The [global theta source review](../formalize/global-box-theta-operator.md#source-and-scope)
+supplies the rendered reading of the kernel comparison in Lemma
+5.1.2.1(1), (5.1.2.1), p. 224. This advances that comparison for the
+repair without yet assembling its masked kernel. No new source
+reading, quotient descent, or continuation was used.
+
+**Review and checks:** Independent exact-source review
+`mellin-cancellation-review` (`stVLnxm`), housed in owning Yah
+`01a206a6-b760-7a33-87d0-b00034cac91e`, checked both statements, the
+power identities, the casts from primes, and the application of the
+raw identity with its repaired support against
+`2425a25edd4ad58f6bf0b41d1d745421347b104f`, without elaboration.
+The owning session records the elaborated dependency probe, exact
+candidate and base, warning-failing build, fresh joint signature and
+axiom report, and adoption result.
+
+**Next bounded check (formalization only):** Assemble the masked
+fixed-line Mellin/class-theta vanishing equivalence on the same
+Schwartz tensors. Pointwise cancellation reduces the Mellin side to
+`rationalUnramifiedMellinLine_eq_zero_iff_classTheta_eq_zero`, in the
+same norm coordinate and at the same $\sigma>1$. It remains to compose
+with equality of the vanishing kernels of the masked and uncut class
+theta maps on these inputs. In the masked-to-uncut direction, the
+[accepted theta implication above](#lean-checked-theta-vanishing-for-the-two-prime-unit-cut)
+already gives zero at every positive scale, which
+`rationalAdeleClassTheta_unramified` evaluates at each positive class
+norm. In reverse, the same identification on the existing log section
+at $\log t$ gives zero at every $t>0$ (the uncut Mellin module uses this
+reduction in its private `theta_exp_eq_zero_iff`). The accepted
+four-scale identity then gives masked theta zero on every class. No new
+norm-fiber proof or analytic premise is needed; the composition is not
+yet a Lean endpoint.

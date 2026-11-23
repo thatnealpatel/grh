@@ -100,6 +100,17 @@ private theorem uniformizer_mul_norm_cpow (p : Nat.Primes) (a : J) (z : ℂ) :
 
 local notation "W(" a "," z ")" => ((ideleNorm (a : J) : ℝ) : ℂ) ^ (z : ℂ)
 
+/-- The reciprocal Euler factor for a real base greater than one is nonzero
+in the positive half-plane. -/
+public theorem one_sub_ofReal_cpow_neg_ne_zero {r : ℝ} {z : ℂ} (hr : 1 < r) (hz : 0 < z.re) :
+    1 - (r : ℂ) ^ (-z) ≠ 0 := by
+  have hnorm : ‖(r : ℂ) ^ (-z)‖ < 1 := by
+    rw [Complex.norm_cpow_eq_rpow_re_of_pos (zero_lt_one.trans hr), Complex.neg_re]
+    exact Real.rpow_lt_one_of_one_lt_of_neg hr (neg_neg_of_pos hz)
+  intro h
+  rw [← sub_eq_zero.mp h, norm_one] at hnorm
+  exact lt_irrefl _ hnorm
+
 -- An existing mask `U` may be kept through the cut if it is invariant under
 -- this translation. We use this first with `univ`, and then with the other
 -- prime's unit condition.
@@ -167,5 +178,18 @@ public theorem rationalTwoPrimeMaskedZetaIntegral (p q : Nat.Primes) (hpq : p �
     simp only [Set.mem_ofPred_eq, uniformizer_mul_finite_of_ne _ _ _ hne]
   obtain ⟨hi, he⟩ := prime_cut_integral p b z (rationalAdelePrimeUnits q) hU hq.1
   exact ⟨hi, by rw [he, hq.2, mul_assoc]⟩
+
+/-- The repaired two-prime unit cut preserves pointwise vanishing of the raw
+idelic Mellin integral in the convergence half-plane. -/
+public theorem rationalTwoPrimeMaskedZetaIntegral_eq_zero_iff (p q : Nat.Primes) (hpq : p ≠ q)
+    (b : 𝓢(ℝ, ℂ)) {z : ℂ} (hz : 1 < z.re) :
+    (∫ a : J, (rationalAdelePrimeUnits p ∩ rationalAdelePrimeUnits q).indicator
+      (rationalAdeleUnramified b) (a : A) * W(a, z) ∂rationalIdeleHaar) = 0 ↔
+    (∫ a : J, rationalAdeleUnramified b (a : A) * W(a, z) ∂rationalIdeleHaar) = 0 := by
+  have hz₀ : 0 < z.re := zero_lt_one.trans hz
+  have hp := one_sub_ofReal_cpow_neg_ne_zero (Nat.one_lt_cast.mpr p.property.one_lt) hz₀
+  have hq := one_sub_ofReal_cpow_neg_ne_zero (Nat.one_lt_cast.mpr q.property.one_lt) hz₀
+  rw [(rationalTwoPrimeMaskedZetaIntegral p q hpq b hz).2, mul_eq_zero,
+    or_iff_right (mul_ne_zero hp hq)]
 
 end Masullo
