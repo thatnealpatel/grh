@@ -1,5 +1,7 @@
 # Manuscript formalization handoff
 
+For the independent Alice and Bob research loops, see [Alice and Bob](peers.md).
+
 Start or resume the [manuscript program](../cmd/godel/README.md) for work across the paper. Its [mission](../cmd/godel/mission.md) is the goal of both the work node and the improver. Read the [proof frontier](frontier.md) for independent obligations and blocked routes before choosing the next task. Both nodes use Yah and can change and adopt the program. A validated workflow change needs relevant program tests; it is not a checked mathematical result.
 
 ## What the first passage run established
