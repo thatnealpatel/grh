@@ -5,7 +5,7 @@ Write $X=(A\log q)^2$, $D=\log X$, $R=X^\theta$, and $T=\exp(\kappa D^2)$, with 
 * For $1<A<2$, at most $X^{\theta/2+\kappa\log A+o(1)}$ twists have a nonpositive [endpoint quotient](endpoint-arithmetic-test.md) at some modulation $|y|\le T$, at the twist's **own** cutoff. In particular $\kappa=\theta/(4\log A)$ gives $R^{3/4+o(1)}$ exceptions, uniformly even if the base Legendre character is bad. No reality hypothesis on the primitive base is needed for the count.
 * For each fixed $C>4A$ there are $\eta,\nu>0$ such that, outside $X^{\theta/2+\kappa\log C+o(1)}$ twists, **all** unit compact tests of diameter at most $2\log(A\log c)$ and all unit [Pick block inputs](short-cell-weil-list.md) there specified have Weil quotient at least $\nu\log c$ if their squared Fourier mass beyond $[-T,T]$ is at most $\eta$. In particular this holds if the Gamma energy excluding conductor is $\le c_0 D^2$ for sufficiently small fixed $c_0>0$. The count saves a power of $R$ when $\kappa<\theta/(2\log C)$.
 
-The price of exceeding every fixed power of $X$ is a growing exceptional list. Neither conclusion covers $q$-power heights or proves a floor on unrestricted inputs.
+The price **in this argument** of exceeding every fixed power of $X$ is a growing exceptional list. For endpoints the [sieved Gram argument](sieved-height-gram.md) instead keeps the list bounded through $\log T=k D^{3/2}/\sqrt{\log D}$ when $\theta<1/2$. The same argument gives a bounded (larger) list for the Fourier-mass-restricted inputs. It does not reach the $\kappa D^2$ scale here. Neither conclusion covers $q$-power heights or proves a floor on unrestricted inputs.
 
 ## Two reductions to one counting problem
 
