@@ -268,7 +268,17 @@ scalar strip transfer; `CJtGPsL` reviewed both fixed statements.
 One draft build exposed a reflection simplification and a function
 composition mismatch; a subsequent check also exposed an importer
 named with the wrong path. Use the module paths at the exact candidate
-for the target list.
+for the target list. The first combined revision
+`9c1ca8c3343b55f83147b5d6ab253b848637b580` moved out of date before
+building. The identical diff built on
+`6edaf717f350275ba9dbabd80135ce9319ad8bbf`, but adoption was stale.
+The owner checked the unchanged patch on the new base and adopted
+exact revision `c1d9906c831ff0c9380c9bacd83d5b66bcd67c51`. Its
+warning-fatal build included all ten changed or affected modules, and
+five endpoint signatures and axiom reports matched the prior candidate
+on a fresh joint import. Each report contains only `propext`,
+`Classical.choice`, and `Quot.sound`. The integration and checks are
+in Yah `01a20665-8398-7aef-960a-b6623a4acd80`.
 See the [checked witness handoff](../../obligations/trace-below-shell-q.md#checked-conditional-witness-for-the-omitted-divisor).
 
 **Decision:** Keep the current routing and one prebuild comparison.

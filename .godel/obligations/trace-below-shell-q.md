@@ -369,7 +369,9 @@ edge terms are immaterial on this specific test. These readings are
 provisional, based on pinned Markdown and numbered layout. The proof is
 an original construction, not a result furnished by those passages.
 The writer check at output `8043871f9cd61d47199bf358575d65ac5f133f38`
-and the owning exact-candidate checks are recorded in the same session.
+and the owning checks of accepted revision
+`c1d9906c831ff0c9380c9bacd83d5b66bcd67c51` are recorded in the same
+session and summarized in the [experiment ledger](../experiments/matched-improvement-recovery/#live-follow-up-budget-the-actual-omitted-divisor).
 The power-saving count remains unproved in pinned Lean.
 
 ### Checked scalar transfer on a test killing the omitted divisor
