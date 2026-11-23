@@ -370,20 +370,68 @@ inherited readings against accepted source, without elaboration.
 The same owning transcript records the integrated build, fresh
 signature and axiom report, and supplied-tensor application check.
 
-**Next check:** Extend the prime-two all-class identity above to this
-same supplied tensor at arbitrary $p$. The positive-section sum
-`rationalTheta_eq_primeMasked_idele_sum` already gives the difference
-at norm $t>0$, with the removed term at $pt$. The [rendered theta
-note][theta-sum] supplies the definition (2.2.3.1), p. 81, on an
-idele representative. No new manuscript identity is presumed. The
-remaining Lean step is to reuse the prime-two proof's class transport:
-Its finite-unit invariance and unramified norm reduction are already
-general in $p$ but proof-local. Combine them with the new LF witness
-and `ideleNorm_rationalThetaRadialUniformizer`, which gives inverse
-translation of norm $t$ to $pt$ at the place corresponding to $p$.
-This uses no two-moment radial-input hypothesis. Independence under
-arbitrary changes of theta representative and identification of the
-printed principal-value operator remain separate.
+The [all-prime result below](#checked-all-class-theta-identity-at-any-single-rational-prime)
+uses this witness to extend the class calculation to every prime.
+
+## Checked all-class theta identity at any single rational prime
+
+[`Masullo.exists_rationalAdeleUnramifiedPrimeCut`][unramified-prime-cut]
+takes `p : Nat.Primes`, `b : 𝓢(ℝ, ℂ)`, and a supplied LF test $f$
+whose underlying function is `rationalAdeleUnramified b`. It gives
+an LF test $g$ whose underlying function equals the literal $p$-unit
+indicator times $f$ on **all additive adèles**. For every rational
+idele class $d$ it gives
+
+$$
+\Theta(g)(d)=\Theta(f)(d)-\Theta(f)([\varpi_p]^{-1}d).
+$$
+
+The result assumes no moment, parity, or measurability conditions.
+`exists_rationalAdelePrimeMaskedLF` supplies $g$. Multiplication by
+finite units preserves all finite valuations and the real coordinate,
+so class theta of the mask is invariant under the norm-one classes.
+This transports `rationalTheta_eq_primeMasked_idele_sum` off the
+positive section. Uncut theta depends only on the norm, and
+`ideleNorm_rationalThetaRadialUniformizer` identifies the removed term
+at $pN(d)$, not $N(d)/p$. The two-moment radial input is not used.
+The prime-two theorem retains its statement as a specialization.
+
+**Source scope:** The inherited rendered readings establish separate
+clauses: The [ordinary filtration note][ordinary] gives disjointness
+in (1.3.2.2), p. 25, satisfied by a finite $p$ with $S=\{\infty\}$;
+the [tensor audit][tensor] gives the outside-$S$ input in (11.3.1.1),
+p. 492; and the [theta source interface][theta-sum] gives the sum over
+nonzero rationals on an idele representative after specializing
+(2.2.3.1), p. 81. The tensor audit separately verifies the printed
+right-hand index in §1.3.2, p. 26. We use the **repair** with the
+complement of $S\cup\{p\}$, not that printed index. Neither supply of
+representatives for a whole isotype, descent across arbitrary input
+LF lifts, nor identification with the printed principal-value
+operator is established.
+
+**Review and checks:** Fixed-statement source review `prime-cut-statement`
+(`HuHmzhK`), Yah `01a205d5-516f-72c6-b2e4-6577e182438a`, checked both
+the class reduction and applicability of the inherited passages,
+without elaboration. The owning transcript in that same session
+records the variable-prime dependency probe and the integrated
+build and joint signature and axiom checks.
+
+**Next check:** Realize the joint unit mask of the same unramified
+tensor at two distinct rational primes $p,q$ as a single LF test,
+using compact support $W_f$ and open translation subgroup $pqW_f$.
+The one-prime LF proof already gives preservation of each mask
+under its own $pW_f$ or $qW_f$ (proof-local), so restriction to
+$pqW_f$ gives both, once the subgroup inclusions are checked. Reuse
+`exists_rationalAdeleLF_of_compactOpenStage` with the same real fibers
+$b$ or zero. This would supply the literal joint witness for a later
+two-prime theta comparison: The one-prime theorem cannot be iterated
+on its output, since that output is no longer unramified. The section
+support test already gives both nondivisibilities by conjunction;
+inclusion-exclusion at the level of the sum remains to be formalized.
+The same inherited disjointness and tensor readings apply with
+$P=\{p,q\}$ outside $S=\{\infty\}$.
+
+[unramified-prime-cut]: ../../Proofs/Theorems/RationalThetaUnramifiedPrimeCut.lean
 
 [prime-mask-lf]: ../../Proofs/Theorems/RationalAdelePrimeMaskLF.lean
 
