@@ -13,8 +13,8 @@ are invariant under finite units, so the section identity gives the class
 identity with inverse-uniformizer translation.
 -/
 
-open NumberField IsDedekindDomain MeasureTheory
-open scoped FourierTransform SchwartzMap
+open Filter NumberField IsDedekindDomain MeasureTheory
+open scoped FourierTransform SchwartzMap Topology
 
 namespace Masullo
 
@@ -223,6 +223,51 @@ public theorem rationalAdeleClassTheta_twoPrimeMasked_eq_rationalTheta
     (rationalTheta_eq_twoPrimeMasked_idele_sum p q hpq b ht).2, rationalAdeleTheta,
     rationalAdeleTheta, (rationalTheta_eq_primeMasked_idele_sum p b ht).2,
     (rationalTheta_eq_primeMasked_idele_sum p b hqt).2]
+
+/-- A profile with zero limit at infinity cannot be invariant under a strictly
+expanding real dilation on the positive ray unless it vanishes there. -/
+private theorem eq_zero_of_dilation_invariant {f : ℝ → ℂ} {r : ℝ} (hr : 1 < r)
+    (h₀ : Tendsto f atTop (𝓝 0)) (hfix : ∀ t : ℝ, 0 < t → f t = f (r * t)) :
+    ∀ t : ℝ, 0 < t → f t = 0 := by
+  intro t ht
+  have hr₀ : 0 < r := zero_lt_one.trans hr
+  have hiter (n : ℕ) : f (r ^ n * t) = f t := by
+    induction n with
+    | zero => simp
+    | succ n ih =>
+      rw [pow_succ', mul_assoc, ← hfix _ (mul_pos (pow_pos hr₀ n) ht), ih]
+  have hscale : Tendsto (fun n : ℕ ↦ r ^ n * t) atTop atTop :=
+    (tendsto_pow_atTop_atTop_of_one_lt hr).atTop_mul_const ht
+  exact tendsto_nhds_unique tendsto_const_nhds ((h₀.comp hscale).congr hiter)
+
+/-- Vanishing of the repaired joint unit-cut class theta forces the uncut
+lattice theta to vanish at every positive scale. No zero modes are prescribed. -/
+public theorem rationalTheta_eq_zero_of_twoPrimeMasked_classTheta_eq_zero
+    (p q : Nat.Primes) (hpq : p ≠ q) (b : 𝓢(ℝ, ℂ))
+    (hmask : ∀ d : C, rationalAdeleClassTheta (Set.indicator
+      (rationalAdelePrimeUnits p ∩ rationalAdelePrimeUnits q) (rationalAdeleUnramified b)) d = 0) :
+    ∀ t : ℝ, 0 < t → rationalTheta b t = 0 := by
+  have hp : 1 < (p : ℝ) := Nat.one_lt_cast.mpr p.property.one_lt
+  have hq : 1 < (q : ℝ) := Nat.one_lt_cast.mpr q.property.one_lt
+  have hθ : Tendsto (rationalTheta b) atTop (𝓝 0) := by
+    obtain ⟨K, _, h⟩ := rationalTheta_uniform_tail_bounds
+      (Bornology.isVonNBounded_singleton (𝕜 := ℂ) b) 1
+    refine squeeze_zero_norm' ?_ (tendsto_id.const_div_atTop K)
+    filter_upwards [eventually_ge_atTop (1 : ℝ)] with t ht
+    simpa only [pow_one, id_eq] using (h b (Set.mem_singleton b)).1 t ht
+  let g (t : ℝ) := rationalTheta b t - rationalTheta b ((p : ℝ) * t)
+  have hg : Tendsto g atTop (𝓝 0) := by
+    simpa only [g, sub_zero, Function.comp_def, id_eq] using
+      hθ.sub (hθ.comp (tendsto_id.const_mul_atTop (zero_lt_one.trans hp)))
+  have hgfix (t : ℝ) (ht : 0 < t) : g t = g ((q : ℝ) * t) := by
+    have hnorm : ideleClassNorm (QuotientGroup.mk (σ t) : C) = t := by
+      rw [ideleClassNorm_mk, ideleNorm_logSection]
+      exact Real.exp_log ht
+    have h := (rationalAdeleClassTheta_twoPrimeMasked_eq_rationalTheta p q hpq b
+      (QuotientGroup.mk (σ t))).symm.trans (hmask (QuotientGroup.mk (σ t)))
+    simpa only [g, hnorm] using sub_eq_zero.mp h
+  have hgzero := eq_zero_of_dilation_invariant hq hg hgfix
+  exact eq_zero_of_dilation_invariant hp hθ fun t ht ↦ sub_eq_zero.mp (hgzero t ht)
 
 /-- For the repaired joint unit cut, the spatial constants cancel and the
 small-norm main term has coefficient `(1 - p⁻¹) * (1 - q⁻¹)` times the real mass.

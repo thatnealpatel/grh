@@ -146,16 +146,59 @@ elaboration. The owning session also records the checked dependency
 probes, exact integrated candidate, joint signature and axiom report,
 and adoption result.
 
-**Next bounded check (formalization only):** Show that if the joint
-masked class theta vanishes, then the uncut lattice theta vanishes at
-every positive norm. The accepted four-scale formula, evaluated on the
-positive norm section, already gives
-`(1 - D_p)(1 - D_q) θ_b = 0`, where `D_p f(t) = f(p*t)`. Prove
-injectivity of `1 - D_p` on profiles tending to zero at infinity by
-iterating the dilation, and use it twice. The needed limit for `θ_b`
-is already proved privately as `rationalTheta_tendsto_zero_atTop` in
-[`RationalThetaOrbitalConstant`](../../Proofs/Lemmas/RationalThetaOrbitalConstant.lean)
-from the accepted uniform tail; the limit for its `q`-difference then
-follows by scaling. No new theta computation is needed. Nonvanishing of
-the scalar factors on the fixed line, and assembly with the existing
-uncut line-kernel equivalence, are separate from this check.
+## Lean-checked theta vanishing for the two-prime unit cut
+
+[`Masullo.rationalTheta_eq_zero_of_twoPrimeMasked_classTheta_eq_zero`](../../Proofs/Theorems/RationalThetaUnramifiedTwoPrimeCut.lean)
+takes distinct `p q : Nat.Primes` and arbitrary complex Schwartz `b` on
+$\mathbb R$. If the joint unit-cut class theta of `rationalAdeleUnramified b`
+vanishes at every rational idele class, then `rationalTheta b t = 0`
+for every $t>0$. There is no LF witness, parity, moment, or Mellin-line
+premise.
+
+The [four-scale identity](primary-divisorial-theta-range.md#checked-small-norm-tail-at-any-two-distinct-primes)
+on the class of the positive log section gives $g(t)=g(qt)$ for
+$g(t)=\theta_b(t)-\theta_b(pt)$. The section class at $\log t$ has norm
+$t$. The singleton $N=1$ case of `rationalTheta_uniform_tail_bounds`
+gives $\theta_b(t)\to0$ at infinity, by the same squeeze used in the
+private orbital limit proof, and positive dilation and subtraction give
+$g(t)\to0$. The private iteration lemma applies to any complex profile
+on the positive ray with zero limit at infinity: If $f(t)=f(rt)$ for
+$r>1$, then $f(r^n t)=f(t)$ and $r^n t\to\infty$ force $f(t)=0$.
+Apply the lemma first to $g$ with $r=q$, then to $\theta_b$ with $r=p$.
+Only the large-norm tail is used.
+
+**Source scope:** The [rendered theta and kernel review](../formalize/global-box-theta-operator.md#source-and-scope)
+verifies the nonzero representative sum in (2.2.3.1), pp. 81–82, and the
+printed global comparison in Lemma 5.1.2.1(1), (5.1.2.1), p. 224. The
+[rendered tensor audit](primary-divisorial-tensor-cut.md) verifies the
+indexing in §1.3.2, p. 26, and the input it cites in (11.3.1.1), p. 492.
+Here the real place is the base, both tested finite factors are unit
+indicators, and the remaining finite factors are integer-ring
+indicators, using the repaired complement. This is the theta-side
+implication for that repair, not a verification of the printed cut,
+a masked theta–Mellin kernel equality, or quotient descent. No new
+manuscript reading was needed.
+
+**Review and checks:** Independent exact-source review
+`two-prime-vanishing-review` (`ldrJJHk`), housed in Yah
+`01a2069e-3bd4-705d-8874-1f37a7eff539`, checked the fixed statement,
+support and norm-section applications, inherited source scope, and
+iteration against `3dd6a52b23e3554d27ef1c6b563365f27451f477`, without
+elaboration. The owning session records the dependency probe, exact
+integrated candidate, warning-failing build, joint signature and axiom
+report, and adoption result.
+
+**Next bounded check (formalization only):** Show that the scalar factors
+of the checked raw multiplier are nonzero on the same fixed convergence
+line as `rationalUnramifiedMellinLine_eq_zero_iff_classTheta_eq_zero`
+($\operatorname{Re}z=\sigma>1$). The raw identity already isolates them
+as $1-r^{-z}$, and Mathlib's `Complex.norm_cpow_eq_rpow_re_of_pos`
+reduces the question to $r^{-\operatorname{Re}z}<1$ for $r>1$ (in fact
+$\operatorname{Re}z>0$ suffices). This would let vanishing of the masked
+Mellin values detect the uncut Mellin values at the same points.
+[`rationalAdeleClassTheta_unramified`](../../Proofs/Theorems/RationalThetaRealProfile.lean)
+already identifies uncut class theta with the lattice profile at the
+class norm, for the same input and without a measurable-space premise.
+Combining that result with the four-scale identity and the new
+vanishing implication would be kernel assembly, not a new norm-fiber
+calculation. Assembly and continuation are separate from nonvanishing.
