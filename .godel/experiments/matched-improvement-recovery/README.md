@@ -120,3 +120,60 @@ records the scope: The reconstructed scalar is path-dependent, but a
 rate-controlled repair is not excluded. The next test is the orbital
 term of one specified common global diagonal on below-one two-moment
 profiles, not another lower-edge scalar computation.
+
+## Live control: The Mellin adjoint
+
+Run `01a20634-adc6-7be5-9974-acd56246d990` matches Yah work
+`01a20634-af61-7ca4-9490-2b578475735c` by input and final response.
+The launch archive and initial pin were both
+`d17819758975e1028f23f72d46270931000adc11`. The program tree was
+unchanged at the proof landing `26f82503eb6462d309a90de2be6ff0072cc335b8`.
+Improvement is Yah `01a2063d-ecee-7326-8380-8653c1f76677`.
+
+The inherited handoff proposed building the tail measure. Work
+identified predecessor `01a20615-9bca-76f9-99c3-bf4ff4a96428` and
+its improvement (Yah `01a20624-d19d-7566-86d3-0dc22f4adc92`). That
+improvement had already landed both the tail measure and assembled
+filter. Work checked the accepted definitions before advancing to the
+adjoint. This was not an unlanded-artifact recovery. Looking up the
+manifest value as an object failed (work seqs. 8–11); work recovered
+by reading the known run record. In the earlier lower-edge recovery,
+`jq`'s `input` function was used in place of the `.input` field and
+failed before the successful recovery (earlier work seqs. 16–23).
+Neither lookup error stopped work.
+
+The independent adjoint review (`CZRgWxT`) checked fixed statement
+text against p. 599, (B.2.1.29–31), and the Chapter 12 trace interface,
+using the digest-matched PDF layout and Markdown but not rendered
+pages. It confirmed the adjoint sign, positive shifts, and the compact
+support argument avoiding the singularity at zero, and distinguished
+Lean's totalized inner integral off the seed support. Two writer builds
+failed on Lean elaboration before the corrected proof passed (seqs.
+46, 53, 62). The one integrated candidate combined the proof and
+its landing note on accepted base `b157758a58ecc9f807eb22bfa409c58ecfb53cff`,
+which had advanced by unrelated changes (seqs. 78–85). The exact
+candidate passed the warning-free scoped build and fresh joint import,
+with only the three permitted axioms in all six reports, and was
+adopted (seqs. 90–93). No stale or unadopted proof candidate remained.
+This is a live success of the flat landing workflow, not evidence
+that it prevents a race.
+
+**Replay and decision:** Run the [read-only lookup recipe](../../../cmd/godel/README.md#finding-the-matching-improvement-report)
+on the two saved consumer records. It returned the already-landed
+filter report and the unlanded lower-edge report respectively. It also
+accepted appended CR/LF and rejected an appended space and a fresh
+objective. Document the manifest schema and point work to the recipe.
+Do not install automatic routing or relax recovery and exact-candidate
+checks. The replay did not run a new work node or measure a speedup.
+
+**Proof scope:** The adjoint is one checked dependency of the rational
+below-one witness. Its [branch handoff](../../obligations/trace-below-shell-q.md#remaining-separation-of-the-transformed-densities)
+retains the concrete next lemma: Prove nonproportionality of the two
+filtered densities on an open positive-log seed interval. The new
+`rationalRadialStripIndexEquiv` at
+`7da5f9b18bb29014d436c052d8c7a6c0348742a7` identifies the scalar
+strip index and multiplicities. It does not supply the omitted-zero
+reciprocal-height budget, the common global operator trace, or the
+necessity of the modeled local projection. Keep those premises
+separate rather than repeating scalar reindexing. Neither the adjoint
+nor the index identifies the manuscript's actual shell.

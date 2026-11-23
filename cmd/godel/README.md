@@ -118,6 +118,33 @@ if it is ready to land before the proof. Keep a true stack when a proof
 relies on a pending parent that is intended to land first; check and
 adopt that parent before adopting the child.
 
+### Finding the matching improvement report
+
+For an inherited task, look up the Gödel program registered at the
+stable launch root, not the campaign writer workspace. The manifest
+values are string IDs, not objects. Set `run_record` to the consumer's
+run JSON. During live work it is the newest UUIDv7 filename for this
+program. Check that its `input` is the handoff you received, then run:
+
+```sh
+launch=$(realpath cmd/godel) &&
+  id=$(jq -er --arg source "$launch" '.[$source] | strings | select(length > 0)' \
+    "$HOME/.godel/manifest.json") &&
+  jq -es --slurpfile consumer "${run_record:?set the consumer run JSON}" '
+    def without_eol: sub("[\r\n]+$"; "");
+    $consumer[0] as $now
+    | map(select(.id < $now.id and (.final_response | test("\\S"))
+        and ((.final_response | without_eol) == ($now.input | without_eol))))
+    | max_by(.id)
+    | if . == null then empty else {id, improvement_response} end
+  ' "$HOME/.godel/$id/runs/"*.json
+```
+
+This is read-only. No output and exit status 4 from the final `jq`
+means no matching predecessor. Treat the report as a lead, not a
+verdict about the current tip. Skip this lookup for a fresh operator
+objective.
+
 ### Recovering a checked but unadopted proof
 
 After a conflict, stale adoption, or ambiguous error, inspect `tool_campaign status` and the current accepted source. Recover only what is still needed.
