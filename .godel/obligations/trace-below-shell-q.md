@@ -331,18 +331,75 @@ $\alpha$. The [reviewed classical power-saving estimate](trace-carving-weight-q.
 would give it: Absorb the logarithmic factors into a slightly larger
 power still less than one and inflate $C$ for finitely many low
 shells. The checked quadratic full-divisor summability does not imply
-this bound. Separately, the witness assembly still has to enumerate the
-large tail without repetition (handling the finite case), and choose a
-real polynomial with both polar roots and the finite omitted roots at
-the negative Mellin argument. The below-one log coordinate reflects
-the class sample, so use the negation symmetry of the omitted set (or
-explicitly enumerate the reflected frequencies).
-The already checked rational strip index and conditional RH endpoint
-(`rationalRadialStripIndexEquiv` and
-`riemannHypothesis_of_ideleClassTraceFormula`) do not supply this bound
+this bound. The exact witness construction using this conditional
+budget is now checked below. The rational strip index and conditional
+RH endpoint (`rationalRadialStripIndexEquiv` and
+`riemannHypothesis_of_ideleClassTraceFormula`) do not supply the count
 or identify the analyzed global operator with either scalar trace.
-In particular, killing zeros outside the open strip only matches a
-strip sum with full interior orders, not an interior Sobolev-capped sum.
+
+### Checked conditional witness for the omitted divisor
+
+[`Masullo.exists_compactLogMellin_omittedZeta_trace_separation`](../../Proofs/Props/OmittedZetaTraceSeparation.lean)
+uses the right-upper dyadic count above, with $0\le q<2$, to build one
+real smooth $f$ supported in any $(L,U)$ with $0\le L<U\le\log 2$.
+For $0<\beta<1$ it has $\langle J,f\rangle=0$,
+$\langle U_\beta,f\rangle\ne0$, and
+$M_f(\pm\tfrac12)=0$. For every distinct critical-strip location outside
+or on the boundary of the open $\alpha$ strip, it gives
+$M_f(- (\rho-\tfrac12))=0$. In the modeled trace take $\beta=2\alpha$;
+the construction itself does not require that relation.
+
+The bounded-height locations are finite. Take a real polynomial with
+both polar roots and a conjugate-pair factor for each of those locations,
+centered at $\rho-\tfrac12$. The polynomial filter evaluates $P(-z)$;
+its evaluation at $5/2-\beta$ is nonzero because every centered root
+has real part of absolute value less than $1/2$. The high tail enters
+at the reflected frequencies by an injective embedding into $\mathbb N$.
+Fill unused positions with dummy imaginary frequencies of small total
+reciprocal-height cost, retaining the support slack. This handles all
+tail cardinalities, including the empty tail. Neither multiplicity
+nor a small-but-nonzero spectral residual enters the budget.
+
+The independent review `witness-review` (`IPgWAzB`) checked the fixed
+endpoint, tail and polynomial signs, and source dependencies in Yah
+`01a20665-8398-7aef-960a-b6623a4acd80`. In particular, the interior
+orders of (12.5.1.3–4), pp. 519–520, agree with the cited
+Theorem 10.4.2.8, p. 463, via (10.3.2.3–4), p. 454; the latter's capped
+edge terms are immaterial on this specific test. These readings are
+provisional, based on pinned Markdown and numbered layout. The proof is
+an original construction, not a result furnished by those passages.
+The writer check at output `8043871f9cd61d47199bf358575d65ac5f133f38`
+and the owning exact-candidate checks are recorded in the same session.
+The power-saving count remains unproved in pinned Lean.
+
+### Checked scalar transfer on a test killing the omitted divisor
+
+[`Masullo.rationalIdeleRadialMellin_reflect`](../../Proofs/Theorems/RationalIdeleRadialExplicitFormula.lean)
+transports a profile $F(x)=f(-x)$ along normalized rational class log Haar.
+It gives the class sample $M_f(-(s-1/2))$, so the two pole arguments are
+$1/2$ and $-1/2$. This applies the log convention in (B.2.1.29), p. 599,
+to the reflected coordinate; it does not change the Haar normalization.
+
+[`Masullo.rationalRadial_stripTrace_of_omitted_mellin_zero`](../../Proofs/Theorems/RationalRadialStripTrace.lean)
+starts from the checked full scalar balance and replaces the summand by
+its interior-strip indicator. The entire omitted term is zero because
+the sample, not merely an estimate of the weighted term, is zero. It
+produces a `HasSum` over the open-strip index with full orders, with
+unchanged normalized local terms, actual real cutoff convergence, and
+finite support in the finite places. This is the one-test scalar transfer
+from (B.4.2.2), p. 614, to the truncation in (12.5.1.3–4), pp. 519–520.
+The manuscript does not supply the termwise vanishing premise. Boundary
+order conventions do not affect the comparison on this test; capping
+positive orders in the interior would still change the obligation.
+
+Owning check session: Yah `01a20665-8398-7aef-960a-b6623a4acd80`.
+Independent fixed-statement review: `radial-bridge-review` (`CJtGPsL`)
+in that session. The pinned Markdown and layout readings remain
+provisional pending rendered-page inspection. These lemmas neither remove
+the witness's density premise nor evaluate a common global diagonal.
+For the full scalar witness, also specialize the real fold and finite-place
+prime-power expansion to support in $(-\log 2,0)$: Every prime sample is
+outside the support, and the norm-one contact term vanishes.
 
 With the actual omitted samples killed and the model’s strip trace
 identified, the explicit formula gives $G(f)=\langle J,f\rangle=0$,
@@ -393,10 +450,11 @@ not a fresh rendered-page verification.
   separately justified global base with the *raw* value would fail on
   this witness, where both are zero.
 
-The conditional filtered witness is checked above. Its specialization to the
-actual omitted samples, the comparison with the common global trace, and
-the necessity of the modeled projection for the manuscript remain separate.
-The obstruction is not machine-checked end to end.
+The conditional specialization to the actual omitted zeros and the
+one-test scalar transfer are checked above. The power-saving count, the
+comparison with the common global trace, and the necessity of the modeled
+projection for the manuscript remain separate. The obstruction is not
+machine-checked end to end.
 
 ## Checked local scalar separation
 

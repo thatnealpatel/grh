@@ -226,3 +226,54 @@ The preflight caught one move and cannot catch a move after it.
 The [proof handoff](../../obligations/trace-below-shell-q.md#checked-short-filtered-separator)
 separates the new checked witness from its unmet actual-zero budget,
 strip/full trace comparison, and manuscript necessity argument.
+
+## Live follow-up: Budget the actual omitted divisor
+
+Gödel run `01a20655-d822-7ec2-ae05-04b317b25977` completed
+without a work failure. The run's input and response match Yah work
+`01a20655-db3c-7878-9b63-9a84a996229f`; the improvement owner is
+`01a20665-8398-7aef-960a-b6623a4acd80`. The launch archive was
+`d28691bf4b4e48f648e1746c45ac02217696a335`, while work first
+observed accepted `3809bb9a96263828effac6b53ee3cad23cf0cc54`.
+The executable's `cmd/godel` tree was unchanged through the work
+landing. Work used the matched predecessor from the preceding
+[follow-up](#live-follow-up-the-rational-filtered-densities), found
+the already-accepted separator, and advanced to the conditional
+actual-zero support budget rather than repeating separation.
+
+The work owner repaired seven unsuccessful draft builds and obtained
+independent reviews from `vRpfWol` and `izzEkMr`. In particular, the
+second review distinguished a displacement budget over distinct
+locations from an order-weighted bound on a nonvanishing residual.
+One exact Mellin zero per location makes the latter unnecessary for
+this construction. Direct output
+`c02222b8b99606ecc80b117f4cd77e815b7fbc0f` was checked on three
+integration bases. The first two candidates,
+`59e911b0c71c8a5d569c61bbcfc7f42ca64424b6` and
+`07fb71b6c65d55f3890493eca5714db51a67540a`, were current at their
+prebuild queries but stale at adoption; the third was adopted at
+`824c5ba148a1afe5b0187da2a99e732274cc17a7`. See work seqs.
+154–246 and the two review subagent records. The first two builds
+were not avoidable by the tested preflight: The intervening moves
+were later. No failed or superseded integration contains a distinct
+proof needed downstream.
+
+The improvement then assembled the actual-zero separator without
+changing its density hypothesis. Writer `emowkVz` checked the three
+new modules at output `8043871f9cd61d47199bf358575d65ac5f133f38`;
+`IPgWAzB` independently reviewed the fixed endpoint. The writer used
+one padding construction for empty, finite, and infinite high tails.
+In parallel, the owner added the rational Haar reflection and the
+scalar strip transfer; `CJtGPsL` reviewed both fixed statements.
+One draft build exposed a reflection simplification and a function
+composition mismatch; a subsequent check also exposed an importer
+named with the wrong path. Use the module paths at the exact candidate
+for the target list.
+See the [checked witness handoff](../../obligations/trace-below-shell-q.md#checked-conditional-witness-for-the-omitted-divisor).
+
+**Decision:** Keep the current routing and one prebuild comparison.
+The recurrence is a concurrency race, not another misidentification
+of a handoff or a demonstrated benefit from more polling. No new
+router, Go change, or policy experiment was run. The [branch handoff](../../obligations/trace-below-shell-q.md#conditional-budget-for-the-actual-omitted-divisor)
+separates the checked reduction from the unformalized density bound
+and the global trace hypotheses.

@@ -87,6 +87,25 @@ public theorem rationalRadial_fullTrace {F : ℝ → ℂ} (hf : ContDiff ℝ ∞
     rw [← he]
     exact hs.of_norm.hasSum
 
+/-- On a test killing every omitted Mellin sample, the full explicit
+formula gives the open-strip scalar identity of (12.5.1.3–4), pp. 519–520.
+Exact vanishing kills any omitted order, including at the edges. This is a
+one-test assertion, not an evaluation of the Chapter 12 diagonal. -/
+public theorem rationalRadial_stripTrace_of_omitted_mellin_zero {a : ℝ} {F : ℝ → ℂ}
+    (hf : ContDiff ℝ ∞ F) (hc : HasCompactSupport F) (h₀ : F 0 = 0)
+    (hkill : ∀ ρ : criticalStripZetaZeros, a ≤ |(shiftedZetaZero ρ).re| →
+      rationalIdeleRadialMellin F ρ = 0) :
+    ∃ R : ℂ, Tendsto (rationalRadialRealCutoff F) (𝓝[>] 0) (𝓝 R) ∧
+      Function.HasFiniteSupport (fun v ↦ rationalRadialFiniteTerm v F) ∧
+      HasSum (fun ρ : rationalRadialStripZeros a ↦ term(F, ρ.val)) (balance(F, R)) := by
+  classical
+  obtain ⟨R, hR, hfin, hall⟩ := rationalRadial_fullTrace hf hc h₀
+  refine ⟨R, hR, hfin, (hasSum_subtype_iff_indicator (s := rationalRadialStripZeros a)
+    (f := fun ρ ↦ term(F, ρ))).mpr (hall.congr_fun fun ρ ↦ ?_)⟩
+  by_cases hi : ρ ∈ rationalRadialStripZeros a
+  · exact indicator_of_mem hi _
+  · rw [indicator_of_notMem hi, hkill ρ (le_of_not_gt hi), mul_zero]
+
 private theorem mellin_eq_positive {F : ℝ → ℂ} (hf : Continuous F) (hc : HasCompactSupport F)
     (ht : tsupport F ⊆ Ioi (0 : ℝ)) (ρ : criticalStripZetaZeros) :
     rationalIdeleRadialMellin F ρ = positiveLaplaceTest (shiftedZetaZero ρ) F := by

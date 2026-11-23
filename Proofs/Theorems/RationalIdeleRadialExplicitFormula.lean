@@ -58,6 +58,28 @@ public theorem rationalIdeleRadialMellin_eq_compactLogMellin {F : ℝ → ℂ}
   congr 2
   ring
 
+/-- In the below-one coordinate `t = -log |c|`, the Mellin argument of
+(B.2.1.29), p. 599, is the negative centered exponent. The normalized
+rational log Haar is invariant under this reflection. -/
+public theorem rationalIdeleRadialMellin_reflect {f : ℝ → ℂ}
+    (hf : Continuous f) (hc : HasCompactSupport f) (s : ℂ) :
+    rationalIdeleRadialMellin (fun x ↦ f (-x)) s = compactLogMellin f (-(s - 1 / 2)) := by
+  let g (x : ℝ) := f x * exp (-(s - 1 / 2) * (x : ℂ))
+  have hg : Continuous g := hf.mul (continuous_exp.comp (continuous_const.mul continuous_ofReal))
+  have hgc : HasCompactSupport g := hc.mul_right
+  have hreflect : (fun x : ℝ ↦ f (-x) * exp ((s - 1 / 2) * (x : ℂ))) =
+      (fun x : ℝ ↦ g (-x)) := by
+    funext x
+    simp only [g, ofReal_neg, mul_neg, neg_mul, neg_neg]
+  change (∫ c, (fun x : ℝ ↦ f (-x) * exp ((s - 1 / 2) * (x : ℂ)))
+    (Real.log (ideleClassNorm c)) ∂rationalIdeleClassHaar) = _
+  rw [hreflect]
+  change (∫ c, (g ∘ Neg.neg) (Real.log (ideleClassNorm c)) ∂rationalIdeleClassHaar) = _
+  rw [integral_rationalIdeleClass_logNorm
+    ((hg.comp continuous_neg).integrable_of_hasCompactSupport (hgc.comp_homeomorph (Homeomorph.neg ℝ)))]
+  exact (Measure.measurePreserving_neg (volume : Measure ℝ)).integral_comp
+    (Homeomorph.neg ℝ).measurableEmbedding g
+
 /-- For a smooth compact log profile, the full-order zero sum is the two
 polar moments minus the real and finite local terms. The canonical real
 term is the negative additive Fourier pairing of (B.4.4.1)–(2), with
