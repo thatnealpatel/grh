@@ -1,0 +1,19 @@
+# One triple defeats the convex library of pair witnesses
+
+At depth $39/20$ take the three second translates $(-7,6,19)/25$ at $3t$, with positive Fourier weights $(3,5,4)/12$. No constant convex mixture of the five tabulated first laws `single-shift`, `hard-pair`, `midgap-sector`, `right-sector`, and `two-term` admits a simultaneous zero answer at those three shifts in the [moment comparison](single-shift-decision.md). In fact every second completion of these first representers has normalized real moment **greater than $.00268$** on this one scalar mask. This includes mixing the prime laws *before* taking their second-moment disks, as well as mixing complete witnesses. These are restrictions on a library, not on arbitrary first laws or arithmetic phases. They do not show that three shifts suffice.
+
+Write $H(x)=\sum h_l e^{ilx/25}$ for the given mask, $C=\cosh(39/20)/3$, and $d\mu=dx/(2\pi|1/2+ix|^2)$. For first moment $m$, the least possible real second response is
+
+$$\Re\int Hm^2\,d\mu-\int |H|(1-|m|^2)\,d\mu.$$
+
+This follows from the conditional unit-circle second-moment disk. It also bounds shallow interior depths: The multipliers $\cosh(jd)/\cosh(jc)$ are the circle Fourier coefficients of harmonic exit measure on the two edges of the strip, projected onto the periodic angle (apply harmonic extension to each cosine and sine). One can thus replace a shallow conditional depth and phase by a boundary circle law with the same first and second moments. For real first-translate data one may symmetrize at opposite ordinates by conjugation without changing any real translated answer; the Fourier uniqueness theorem then pins the symmetrized first moment when every real first translate is matched.
+
+Set $U=|H|^2\le1$. The majorant $M=1-(1-U)/2-(1-U)^2/8\ge\sqrt U$ follows by truncating the binomial series with negative remaining terms (and by continuity at zero). It is a Laurent polynomial on the shift lattice. For first law $i$ write $m_i=-\sum_a b_{i,a}e^{iax}/(1/2+ix)$, $b_{i,a}=e^{-a/2}\Delta B_i(a)/C$, with $B_i$ the slab expectation of $4X^3-3X$. If $m=\sum\lambda_i m_i$ for convex weights, then the negative of the least response is bounded above by $\sum\lambda_i\lambda_j K_{ij}$, where
+
+$$K_{ij}=\int M\big(1-\Re(m_i\overline{m_j})\big)\,d\mu-\Re\int Hm_i m_j\,d\mu.$$
+
+The constant term is polarized using $\sum\lambda_i=1$. Only the mixed *upper bounds* need checking, not the continuum of mixtures. For the common prime mixture the first representer is linear. Every complete-witness mixture also lies in its disk, so the negative upper bound covers both mix orders.
+
+**Replay.** Run `sage .godel/bob/check-three-shift-library.py` from the repository root. For the difference integral it uses the average of the [difference kernels](separated-second-shifts.md) at $a-b\pm l/25$ for each pair of weighted jumps, since the coefficient of $\Re(m_i\bar m_j)$ is real and even. For the sum integral the kernel is $(1+y_++y_+^2/2)e^{-|y|/2}$ at $y=a+b+l/25$. The constant has kernel $e^{-|l|/50}$. The finite ball sums check all fifteen distinct entries $K_{ij}<-.00268$. There is no angular sampling or quadrature. The closest entry is `midgap-sector` against itself, about $-.002687$.
+
+**Decision.** Do not extend the [all-pairs](all-pairs-10-2.md) certificate to every triple merely by adjusting the constant mixing percentages of these five laws. For this triple a different admissible first profile is needed even against one direction. A constructive test is to refit slab probabilities for this scalar direction, preserving both first caps and the $8/9$ mean; a nonnegative disk capacity minus price there is necessary, not sufficient for a common completion on the triple. Alternatively seek a separator against *all* first laws with these three shifts. No unconditional three-term separator or all-triples witness is known from this calculation.
