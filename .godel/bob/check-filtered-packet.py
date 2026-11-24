@@ -22,4 +22,10 @@ assert P-I*c.cosh()/3 > F('0.00184')
 I0 = (l/2).exp()*(h.exp()+3*(-h).exp())/4
 assert (F(8)/9)/L < F('0.91')
 assert 3*P < I0*F('1.205').cosh()
-print('Prime lower bound, strip positivity constants, and packet margin passed.')
+K0 = 2*(l/2).exp()*(h.cosh()+1)
+E0 = K0 + 2*(l/2).exp()*delta
+assert c.exp()*K0-c.cosh()*E0 > F('6.12')
+assert P-I*c.cosh()/3 < F('0.00186')
+old_floor = P/(1+F(-80).exp())-I*c.cosh()/6
+assert F('0.2873') < old_floor and old_floor < F('0.2874')
+print('Prime price, strip constants, packet margin, and reflection benchmarks passed.')
