@@ -69,3 +69,5 @@ From the repository root with SageMath 10.9, leaving assertions enabled:
 ```sh
 /opt/sage-10.9/bin/python .godel/bob/check-two-knots-33.py
 ```
+
+The [moved-center certificate](three-midpoints-deletion-33.md) now excludes the three fixed midpoints at full hull width, and prices arbitrary positions of three knots.
