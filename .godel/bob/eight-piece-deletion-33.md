@@ -279,10 +279,12 @@ surplus is known here.
 **Subsequent result.** Two [reweighted prices][independent-price]
 exclude $(0,2,4,6,16)/400$, $(0,2,4,8,12)/400$, and
 $(0,2,4,6,14)/400$, with all five releases and the tail
-measurable. This leaves four sets: $(0,2,4,6,k)/400$ for
-$k\in\{8,10,12\}$, and $(0,2,4,8,10)/400$.
+measurable. The [disk-normal price][disk-price] also excludes
+$(0,2,4,8,10)/400$ on that same domain. This leaves three
+sets: $(0,2,4,6,k)/400$ for $k\in\{8,10,12\}$.
 
 [independent-price]: five-release-independent-price-33.md
+[disk-price]: five-release-disk-price-33.md
 
 Replay with SageMath 10.9 and assertions enabled:
 

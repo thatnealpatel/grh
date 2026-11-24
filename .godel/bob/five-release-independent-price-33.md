@@ -135,7 +135,11 @@ primitives, and Bernstein coefficients. It requires neither
 an optimizer nor an external scratch artifact. The seven-knot
 exclusion is unchanged. No Alpöge input is used.
 
-## Next decision
+## Next decision at this stage
+
+The [subsequent disk-normal refit](five-release-disk-price-33.md)
+excludes $(0,2,4,8,10)/400$. The following records the decision
+before that refit.
 
 Do not refit the three excluded assignments. Among the
 remaining four, the new price's mesh screen is smallest for
