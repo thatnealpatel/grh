@@ -81,7 +81,10 @@ bounds or feasible laws. Recenter and refit the inherited
 disks first for $(0,2,4,6,12)/400$, the smallest of those
 three prices, and reprice all three before freezing another
 certificate. No new frequency is required for this exclusion.
+Use the mesh stop to nominate a price for that replay; a fixed
+extra mesh margin [did not help][mesh-stop] on the last seed.
 
+[mesh-stop]: five-release-mesh-stop-decision.md
 [table]: deletion-laws/delete-33-five-release-disk-price.json
 [previous]: five-release-independent-price-33.md
 [frontier]: eight-piece-deletion-33.md#price-exactly-two-knots-and-refine-five-releases
