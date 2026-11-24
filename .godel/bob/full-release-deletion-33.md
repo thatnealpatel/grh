@@ -2,6 +2,8 @@
 
 **Decision.** At $c=39/20$ the original knots cannot support the requested refit: Every law satisfying the two unfolded caps and simultaneous second replies has $M-8/9<-6.6728\cdot10^{-9}$. Keep $X=0$ left of $-144/25$, allow any independent probability law on $u\in[0,1]$ on **each** of the 1,256 finite reference slabs, and allow arbitrary measurable laws on $[29/5,\infty)$. Here $X=2u^2-1$, $T(X)=4X^3-3X$, $(A,B,U)=\mathbb E(X,T(X),u)$, and $M=\int_0^\infty te^{-t}U(t)\,dt$. No previously derived regional-score, support-count, or shape condition needs to be imposed. This is not an exclusion for unrestricted all-real laws or a relaxation of the unfolded caps. No Alpöge input is used.
 
+**Subsequent result.** The midpoint fit proposed below has now been [excluded by an enlarged first-cut list](two-knots-deletion-33.md). The positive split price and required jumps below refer to the old list.
+
 ## What changed the sign
 
 Keep the [previous 106 and 57 first frequencies](all-slabs-deletion-33.md), on $A$ and $B$, respectively, and the **one** reference-centered second tangent. Refit the first multipliers as complex vectors (charge their Euclidean norms), and vary the second multiplier. A smoothed Newton search using the stationary atoms of each slab score, not a final frozen list of atom sites, nominated the [new dual](deletion-laws/delete-33-full-release.json). The finite-tail search objective, about $-1.01\cdot10^{-8}$, is not the certificate.
