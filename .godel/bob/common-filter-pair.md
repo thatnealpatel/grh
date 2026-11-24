@@ -2,6 +2,8 @@
 
 A real high-endpoint failure forces a zeta zero at scaled depth $>1.230$ near $t$ **or** $3t$, with $t=2q^{3/5}$. Alternatively the two required depths can be set to $1.226$ and $1.50$, respectively. These are disjunctions, not improvements to $1.220$ at the first height alone. The gain comes from pricing the two signs against the *same* prime phase; there is no new cutoff search.
 
+The [two signed first masks](symmetric-first-depth.md) give a stronger symmetric **existence** bound $>1.23684$ when both centers are included, without a longer-cutoff measurement. That result does not improve the signed charges or preserve the first-height hole below.
+
 Use $R,V,D,g,G,Q,E,I$ and the seventeen-cutoff weight $f$ of the [single-height test](common-filter-depth.md). For $j=1,3$ set $x_j=\gamma-jt$, $b=\beta-1/2$, $d=Db$, $s_1=1$, $s_3=-1$. Let $J=(2/\epsilon)\log D$. Define $S_j(c)$ by summing
 
 $$-s_j(1+e^{-2d})\Re Q(\beta+ix_j)-\frac{2G\cosh c}{R}\Re E(x_j+ib)$$
