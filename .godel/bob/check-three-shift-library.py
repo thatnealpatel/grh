@@ -88,3 +88,19 @@ for i,p in enumerate(laws):
         entry = sum(a*R(QQ(k)/25) for k,a in major.items()) - sum(a*S(QQ(k)/25) for k,a in hs.items())
         print(names[i], names[j], entry, flush=True)
         assert entry < -F('0.00268')
+
+# Same kernels, but now price the *actual* sparse measured masks and
+# every disk completion of the original 152-slab first law.
+S, R = kernels(laws[0],laws[0])
+for table, count, low, high, cap in (
+    ('four-shift-10-2',4,'-.000891398','-.000891397','-.00008175'),
+    ('joint-refit-10-2',5,'-.000886218','-.000886216','-.00007548'),
+):
+    rows = [list(map(int,l.split())) for l in Path(f'.godel/bob/{table}.txt').read_text().splitlines()
+            if l.strip() and not l.lstrip().startswith('#')]
+    h = [(QQ(k)/25,QQ(b)/10**10) for k,_,_,b in rows if b]
+    assert len(h) == count
+    center = C*sum(b*S(s) for s,b in h)
+    rad = C*(R(0)*sum(b*d*R(s-t) for s,b in h for t,d in h)).sqrt()
+    assert F(low) < center < F(high) and center+rad < F(cap)
+    print(table, 'center, radius upper bound, upper price:', center, rad, center+rad)

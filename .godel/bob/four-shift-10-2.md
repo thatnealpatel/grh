@@ -47,3 +47,13 @@ The finite surcharge over the ideal $t$ cost in the winning floating reprice was
 ## Scope
 
 The signed inequality in the fixed shallow comparison is $Q_t+Q_3<-4.8\cdot10^{-7}$ at $L=8192$. At sufficiently large actual failures it is conditional on the two windows being shallow and on taking the iterated errors small for these fixed masks, as in the six-term construction. For instance, a measured sum $\ge-4\cdot10^{-7}$ contradicts joint shallowness once the total error is less than $8\cdot10^{-8}$. No such arithmetic lower bound follows from this certificate. Nor does the search exclude three terms.
+
+## Repricing the signed premise on a shallow model
+
+On the [shared-prime long-layer construction](endpoint-convolution-lift.md) from the 152-slab first law, the limiting $Q_t$ is zero and $-.000891398<Q_3<-.000891397$ on the four new terms. Thus the sufficient lower bound $-4\cdot10^{-7}$ is not a consequence of the failure mean in that relaxation. In fact, **changing the conditional second law alone cannot recover the lower bound**, even if one drops all higher constraints at $3t$. This conclusion fixes the first prime law, all its first translates, the common trace marginal, and the zero-answer completion at $t$.
+
+To see this, use $m=-G_B/C_1$, $v=1-|m|^2$, and the kernels $S(s)=\int e^{isx}m^2\,d\mu$, $R(s)=\int e^{isx}v\,d\mu$ of the [three-shift library calculation](three-shift-library.md). Since the measured multiplier is $-(C_1/C_2)h$, the measured response is **plus** $C_1\Re\int h m_2\,d\mu$, with $m_2=m^2+v g$, $|g|\le1$. Its center is $Q_{3,0}=C_1\sum_l h_l S(l/25)$, realized by the Poisson second law in the long-layer construction. By Cauchy–Schwarz with measure $v\,d\mu$ every disk completion satisfies
+
+$$|Q_3-Q_{3,0}|\le C_1\int |h|v\,d\mu\le C_1\sqrt{R(0)\sum_{k,l}h_k h_l R((k-l)/25)}.$$
+
+The [ball checker](check-three-shift-library.py) certifies $Q_3<-.00008175$ uniformly on this disk, and $Q_3<-.00007548$ for the [five-term mask](joint-refit-10-2.md) by the same argument. The radius bound need not be attained, nor need every disk choice have a shared-prime long-layer realization. Only the Poisson center is used for that example. None is an assertion about arithmetic phases or zeta divisors.
