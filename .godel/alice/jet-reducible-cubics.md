@@ -241,9 +241,10 @@ $O(W)<q$, so they remain distinct. Simplicity at infinity implies
 smoothness there, even if $\overline C$ is singular elsewhere.
 
 Use the [marked quotient](jet-quotient-determinant.md), with $r\ge1$
-and $m-3\ge r-1$. If a set in the box has more than $3m$ distinct
-points, **some maximal minor of the normalized quotient evaluation
-matrix is a $q$-unit**. To see this, take primitive coordinates for
+and $m-3\ge r-1$. Put $a=3m-r$, the quotient rank. If a set
+in the box has more than $a$ distinct points, **some maximal minor
+of the normalized quotient evaluation matrix is a $q$-unit**.
+To see this, take primitive coordinates for
 $P$ and extend its vector to an integral unimodular basis. In those
 coordinates the lattice $K_{m,r}$ has a monomial basis, consisting
 of monomials of order at least $r$ at $[0:0:1]$. Thus $K_{m,r}$
@@ -259,11 +260,15 @@ reduced marked space by those multiples.
 The points remain distinct modulo $q$ since $2N<q$. The row factors
 $l^{-r}$ are units at $q$. If a nonzero quotient class were in the
 kernel of all the reduced evaluations, it would give a form of
-degree $m$ not divisible by $\overline C$ meeting that irreducible
-cubic in more than $3m$ points, contradicting Bézout. The evaluations
-therefore have full rank modulo $q$. This rules out a $q$-factor
-common to all maximal minors on a large class, not an argument
-that prices individual residue classes by other means.
+degree $m$ not divisible by $\overline C$. Its intersection
+multiplicity with $\overline C$ at $\overline P$ is at least $r$,
+since it vanishes to ambient order at least $r$ and the curve is
+smooth there. The box points are affine and distinct from
+$\overline P$. By Bézout there can be at most $3m-r$ of them
+in the zero set of the form. The evaluations therefore have full
+rank modulo $q$. This rules out a $q$-factor common to all maximal
+minors on a large class, not an argument that prices individual
+residue classes by other means.
 
 The short-line argument above uses a line through the **actual**
 $P$. Merely knowing $q\mid UA+VB$ gives $q\mid Ux_1+Vx_2$ but
@@ -288,6 +293,8 @@ result pays for unrestricted outside-support cofactors.
 
 Next test: On the irreducible reduction, seek structure in the
 simultaneous output factorizations, not an additional common
-$q$-factor on the whole marked quotient. The infinity test does
-not bound occupancy at arbitrary norm and splitting type. The full
+$q$-factor on the whole marked quotient. See the
+[cubic rank decision](cubic-rank-decision.md#next-worker) for the
+fixed denominator-pair handoff. The infinity test does not bound
+occupancy at arbitrary norm and splitting type. The full
 maximizing-region complement is still open.
