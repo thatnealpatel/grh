@@ -1,4 +1,4 @@
-# Delete-33: Price four slab releases and six added knots
+# Delete-33: Price four slab releases and seven added knots
 
 At $c=39/20$, keep $X=0$ left of $-144/25$, both unfolded
 first caps, and simultaneous second replies at $(-7,6,19)/25$.
@@ -21,6 +21,8 @@ The law from $29/5$ onward is arbitrary measurable. Then:
   gives $M-8/9<-3.38686\cdot10^{-10}$. The five-knot bound is
   $-2.78406\cdot10^{-8}$. The pieces on either side of each
   new knot may have unrelated laws.
+* Inserting **any seven real knots** gives $M-8/9<-10^{-10}$.
+  This uses several tangents, selected by slab assignment.
 * Releasing all negative slabs and inserting **one** real knot
   in a nonnegative finite slab gives $M-8/9<-4.0298\cdot10^{-9}$.
 
@@ -121,3 +123,57 @@ Run from the repository root with SageMath 10.9 and assertions enabled:
 /opt/sage-10.9/bin/python .godel/bob/check-three-midpoints-33.py --certificate eight-piece
 /opt/sage-10.9/bin/python .godel/bob/check-three-midpoints-33.py --certificate six-knots
 ```
+
+## Seven knots: Use different tangents on different assignments
+
+A single tangent need not price every knot configuration. Record
+an assignment by the original slabs having one interior knot
+or at least two. Charge $E_i$ and one unit of budget for the
+former, and $D_i$ and two units for the latter. This encoding
+also covers fewer than seven knots, knots at existing boundaries,
+and three or more interior knots in the same slab.
+
+For each tangent, enclose its own unsplit price $P$ and slab
+increments. Round each term upward to an integer multiple of
+$10^{-16}$. Using the six-knot tangent first, enumerate every
+assignment of budget at most seven with integer upper price
+at least $-10^{-10}$. Pruning uses the same budget recurrence
+as above, applied to the remaining suffix of slabs. Specifically,
+if $V_j(k)$ is the best increment on the suffix starting at
+$j$ with at most $k$ units, the three available terms are
+$V_{j+1}(k)$, $E_j+V_{j+1}(k-1)$, and $D_j+V_{j+1}(k-2)$,
+omitting terms that overrun the budget. A partial assignment
+whose current price plus $V_j(k)$ falls below the cutoff cannot
+have an extension at or above it.
+
+Each subsequent tangent takes the same assignment and reprices
+it, including its unsplit term. The four additional tables
+are in `deletion-laws/delete-33-seven-*.json`. They use
+$1/3200$ shared split cells rather than $1/1600$ cells; their
+tail integration ends at $56$ or $60$, with a remote allowance
+beyond that endpoint. The slab-release bounds are unchanged
+in method but recomputed for each tangent. The names indicate
+where the tangents were fitted, not restrictions on their use.
+
+| Tangent | Assignments not yet below $-10^{-10}$ |
+|:--|--:|
+| `six-knots` | 433 |
+| `seven-two-negative` | 38 |
+| `seven-minus-216` | 13 |
+| `seven-minus-2304` | 6 |
+| `seven-nonnegative` | 0 |
+
+This is a cover of assignments by proofs, not a sum of
+inequalities from different tangents. The last tangent handles
+the assignment with one split in each of the first seven
+nonnegative slabs, with upper price about $-2.128678\cdot10^{-10}$.
+No statement about eight arbitrary knots or five measurable
+releases follows from the cover.
+
+Replay all five tables with SageMath 10.9 and assertions enabled:
+
+```sh
+/opt/sage-10.9/bin/python .godel/bob/check-seven-knots-deletion-33.py --jobs 5
+```
+
+Omit `--jobs 5` to check the tangents serially.

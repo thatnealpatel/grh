@@ -1,140 +1,30 @@
 """Reprice refined finite delete-33 meshes with moved quadratic tangents."""
 import argparse
 from fractions import Fraction
-from hashlib import sha256
-import json
 from pathlib import Path
 from runpy import run_path
 
 from sage.all import QQ
 
 
-def upper(a,b,m):
-    return s['bern_upper'](a,b,m,F('1e-14'))
+price = run_path(str(Path(__file__).resolve().with_name('refined-prices-33.py')))
+F, s, costs, z, B = (price[k] for k in ('F', 's', 'costs', 'z', 'B'))
+upper, single_knot_costs = (price[k] for k in ('upper', 'single_knot_costs'))
 
-
-def single_knot_costs(z, center, data, old, extra, threshold):
-    """Price one arbitrary real knot per slab; use release on cheap slabs."""
-    split = list(extra)
-    h = QQ(1)/1600
-    large = [i for i,y in enumerate(extra) if y > threshold]
-    points = sorted({j for i in large for j in range(int(3200*z[i]),int(3200*z[i+1])+1)})
-    aa,bb,_,_,curv = s['tail_data'](z,center,data,points,3200,primitive=True)
-    # The mass primitive is step(t,0), including on t<0.
-    prim = {j:(a,b,s['step'](QQ(j)/3200,0)) for j,a,b in zip(points,aa,bb)}
-
-    for i in large:
-        t,r = z[i:i+2]
-        j0,j1 = int(3200*t),int(3200*r)
-        def score(v):
-            left = [a-b for a,b in zip(prim[j0],v)]
-            right = [a-b for a,b in zip(v,prim[j1])]
-            return upper(*left)+upper(*right)
-
-        # On each cell bound the quadratic interpolant by its three
-        # controls, pricing the two atom choices at each control jointly
-        # in their shared knot coordinate. This bound is uniform in both.
-        vals = [score(prim[j]) for j in range(j0,j1+1,2)]
-        for j in range(j0+1,j1,2):
-            v = [2*b-(a+c)/2 for a,b,c in zip(prim[j-1],prim[j],prim[j+1])]
-            vals.append(score(v))
-        # curv already accounts for differences of two laws in A and B.
-        # |(t*exp(-t))''| <= 2 exp(-t/2) for t>=0, |delta U|<=1.
-        rem = (curv+(2 if t>=0 else 0))*(-F(t)/2).exp()*h**3/(72*F(3).sqrt())
-        split[i] = min(extra[i],max(0,(F(max(y.upper() for y in vals))+rem-old[t]).upper().exact_rational()))
-
-    return split, prim
-
-
-base = Path(__file__).resolve().parent
-if not __debug__:
-    raise SystemExit('Run with assertions enabled.')
-costs = run_path(str(base/'release-costs-33.py'))
-neg, s, F = costs['neg'], costs['s'], costs['F']
-laws = base/'deletion-laws'
-ref = (laws/'delete-33-tail-baseline.txt').read_bytes()
-assert sha256(ref).hexdigest() == '7be0449af83f2b264894d0b0074108139ada0badc0c34a26edc6731d81baaa5c'
-z, _, B, _ = s['unfold']['lattice']['prime_rows'](ref.decode())
-assert len(z)==1257 and z[0]==-QQ(144)/25 and z[-1]==QQ(29)/5
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument('--certificate', choices=('three-midpoints', 'first-fit', 'eight-piece', 'six-knots'), default='three-midpoints')
 case = parser.parse_args().certificate
-hashes = {'three-midpoints': '2716981104b65b67c01c1b8e2306f43a6328145b3425dfaee040b18dd35a13ec',
-          'first-fit': 'ebb8ba76b9be482c9bf4b7c254891a16106c539b30e9c5069abf048c38f1db4e',
-          'eight-piece': '163e7c8da104a89855147b0a996b5968b26765d0596a24c70682f566b458890c',
-          'six-knots': '79face742e0aee44229823c08c2c32d53ac66aabdac39e918a6b58c2af1dd51f'}
-raw = (laws/f'delete-33-{case}.json').read_bytes()
-assert sha256(raw).hexdigest() == hashes[case]
-cert = json.loads(raw,parse_float=str)
-data = cert['cuts']
-second = [r for r in data if len(r)==3]
-assert len(second)==1 and second[0][0]==1
-for row in data:
-    assert F(row[-1]) >= 0
-    if len(row)!=3:
-        j,x,re,im,_ = row
-        assert j in (0,1) and F(x)>=0 and abs(s['K'](F(re),F(im)))>0
-
-# Perturb raw B jumps, not the normalized Fourier coefficients. This
-# center need not be realizable and is never used as a primal law.
-bump = {QQ(k)/400:QQ(Fraction(v)) for k,v in cert['jumps']}
-assert len(bump)==len(cert['jumps']) and bump.keys()<=set(z)
-shift = 0
-center = []
-for t,y in zip(z,B):
-    shift += bump.get(t,0)
-    center.append(y+shift)
-_, lam, sigma = second[0]
-lam = list(map(F,lam))
-q = s['second_majorant'](lam)
-bc = s['jumps'](z,center,s['C'])
-d,v = s['second_tangent'](z,bc,lam,q)
-qc = sum(x*y for x,y in zip(bc,v))
-constant = -F(8)/9 + sum(F(r[-1]) for r in data if len(r)==5) + F(sigma)*(d+qc)
+data, center, sigma, constant = price['tangent_data'](price['load_certificate'](case))
 refined = case in ('eight-piece','six-knots')
 finite_den = 1600 if refined else 400
 added = [j for j in range(1,24) if j % 8] if refined else [1,3,5]
-assert all(t*400==int(400*t) for t in z)
-mesh = sorted([int(finite_den*t) for t in z]+added)
-assert len(set(mesh))==len(z)+len(added)
-ap,bp,*_ = s['tail_data'](z,center,data,mesh,finite_den,primitive=True)
-W = [s['step'](QQ(k)/finite_den,0) for k in mesh]
-supports = [upper(a-b,c-d0,e-f) for a,b,c,d0,e,f in
-             zip(ap,ap[1:],bp,bp[1:],W,W[1:])]
-finite = sum(supports)
-print('Constant plus finite atom supports:',constant+finite,flush=True)
-
-# Integrate the raw atom score, not a difference relative to the
-# (possibly unbounded by one) auxiliary center. All branch points
-# are on the 1/400 mesh. Use quadratic Bernstein interpolation on it.
-den = 400
-lo,hi = int(z[-1]*den),48*den
-pts = range(2*lo,2*hi+1)
-a,b,size,_,_ = s['tail_data'](z,center,data,pts,2*den)
-m = [F(j)/(2*den)*(-F(j)/(2*den)).exp() for j in pts]
-ends = [upper(a[i],b[i],m[i]) for i in range(0,len(m),2)]
-controls = sum(upper(*(2*v[i]-(v[i-1]+v[i+1])/2 for v in (a,b,m)))
-               for i in range(1,len(m),2))
-tail = (2*sum(ends)-ends[0]-ends[-1]+controls)/(3*den)
-# The shared curved_error includes the integral of exp(-t/2) on
-# [z[0],0]. Reuse its derivative coefficient on the positive tail.
-scale = neg['curved_error'](z,center,data,den)/(2*((-F(z[0])/2).exp()-1))
-scale += 3*(F(1)/(2*den)).exp()/(192*den**3)  # |(t exp(-t))'''| <= 3 exp(-t/2)
-err = 2*scale*((-F(z[-1])/2).exp()-F(-24).exp())
-remote = s['step'](QQ(48),0)+2*size*F(-24).exp()
-bound = constant+finite+tail+err+remote
-print('Integrated tail atom support, interpolation, remote:',tail,err,remote,flush=True)
+bound, original, old, tail_data = price['mesh_prices'](data, center, constant, finite_den, added)
+a, b, m, den, tail, err, remote = tail_data
 print(case, 'fixed mesh, surplus upper:',bound,flush=True)
 if case == 'first-fit':
     assert bound < F('-1.43881e-8')
     raise SystemExit(0)
 
-# Restore the actual unsplit atom bounds for measurable-release accounting.
-indices = dict(zip(mesh,range(len(mesh))))
-ends = [indices[int(t*finite_den)] for t in z]
-old = {t: (supports[i] if j==i+1 else upper(ap[i]-ap[j],bp[i]-bp[j],W[i]-W[j]))
-       for t,i,j in zip(z,ends,ends[1:])}
-original = constant+sum(old.values())+tail+err+remote
 extra = costs['release_costs'](z,center,data,old)
 rank = sorted(zip(extra,z[:-1]),reverse=True)
 print('Original price and top measurable increments:',original,rank[:5],flush=True)

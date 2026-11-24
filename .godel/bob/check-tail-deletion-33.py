@@ -86,6 +86,7 @@ def tail_data(z, B, data, points, den, *, primitive=False):
     assert all(i*h == t for i,t in zip(k,z)) and all(i < j for i,j in zip(k,k[1:]))
     bstar = [v for v in jumps(z,B,C)]
     lo, hi = points[0], points[-1]
+    gaps = [0]+[q-p for p,q in zip(points,points[1:])]
     assert all(lo <= p <= hi for p in points)
     x = [F(j)*h for j in points]
     w = [(-t/2).exp() for t in x]
@@ -101,8 +102,17 @@ def tail_data(z, B, data, points, den, *, primitive=False):
             wbar = K(F(1)/2,-f)
             coeff = scale/D*(1 if primitive else wbar)/wbar.conjugate()*v.conjugate()
             target = aa if j == 0 else bb
-            for i,t in enumerate(x):
-                target[i] += w[i]*(coeff*K(0,f*t).exp()).real()
+            # Acb arithmetic encloses each phasor product. Reset its
+            # anchor periodically to limit the growth of the enclosure.
+            step = {}
+            for i,delta in enumerate(gaps):
+                if i % 128 == 0 or abs(delta) > 16:
+                    phase = coeff*K(0,f*x[i]).exp()
+                else:
+                    if delta not in step:
+                        step[delta] = K(0,f*delta*h).exp()
+                    phase *= step[delta]
+                target[i] += w[i]*phase.real()
             size += 2*scale/D
             slope += 2*scale/D*abs(wbar)
             curvature += 2*scale/D*(F(1)/4+f*f)
