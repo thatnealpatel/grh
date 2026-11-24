@@ -76,21 +76,20 @@ price = I17/3*(1-2*ratio*(F.pi()/15).cos())
 assert price < F('-.00012')
 print('Difference-shift floor, mass, second and order-13 prices:', P17, I17, W, price)
 
-# H_N = |sum_{l=0}^{N-1} exp(i l x/10) / N|^2. Shift the phase by b*x.
-def fejer_price(N, b50):
+# Equally spaced Fejer mask, with spacing H and phase shift b*x.
+def fejer_price(N, H, b):
     r = {l: QQ(N-abs(l))/N**2 for l in range(1-N, N)}
-    I = sum(v*F(-abs(l)*h/2).exp() for l, v in r.items())
-    K = sum(v*w*F(-abs(l+m)*h/2).exp() for l, v in r.items() for m, w in r.items())
-    # First-order shift = l/10 + b50/50; higher orders use j*b50/50.
-    step = QQ(1)/50
-    A = {5*l+b50: v*F(-(5*l+b50)*step/2).exp() for l, v in r.items()}
-    return first_floor(A, step), I, K
+    I = sum(v*F(-abs(l)*H/2).exp() for l, v in r.items())
+    K = sum(v*w*F(-abs(l+m)*H/2).exp() for l, v in r.items() for m, w in r.items())
+    # Key by the exact first-order shift. At order j, use l*H+j*b.
+    A = {l*H+b: v*F(-(l*H+b)/2).exp() for l, v in r.items()}
+    return first_floor(A, QQ(1)), I, K
 
-P5, _, K5 = fejer_price(5, 0)
+P5, _, K5 = fejer_price(5, QQ(1)/11, 0)
 c = F('1.577')
 U = (2*c).cosh()/3*(1-2*(3*P5/c.cosh())**2/K5)
-assert U < F('-.00154')
-P6, I6, _ = fejer_price(6, 2)
+assert U < F('-.00270')
+P6, I6, _ = fejer_price(6, QQ(1)/10, QQ(1)/25)
 c = F('1.61')
 W = I6*(2*c).cosh()/3*(1-2*(3*P6/(I6*c.cosh()))**2)
 B = I6/3-2*(F.pi()/14).cos()*P6/F('1.95').cosh()

@@ -4,7 +4,7 @@ At a sufficiently large real high-endpoint failure use the [original height, ord
 
 ## The two measurements
 
-Set $h=1/10$, $r_l=(N-|l|)/N^2$ for $|l|<N$, and $H_N(x)=|N^{-1}\sum_{l=0}^{N-1}e^{ilhx}|^2=\sum_l r_l e^{ilhx}$. Given a fixed real $b$, define $T_j(N,b)$ using shifts $s=lh+jb$ and coefficients $A_s=r_l e^{-s/2}$: Replace $B_j(y)$ in $P_j$ by $\sum_s A_s B_j(y-s)$ **before** smoothing. The first price is the [masked-cutoff floor](masked-cutoff.md) $P=2(8/9)^2/\mathcal L-\sum_s A_s e^s$, where $f(z)=\sum_s A_s(z+s)_+$ at $j=1$ and $\mathcal L=\int_0^\infty z^2e^{-z}/f(z)\,dz$. Both filters below have positive coefficients and $f(0)>0$. No longer measurements are inferred by translating the first sum.
+For spacing $h>0$, set $r_l=(N-|l|)/N^2$ for $|l|<N$, and $H_N(x)=|N^{-1}\sum_{l=0}^{N-1}e^{ilhx}|^2=\sum_l r_l e^{ilhx}$. Given a fixed real $b$, define $T_j(N,b)$ using shifts $s=lh+jb$ and coefficients $A_s=r_l e^{-s/2}$: Replace $B_j(y)$ in $P_j$ by $\sum_s A_s B_j(y-s)$ **before** smoothing. The first price is the [masked-cutoff floor](masked-cutoff.md) $P=2(8/9)^2/\mathcal L-\sum_s A_s e^s$, where $f(z)=\sum_s A_s(z+s)_+$ at $j=1$ and $\mathcal L=\int_0^\infty z^2e^{-z}/f(z)\,dz$. Both filters below have positive coefficients and $f(0)>0$. No longer measurements are inferred by translating the first sum.
 
 In that note's shallow comparison, the line multiplier at order $j$ is now $e^{ijbx}H_N(x)$. The order-dependent translation is essential: This replaces the common phase $\phi$ by $\phi+bx$ at *every* order, leaving the mass and the depth factors untouched. More explicitly the conditional summand for $-T_j/(M\cosh(jc))$ is, up to vanishing total errors,
 
@@ -12,11 +12,11 @@ $$H_N(x)\frac{\cosh(jd)}{\cosh(jc)}\cos(j(\phi+bx)).$$
 
 The contour bounds, line replacement, reflection, and trace marginal in the masked proof apply since there are only finitely many fixed shifts for each of finitely many fixed orders. Reflection changes depth sign at fixed $x$. The harmonic extension of a nonnegative cosine polynomial is nonnegative at $(d,\phi+bx)$ pointwise, without an independence assumption. Let $I=\sum_l r_l e^{-|l|h/2}$ and $K=\sum_{l,m} r_lr_m e^{-|l+m|h/2}$. These are the first two mask moments for $d\mu=dx/[2\pi(1/4+x^2)]$.
 
-* **Raw $P_2$.** Use $(N,b)=(5,0)$ only at the first cutoff. The unmasked limiting upper price from the masked proof is $\cosh(2c)(1-2(3P/\cosh c)^2/K)/3$. At $c=1.577$ it is below $-.00154$.
-* **New second measurement.** Use $(N,b)=(6,1/25)$ throughout. The upper price for $T_2$ is $I\cosh(2c)(1-2(3P/(I\cosh c))^2)/3<-.00124$ at $c=1.61$. In particular the order-two filter is centered at shift $2/25$, not $1/25$.
-* **Order twelve.** With the same $(6,1/25)$ and $n=12$, take $v_k=\sqrt{2/14}\sin((k+1)\pi/14)$, $0\le k\le12$, and $s_j=2\sum_{k=0}^{12-j}v_kv_{k+j}$. The [sine-vector inequality](finite-cutoff-budget.md) at the rotated phase gives a limiting upper price on $\sum_{j=2}^{12}s_j T_j/\cosh(jc)$ of $I/3-2\cos(\pi/14)P/\cosh c<-.000146$ at $c=1.95$.
+* **Raw $P_2$.** Use $(N,h,b)=(5,1/11,0)$ only at the first cutoff. The unmasked limiting upper price from the masked proof is $\cosh(2c)(1-2(3P/\cosh c)^2/K)/3$. At $c=1.577$ it is below $-.00270$.
+* **New second measurement.** Use $(N,h,b)=(6,1/10,1/25)$ throughout. The upper price for $T_2$ is $I\cosh(2c)(1-2(3P/(I\cosh c))^2)/3<-.00124$ at $c=1.61$. In particular the order-two filter is centered at shift $2/25$, not $1/25$.
+* **Order twelve.** With the same $(6,1/10,1/25)$ and $n=12$, take $v_k=\sqrt{2/14}\sin((k+1)\pi/14)$, $0\le k\le12$, and $s_j=2\sum_{k=0}^{12-j}v_kv_{k+j}$. The [sine-vector inequality](finite-cutoff-budget.md) at the rotated phase gives a limiting upper price on $\sum_{j=2}^{12}s_j T_j/\cosh(jc)$ of $I/3-2\cos(\pi/14)P/\cosh c<-.000146$ at $c=1.95$.
 
-Thus measured lower bounds of $-.0015$, $-.0012$, and $-.00014$, respectively, force a right zero with $D(\beta-1/2)>c$ in the corresponding row. The height is $t=2q^{3/5}$, $D=\log((9\log q/5)^2)$, and $|\gamma-t|\le(2/\epsilon)\log D$ includes the center. The strict margins absorb errors by fixing sufficiently small $\epsilon>0$ before taking $q$ sufficiently large. Run [the price checker](check-masked-cutoff.py) with SageMath Python without `-O`.
+Thus measured lower bounds of $-.002$, $-.0012$, and $-.00014$, respectively, force a right zero with $D(\beta-1/2)>c$ in the corresponding row. The height is $t=2q^{3/5}$, $D=\log((9\log q/5)^2)$, and $|\gamma-t|\le(2/\epsilon)\log D$ includes the center. The strict margins absorb errors by fixing sufficiently small $\epsilon>0$ before taking $q$ sufficiently large. Run [the price checker](check-masked-cutoff.py) with SageMath Python without `-O`.
 
 ## Why the raw decision cannot just inherit the rotated depth
 
