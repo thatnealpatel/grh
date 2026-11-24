@@ -1,5 +1,6 @@
 ---
 evidence_revision: b6b5fe8ce1c7334f815ba2515ee02969b09b996e
+outcome: established
 ---
 
 # Test onset two for the discounted triangular sign
@@ -195,3 +196,101 @@ print('small', len(A), min(A), 'endpoint', A[0])
 print('middle', len(B), min(B))
 assert min(A)[0] >= 200 and min(B)[0] >= 315
 ```
+
+## Adjudication
+
+**Two suffices.** In fact the lower bound is strict. This is a
+strengthening of the forward use at lines 175–181 of the evidence
+revision, not a correction to its result for $X\ge2^{512}$.
+
+**Full sums and signs.** At lines 53–93 the full Mangoldt sum for
+scale $U\ge2$ and transform $F$ is the pole term minus both zero
+sums. In $X-P_{\rm all}$ this leaves a *positive* trivial sum
+$\sum_{j\ge1}X^{-2j}K(-2j)$; each summand is nonnegative. Adding
+back the proper powers costs nothing in this lower bound and gives
+at least the exact square sum $Q_2(Y)$. On RH the nontrivial sum
+is bounded in modulus by $wY$ (Landau pin, lines 121–130). Thus
+$$H_{\rm all}(X)\ge Q_2(Y)-wY.$$
+At scale $Y\ge4096$, apply the full formula instead to $h(2v)$.
+Its pole is $kY$, and $|K_2(\rho)||\rho|^2\le
+2(2^{1/4}+1)^2<10$. Here the trivial sum is subtracted; its size
+is at most $2\sum_{j\ge1}Y^{-j}/j^2\le 2/(Y-1)$. Removing proper
+powers to get $Q_2$ costs at most $(\log2)\theta(\sqrt{2Y})$:
+Two powers of one base have ratio at least two and cannot both be
+in $(Y,2Y)$, while either endpoint has weight zero.
+
+For $\theta(t)\le t\log4$, induct on integers $n$, starting at
+zero and one. At $n=2m$ bound $\theta(n)-\theta(m)$ by the log
+of the central binomial coefficient. At $n=2m+1$ bound
+$\theta(n)-\theta(m+1)$ by $\log\binom{2m+1}{m}$. In each case the
+primes in the difference divide the coefficient, and the coefficient
+is at most $2^{2m}$ (two equal maxima in the odd row). The inductive
+bounds give $n\log4$ in both cases; taking floors handles real $t$.
+
+**All moduli.** Set $\ell=\log(2q)>1$. The primitive conductor
+bound at evidence lines 130–142 charges each full nontrivial sum
+at most $108Y\ell$: On GRH the reciprocal-square zero mass for a
+nonprincipal inducer is less than $3(\log r+5)$, $r\le q$, and
+$|K(\rho)||\rho|^2<6$. Zeta is covered by $D_0$. The full trivial
+sum costs less than 10. Restricting to bases coprime to $q$ costs
+at most $\sum_{p\mid q}(\log p+\log4)\le3\log q$ by counting
+exponents in $[X,4X]$ and using $h<1$. Averaging with weight $1/d$
+keeps these budgets unchanged, gives pole $X/d$, and selects powers
+congruent to one. To get $P_1$, remove proper powers: Each base
+is at most $2Y$ and has at most two powers in $(X,4X)$, since the
+third has ratio at least four to the first. Their total cost is at
+most $2\log2\,\theta(2Y)\le8(\log2)^2Y<4Y$. Hence
+$$|X/d-P_1|\le108Y\ell+10+3\log q+4Y<200Y\ell.$$
+The exact split and $\lceil\ell\rceil\ge\ell$ give
+$H_q(X)>H_{\rm all}(X)-0.0002Y$ even when $q>X$.
+
+**Three real intervals.** The rational inequalities in `constants`
+now give, for $Y\ge4096$,
+$$H_q(X)/Y>0.07248-1.84/64-2/(4096\cdot4095)-0.0002>1/25.$$
+Here $1.84$ pays for $10D_0+\sqrt2\log2\log4$, both terms having
+relative loss proportional to $1/\sqrt Y$.
+
+For the other intervals I checked the two grid sums against the
+arms $m(\log p-\log U)$ and $2\log2-m(\log p-\log U)$, with
+$(m,U)=(1,X)$ or $(2,Y)$. In the latter case the last rising-arm
+prime satisfies $64p^2\le2j^2$; `isqrt(2*j*j)//8` is the exact
+integer cutoff. The sign of the $400T$ allowance is adverse in both
+calculations. I reran the block above with assertions enabled in
+Python 3.12.3 (SHA-256 of the block including its final newline:
+`6a122fbeca542c2586e27f9180bdd1ccdd5d13874d21ef70020a1a845b4cb575`).
+The sieve gave 23,000 primes through 262,144 and 1,028 through 8,192.
+
+* For $2\le X\le256^2$, the minimum of the 32,588 floored lower
+  bounds in units of $Y/1000$ was 306 at $j=2219$; the endpoint
+  $X=2$ gave 358. Use only $H_{\rm all}(X_i)\ge0.20Y_i$. On smooth
+  pieces $|H_{\rm all}'|\le1+\theta(4X)/X<7$. Continuity at all
+  knots makes this a Lipschitz bound on the interval. The preceding
+  node (including the initial endpoint) has $Y_i/Y\ge127/128$ and
+  $X-X_i\le2Y/128$. After the discount the ratio is greater than
+  $0.20(127/128)-7/64-0.0002>1/25$.
+* For $256\le Y\le4096$, the minimum of the 30,721 floored lower
+  bounds for $1000Q_2(Y_i)/Y_i$ was 331 at $j=2048$. Use only
+  $Q_2(Y_i)\ge0.315Y_i$. Here $|Q_2'|\le2\theta(2Y)/Y<6$ off the
+  knots, again with continuity. The nearest node has distance at
+  most $1/16$, so $Q_2(Y)/Y\ge0.315-(6+0.315)/(16\cdot256)>0.312$.
+  After the zero budget and discount, $0.312-0.27066-0.0002>1/25$.
+
+**Samples.** Fix $q$ and integer $B\ge1$. The forward implication
+now covers every $n\ge2$. Conversely, such signs give an eventual
+nonnegative tail. At the Landau pin, lines 153–206 apply to the
+same $H_q$ without GRH: The grouped coefficient is
+$K(z)(m_\zeta(z)-\delta_q S(z)/d)$, never zero by irrationality
+and $K(z)\ne0$ in the strip. Any real zero above $1/2$ has negative
+coefficient since zeta has none there. The $O_q(\sqrt X)$ remainder
+needs no GRH for removing proper powers, by the width-four count.
+If $\Re z\le a$ for all zeros, the sub-first coefficient moments
+justify the cell subtraction for the sample series in
+$\Re s>b=\max(1/2,a-1/B)$, with these coefficients as residues.
+The nonnegative tail cannot have real convergence abscissa above
+$b$: A regular point there contradicts Landau, and a pole with
+negative residue contradicts nonnegativity from the right. Thus
+convergence excludes all poles in the strip. Iterating from $a=1$
+with the same series gives $\Re z\le1/2$, and family reflection
+gives joint GRH. Dropping $n=1$ changes only an entire term. The
+finite grids certify two ordinary-prime inequalities, not GRH or
+the infinitely many sampled signs.
