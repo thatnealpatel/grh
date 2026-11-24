@@ -165,13 +165,19 @@ is independently repriced through $68$ with an analytic
 remainder, and every segment retains the full jump
 support in its convolutions.
 
-**Next test.** Price the violation of the all-frequency
-caps by the near-optimal joint law of an unrestricted
-refit. Use the cap violation and a dual refit on the
-full measurable domain to test whether a small set of
-additional frequencies can pay the positive unrestricted
-margin. A refit conditioned only on at most two positive
-increments cannot decide the unrestricted question.
+**Next test.** Recover a near-optimal joint law of the
+unrestricted inherited-frequency refit. On that same law,
+compare its surplus to the refit target and check both
+inherited disk moduli and the full second quadratic cap
+before ranking off-list violations. The [scout decision
+replay](five-release-scout-decision.md) gives a cellwise
+atom-weight test and records why the raw support proxy did
+not supply such a law. If a useful law emerges, use its
+cap violations and a dual refit on the full measurable
+domain to test whether a small set of additional frequencies
+can pay the positive unrestricted margin. A refit conditioned
+only on at most two positive increments cannot decide the
+unrestricted question.
 The five-release and eight-knot frontiers remain open.
 The seven-knot exclusion is unchanged. Keep the Alpöge
 exclusion.
