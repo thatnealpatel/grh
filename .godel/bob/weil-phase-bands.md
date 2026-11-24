@@ -55,3 +55,5 @@ Before smoothing this is $47/81-K/3>0.23376$: For $u=0.28$, use $\cosh u\le 1+(u
 **Decision.** An upper bound of $0.233$ on this *retained signed charge* at the prescribed heights would suffice; it need not bound every off-line zero's absolute contribution. This is a different test from the [right-only Mellin imbalance](opposite-phase-bands.md), whose summands and normalization differ. Neither a bound excluding the packet nor an actual failing twist follows from the gray price.
 
 **Second test recovered after Work.** At the same failure the [twist's own signed packet](twist-endpoint-packet.md) must exceed $0.028$ around $y=q^{3/5}$, not $2y$. Bounding that packet is an alternative to bounding this zeta charge. At other failing heights the twist test still has a $0.008$ margin; no corresponding all-height zeta claim is needed.
+
+At the exceptional prescribed heights the [depth-priced excess](deep-retained-excess.md) now subtracts a single Poisson price from the deep retained pairs. It gives a density-one upper bound, not a uniform bound at a failure.
