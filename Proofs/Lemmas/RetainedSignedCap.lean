@@ -368,7 +368,8 @@ private theorem sparse_card_le (S : Finset ℕ) (X : ℝ) (hX : 0 ≤ X)
     _ = (G.card : ℝ) * M := by simp
     _ ≤ X * M := mul_le_mul_of_nonneg_right hcG hM
 
-private theorem weight_bounds {S : Finset ℕ} {X : ℝ} {d : ℕ} (h : IsPrimePool S X d)
+/-- The pool weights are nonnegative and bounded by the dense-gap scale. -/
+public theorem weight_bounds {S : Finset ℕ} {X : ℝ} {d : ℕ} (h : IsPrimePool S X d)
     {p : ℕ} (hp : p ∈ S) : 0 ≤ weight X d p ∧ weight X d p ≤ 8 * (Real.log X)^2 / X := by
   obtain ⟨hpp, hpdp, ⟨hlo, hhi⟩, ⟨_, hdhi⟩⟩ := h.band p hp
   have hX : 0 < X := zero_lt_one.trans h.one_lt

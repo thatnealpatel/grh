@@ -195,7 +195,8 @@ public theorem exists_measurable_four_node_law_of_convolution
   volume.withDensity (fun x : ℝ ↦ ENNReal.ofReal (1 / (2 * Real.pi *
     ‖(1 / 2 : ℂ) + (x : ℂ) * Complex.I‖ ^ 2)))
 
-private theorem unfoldedMeasure_eq_cauchy :
+/-- The unfolded measure is the centered Cauchy law of scale `1/2`. -/
+public theorem unfoldedMeasure_eq_cauchy :
     unfoldedMeasure = ProbabilityTheory.cauchyMeasure 0 (1 / 2) := by
   rw [unfoldedMeasure, ProbabilityTheory.cauchyMeasure_of_scale_ne_zero 0 (by norm_num)]
   congr 1
