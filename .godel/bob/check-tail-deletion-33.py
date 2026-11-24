@@ -189,7 +189,7 @@ def moving_tail(z, A, B, U, data, den, radius, R):
     return dp[0]+err+remote
 
 
-def price(z, A, B, U, data, omit=(), split_pre=False):
+def price(z, A, B, U, data, omit=(), split_pre=False, slab_check=None):
     bstar = jumps(z, B, C)
     az, bz = [F(0) for _ in z], [F(0) for _ in z]
     room, remote_density = F(0), F(0)
@@ -234,7 +234,10 @@ def price(z, A, B, U, data, omit=(), split_pre=False):
         j = 0 if t < 0 else 1 if t < QQ(29)/5 else 2
         if split_pre and 0 <= t < 1:
             j = 3
-        zonal[j] += bern_upper(a, b, m, eps)-(m*u-a*y-b*w)
+        upper = bern_upper(a, b, m, eps)
+        zonal[j] += upper-(m*u-a*y-b*w)
+        if slab_check is not None:
+            slab_check(t, upper, a, b, m, w)
     R = QQ(40)
     remote = step(R, 0)+2*remote_density*(F(-R)/2).exp()
     print('Baseline surplus:', ref, flush=True)

@@ -191,3 +191,81 @@ Sage `RealBallField` at the two decimal rational depths. The
 exclusion is for **full** independent replacement on the original
 slabs; it neither reaches $39/20$ nor gives an exclusion for
 the unrestricted all-real comparison.
+
+## Local third-moment requirements and a negative-profile obstruction
+
+Keep the domain of the full price above, including its measurable
+positive tail. Three disjoint sets of original slabs are recorded in
+`deletion-laws/delete-33-regional-tilts.txt` as (mask, left knot
+in units of $1/400$, tilt in units of $10^{-16}$). On any union
+$J$ of the masks put $S_J=\sum_{i\in J} h_i(B_i-B_{*,i})$.
+If $E_i(b)$ is the Bernstein upper price of $m_i u-a_i X-bT(X)$,
+replace the old upper by the new upper for $b_i+h_i$ and add back
+$h_i B_i$. Consequently
+
+$$M-8/9\le P_{\rm full}-L_J+S_J,\qquad
+L_J=\sum_{i\in J}[E_i(b_i)-E_i(b_i+h_i)-h_iB_{*,i}].$$
+
+This subtracts the **same computed upper** already included in
+$P_{\rm full}$; it need not lower-bound the true atom maximum.
+The finer tolerance of the shifted price is allowed. No curvature
+budget, smoothness of the tail law, or assumption about the
+unselected slabs is needed beyond the original price hypotheses.
+For nonnegative surplus, the following changes are all necessary:
+
+| Mask | Slabs | $L_J$ (rounded) | Necessary $\max_{i\in J}|B_i-B_{*,i}|$ |
+|---|---:|---:|---:|
+| Negative | 9 | $1.31234\cdot10^{-8}$ | $>0.5$ |
+| In $[0,1)$ | 32 | $9.43812\cdot10^{-9}$ | $>0.001$ |
+| In $[1,5.8)$ | 21 | $1.12875\cdot10^{-8}$ | $>0.06$ |
+
+Indeed the indicated radius times $\sum_J|h_i|$ leaves the upper
+surplus below $-6.58\cdot10^{-10}$ in each case. Jointly the signed
+score on all 62 slabs must exceed $2.80009\cdot10^{-8}$; on the nine
+negative slabs alone it must exceed $7.275\cdot10^{-9}$.
+
+**The negative part cannot just be rescaled.** Let $D=B_1-B_*$ on
+$I=[-144/25,0)$, with $B_1$ the [early-score trial](early-refit-deletion-33.md).
+Then for every feasible nonnegative-surplus contender,
+
+$$\inf_{\theta\in\mathbb R}\|B-B_*-\theta D\|_{L^\infty(I)}>0.005.$$
+
+Here the entire nonnegative half-line is independent of $\theta$;
+changing the remote band or refitting every positive slab does not
+repair the negative profile. To see this, suppose that the norm is
+at most $\rho=0.005$. The negative score of $D$ is
+$S_D=1.31390162\ldots\cdot10^{-8}$ (the weighted sum of $D_i$).
+The signed requirement gives
+$\theta>(7.275\cdot10^{-9}-\rho\sum_{i\in J_-}|h_i|)/S_D
+>0.5486584$. The infimum is attained since $D\ne0$.
+
+Use a combination of five tests of the first cap on $V_B$. With
+$x_0=273/8$, $\delta=2/5$, and $t_0=22/5$, its complex functional is
+
+$$Z(B)=C^{-1}\int_{-144/25}^\infty e^{(-1/2+ix_0)t}
+  \cos^4(\delta(t+t_0)/2)B(t)\,dt.$$
+
+The five coefficients of the cosine power before translation are
+$\binom4{j+2}/16$ for $-2\le j\le2$. Translation, and conversion
+of the field to its integral representation at $x_0+j\delta$, only
+multiply these coefficients by unit phases. They sum to one in
+absolute value, so the cap gives $|Z(B)|\le1$. Write $Z_I$ for the
+negative-interval contribution. No positive profile with $|B|\le1$
+can change it by more than $p=0.11084115\ldots$, the integral of
+the envelope on $[0,\infty)$. The envelope mass on $I$ is
+$n=24.577232\ldots$. Both follow by integrating the same five
+exponentials with carrier zero; the envelope is nonnegative.
+
+Project onto the phase of $Z_I(B_*+0.55D)$. The projection of
+$Z_I(D)$ exceeds $2.24925$, so substituting the lower bound for
+$\theta$ in this affine projection gives a lower bound. Even after
+subtracting $\rho n+p$ for all remaining freedom, the projection
+exceeds $1.01494$, contradicting the cap. This is an obstruction to
+a specific negative shape, not to independent negative refitting.
+
+Replay with Sage Python, assertions enabled, from `.godel/bob`:
+
+```sh
+python check-all-slabs-deletion-33.py --regional --upper 5.849e-9
+python check-negative-packet-33.py
+```
