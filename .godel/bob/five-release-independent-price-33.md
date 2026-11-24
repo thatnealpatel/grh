@@ -135,14 +135,40 @@ primitives, and Bernstein coefficients. It requires neither
 an optimizer nor an external scratch artifact. The seven-knot
 exclusion is unchanged. No Alpöge input is used.
 
-**Next decision.** Do not refit the three excluded assignments.
-Among the remaining four, the new price's mesh screen
-is smallest for $(0,2,4,8,10)/400$ at $9.216\cdot10^{-10}$,
-versus $2.510\cdot10^{-9}$ or more for each of the others.
-Start there, reusing the new weights as the baseline and
-refreshing the local supports for the new assignment. These
-are floating screens with a fixed law after $56$, not
-bounds for measurable laws or evidence of attainability.
+## Next decision
+
+Do not refit the three excluded assignments. Among the
+remaining four, the new price's mesh screen is smallest for
+$(0,2,4,8,10)/400$ at $9.216\cdot10^{-10}$, versus
+$2.510\cdot10^{-9}$ or more for each of the others. The
+subsequent floating weight refit in the Work handoff reached
+$6.59\cdot10^{-10}$, not an exclusion. These screens fix the
+law after $56$ and do not bound the measurable domain or
+show attainability.
+
+Start with independent common-atom laws on this assignment's
+recovery mesh, splitting $8/400$ and $10/400$ rather than
+$6/400$ and $16/400$. Use the accepted all-row refit as a
+starting price, not an exclusion or a primal law. Test all
+inherited disks, the full $Q$, and the target surplus on
+the same rounded law before adding frequencies. The old
+signed $B$ displacement is a
+diagnostic, not a gate for this assignment. Its [threshold
+and raw-deficit budget][recovery] use a different release
+set and the original joint-refit tangent. If using the same
+tangent, seed, and signed slopes, the corrected slabs here
+are still ordinary, so the same local support reductions
+$\ell_k$ apply. A necessary signed displacement bound still
+requires a full-domain raw upper $U_S$ on the **new** release
+set: The threshold becomes $-10^{-10}-U_S+\sum_k\ell_k$.
+The raw-deficit budget would be $U_S+10^{-10}$. With a
+changed tangent, reprice the local reductions as well.
+
+For a new exclusion candidate, evaluate any cheap local
+replacements on the remaining assignments before freezing
+the checker. Do not reuse a base or increments from a
+different tangent. The [batch decision replay][decision]
+separates this reuse from the required full-domain replay.
 
 [group]: five-release-group12-decision.md#checked-exclusion-of-the-first-group-12-family
 [frontier]: eight-piece-deletion-33.md#price-exactly-two-knots-and-refine-five-releases
@@ -151,3 +177,5 @@ bounds for measurable laws or evidence of attainability.
 [identity]: five-release-curvature-33.md#identity-and-uniform-localization
 [weights]: deletion-laws/delete-33-five-release-independent-price.json
 [recentered]: deletion-laws/delete-33-five-release-recentered-price.json
+[recovery]: five-release-joint-recovery-33.md#replay-and-decision
+[decision]: five-release-batch-decision.md
