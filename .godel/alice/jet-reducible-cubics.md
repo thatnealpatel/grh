@@ -228,25 +228,66 @@ In the short-line formula the simple direction is not unused, so
 $v_q(x)=-1$ no longer holds, and the flex argument only helps if
 $g=0$. Repeated real directions are not priced in general.
 
+## Why the same determinant gives no uniform $q$-factor on the complement
+
+Suppose $C$ is smooth over $\mathbb Q$, $W\le q^{.192}$, and
+$\overline C$ is geometrically irreducible. The marked point
+$\overline P$ is smooth on $\overline C$. If $H_3$ is squarefree, its
+nonzero binary discriminant is $O(W^4)<q$, so every infinity root
+remains simple modulo $q$. In the repeated case, the preceding
+argument shows that $\overline P$ is at the other, simple direction:
+The determinant of the two primitive directions is nonzero and
+$O(W)<q$, so they remain distinct. Simplicity at infinity implies
+smoothness there, even if $\overline C$ is singular elsewhere.
+
+Use the [marked quotient](jet-quotient-determinant.md), with $r\ge1$
+and $m-3\ge r-1$. If a set in the box has more than $3m$ distinct
+points, **some maximal minor of the normalized quotient evaluation
+matrix is a $q$-unit**. To see this, take primitive coordinates for
+$P$ and extend its vector to an integral unimodular basis. In those
+coordinates the lattice $K_{m,r}$ has a monomial basis, consisting
+of monomials of order at least $r$ at $[0:0:1]$. Thus $K_{m,r}$
+reduces onto the entire marked space over $\mathbb F_q$. The reduced
+multiples in that space are precisely
+$\overline C\,\overline K_{m-3,r-1}$: Vanishing orders add, and the
+order of $\overline C$ at $\overline P$ is one. These multiples are
+all reductions of the characteristic-zero marked multiples. The
+quotient lattice is free by saturation, as in the marked quotient
+proof, so this identifies its reduction with the quotient of the
+reduced marked space by those multiples.
+
+The points remain distinct modulo $q$ since $2N<q$. The row factors
+$l^{-r}$ are units at $q$. If a nonzero quotient class were in the
+kernel of all the reduced evaluations, it would give a form of
+degree $m$ not divisible by $\overline C$ meeting that irreducible
+cubic in more than $3m$ points, contradicting Bézout. The evaluations
+therefore have full rank modulo $q$. This rules out a $q$-factor
+common to all maximal minors on a large class, not an argument
+that prices individual residue classes by other means.
+
+The short-line argument above uses a line through the **actual**
+$P$. Merely knowing $q\mid UA+VB$ gives $q\mid Ux_1+Vx_2$ but
+not the size bound $|Ux_1+Vx_2|<q$ from a short line equation.
+Thus one cannot use that argument to bound the fibers of
+projection from $\overline P$ modulo $q$.
+
 ## Price and remaining question
 
 Each point costs only divisor-many actual columns. At one prescribed
 support per input, use the joint $(h,f)$ enumeration of exponent
 $.1276$ from the jet proof. The bounded-occupancy reduction test
-costs $q^{.1276+o(1)}$ columns per input; the split-infinity test eliminates its occupied
-filters outright. Triples with **both** columns in the bounded-occupancy
-family therefore cost $q^{1.1152+o(1)}$, including $.860$ for the
-inputs, also after restriction to the complement of the maximizing
-region. If each actual reference instead supplies the
-support and only its candidate passes, the sum is
-$q^{.1276+o(1)} I'$ over the $I'$ references, not the stated
-both-passing triple bound. Neither result pays for unrestricted
-outside-support cofactors.
+costs $q^{.1276+o(1)}$ columns per input; the split-infinity test
+eliminates its occupied filters outright. Triples with **both**
+columns in the bounded-occupancy family therefore cost
+$q^{1.1152+o(1)}$, including $.860$ for the inputs, also after
+restriction to the complement of the maximizing region. If each
+actual reference instead supplies the support and only its
+candidate passes, the sum is $q^{.1276+o(1)} I'$ over the $I'$
+references, not the stated both-passing triple bound. Neither
+result pays for unrestricted outside-support cofactors.
 
-Next test: On absolutely irreducible reductions, use additional
-information about which residue classes are actually occupied.
-The above vanishing-subspace construction only uses a proper
-component of the reduction, not its singularity in isolation.
-Likewise, the infinity test does not bound the occupancy of a
-smooth cubic at arbitrary norm and infinity splitting type. The
-full maximizing-region complement is still open.
+Next test: On the irreducible reduction, seek structure in the
+simultaneous output factorizations, not an additional common
+$q$-factor on the whole marked quotient. The infinity test does
+not bound occupancy at arbitrary norm and splitting type. The full
+maximizing-region complement is still open.
