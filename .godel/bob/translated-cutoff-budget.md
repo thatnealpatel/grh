@@ -40,3 +40,5 @@ with strict room to absorb errors. Thus thirteen orders suffice instead of fifte
 | $1.983$ | All higher orders | No fixed finite translated-mask prefix separates on this path. |
 
 The upper-order sufficiencies use the same height and original angular datum, with their indicated masked **signed** measurements and their strict margins. The obstructions are feasibility statements about limiting information, not converse zero theorems, effective conductor thresholds, or bounds at a surviving sample. Reopen the decision if measurements are nonzero, if additional arithmetic data restrict the phase assignment, or if the test uses more than these fixed-translate limiting comparisons. In particular, a signed order-six test can still decide particular nonzero data.
+
+**Subsequent price:** [Order-dependent phase shifts](phase-shifted-cutoff.md) lower the sufficient maximum order to twelve at $1.95$. They also distinguish the information in a raw zero answer at order two from a matched-mask zero answer.
