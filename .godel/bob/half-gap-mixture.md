@@ -34,4 +34,4 @@ This is successive one-variable linear interpolation using the pure second deriv
 
 All real directions therefore pass the [compact convex separation test](separated-second-shifts.md), giving simultaneous matching for each pair. Replay from the repository root with `sage .godel/bob/check-half-gap-mixture.py` (SageMath 10.9, assertions enabled). No optimization output or sampled cap is an input.
 
-**Next decision.** At a gap just above $1/2$, test the exact balanced price with its worse common shift on the available laws before extending this cover. A failure there may require a new profile, not tighter ratio interpolation. Ruling out one law even in the balanced direction would not establish a separator.
+**Update after Work:** The [six-profile exclusion and one-block repair](gap-51-hull.md) settle the balanced test at $(.05,.56)$. The original mixture fails there, but the new law covers the whole next strip, $1/2\le d\le13/25$, for all $s$. Do not refit the six constant weights at this pair. The next test uses more than one negative block at $(.07,.62)$, where the one-block law already fails.
