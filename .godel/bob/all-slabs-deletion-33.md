@@ -12,6 +12,10 @@ the three simultaneous second replies at $3t$ are the ones in the
 [joint price](joint-tail-deletion-33.md#joint-price). This is not an
 all-real or unrestricted three-versus-four test.
 
+**Update.** A [same-frequency dual refit](full-release-deletion-33.md)
+now excludes full replacement at $39/20$. The positive price and
+the proposed original-knot refit below describe the earlier cut list.
+
 ## Upper price
 
 Use $X(u)=2u^2-1$, $T(X)=4X^3-3X$, $(A,B,U)=\mathbb E(X,T(X),u)$,
