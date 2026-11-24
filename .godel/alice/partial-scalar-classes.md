@@ -52,3 +52,5 @@ For necessity use $q n_1=F_1 k\pmod{f_1}$ on each endpoint. Conversely the two p
 
 Running `python3 .godel/alice/check-partial-scalar.py` checked 12,785 full scalar classes (5,328 with $(d,e)>1$), 83,540 partial residue reconstructions, and 4,335 spatial difference congruences on the stated finite grids. The sieve and the reference allowance above are mathematical bounds, not extrapolations from these grids.
 The same checker compared the two-gcd test with explicit key intersection for 62,001 ordered pairs of toy row-equation solutions (1,858 passing). These are not constructed list incidences.
+
+**After Work:** For a lower bound on passing pairs, [count the whole reference coset](reference-coset-windows.md). A weighted determinant-difference window contains every shared-key hit at the same $.3475$ outgoing price without testing the second column's output divisors. Its frequency on actual fibers is still open.

@@ -1,5 +1,6 @@
 """Arithmetic controls for partial scalar classes, not an incidence sampler."""
 from collections import Counter
+from functools import cache
 from itertools import product
 from math import gcd
 
@@ -77,3 +78,51 @@ for (y, Y, t, n, keys), (yy, YY, tt, nn, others) in product(rows, repeat=2):
     passing += hit
 assert len(rows) < passing < len(rows)**2
 print(f'{len(rows)**2} ordered row-pair tests, {passing} with a shared partial key')
+
+# Replay on exactly those ordered pairs, with the first row as reference.
+# Wtoy bounds |t| on this grid only. The finite test is integer-only.
+
+
+@cache
+def menu(S):
+    cap = X**2 * Q**3
+    steps = {1}
+    for prime in S:
+        for seed in list(steps):
+            while seed * prime <= cap:
+                seed *= prime
+                steps.add(seed)
+    return [(e, b) for e in steps for b in steps if e % b == 0 and e*b <= cap]
+
+
+def supported(n, S):
+    assert n > 0
+    rest = n
+    for prime in S:
+        while rest % prime == 0:
+            rest //= prime
+    return n//rest
+
+
+Wtoy = max(abs(row[2]) for row in rows)
+projected = enlarged = mixed = 0
+for (y, Y, t, n, keys), (yy, YY, tt, nn, others) in product(rows, repeat=2):
+    S = tuple(p for p in (2, 3, 5) if y*Y % p == 0)
+    z, v = tt-t, nn-n
+    assert (F2*v-d*z) % F1 == 0
+    w = (F2*v-d*z)//F1
+    proj = any(z % (a*b) == v % a == w % a == 0 for a, b, _, _ in keys)
+    assert not keys & others or proj
+    m = gcd(z, v, w)
+    hit = z == 0 or abs(z)*Q**3 <= 2*Wtoy*supported(abs(z), S)*supported(m, S)
+    assert not proj or hit
+    # Independent finite menu: No use of the factorization of the difference.
+    assert hit == any(z % e == v % b == w % b == 0 and abs(z)*Q**3 <= 2*Wtoy*e*b
+                      for e, b in menu(S))
+    projected += proj
+    enlarged += hit
+    if z and t and tt and hit and not proj and abs(z)*Q**3 > 2*Wtoy*supported(abs(z), S):
+        mixed += 1
+assert passing < projected < enlarged < len(rows)**2 and mixed > 0
+print(f'{projected} in reference-key cosets, {enlarged} in weighted windows, '
+      f'{mixed} outside both the cosets and determinant-only windows with both t nonzero')
