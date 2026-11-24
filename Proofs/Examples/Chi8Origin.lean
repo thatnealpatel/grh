@@ -24,7 +24,8 @@ private theorem χ_at_five : χ ((5 : ℤ) : ZMod 8) = -1 := by
   rw [χ, MulChar.ringHomComp_apply, ZMod.χ₈_int_eq_if_mod_eight]
   norm_num
 
-private theorem χ_even : χ.Even := by
+/-- The character `χ` is even. -/
+public theorem χ_even : χ.Even := by
   change χ ((-1 : ℤ) : ZMod 8) = 1
   rw [χ, MulChar.ringHomComp_apply, ZMod.χ₈_int_eq_if_mod_eight]
   norm_num
@@ -46,13 +47,15 @@ public theorem conductor_eq : χ.conductor = 8 := by
   rw [← hψ, χ_at_five, show ((5 : ℤ) : ZMod 4) = 1 by decide, map_one] at hv
   exact (by norm_num : (-1 : ℂ) ≠ 1) hv
 
-private theorem χ_ne_one : χ ≠ 1 := by
+/-- The character `χ` is nonprincipal. -/
+public theorem χ_ne_one : χ ≠ 1 := by
   intro h
   have hc := conductor_eq
   rw [h, conductor_one] at hc
   exact (by decide : (1 : ℕ) ≠ 8) hc
 
-private theorem completedLFunction_zero_ne_zero : completedLFunction χ 0 ≠ 0 := by
+/-- The completed L-function of `χ` does not vanish at `0`. -/
+public theorem completedLFunction_zero_ne_zero : completedLFunction χ 0 ≠ 0 := by
   have hprim : χ.IsPrimitive := conductor_eq
   have hone : completedLFunction χ⁻¹ 1 ≠ 0 :=
     completedLFunction_ne_zero_of_one_le_re χ⁻¹ (Or.inl (inv_ne_one.mpr χ_ne_one)) (by simp)
