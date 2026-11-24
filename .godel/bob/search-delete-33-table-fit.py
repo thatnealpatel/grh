@@ -9,8 +9,8 @@ Control and portability trial on table pin 766e1d844630083d0987c269b6903528be5f7
 ``--left -192 --right 192`` and ``--left -256 --right 256`` each used one solve
 at tol=1e-11 and returned AlmostSolved. Serialized mean minus 8/9 was
 +2.43198124e-5 and +2.42664807e-5 respectively; the largest serialized
-balance errors in the floating model were 1.14e-9 and 6.08e-10. Neither
-output has been checked with exact integration or the repair inequalities.
+balance errors in the floating model were 1.14e-9 and 6.08e-10. For the
+subsequent exact checks and their scope, see table-fit-decision.md.
 Tested with Python 3.12.3, NumPy 2.5.5, SciPy 1.18.1, Clarabel 0.11.1.
 """
 import argparse
