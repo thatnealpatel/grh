@@ -1,4 +1,4 @@
-"""SageMath: Price all convex mixtures of five existing first laws on one triple."""
+"""SageMath: Price all convex mixtures of five first laws on the four triples."""
 from collections import defaultdict
 from functools import cache
 from pathlib import Path
@@ -70,24 +70,56 @@ def times(a,b):
     return out
 
 
-hs = {-7: QQ(3)/12, 6: QQ(5)/12, 19: QQ(4)/12}
-u = times(hs, {-k:v for k,v in hs.items()})  # |H|^2
-z = {k:-v for k,v in u.items()}; z[0] += 1
-# 1 - (1-u)/2 - (1-u)^2/8 majorizes sqrt(u) on [0,1].
-major = {0: QQ(1)}
-for poly, div in ((z,2), (times(z,z),8)):
-    for k,v in poly.items():
-        major[k] = major.get(k,0)-v/div
-assert all(v == major[-k] for k,v in major.items())
+def majorant(hs, degree):
+    # Truncate sqrt(1-z) = 1 - sum_{n>=1} a_n z^n with a_n > 0.
+    assert sum(abs(v) for v in hs.values()) == 1 and degree >= 1
+    u = times(hs, {-k:v for k,v in hs.items()})  # |H|^2
+    z = {k:-v for k,v in u.items()}; z[0] += 1
+    poly = {0: QQ(1)}
+    power = {0: QQ(1)}
+    a = QQ(1)/2
+    for n in range(1, degree+1):
+        power = times(power, z)
+        for k,v in power.items():
+            poly[k] = poly.get(k,0)-a*v
+        a *= (n-QQ(1)/2)/(n+1)
+    assert all(v == poly[-k] for k,v in poly.items())
+    return poly
+
 
 names = ['single-shift', 'hard-pair', 'midgap-sector', 'right-sector', 'two-term']
 laws = [law(name) for name in names]
+shifts = (-7, 6, 19, 33)
+cases = (
+    # Deleted lattice index, weights in retained shift order, degree, lower response.
+    (33, (3, 5, 4), 2, '.00268'),
+    (-7, (50, 35, 15), 4, '.0013'),
+    (6, (43, 35, 22), 12, '.0003'),
+    (19, (28, 42, 30), 2, '.0042'),
+)
+worst = {}
+prices = []
+for deleted, nums, degree, floor in cases:
+    keep = [k for k in shifts if k != deleted]
+    assert len(keep) == len(nums) == 3
+    hs = dict(zip(keep, (QQ(n)/sum(nums) for n in nums)))
+    prices.append((deleted, hs, majorant(hs, degree), F(floor)))
 for i,p in enumerate(laws):
     for j,q in enumerate(laws[:i+1]):
         S,R = kernels(p,q)
-        entry = sum(a*R(QQ(k)/25) for k,a in major.items()) - sum(a*S(QQ(k)/25) for k,a in hs.items())
-        print(names[i], names[j], entry, flush=True)
-        assert entry < -F('0.00268')
+        for deleted, hs, major, floor in prices:
+            entry = (sum(a*R(QQ(k)/25) for k,a in major.items() if a)
+                     - sum(a*S(QQ(k)/25) for k,a in hs.items()))
+            assert entry < -floor, (deleted, names[i], names[j], entry)
+            if deleted == 33:
+                print(names[i], names[j], entry, flush=True)
+            if deleted not in worst or entry.upper() > worst[deleted][0]:
+                worst[deleted] = entry.upper(), names[i], names[j], entry
+for deleted, hs, _, floor in prices:
+    _, i, j, entry = worst[deleted]
+    print('Delete', deleted, 'mask', hs, 'largest entry upper enclosure:',
+          entry, (i, j), '; uniform response >', floor, flush=True)
+
 
 # Same kernels, but now price the *actual* sparse measured masks and
 # every disk completion of the original 152-slab first law.
