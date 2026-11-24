@@ -280,3 +280,60 @@ Replay with SageMath 10.9 and assertions enabled:
 ```sh
 /opt/sage-10.9/bin/python .godel/bob/check-refined-frontier-33.py --jobs 5
 ```
+
+## Eight knots: Slab 4/400 is necessary
+
+Neither of the two assignments above can attain surplus
+at least $-10^{-10}$. Use a $1/6400$ shared-coordinate
+mesh on the eight selected slabs, instead of the coarser
+bound or a measurable-release proxy. The first assignment
+uses `seven-two-negative` and $1/400$ tail cells; the second
+uses `five-release-minus-216` and $1/800$ tail cells,
+which keep its uniform tail interpolation allowance below
+$1.267\cdot10^{-11}$.
+The resulting upper prices are about $-2.35418\cdot10^{-10}$
+and $-1.17157\cdot10^{-10}$, respectively. Thus **every** law
+in the eight-knot class reaching the cutoff must split each
+of the slabs starting at $0$, $2/400$, and $4/400$. The
+cover leaves at most 774 assignments, 67 with a double slab.
+
+```sh
+/opt/sage-10.9/bin/python .godel/bob/check-eight-knots-omit-slab-33.py
+```
+
+## Five releases: Recombining the fixed linear prices cannot suffice
+
+For each of the seven unpaid release sets there is **one**
+profile on which all nine raw linear functionals in the
+frontier screen exceed $5\cdot10^{-10}$, **even after
+restoring both first caps at frequency zero**. Thus taking
+any convex combination or the pointwise minimum of the
+nine and maximizing over this relaxation cannot certify
+a negative upper bound. Adding nonnegative multiples of
+the zero-frequency cap slacks cannot help either. This is
+stronger than finding a separate maximizer for each tangent;
+it does not rule out new nonzero-frequency cuts or retaining
+the quadratic loss.
+
+Use at most three atoms per original finite slab except on
+the five released slabs, whose pieces have width $1/6400$.
+On the tail use step laws through $48$ and $u=1/\sqrt2$
+thereafter. Nominate three atoms per interval using the
+`eight-knots` price with three small signed shifts to its
+zero-frequency coefficients. Round the atoms to rationals
+and mix with the fixed probabilities $(.399,.250,.351)$.
+Check **the same profile** under all nine functionals with
+ball-enclosed primitive differences. The remote tail has
+$A=B=0$ and its mass is included exactly. No upper atom
+estimates, interpolation allowances, or floating-point
+optimizer claims enter this test. The smallest price is
+about $6.36057\cdot10^{-10}$, on $(0,2,4,6,16)/400$.
+These are not feasible witnesses: Each has $|V_A(1)|>4$.
+Test the effect of adding a nonzero-frequency cut against
+this response before exchanging the full frequency lists.
+
+```sh
+/opt/sage-10.9/bin/python .godel/bob/check-five-release-linear-lower-33.py --jobs 5
+```
+
+The eight-knot and five-release classes remain open in full.

@@ -107,7 +107,7 @@ def tangent_data(cert):
     return data, center, sigma, constant
 
 
-def mesh_prices(data, center, constant, finite_den, added, tail_end=48):
+def mesh_prices(data, center, constant, finite_den, added, tail_end=48, *, tail_den=400):
     assert all(t*400==int(400*t) for t in z)
     mesh = sorted([int(finite_den*t) for t in z]+added)
     assert len(set(mesh))==len(z)+len(added)
@@ -121,7 +121,8 @@ def mesh_prices(data, center, constant, finite_den, added, tail_end=48):
     # Integrate the raw atom score, not a difference relative to the
     # (possibly unbounded by one) auxiliary center. All branch points
     # are on the 1/400 mesh. Use quadratic Bernstein interpolation on it.
-    den = 400
+    den = tail_den
+    assert den > 0 and den % 400 == 0
     lo,hi = int(z[-1]*den),tail_end*den
     pts = range(2*lo,2*hi+1)
     a,b,size,_,_ = s['tail_data'](z,center,data,pts,2*den)
