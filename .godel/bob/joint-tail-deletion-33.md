@@ -180,3 +180,5 @@ Replay including the reference cap and Gram checks:
 ```sh
 PYTHONDONTWRITEBYTECODE=1 /opt/sage-10.9/bin/python .godel/bob/check-tail-deletion-33.py --full-negative
 ```
+
+For the refit and its full quadratic violation, see the [early-score diagnostic and necessary remote-band change](early-refit-deletion-33.md).
