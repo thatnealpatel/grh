@@ -1,4 +1,4 @@
-# Delete-33: Release any four finite slabs
+# Delete-33: Price four slab releases and six added knots
 
 At $c=39/20$, keep $X=0$ left of $-144/25$, both unfolded
 first caps, and simultaneous second replies at $(-7,6,19)/25$.
@@ -17,6 +17,15 @@ The law from $29/5$ onward is arbitrary measurable. Then:
   finite slabs gives $M-8/9<-4.68429\cdot10^{-8}$. In this case
   the nonnegative finite slabs still have arbitrary constant
   laws, not fixed reference values.
+* Inserting **any six real knots** in the original finite slabs
+  gives $M-8/9<-3.38686\cdot10^{-10}$. The five-knot bound is
+  $-2.78406\cdot10^{-8}$. The pieces on either side of each
+  new knot may have unrelated laws.
+* Releasing all negative slabs and inserting **one** real knot
+  in a nonnegative finite slab gives $M-8/9<-4.0298\cdot10^{-9}$.
+
+Each bullet is a separate class, and each knot allowance is an
+upper limit. Knots at baseline boundaries change no slabs.
 
 Here $X=2u^2-1$, $T(X)=4X^3-3X$, $(A,B,U)=\mathbb E(X,T(X),u)$
 for $u\in[0,1]$, and $M=\int_0^\infty te^{-t}U(t)\,dt$.
@@ -76,8 +85,39 @@ feasible law. For a five-release extension, fit on the current
 worst five slabs first, then reprice the best five over the whole
 mesh with the new certificate; the maximizing set can change.
 
+## Price of a shared split coordinate
+
+For one real knot in slab $[l,r)$, bound the sum of the atom
+supports on $[l,x)$ and $[x,r)$ with the **same** unknown $x$.
+For each fixed pair of atoms this sum before maximizing is a
+constant plus the primitive coefficient vector at $x$ paired
+with their moment difference. Interpolate in $x$ on $1/1600$
+quadratic cells. At each Bernstein control maximize the sum
+separately over the two atoms, then take the largest control
+bound and add the uniform interpolation remainder for a moment
+difference. All coefficient branch points are cell boundaries.
+Subtract the unsplit support and round upward, capping at $D_i$;
+for cheap slabs it is enough to use $D_i$ directly. Call the
+result $E_i$.
+
+A budget of $k$ knots can buy $E_i$ for one knot in slab $i$,
+or $D_i$ for two or more. The checker maximizes the sum over
+these options by a budget recurrence, buying at most one
+option per slab. This prices coincident slab assignments and
+arbitrary real split locations in one test. For the combined
+negative-release and one-knot claim, add the largest $E_i$
+among nonnegative slabs to the all-negative price.
+
+The six-knot test uses a [second cut and center table](deletion-laws/delete-33-six-knots.json)
+with 548 first cuts on $A$, 50 on $B$, one second cut, and 419
+raw $B$ jump corrections. The proof is unchanged. Its unsplit
+price is about $-2.0092030\cdot10^{-7}$; after maximizing the
+six-knot budget the upper price is about $-3.3868670\cdot10^{-10}$.
+It still does not exclude all five measurable releases.
+
 Run from the repository root with SageMath 10.9 and assertions enabled:
 
 ```sh
 /opt/sage-10.9/bin/python .godel/bob/check-three-midpoints-33.py --certificate eight-piece
+/opt/sage-10.9/bin/python .godel/bob/check-three-midpoints-33.py --certificate six-knots
 ```

@@ -8,6 +8,44 @@ from runpy import run_path
 
 from sage.all import QQ
 
+
+def upper(a,b,m):
+    return s['bern_upper'](a,b,m,F('1e-14'))
+
+
+def single_knot_costs(z, center, data, old, extra, threshold):
+    """Price one arbitrary real knot per slab; use release on cheap slabs."""
+    split = list(extra)
+    h = QQ(1)/1600
+    large = [i for i,y in enumerate(extra) if y > threshold]
+    points = sorted({j for i in large for j in range(int(3200*z[i]),int(3200*z[i+1])+1)})
+    aa,bb,_,_,curv = s['tail_data'](z,center,data,points,3200,primitive=True)
+    # The mass primitive is step(t,0), including on t<0.
+    prim = {j:(a,b,s['step'](QQ(j)/3200,0)) for j,a,b in zip(points,aa,bb)}
+
+    for i in large:
+        t,r = z[i:i+2]
+        j0,j1 = int(3200*t),int(3200*r)
+        def score(v):
+            left = [a-b for a,b in zip(prim[j0],v)]
+            right = [a-b for a,b in zip(v,prim[j1])]
+            return upper(*left)+upper(*right)
+
+        # On each cell bound the quadratic interpolant by its three
+        # controls, pricing the two atom choices at each control jointly
+        # in their shared knot coordinate. This bound is uniform in both.
+        vals = [score(prim[j]) for j in range(j0,j1+1,2)]
+        for j in range(j0+1,j1,2):
+            v = [2*b-(a+c)/2 for a,b,c in zip(prim[j-1],prim[j],prim[j+1])]
+            vals.append(score(v))
+        # curv already accounts for differences of two laws in A and B.
+        # |(t*exp(-t))''| <= 2 exp(-t/2) for t>=0, |delta U|<=1.
+        rem = (curv+(2 if t>=0 else 0))*(-F(t)/2).exp()*h**3/(72*F(3).sqrt())
+        split[i] = min(extra[i],max(0,(F(max(y.upper() for y in vals))+rem-old[t]).upper().exact_rational()))
+
+    return split, prim
+
+
 base = Path(__file__).resolve().parent
 if not __debug__:
     raise SystemExit('Run with assertions enabled.')
@@ -19,11 +57,12 @@ assert sha256(ref).hexdigest() == '7be0449af83f2b264894d0b0074108139ada0badc0c34
 z, _, B, _ = s['unfold']['lattice']['prime_rows'](ref.decode())
 assert len(z)==1257 and z[0]==-QQ(144)/25 and z[-1]==QQ(29)/5
 parser = argparse.ArgumentParser(description=__doc__)
-parser.add_argument('--certificate', choices=('three-midpoints', 'first-fit', 'eight-piece'), default='three-midpoints')
+parser.add_argument('--certificate', choices=('three-midpoints', 'first-fit', 'eight-piece', 'six-knots'), default='three-midpoints')
 case = parser.parse_args().certificate
 hashes = {'three-midpoints': '2716981104b65b67c01c1b8e2306f43a6328145b3425dfaee040b18dd35a13ec',
           'first-fit': 'ebb8ba76b9be482c9bf4b7c254891a16106c539b30e9c5069abf048c38f1db4e',
-          'eight-piece': '163e7c8da104a89855147b0a996b5968b26765d0596a24c70682f566b458890c'}
+          'eight-piece': '163e7c8da104a89855147b0a996b5968b26765d0596a24c70682f566b458890c',
+          'six-knots': '79face742e0aee44229823c08c2c32d53ac66aabdac39e918a6b58c2af1dd51f'}
 raw = (laws/f'delete-33-{case}.json').read_bytes()
 assert sha256(raw).hexdigest() == hashes[case]
 cert = json.loads(raw,parse_float=str)
@@ -52,15 +91,14 @@ bc = s['jumps'](z,center,s['C'])
 d,v = s['second_tangent'](z,bc,lam,q)
 qc = sum(x*y for x,y in zip(bc,v))
 constant = -F(8)/9 + sum(F(r[-1]) for r in data if len(r)==5) + F(sigma)*(d+qc)
-finite_den = 1600 if case == 'eight-piece' else 400
-added = [j for j in range(1,24) if j % 8] if case == 'eight-piece' else [1,3,5]
+refined = case in ('eight-piece','six-knots')
+finite_den = 1600 if refined else 400
+added = [j for j in range(1,24) if j % 8] if refined else [1,3,5]
 assert all(t*400==int(400*t) for t in z)
 mesh = sorted([int(finite_den*t) for t in z]+added)
 assert len(set(mesh))==len(z)+len(added)
 ap,bp,*_ = s['tail_data'](z,center,data,mesh,finite_den,primitive=True)
 W = [s['step'](QQ(k)/finite_den,0) for k in mesh]
-def upper(a,b,m):
-    return s['bern_upper'](a,b,m,F('1e-14'))
 supports = [upper(a-b,c-d0,e-f) for a,b,c,d0,e,f in
              zip(ap,ap[1:],bp,bp[1:],W,W[1:])]
 finite = sum(supports)
@@ -111,38 +149,28 @@ if case == 'eight-piece':
     print('All negative and all finite releases, upper prices:',negative,original+sum(extra),flush=True)
     assert early < F('-4.13718e-8') and four < F('-3.83838e-9')
     assert negative < F('-4.68429e-8')
+    split, _ = single_knot_costs(z,center,data,old,extra,QQ(20)/10**9)
+    negative_one = negative+max(j for t,j in zip(z[:-1],split) if t>=0)
+    print('All negative releases plus one nonnegative real knot, surplus upper:',negative_one,flush=True)
+    assert negative_one < F('-4.0298e-9')
+    raise SystemExit(0)
+if case == 'six-knots':
+    split, _ = single_knot_costs(z,center,data,old,extra,QQ(15)/10**9)
+    # Each slab can be unchanged, get one knot, or be released for
+    # the price of two knots. The budget is at most k knots.
+    best = [QQ(0)]*7
+    for j,d in zip(split,extra):
+        best = [max(best[k], best[k-1]+j if k>=1 else 0,
+                    best[k-2]+d if k>=2 else 0) for k in range(7)]
+    five_knots, six_knots = (original+best[k] for k in (5,6))
+    five_releases = original+sum(e for e,_ in rank[:5])
+    print('Five and six real knots, surplus uppers:',five_knots,six_knots,flush=True)
+    print('Best five finite releases, upper price:',five_releases,flush=True)
+    assert five_knots < F('-2.78406e-8') and six_knots < F('-3.38686e-10')
     raise SystemExit(0)
 assert bound < F('-2.51350e-8')
 
-# Price the best three real split positions, not merely these midpoints.
-split = list(extra)
-h = QQ(1)/1600
-large = [i for i,y in enumerate(extra) if y > QQ(32)/10**9]
-points = sorted({j for i in large for j in range(int(3200*z[i]),int(3200*z[i+1])+1)})
-aa,bb,_,_,curv = s['tail_data'](z,center,data,points,3200,primitive=True)
-# The mass primitive is step(t,0), including on t<0.
-prim = {j:(a,b,s['step'](QQ(j)/3200,0)) for j,a,b in zip(points,aa,bb)}
-
-for i in large:
-    t,r = z[i:i+2]
-    j0,j1 = int(3200*t),int(3200*r)
-    def score(v):
-        left = [a-b for a,b in zip(prim[j0],v)]
-        right = [a-b for a,b in zip(v,prim[j1])]
-        return upper(*left)+upper(*right)
-
-    # On each cell bound the quadratic interpolant by its three
-    # controls, pricing the two atom choices at each control jointly
-    # in their shared knot coordinate. This bound is uniform in both.
-    vals = [score(prim[j]) for j in range(j0,j1+1,2)]
-    for j in range(j0+1,j1,2):
-        v = [2*b-(a+c)/2 for a,b,c in zip(prim[j-1],prim[j],prim[j+1])]
-        vals.append(score(v))
-    # curv already accounts for differences of two laws in A and B.
-    # |(t*exp(-t))''| <= 2 exp(-t/2) for t>=0, |delta U|<=1.
-    rem = (curv+(2 if t>=0 else 0))*(-F(t)/2).exp()*h**3/(72*F(3).sqrt())
-    split[i] = min(extra[i],max(0,(F(max(y.upper() for y in vals))+rem-old[t]).upper().exact_rational()))
-
+split, prim = single_knot_costs(z,center,data,old,extra,QQ(32)/10**9)
 worst = sorted(zip(split,z[:-1]),reverse=True)[:3]
 print('Largest single-knot increments (left endpoint, upper increment):',
       [(t,float(y)) for y,t in worst],flush=True)
