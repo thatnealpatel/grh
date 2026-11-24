@@ -1,4 +1,5 @@
 """Exclude three added delete-33 knots with a moved quadratic tangent."""
+import argparse
 from fractions import Fraction
 from hashlib import sha256
 import json
@@ -17,8 +18,13 @@ ref = (laws/'delete-33-tail-baseline.txt').read_bytes()
 assert sha256(ref).hexdigest() == '7be0449af83f2b264894d0b0074108139ada0badc0c34a26edc6731d81baaa5c'
 z, _, B, _ = s['unfold']['lattice']['prime_rows'](ref.decode())
 assert len(z)==1257 and z[0]==-QQ(144)/25 and z[-1]==QQ(29)/5
-raw = (laws/'delete-33-three-midpoints.json').read_bytes()
-assert sha256(raw).hexdigest() == '2716981104b65b67c01c1b8e2306f43a6328145b3425dfaee040b18dd35a13ec'
+parser = argparse.ArgumentParser(description=__doc__)
+parser.add_argument('--certificate', choices=('three-midpoints', 'first-fit'), default='three-midpoints')
+case = parser.parse_args().certificate
+hashes = {'three-midpoints': '2716981104b65b67c01c1b8e2306f43a6328145b3425dfaee040b18dd35a13ec',
+          'first-fit': 'ebb8ba76b9be482c9bf4b7c254891a16106c539b30e9c5069abf048c38f1db4e'}
+raw = (laws/f'delete-33-{case}.json').read_bytes()
+assert sha256(raw).hexdigest() == hashes[case]
 cert = json.loads(raw,parse_float=str)
 data = cert['cuts']
 second = [r for r in data if len(r)==3]
@@ -77,6 +83,9 @@ remote = s['step'](QQ(48),0)+2*size*F(-24).exp()
 bound = constant+finite+tail+err+remote
 print('Integrated tail atom support, interpolation, remote:',tail,err,remote,flush=True)
 print('Three fixed midpoints, surplus upper:',bound,flush=True)
+if case == 'first-fit':
+    assert bound < F('-1.43881e-8')
+    raise SystemExit(0)
 assert bound < F('-2.51350e-8')
 
 # Price the best three real split positions, not merely these midpoints.
@@ -150,6 +159,27 @@ coeff = [[x-y for x,y in zip(prim[j],prim[j+2])] for j in range(0,48,2)]
 unit = [upper(*v) for v in coeff]
 free = original-sum(old[QQ(t)/400] for t in (0,2,4))+sum(unit)
 print('Eight-piece upper price; necessary Q(V_B-Z) upper:',free,free/F(sigma),flush=True)
+# Every first-cap slack is nonnegative and enters the SAME raw price
+# as the quadratic remainder. Test the total response needed in a band.
+band = [r for r in data if len(r)==5 and r[0]==1 and 40<=Fraction(r[1])<=80]
+assert len(band)==254
+S = sum(F(r[-1]) for r in band)
+_, band_prim, *_ = s['tail_data'](z,B,band,[int(400*t) for t in z],400,primitive=True)
+hb = [l-r for l,r in zip(band_prim,band_prim[1:])]
+ref_slack = S-sum(h*y for h,y in zip(hb,B))-band_prim[-1]*B[-1]
+# Everywhere |delta B| <= 2 and the directional density is bounded
+# by S exp(-t/2)/C. Release even measurable fields on [0,.015) and tail.
+release = 4*S/s['C']*(1-(-F(3)/400).exp()+(-F(29)/10).exp())
+positive = sum(abs(h)-h*y for t,h,y in zip(z,hb,B) if t>=QQ(3)/200)
+needed = ref_slack-free-release-positive
+radius = QQ(915)/10000
+possible = sum(min((abs(h)*radius).upper(), (abs(h)-h*y).upper()).exact_rational()
+               for t,h,y in zip(z,hb,B) if t<0)
+print('Band reference slack, release, positive, needed negative, capped negative:',
+      ref_slack, release, positive, needed, F(possible),flush=True)
+assert ref_slack > F('5.11565e-8') and ref_slack-free > F('4.1530e-8')
+assert positive < F('1.1550e-8')
+assert needed > F('1.9284e-8') and needed > possible
 for i in (0,8,16):
     gains = []
     for col in range(3):

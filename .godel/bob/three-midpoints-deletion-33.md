@@ -49,6 +49,18 @@ The computed $F_8<9.626\cdot10^{-9}$ gives $Q(V_B-Z)<1.369\cdot10^{-5}$ for any 
 
 A separate *lower* check prices the same raw linear functional on step tails. On each tail step integrate the three quadratic interpolants before taking an atom maximum. For the integral this uses the Simpson weights $(1,4,1)/6$ on each original tail cell. Subtract the uniform integrated interpolation and remote errors. For the integrated score (and the finite slabs) the shared Bernstein routine returns a sampled lower bound plus the specified tolerance, so subtract that tolerance when using it as a lower bound on the support. Independent atoms here need not satisfy either cap or $Q(V_B)\le d$. On tail steps of width $1/10$ from $29/5$ to $48$, with a constant remote tail, the raw linear price exceeds $2.0654\cdot10^{-9}$ using four equal pieces on each of the three finite slabs and $9.0172\cdot10^{-9}$ using eight. Thus improving the atom or tail integration alone cannot certify exclusion on these meshes with these rows and center. This is not a positive surplus. On the eight-piece mesh, test whether the full quadratic, the moved-center radius, and the nine half-slab contrasts are compatible with nonnegative surplus and both first caps before attempting simultaneous second completion.
 
+## After Work: Where the eight-piece fit must move
+
+Any eight-piece fit with nonnegative surplus must change $B$ from the reference by **more than $0.0915$ on at least one original negative slab**. Use the linear response inequality below in the fit, not a guessed slab or a required sign on every slab.
+
+Indeed, put $s_i=w_i(1-\Re(\overline{\gamma_i}V_i))$ for each normalized first cut at its field and frequency. For a feasible law these are nonnegative. Before taking the raw atom suprema the price adds exactly $\sum_i s_i+\sigma(d-Q(V_B))+\sigma Q(V_B-Z)$ to the surplus. In particular,
+$$M-8/9+\sigma Q(V_B-Z)+\sum_i s_i\le F_8.$$
+This is **one** budget, not a separate allowance on top of the radius. Aggregate the 254 retained $B$ directions with $40\le x_i\le80$. Write $S=\sum_{\rm band} w_i$ and let $p(t)$ be their summed primitive from $t$ to infinity; the $i$th summand is $(w_i/C)\Re[\overline{\gamma_i}e^{(-1/2+ix_i)t}/(1/2+ix_i)]$. The reference band slack exceeds $5.11565\cdot10^{-8}$. Since the band slack at a successful law is at most $F_8$, the directional response must increase by more than $4.1530\cdot10^{-8}$.
+
+Set $h_j=p(z_j)-p(z_{j+1})$. On each unrefined finite slab its response increment is $h_j(B_j-B_{*,j})\le |h_j|-h_jB_{*,j}$. Summing these uppers on $[3/200,29/5)$ costs less than $1.1550\cdot10^{-8}$. On the refined slabs and the infinite tail allow even arbitrary measurable $|B|\le1$: Since $|p'(t)|\le S e^{-t/2}/C$ and $|B-B_*|\le2$, their combined contribution is at most $4S(1-e^{-3/400}+e^{-29/10})/C$. Subtract both costs from the required response. The default checker below gives
+$$\sum_{z_j<0} h_j(B_j-B_{*,j}) > 1.9284\cdot 10^{-8}.$$
+With $|B_j-B_{*,j}|\le0.0915$ on every negative slab, sum the smaller of $0.0915|h_j|$ and $|h_j|-h_jB_{*,j}$ on each; this cannot pay the computed residual. This localizes a necessary change, not an impossibility at full width. In a restricted-frequency pilot include the aggregate row even if its individual weights are small; keep the full quadratic, both continuous caps, and simultaneous second completion for a witness. [Reason for changing the fit order and handoff](first-fit-decision.md).
+
 ## Replay
 
 From the repository root with SageMath 10.9:
