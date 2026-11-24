@@ -209,11 +209,15 @@ $q^{1.300/2+.220+o(1)}=q^{.870+o(1)}$ such edges, so they
 cannot meet the fraction unless $C_{\rm off}\le q^{.9885+o(1)}$.
 An energy bound on all pairs that does not control which
 edges survive the complement does not prove the needed
-lower bound. No admissible census, economical cover, or
-unrestricted complement estimate is supplied here.
+lower bound. The [shared-erasure refinement][shared] lowers
+the passing price when the erasure is fixed per input and
+reprices this test at larger radius. No admissible census,
+economical cover, or unrestricted complement estimate is
+supplied here.
 
 Check the intersections, radii, and budgets with
 `python3 .godel/alice/check-global-pivot-row-price.py`.
 
 [screen]: denominator-pair-gap-regions.md#after-work-spend-the-full-rank-margin-before-testing-the-second-row
 [three]: global-three-ratio.md
+[shared]: shared-second-erasure.md
