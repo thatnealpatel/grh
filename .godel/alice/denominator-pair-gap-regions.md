@@ -1,0 +1,35 @@
+# Price a gap region at a fixed pair of denominators
+
+On one actual ordered two-label list in $g=R=j=1$, consider the [retained common-input triples](private-output-radicals.md), including those not hit by any proposed local valuation cover. Reverse the order of counting: Fix distinct ordered denominators $d,e$, put $G=(d,e)$, and write the first rows as
+
+$$F_1 m=v=dY+qx=eY_0+qy,\qquad b=(x,y).$$
+
+Here $m=ca$ is smooth, $m\le V=q^{1.720+o(1)}$, and $0<|x|,|y|\le H=q^{.390+o(1)}$. The reciprocal deletions in [the common-input count](same-input-second-bracket.md) give $G\le q^{.118+o(1)}$. The gaps are distinct since equal output products have the same sorted prefix. At a given pair, each $m$ occurs in at most one triple: It fixes the input, and the graph has one edge per input and denominator. The two second rows need not be reconstructed on an arbitrary lattice point; we count a superset, using injectivity on actual triples.
+
+For each pair prescribe two independent polynomial-height integral linear forms $u,w$ in the two gaps, and one set $S$ of $O(\log q/\log\log q)$ primes. They may be chosen on the residual itself, but are then held fixed. For example the forms may take determinants against two chosen nonparallel gap vectors at this pair. Use full supported parts, and put
+
+$$s=|x|_S,\quad t=|y|_S,\quad l=G\,(|x-y|/G)_S,\qquad D=stl/\gcd(s,t,l).$$
+
+Here $G\mid x-y$ by the equations. The triples passing
+
+$$ |u(b)w(b)|\ \le\ |\det(u,w)|\,D\, G q^{.160} \tag{1} $$
+
+cost **at most $q^{1.135+o(1)}$ over all ordered denominator pairs on the list**. There is no charge for enumerating input references in this statement. In particular even at $S=\varnothing$ the area allowance in (1) is $G^2 q^{.160}$, not $G q^{.079}$ times the gap gcd of a chosen reference. The latter [small-area estimate](gap-area-rectangles.md) is for a different count and orientation. The present test uses the two forms together and counts objects once, not rectangles. No agreement of valuation vectors is required.
+
+## Local estimate
+
+Put $T=Gq^{.160}$. The local price is $q^{o(1)}\sqrt T$. Guess $s,t,l/G$ at subpower cost by distributing $O(\log q)$ exponents on $S$. For $u(b)\ne0$, dyadically bin its absolute value in $[M,2M)$. Enlarge the allowed gap region to the centred parallelogram $|u|\le2M$, $|w|\le |\det(u,w)|DT/M$, of area $8DT$. There are logarithmically many bins, and any two gap vectors in the parallelogram have absolute determinant at most $4DT$. Keep the original gap bounds for recovery.
+
+The mask lattice of gap pairs is $s\mid x$, $t\mid y$, $l\mid x-y$. Its index is exactly $D$: After the diagonal substitution, the image of the difference modulo $l$ has size $l/\gcd(s,t,l)$. The projection of the unmasked three-variable congruence lattice for $(m,x,y)$ onto gaps consists of *all* pairs $x=y\bmod G$, by CRT since $(F_1q,de)=1$. Its vertical period in $m$ is $de/G$. Thus the three-variable masked lattice has determinant $(de/G)D$. A factor of $G$ in the projection is not a second independent factor of $G$ in this determinant.
+
+First price the full-rank bin, without any smooth divisor. Use the centred prism over the parallelogram, of half-height $V$. If it contains three independent lattice points, its lattice-point count is $O(VGT/(de))$: The parallelepiped on those vectors fits in three times the prism. In each coset of their generated lattice the translates at counted points have disjoint interiors and fit in four times the prism; sum over cosets. At the actual widths $V G\sqrt{T}/(de)\le q^{1.720+1.5(.118)+.080-2.110+o(1)}=q^{-.133+o(1)}$. Hence full rank is affordable, even where the volume bound does not force rank loss.
+
+Otherwise the span has rank at most two, with at most two actual points in rank one by $(m,x)=1$ (primitivity of the first row product pair). Suppose the plane does not contain the $m$-axis. The projected lattice of its intersection with the masked lattice has covolume at least $D$, by injectivity and the mask index. Let $j_0>0$ generate the image of the $m$ coordinate on this plane lattice; zero image has no inputs. If $m/j_0\le4T$, enumerate this smooth integer at cost $q^{o(1)}\sqrt T$, recovering $m$. Otherwise choose a divisor $f\mid m/j_0$ strictly crossing $4T$ by eligible prime factors. The overshoot factor is at most $X=q^{o(1)}$, so the same [smooth half-power bound](shared-complement-count.md) prices all choices. Divisibility of the **divided projection** by $f$ has index exactly $f$ on this plane. Thus mutual projected determinants in the filtered lattice are multiples of its covolume, at least $Df>4DT$. They vanish; by injectivity the original points are collinear through zero, and primitivity bounds their number. No guessing the plane per input: There is just one span in a rank-two bin and mask group.
+
+For a vertical plane, or the unbinned branch $u(b)=0$, the gaps lie on a fixed rational line. Write $b=k(i,j)$ with $(i,j)$ primitive. An occupied line has $i\ne j$. Since $(x,d)=1$, $(k,G)=1$, so $G\mid i-j$ and $|k|\le 2H/G$. In coordinates $(m,k)$ one has $m=B k\bmod de/G$ for a fixed $B$, by CRT on the reduced direction (using $G\mid i-j$). The rectangle $|m|\le V$, $|k|\le 2H/G$ has area divided by covolume $O(VH/(de))=q^{o(1)}$. In rank two apply the same coset-volume argument; in rank at most one use $(m,k)=1$. This costs subpower inputs on the entire line, irrespective of how large its primitive gap vector is. This addresses the line through zero separately rather than applying an area estimate to collinear points.
+
+## Sum and remaining decision
+
+At $G\asymp K$ there are at most $q^{1.055+o(1)}/\sqrt K$ ordered denominator pairs: Enumerate the smooth gcd at cost $q^{o(1)}\sqrt K$, and each remaining smooth quotient at cost $q^{.5275+o(1)}/\sqrt K$. This cancels the $\sqrt G$ in the local price and proves (1)'s total. The bound holds also for the intersection of the passing set with any uncovered heavy-reference residual. It is a triple charge on the retained graph, not a column deletion or a bound for each input reference. The initial column cuts must still be made before forming partners.
+
+One concrete remaining test: At each denominator pair with any nonparallel gap vectors choose two actual directions maximizing the number passing (1), using their combined gap and output support for $S$. A pair with just one gap line is already priced by line recovery. In the nonparallel case, test the second successful rows **on the triples failing this maximizing choice**, or bound them by the local valuation cover. A $q^{1.136-\eta}$ bound there would suffice, because this test costs $q^{1.135+o(1)}$ in total and the earlier exceptional charge is $q^{1.1355+o(1)}$. There is no proved lower bound for the maximizing occupancy. For example with empty mask and $G=1$ the area allowance is just $q^{.160}$ against a full gap-box area $q^{.780+o(1)}$. Taking $q^{.620}$ narrow regions and paying for each would lose the saving; nor may one multiply the price here by an estimated second-row density.
