@@ -1,4 +1,5 @@
 """Certify the delete-33 obstruction for both entire first lattices."""
+import argparse
 from pathlib import Path
 from runpy import run_path
 from sage.all import ComplexBallField, QQ, RealBallField
@@ -8,14 +9,13 @@ if not __debug__:
 F = RealBallField(128)
 base = Path(__file__).resolve().parent
 eval_grid = run_path(str(base/'check-four-shift-10-2.py'))['eval_grid']
-r = F(-QQ(1)/50).exp()
 C = F(QQ(39)/20).cosh()/3
 Ct = C/(2*(F.pi()/12).cos())
-S = (-7, 6, 19)
+ORIGINAL = base/'deletion-laws/delete-33-full.txt'
 
 
-def read():
-    prime, second = (base/'deletion-laws/delete-33-full.txt').read_text().split('# Second:')
+def read(table):
+    prime, second = table.read_text().split('# Second:')
     rows = [list(map(int, line.split())) for line in prime.splitlines() if not line.startswith('#')]
     z, A, B, U = [], [], [], []
     for start, *pairs in rows:
@@ -51,11 +51,11 @@ def stencil(z,Y,D,d):
     return r, a, K, slope
 
 
-def first(z,Y,D):
-    r, a, K, slope = stencil(z,Y,D,25)
+def first(z,Y,D,d):
+    r, a, K, slope = stencil(z,Y,D,d)
     # For k>K the infinite stencil gives slope*r^k exactly. Truncate
     # for the GRID calculation only, bounding the omitted sup norm.
-    J = 1536
+    J = 1536*(d//25)
     assert J > K
     a.update({k:slope*r**k for k in range(K+1,J+1)})
     T = J+1
@@ -67,26 +67,38 @@ def first(z,Y,D):
     return a, e, norms
 
 
-def repair(n):
+def repair(n,d):
     # Equal spacing makes the 3-by-3 Gram inverse tridiagonal.
-    p = r**13
+    r = F(-QQ(1)/(2*d)).exp()
+    S = [k*(d//25) for k in (-7,6,19)]
+    p = r**(S[1]-S[0])
     x,y,z = [sum(b*r**abs(k-j) for j,b in n.items()) for k in S]
     correction = [(x-p*y)/(1-p*p), ((1+p*p)*y-p*(x+z))/(1-p*p), (z-p*y)/(1-p*p)]
     for k,b in zip(S,correction):
-        n[k] -= b
+        n[k] = n.get(k,0)-b
     return sum(abs(b) for b in correction)
 
 
 def main():
-    z,A,B,U,n = read()
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--table', type=Path, help='default: accepted table for this denominator')
+    parser.add_argument('--denominator', type=int, choices=(25,50), default=25)
+    args = parser.parse_args()
+    d = args.denominator
+    reference = ORIGINAL if d == 25 else base/'deletion-laws/delete-33-half-step.txt'
+    table = args.table or reference
+    original = d == 25 and table.resolve() == ORIGINAL.resolve()
+    z,A,B,U,n = read(table)
     surplus = sum((step(t,0)-step(s,0))*u for t,s,u in zip(z,z[1:],U))+step(z[-1],0)*U[-1]-F(8)/9
     # The omitted left ray has X=0 and lies entirely below zero.
     print('Failure surplus:',surplus,flush=True)
-    assert surplus > F('0.00001683')
-    a,ea,T = first(z,A,Ct)
-    b,eb,M = first(z,B,C)
-    print('Second Gram repair l1:',repair(n),flush=True)
-    N = 131072
+    half = d == 50 and table.resolve() == reference.resolve()
+    threshold = '0.00001683' if original else '0.0000008709' if half else '0'
+    assert surplus > F(threshold)
+    a,ea,T = first(z,A,Ct,d)
+    b,eb,M = first(z,B,C,d)
+    print('Second Gram repair l1:',repair(n,d),flush=True)
+    N = 131072*(d//25)**2
     chord = (2*F.pi()/N)**2/8
     # eval_grid uses exp(+ij phi); simultaneous reflection of all fields
     # merely reverses the order in which we visit the circle.
@@ -95,7 +107,7 @@ def main():
     tmax = max(abs(v).upper() for v in sample(a))
     tgap = 1-F(tmax)-ea-chord*T[2]
     print('Uniform first t slack lower bound:',tgap,flush=True)
-    assert tgap > F('0.00006')
+    assert tgap > (F('0.00006') if original else 0)
     # For each fixed unit h bound |m|^2 + Re(h*(n-m^2))
     # by endpoint interpolation plus a uniform second derivative bound.
     n2 = sum(k*k*abs(v) for k,v in n.items())
@@ -106,9 +118,25 @@ def main():
     vmax = max((abs(m)**2+abs(v-m*m)).upper() for m,v in zip(mvals,sample(n)))
     gap = 1-F(vmax)-loss-2*eb*(2*M[0]+eb)
     print('Uniform second disk slack lower bound:',gap,flush=True)
-    assert gap > F('0.00003')
+    assert gap > (F('0.00003') if original else 0)
 
     # Test the same prime law, not a refit, on the next finer lattice.
+    if half:
+        E = ComplexBallField(128)
+        # Canonical quarter-step t field at one frequency, not a refit.
+        rho, av, J, slope = stencil(z,A,Ct,100)
+        w = E(0,-2*F.pi()*1898/131072).exp()
+        v = sum(b*w**j for j,b in av.items())+slope*(rho*w)**(J+1)/(1-rho*w)
+        print('Quarter-step first t norm:', abs(v), flush=True)
+        assert abs(v) > F('1.00181')
+        # Unfolded first field for the same primes, using weighted jumps.
+        x = 200*F.pi()*1901/131072
+        jumps = [F(a-b) for a,b in zip(A,[0]+A)]
+        g = sum(b*E(-F(t)/2,x*F(t)).exp() for t,b in zip(z,jumps))/(Ct*E(F(1)/2,x))
+        print('Continuous first t norm:', abs(g), flush=True)
+        assert abs(g) > F('1.00251')
+    if not original:
+        return
     E = ComplexBallField(128)
     for Y,D,i,threshold in [(A,Ct,2734,'1.012'), (B,C,923,'1.0015')]:
         rho, a, J, slope = stencil(z,Y,D,50)
