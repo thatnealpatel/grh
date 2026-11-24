@@ -138,8 +138,9 @@ def tail_data(z, B, data, points, den, *, primitive=False):
     return aa, bb, size, slope, curvature
 
 
-def continuous_tail(z, A, B, U, data):
-    den, lo, hi = 800, 4640, 38400
+def continuous_tail(z, A, B, U, data, den=800):
+    assert den > 0 and den % 5 == 0 and z[-1] == QQ(29)/5
+    lo, hi = 29*den//5, 48*den
     h = QQ(1)/den
     points = range(lo,hi+1)
     aa, bb, size, _, curvature = tail_data(z,B,data,points,den)
@@ -184,7 +185,7 @@ def moving_tail(z, A, B, U, data, den, radius, R):
     return dp[0]+err+remote
 
 
-def price(z, A, B, U, data, omit=()):
+def price(z, A, B, U, data, omit=(), split_pre=False):
     bstar = jumps(z, B, C)
     az, bz = [F(0) for _ in z], [F(0) for _ in z]
     room, remote_density = F(0), F(0)
@@ -219,17 +220,23 @@ def price(z, A, B, U, data, omit=()):
     mass = [step(t, 0)-step(s, 0) for t, s in zip(z, z[1:])]+[step(z[-1], 0)]
     ref = sum(m*u for m, u in zip(mass, U))-F(8)/9
     zonal = [F(0), F(0), F(0)]
+    if split_pre:
+        assert 1 in z
+        zonal.append(F(0))
     eps = F('1e-12')
     for t, a, b, m, u, y, w in zip(z, az, bz, mass, U, A, B):
         if t in omit:
             continue
         j = 0 if t < 0 else 1 if t < QQ(29)/5 else 2
+        if split_pre and 0 <= t < 1:
+            j = 3
         zonal[j] += bern_upper(a, b, m, eps)-(m*u-a*y-b*w)
     R = QQ(40)
     remote = step(R, 0)+2*remote_density*(F(-R)/2).exp()
     print('Baseline surplus:', ref, flush=True)
     print('Combined slack:', room, flush=True)
-    print('Independent arbitrary-u gains (negative, pre-tail, tail):', zonal, flush=True)
+    regions = 'negative, late pre-tail, tail, early pre-tail' if split_pre else 'negative, pre-tail, tail'
+    print(f'Independent arbitrary-u gains ({regions}):', zonal, flush=True)
     print('Uniform allowance beyond z=40:', remote, flush=True)
     return ref+room, zonal, remote
 
@@ -241,6 +248,7 @@ def main():
     p.add_argument('--fine-tail', action='store_true', help='only with --probe-dual')
     p.add_argument('--movable', action='store_true')
     p.add_argument('--continuous', action='store_true')
+    p.add_argument('--full-negative', action='store_true')
     args = p.parse_args()
     assert not args.fine_tail or args.probe_dual
     tab = base/'deletion-laws/delete-33-tail-baseline.txt'
@@ -256,6 +264,20 @@ def main():
         complete(z, jumps(z, B, C), list(map(F, ['113.71074849', '153.65856922', '156.52872908'])),
                  degree=256, grid_size=65536, min_slack='.0000014')
     read_dual = lambda p: json.loads(p.read_text(), parse_float=str)
+    if args.full_negative:
+        data = read_dual(base/'deletion-laws/delete-33-full-negative-dual.json')
+        off, gain, _ = price(z,A,B,U,data,omit={z[-1]},split_pre=True)
+        bound = off+gain[0]+continuous_tail(z,A,B,U,data,den=2400)
+        print('Measurable tail, full negative freedom, unchanged pre-tail:',bound,flush=True)
+        assert bound < F('-2.0215e-7')
+        partial = bound+QQ(2)/3*(gain[1]+gain[3])
+        print('With up to two-thirds pre-tail replacement:',partial,flush=True)
+        assert partial < F('-1.529e-8')
+        local = bound+gain[1]+gain[3]/6
+        print('With full replacement from 1 and one-sixth on [0,1):',local,flush=True)
+        assert local < 0
+        print('Full pre-tail allowance:', bound+gain[1]+gain[3], flush=True)
+        return
     if args.continuous:
         data = read_dual(base/'deletion-laws/delete-33-continuous-tail-dual.json')
         off, gain, _ = price(z,A,B,U,data,omit={z[-1]})
