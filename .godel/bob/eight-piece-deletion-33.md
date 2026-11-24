@@ -270,15 +270,17 @@ starts, in units of $1/400$:
 In particular, any five-release law reaching surplus at least
 $-10^{-10}$ is constant on every negative slab. Neither the
 five-release nor the eight-knot class is excluded in full.
-For a further five-release fit, target these seven sets rather
-than the whole finite partition, and reprice all seven with
-any new tangent. The prior local fits were sampled relaxations;
-no admissible law with nonnegative surplus is known here.
+For a further five-release fit, target the sets not excluded
+below rather than the whole finite partition, and reprice
+them with any new tangent. The prior local fits were
+sampled relaxations; no admissible law with nonnegative
+surplus is known here.
 
-**Subsequent result.** Reweighting inherited first rows
-[excludes the set with $k=16$][independent-price], with all
-five releases and the tail measurable. The other six sets
-are not decided by that certificate.
+**Subsequent result.** Two [reweighted prices][independent-price]
+exclude $(0,2,4,6,16)/400$, $(0,2,4,8,12)/400$, and
+$(0,2,4,6,14)/400$, with all five releases and the tail
+measurable. This leaves four sets: $(0,2,4,6,k)/400$ for
+$k\in\{8,10,12\}$, and $(0,2,4,8,10)/400$.
 
 [independent-price]: five-release-independent-price-33.md
 
