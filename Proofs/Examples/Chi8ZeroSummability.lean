@@ -2,6 +2,7 @@ module
 
 public import Examples.Chi8Origin
 public import Mathlib.Analysis.Analytic.Order
+public import Mathlib.Analysis.Meromorphic.Divisor
 import Lemmas.DirichletLFunctionGrowth
 import Lemmas.DirichletRightAnchor
 import Mathlib.Analysis.Complex.JensenFormula
@@ -32,12 +33,13 @@ private theorem chi8_ne_one : χ ≠ 1 := by
 private theorem analyticAt_L (z : ℂ) : AnalyticAt ℂ L z :=
   (χ.differentiable_LFunction chi8_ne_one).analyticAt z
 
--- The same moving disks as in DirichletThreeResidueSummability, but we
--- retain the logarithm of the polynomial bound before estimating it.
-private theorem moving_disk_jensen :
-    ∃ A : ℝ, 0 ≤ A ∧ ∀ t : ℝ,
-      ((∑ᶠ z, divisor L (closedBall (2 + (t : ℂ) * I) 5) z : ℤ) : ℝ)
-        ≤ (A + 6 * Real.log (1 + |t|)) / Real.log (6 / 5 : ℝ) := by
+/-- Moving-disk sphere, center-loss and divisor bounds for the bare L-function. -/
+public theorem exists_moving_disk_bounds :
+    ∃ A : ℝ, 0 ≤ A ∧ ∀ t : ℝ, let c : ℂ := 2 + (t : ℂ) * I
+      ∃ M : ℝ, 0 < M ∧ L c ≠ 0 ∧ (∀ z ∈ sphere c 6, ‖L z‖ ≤ M) ∧
+        Real.log (M / ‖L c‖) ≤ A + 6 * Real.log (1 + |t|) ∧
+        ((∑ᶠ z, divisor L (closedBall c 5) z : ℤ) : ℝ) ≤
+          (A + 6 * Real.log (1 + |t|)) / Real.log (6 / 5 : ℝ) := by
   obtain ⟨C, hC, hG⟩ := Masullo.exists_dirichlet_LFunction_growth_closed_halfPlane χ chi8_ne_one
   obtain ⟨b, hb, hB⟩ := Masullo.exists_dirichlet_anchor_at (show (1 : ℝ) < 2 by norm_num)
   let A := |Real.log C - Real.log b| + 6 * Real.log 14
@@ -65,27 +67,31 @@ private theorem moving_disk_jensen :
   have hj := AnalyticOnNhd.sum_divisor_le («f» := L) (c := c) (r := 5) (R := 6)
     (by norm_num) (by norm_num) hM (fun z _ ↦ analyticAt_L z) (norm_pos_iff.mp hcn)
     (by simpa using hbd)
+  have hL : Real.log (M / ‖L c‖) ≤ A + 6 * Real.log (1 + |t|) := by
+    have hlog := Real.log_le_log hb hcen'
+    have hlogu : Real.log u ≤ Real.log 14 + Real.log (1 + |t|) := by
+      rw [← Real.log_mul (by norm_num : (14 : ℝ) ≠ 0) (by positivity : 1 + |t| ≠ 0)]
+      exact Real.log_le_log hu' (by dsimp [u]; linarith [abs_nonneg t])
+    rw [Real.log_div (zero_lt_one.trans_le hM).ne' hcn.ne']
+    dsimp only [M]
+    rw [Real.log_mul (zero_lt_one.trans_le hC).ne' (pow_ne_zero _ hu'.ne'), Real.log_pow]
+    push_cast
+    dsimp only [A]
+    linarith only [hlog, hlogu, le_abs_self (Real.log C - Real.log b)]
+  refine ⟨M, zero_lt_one.trans_le hM, norm_pos_iff.mp hcn, hbd, hL, ?_⟩
   rw [abs_of_pos (by norm_num : (0 : ℝ) < 5)] at hj
-  refine hj.trans (div_le_div_of_nonneg_right ?_ (Real.log_nonneg (by norm_num)))
-  have hlog := Real.log_le_log hb hcen'
-  have hlogu : Real.log u ≤ Real.log 14 + Real.log (1 + |t|) := by
-    rw [← Real.log_mul (by norm_num : (14 : ℝ) ≠ 0) (by positivity : 1 + |t| ≠ 0)]
-    exact Real.log_le_log hu' (by dsimp [u]; linarith [abs_nonneg t])
-  rw [Real.log_div (zero_lt_one.trans_le hM).ne' hcn.ne']
-  dsimp only [M]
-  rw [Real.log_mul (zero_lt_one.trans_le hC).ne' (pow_ne_zero _ hu'.ne'), Real.log_pow]
-  push_cast
-  dsimp only [A]
-  linarith only [hlog, hlogu, le_abs_self (Real.log C - Real.log b)]
+  exact hj.trans (div_le_div_of_nonneg_right hL (Real.log_nonneg (by norm_num)))
 
 private theorem disk_divisor_bound :
     ∃ K : ℝ, 0 ≤ K ∧ ∀ t : ℝ,
       ((∑ᶠ z, divisor L (closedBall (2 + (t : ℂ) * I) 5) z : ℤ) : ℝ)
         ≤ K * (1 + |t|) ^ (1 / 2 : ℝ) := by
-  obtain ⟨A, hA, hJ⟩ := moving_disk_jensen
+  obtain ⟨A, hA, hJ⟩ := exists_moving_disk_bounds
   let d : ℝ := Real.log (6 / 5 : ℝ)
   have hd : 0 < d := Real.log_pos (by norm_num)
-  refine ⟨(A + 12) / d, by positivity, fun t ↦ (hJ t).trans ?_⟩
+  refine ⟨(A + 12) / d, by positivity, fun t ↦ ?_⟩
+  obtain ⟨_, _, _, _, _, hcount⟩ := hJ t
+  refine hcount.trans ?_
   let x : ℝ := 1 + |t|
   have hx : 1 ≤ x := by dsimp [x]; linarith [abs_nonneg t]
   have hlog := Real.log_le_rpow_div (zero_le_one.trans hx) (by norm_num : (0 : ℝ) < 1 / 2)

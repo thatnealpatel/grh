@@ -12,6 +12,24 @@ open scoped ContDiff LSeries.notation
 
 namespace Masullo
 
+/-- The twisted von Mangoldt series gives a height-independent bound on a
+whole right half-plane strictly inside the half-plane of absolute convergence. -/
+public theorem exists_norm_logDeriv_dirichletL_le {N : ℕ} [NeZero N]
+    (χ : DirichletCharacter ℂ N) {a : ℝ} (ha : 1 < a) :
+    ∃ B : ℝ, 0 ≤ B ∧ ∀ s : ℂ, a ≤ s.re → ‖logDeriv χ.LFunction s‖ ≤ B := by
+  let b := ↗χ * ↗ArithmeticFunction.vonMangoldt
+  let c (n : ℕ) := ‖LSeries.term b (a : ℂ) n‖
+  have hsum : Summable c := (χ.LSeriesSummable_twist_vonMangoldt (s := (a : ℂ)) ha).norm
+  refine ⟨∑' n, c n, tsum_nonneg (fun _ ↦ norm_nonneg _), fun s hs ↦ ?_⟩
+  have h₁ := ha.trans_le hs
+  have hlog : logDeriv χ.LFunction s = -LSeries b s := by
+    rw [logDeriv_apply, χ.deriv_LFunction_eq_deriv_LSeries h₁, χ.LFunction_eq_LSeries h₁,
+      χ.LSeries_twist_vonMangoldt_eq h₁, neg_div, neg_neg]
+  rw [hlog, norm_neg]
+  have hsum' := (χ.LSeriesSummable_twist_vonMangoldt h₁).norm
+  exact (norm_tsum_le_tsum_norm hsum').trans (hsum'.tsum_le_tsum
+    (LSeries.norm_term_le_of_re_le_re b (by simpa using hs)) hsum)
+
 /-- On `Re s = a > 1`, the absolutely convergent twisted von Mangoldt series gives a
 uniformly bounded multiplier for the reflected compact log Mellin test. -/
 public theorem integrable_compactLogMellin_dirichletL_reflected {N : ℕ} [NeZero N]
