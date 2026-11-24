@@ -24,7 +24,7 @@ func TestStarter(t *testing.T) {
 		if n == nil || n.Exec != "yah" || n.Directory != root || n.Next != nil || len(n.Args) != 5 || !slices.Equal(n.Args[:4], []string{"-yolo", "-effort", "high", "-append"}) {
 			t.Fatalf("unexpected starter node: %+v", n)
 		}
-		if !slices.Equal(n.Env, []string{"YAH_DEFAULT_MODEL=gpt-6.2-astra"}) {
+		if !slices.Equal(n.Env, []string{"YAH_DEFAULT_MODEL=gpt-6.2-sol"}) {
 			t.Errorf("unexpected node environment: %q", n.Env)
 		}
 		prompt := n.Args[4]

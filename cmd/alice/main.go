@@ -77,7 +77,7 @@ func nodes(root, name, rev string) *godel.Params {
 		return &godel.Node{
 			Directory: root,
 			Exec:      "yah",
-			Env:       []string{"YAH_DEFAULT_MODEL=gpt-6.2-astra"},
+			Env:       []string{"YAH_DEFAULT_MODEL=gpt-6.2-sol"},
 			Args:      []string{"-yolo", "-effort", "high", "-append", intro + role},
 		}
 	}
