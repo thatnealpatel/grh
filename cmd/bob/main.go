@@ -71,6 +71,7 @@ func nodes(root, name, rev string) *godel.Params {
 	if hash := strings.TrimSpace(rev); (len(hash) == 40 || len(hash) == 64) && strings.Trim(hash, "0123456789abcdef") == "" {
 		intro += "Gödel launch source commit: " + hash + ". Read program sources at this revision; get the current accepted mathematics from campaign status.\n"
 	}
+	intro += "For tool_campaign integrate, start the subject with the affected area and a colon, then a short, capitalized imperative. For .godel/ changes, use exactly .godel: (e.g., .godel: Price shifted Hankel tests). Wrap body prose at 60 columns.\n"
 	intro += grhgodel.ScratchPolicy + "\n\n"
 	yah := func(role string) *godel.Node {
 		return &godel.Node{
