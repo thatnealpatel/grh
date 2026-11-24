@@ -73,7 +73,10 @@ $(K-\tau V)/V$ and $(K-\tau(2V+ra))/V$, respectively. Neither
 assumption about extra depth is forced. Prove the credit or bound
 the residual uniformly in one actual reference before changing
 what gets summed. The full complement and unrestricted cofactors
-remain open. Keep the Alpöge exclusion.
+remain open. Keep the Alpöge exclusion. The
+[reference-disk test](jet-reference-disks.md) now gives a uniform
+price for the pairs of radius and supported depth that meet the
+threshold, not for the far, low-credit complement.
 
 [bob]: ../bob/check-five-release-curvature-33.py
 [dispatch]: ../bob/reference-check-dispatch.md
