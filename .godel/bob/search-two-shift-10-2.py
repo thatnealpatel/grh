@@ -1,4 +1,4 @@
-"""Numerical fixed-pair dual search; SciPy/NumPy/Clarabel (not a certificate)."""
+"""Numerical fixed-support dual search; SciPy/NumPy/Clarabel (not a certificate)."""
 import argparse
 import itertools
 from pathlib import Path
@@ -91,16 +91,35 @@ def trace_max(p,h,samples=128):
     return maxima,i,q,vals
 
 
+def finite_t_nodes(k,L):
+    """Fold the actual 2L-point sum, with deconvolution of the first mask."""
+    m=np.rint(k/H).astype(int)
+    if L < 2 or np.any(abs(m) >= L):
+        raise ValueError('need |first shift| < L and L >= 2')
+    l=np.arange(L)
+    al=np.pi/(L+1)
+    d=((L-l)*np.cos(l*al)+np.sin((l+1)*al)/np.sin(al))/(L+1)
+    phi=np.arange(L+1)*np.pi/L
+    mat=np.exp(1j*phi[:,None]*m)/d[abs(m)]
+    wt=(1+2*np.cos(phi[:,None]*l[1:])@(d[1:]*np.exp(-l[1:]/50)))/L
+    wt[[0,-1]]/=2
+    assert np.all(wt>0)
+    return mat,wt
+
+
 class Price:
-    def __init__(self,k,dz,dx,fixed_t=False,shift_bounds=None):
+    def __init__(self,k,dz,dx,fixed_t=False,shift_bounds=None, L=None, chord=False):
         self.k=k
         self.shift_bounds = shift_bounds
-        self.P,self.v,self.wz=nodes_z(k,dz)
+        self.P,self.v,self.wz=nodes_z(k,dz,chord)
         # Only the requested first and second shift columns are needed.
         lo, hi = self.shift_bounds
         self.Z, self.wx = nodes_x(np.arange(lo, hi+1)*H, dx)
         self.Zt = self.Z[:, np.rint(k/H).astype(int)-lo]
         self.fixed_t=fixed_t
+        self.Zcost,self.wt=self.Zt,self.wx
+        if L is not None:
+            self.Zcost,self.wt=finite_t_nodes(k,L)
         if fixed_t:
             l,a,_ = np.loadtxt(BASE/'paired-10-2.txt').T
             self.fixed_k = l*H
@@ -109,15 +128,16 @@ class Price:
             assert set(np.rint(l).astype(int)) <= set(np.rint(k/H).astype(int))
             ka=np.zeros(len(k)); ka[np.searchsorted(np.rint(k/H).astype(int),l.astype(int))]=self.fixed_a
             self.fixed_f=self.P@ka
-            self.fixed_cost=CT*(self.wx@abs(self.Zt@ka))
+            self.fixed_cost=CT*(self.wt@abs(self.Zcost@ka))
         else:
             self.fixed_cost=0.
 
     def solve(self, s, nit, tol, warm=None):
         k=self.k; P=self.P; Z=self.Zt
         l,n=len(self.v),len(self.wx); K=len(k); q2=2*K
-        N=q2+2+3*l+6*n
-        f=q2+2; g=f+l; r=g+l; tr=r+l; br=tr+n; bi=br+n; hr=bi+n; hi=hr+n; tn=hi+n
+        ns=len(s); nt=len(self.wt)
+        N=q2+ns+3*l+5*n+nt
+        f=q2+ns; g=f+l; r=g+l; tr=r+l; br=tr+n; bi=br+n; hr=bi+n; hi=hr+n; tn=hi+n
         z2=self.Z[:,np.rint(np.asarray(s)/H).astype(int)-self.shift_bounds[0]]
         z0=sp.csc_matrix
         xp=[]
@@ -139,13 +159,13 @@ class Price:
         eq=assemble(ne); xp=[]; const=0.
         if not self.fixed_t:
             # slack vector [tn, Re(H_t), Im(H_t)] in SOC
-            setdiag(0,tn,-np.ones(n)); put(n,-Z.real,0); put(2*n,-Z.imag,0)
-            soc=assemble(3*n)[np.arange(3*n).reshape(3,-1).T.ravel(),:]
+            setdiag(0,tn,-np.ones(nt)); put(nt,-self.Zcost.real,0); put(2*nt,-self.Zcost.imag,0)
+            soc=assemble(3*nt)[np.arange(3*nt).reshape(3,-1).T.ravel(),:]
         else:
             soc=z0((0,N)); const=self.fixed_cost
         obj=np.zeros(N); obj[r:r+l]=-self.wz; obj[tr:tr+n]=C*self.wx
-        obj[tn:tn+n]=CT*self.wx
-        if self.fixed_t: obj[tn:tn+n]=0
+        obj[tn:tn+nt]=CT*self.wt
+        if self.fixed_t: obj[tn:tn+nt]=0
         if warm is None:
             U={ (i,j/24) for i in range(l) for j in [0,4,8,12,15,17,19,20,21,22,23,24] }
             W={ (i,j*np.pi/4) for i in range(n) for j in range(8) }
@@ -172,7 +192,7 @@ class Price:
             mm,i,u,vals=prime_min(f0,w[g:g+l],self.v)
             nn,j,t,vals2=trace_max(w[br:br+n]+1j*w[bi:bi+n],w[hr:hr+n]+1j*w[hi:hi+n])
             pr=8/9+self.wz@mm
-            price=C*(self.wx@nn)+const+(0 if self.fixed_t else CT*(self.wx@abs(Z@w[:K])))
+            price=C*(self.wx@nn)+const+(0 if self.fixed_t else CT*(self.wt@abs(self.Zcost@w[:K])))
             margin=pr-price; cut_obj=8/9-result.obj_val-const
             # cutting at every violated local extremum, not just global (helps sign switches)
             ix=w[r+i]-vals>max(tol*3,1e-11)
@@ -181,7 +201,7 @@ class Price:
             if cut_obj-margin<max(2*tol,1e-9): break
         coeff=w[:K].copy()
         if self.fixed_t: coeff[np.searchsorted(np.rint(k/H).astype(int),np.rint(self.fixed_k/H).astype(int))]=self.fixed_a
-        return (margin,cut_obj,pr,price,coeff,w[K:2*K],w[q2:q2+2],str(result.status),it+1,result.r_prim,result.r_dual),(U,W)
+        return (margin,cut_obj,pr,price,coeff,w[K:2*K],w[q2:q2+ns],str(result.status),it+1,result.r_prim,result.r_dual),(U,W)
 
 
 def real_roots(coeffs):
@@ -212,11 +232,12 @@ def trace_max_roots(b, h):
     return np.array(out)
 
 
-def evaluate(k,A,B,s,h,dz=.005,dx=.0125):
+def evaluate(k,A,B,s,h,dz=.005,dx=.0125,L=None):
     P,v,w=nodes_z(k,dz,chord=True); p=8/9+w@prime_min_roots(P@A,P@B,v)
     P,v,w=nodes_z(k,dz,chord=False); pu=8/9+w@prime_min_roots(P@A,P@B,v)
-    xshift=np.r_[k,s]; Z,w=nodes_x(xshift,dx,jensen=False); Z2=Z[:,-2:]; Z=Z[:,:-2]
-    a,b,d=Z@A,Z@B,Z2@h; costs=(CT*(w@abs(a)), C*(w@trace_max_roots(b,d)))
+    xshift=np.r_[k,s]; Z,w=nodes_x(xshift,dx,jensen=False); Z2=Z[:,len(k):]; Z=Z[:,:len(k)]
+    Zt,wt=finite_t_nodes(k,L) if L is not None else (Z,w)
+    costs=(CT*(wt@abs(Zt@A)), C*(w@trace_max_roots(Z@B,Z2@h)))
     return p,pu,costs,p-sum(costs),pu-sum(costs)
 
 
@@ -227,22 +248,42 @@ def main():
     ap.add_argument('--dz',type=float,default=.03); ap.add_argument('--dx',type=float,default=.18)
     ap.add_argument('--min-shift',type=int,default=-25); ap.add_argument('--max-shift',type=int,default=40)
     ap.add_argument('--shift-step',type=int,default=5); ap.add_argument('--min-gap',type=int,default=15)
-    ap.add_argument('--max-gap',type=int,default=55); ap.add_argument('--pairs')
+    ap.add_argument('--max-gap',type=int,default=55)
+    ap.add_argument('--pairs',help='explicit integer supports of any size, separated by semicolons')
     ap.add_argument('--iter',type=int,default=7); ap.add_argument('--tol',type=float,default=1e-9)
     ap.add_argument('--fixed-t',action='store_true'); ap.add_argument('--warm',action='store_true')
     ap.add_argument('--save',type=Path); ap.add_argument('--check',type=Path)
+    ap.add_argument('--chord',action='store_true',help='use radial chords in the fit')
+    ap.add_argument('--L',type=int,help='price the finite t mask of length L instead of its ideal limit')
+    ap.add_argument('--paired-knots',action='store_true',help='use the original paired first-mask lattice sites')
+    ap.add_argument('--freeze',type=Path,help='with --check, round and write a rational table (distinct shifts required)')
     ap.add_argument('--control',action='store_true')
     args=ap.parse_args()
+    if args.freeze and not args.check:
+        ap.error('--freeze requires --check')
     if args.check:
         with np.load(args.check,allow_pickle=False) as data:
-            pri_lo,pri_hi,(ct,cb),m_lo,m_hi=evaluate(*(data[j] for j in ('k','A','B','s','h')))
-            print('pair', data['s'], 'second trace coefficients', data['h'])
+            k,A,B,s,h=(data[j] for j in ('k','A','B','s','h'))
+            if args.freeze:
+                for sites in (k,s):
+                    if len(np.unique(np.rint(sites/H))) != len(sites):
+                        ap.error('--freeze requires distinct shifts within each mask')
+                rows={}
+                for j,(sites,coeffs) in enumerate(((k,A),(k,B),(s,h))):
+                    for l,v in zip(np.rint(sites/H).astype(int),np.rint(coeffs*10**10).astype(int)):
+                        rows.setdefault(l,[0,0,0])[j]=v
+                args.freeze.write_text('# l, 10^10*b_t, 10^10*b_3t, 10^10*h\n'+
+                                       ''.join(f'{l} {a} {b} {d}\n' for l,(a,b,d) in sorted(rows.items())))
+                A,B,h=(np.rint(v*10**10)/10**10 for v in (A,B,h))
+            pri_lo,pri_hi,(ct,cb),m_lo,m_hi=evaluate(k,A,B,s,h,L=args.L)
+            print('support', np.rint(s/H).astype(int), 'second trace coefficients', h)
             print('prime chord / midpoint, costs t / 3t, margin chord / midpoint')
             print(pri_lo,pri_hi,ct,cb,m_lo,m_hi)
         return
     ii=np.arange(-args.range,args.range+1,args.stride)
     if args.taper:
         ii=ii[(abs(ii)<=50)|((abs(ii)<=125)&(ii%2==0))|(ii%4==0)]
+    if args.paired_knots: ii=np.loadtxt(BASE/'paired-10-2.txt')[:,0].astype(int)
     k=H*ii
     if args.fixed_t:
         k=np.sort(np.unique(np.r_[np.rint(k/H),np.loadtxt(BASE/'paired-10-2.txt')[:,0]]))*H
@@ -261,12 +302,12 @@ def main():
         pairs=[(s,t) for s,t in itertools.combinations(range(args.min_shift,args.max_shift+1,args.shift_step),2)
                if args.min_gap<=t-s<=args.max_gap]
     if not pairs:
-        ap.error('no shift pairs in the requested range')
+        ap.error('provide at least one nonempty support')
     lo=min(round(min(k)/H), *(v for r in pairs for v in r))
     hi=max(round(max(k)/H), *(v for r in pairs for v in r))
-    price=Price(k,args.dz,args.dx,args.fixed_t,(lo,hi))
-    print('parameters',vars(args),'nfirst',len(k),'nprime',len(price.v),'ntrace',len(price.wx),'pairs',len(pairs),flush=True)
-    print('pair  cell_margin  cut_objective  prime  trace  h1  h2  status  rounds  r_prim  r_dual', flush=True)
+    price=Price(k,args.dz,args.dx,args.fixed_t,(lo,hi),args.L,args.chord)
+    print('parameters',vars(args),'nfirst',len(k),'nprime',len(price.v),'ntrace',len(price.wx),'supports',len(pairs),flush=True)
+    print('support  cell_margin  cut_objective  prime  total_cost  h...  status  rounds  r_prim  r_dual', flush=True)
     best=-np.inf; warm=None
     for ll in pairs:
         s=H*np.array(ll)

@@ -7,19 +7,8 @@ if not __debug__:
     raise SystemExit('Run with assertions enabled.')
 F, K = RealBallField(128), ComplexBallField(128)
 base = Path('.godel/bob')
-first = run_path(str(base / 'check-paired-10-2.py'))
-assert first['h'] == 1/first['QQ'](25) and first['c'] == first['QQ'](39)/20
-floor = first['floor']
-at, a3 = first['cols']
-c1 = F(first['c']).cosh()/3
-rt2 = F(2).sqrt()
+c1 = (F(39)/20).cosh()/3
 ct = c1/(2*(F.pi()/12).cos())
-# Real coefficients of h in the circle support function, before the
-# -cosh(c)/cosh(2c) conversion to the measured multiplier.
-terms = [(-23, -18844), (-9, -25047), (5, -57437), (19, -33872),
-         (33, -43702), (55, 7938)]
-assert len(terms) == len({k for k, v in terms}) == 6 and all(v for k, v in terms)
-b3 = {k: F(v)/10**8 for k, v in terms}
 eta = F(1)/50  # spacing/2, in the folded Cauchy density
 
 
@@ -32,7 +21,7 @@ def osc(col, j, e):
     return sum(b*e[(k*j) % len(e)] for k, b in col.items())
 
 
-def finite_t(L):
+def finite_t(at, L):
     N = 2*L
     assert all(abs(k) < L and abs(k)+L-1 < N for k in at)
     alpha = F.pi()/(L+1)
@@ -89,26 +78,43 @@ def trace_abs_lower(nodes, second_derivative):
                zip(nodes, nodes[1:], masses, skew)) - second_derivative*step**2/8
 
 
-Ht = [osc(at, j, e) for j in range(N+1)]
-H3 = [osc(a3, j, e) for j in range(N+1)]
-t_ideal = ct*trace_upper([abs(z) for z in Ht], curvature(at))
-third_ideal = c1/rt2*trace_upper([abs(z) for z in H3], curvature(a3))
-t_ideal_lo = ct*trace_abs_lower(Ht, curvature(at))
-third_ideal_lo = c1/rt2*trace_abs_lower(H3, curvature(a3))
-third = c1*trace_upper([support_upper(z, osc(b3, j, e)) for j, z in enumerate(H3)],
-                       curvature(a3)+curvature(b3))
-# This is the exact finite t allowance, not the unattained ideal price.
-tfinite = finite_t(1024)
-margin = floor-tfinite-third
-print('Ideal bounds at t:', t_ideal_lo, t_ideal)
-print('Ideal bounds at 3t:', third_ideal_lo, third_ideal)
-print('Ideal margin over the paired first-price floor:', floor-t_ideal-third_ideal)
-print('Finite t allowance and overhead bound:', tfinite, tfinite-t_ideal_lo)
-print('Sparse 3t allowance and overhead bound:', third, third-third_ideal_lo)
-print('Finite signed margin, lower bound:', margin)
-assert floor > F('0.16405490')
-assert floor-t_ideal-third_ideal > F('0.000052039')
-assert tfinite-t_ideal_lo < F('0.000001476')
-assert third-third_ideal_lo < F('0.000049426')
-assert tfinite < F('0.16072313') and third < F('0.00332990')
-assert margin > F('0.00000188')
+def third_cost(a3, b3):
+    return c1*trace_upper([support_upper(osc(a3, j, e), osc(b3, j, e)) for j in range(N+1)],
+                          curvature(a3)+curvature(b3))
+
+
+# The Sage CLI evaluates .py files in the sage.all namespace.
+if __name__ in ('__main__', 'sage.all'):
+    first = run_path(str(base / 'check-paired-10-2.py'), run_name='__main__')
+    assert first['h'] == 1/first['QQ'](25) and first['c'] == first['QQ'](39)/20
+    floor = first['floor']
+    at, a3 = first['cols']
+    rt2 = F(2).sqrt()
+    # Real coefficients of h in the circle support function, before the
+    # -cosh(c)/cosh(2c) conversion to the measured multiplier.
+    terms = [(-23, -18844), (-9, -25047), (5, -57437), (19, -33872),
+             (33, -43702), (55, 7938)]
+    assert len(terms) == len({k for k, v in terms}) == 6 and all(v for k, v in terms)
+    b3 = {k: F(v)/10**8 for k, v in terms}
+    Ht = [osc(at, j, e) for j in range(N+1)]
+    H3 = [osc(a3, j, e) for j in range(N+1)]
+    t_ideal = ct*trace_upper([abs(z) for z in Ht], curvature(at))
+    third_ideal = c1/rt2*trace_upper([abs(z) for z in H3], curvature(a3))
+    t_ideal_lo = ct*trace_abs_lower(Ht, curvature(at))
+    third_ideal_lo = c1/rt2*trace_abs_lower(H3, curvature(a3))
+    third = third_cost(a3, b3)
+    # This is the exact finite t allowance, not the unattained ideal price.
+    tfinite = finite_t(at, 1024)
+    margin = floor-tfinite-third
+    print('Ideal bounds at t:', t_ideal_lo, t_ideal)
+    print('Ideal bounds at 3t:', third_ideal_lo, third_ideal)
+    print('Ideal margin over the paired first-price floor:', floor-t_ideal-third_ideal)
+    print('Finite t allowance and overhead bound:', tfinite, tfinite-t_ideal_lo)
+    print('Sparse 3t allowance and overhead bound:', third, third-third_ideal_lo)
+    print('Finite signed margin, lower bound:', margin)
+    assert floor > F('0.16405490')
+    assert floor-t_ideal-third_ideal > F('0.000052039')
+    assert tfinite-t_ideal_lo < F('0.000001476')
+    assert third-third_ideal_lo < F('0.000049426')
+    assert tfinite < F('0.16072313') and third < F('0.00332990')
+    assert margin > F('0.00000188')
