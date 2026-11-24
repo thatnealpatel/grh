@@ -90,7 +90,13 @@ census or saving in runtime has been demonstrated here.
 
 ## Next worker: One paired gate, not two censuses
 
-For the shared pure second-output test let $H(r)=.9284+.06r$.
+The [fixed-input determinant refinement][fixed] lowers
+both passing exponents and supersedes the numerical ledger
+below. The same-population comparison and census protocol
+still apply, with the new thresholds.
+
+For the original shared pure second-output test let
+$H(r)=.9284+.06r$.
 Use the same actual off-screen count $C_{\rm off}$ at both
 radii. For target exponent $1.1354$, a uniform lower
 fraction $q^{-a-o(1)}$ suffices when $a\le1.1354-H(r)$:
@@ -144,5 +150,6 @@ on the unrestricted complement, or RH/GRH result follows.
 No Alpöge input is used.
 
 [shared]: shared-second-erasure.md
+[fixed]: fixed-input-erasure.md#decision-at-the-same-complement-target
 [coverage]: three-ratio-coverage-decision.md#next-worker
 [bob]: ../bob/five-release-disk-price-33.md#one-refit-prices-the-complete-five-release-frontier
