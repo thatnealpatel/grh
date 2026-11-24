@@ -11,7 +11,7 @@ F = RealBallField(128)
 root = '.godel/bob/'
 
 
-def strip(beta, d0, d1, H):
+def strip(beta, d0, d1, H, s_min=None):
     """beta: list of (knot, normalized B jump), already first-cap certified."""
     we, ws = {}, {}
     for t, a in beta:
@@ -90,7 +90,9 @@ def strip(beta, d0, d1, H):
         return floor
 
     slack = QQ(1)/100000
-    stack = [(-QQ(8)-d1,QQ(8),d0,d1)]
+    left = -QQ(8)-d1 if s_min is None else s_min
+    assert left < 8
+    stack = [(left,QQ(8),d0,d1)]
     boxes = 0
     while stack:
         a,b,l,u = stack.pop()
