@@ -269,3 +269,73 @@ Replay with Sage Python, assertions enabled, from `.godel/bob`:
 python check-all-slabs-deletion-33.py --regional --upper 5.849e-9
 python check-negative-packet-33.py
 ```
+
+## After Work: A refit cannot choose a sparse third-field support
+
+At $c=39/20$ under the scope above, a feasible $M\ge8/9$ requires the
+following numbers of the **1,256 original finite slabs** to satisfy
+$|B_i-B_i^*|>r$. The slabs can be chosen anywhere. No $A_i$ is frozen,
+no atom dictionary is imposed, and the measurable tail is free.
+
+| Radius $r$ | All 1,256 | Negative 494 alone |
+| ---: | ---: | ---: |
+| 0 | 646 | 181 |
+| 0.001 | 401 | 101 |
+| 0.05 | 174 | 82 |
+| 0.5 | 46 | 35 |
+
+Let $E_i$ be the very Bernstein upper used in the full price on slab
+$i$, for $m_i U_i-a_i A_i-b_i B_i$. On a nonnegative slab, with $b_i$ replaced by $b_i+h_i$,
+write $E'_i$ for a fresh Bernstein upper. If
+$|B_i-B_i^*|\le r$, the full price can be reduced on that slab by at
+least
+
+$$s_i(r)=\max(0,E_i-E'_i-h_i B_i^*-r|h_i|).$$
+
+Indeed the tilt costs $+h_i B_i$ when added back; zero is available by
+keeping $E_i$.
+
+On a negative slab $m_i=0$, so use the exact sectional maximum instead
+of a tilt. At fixed $B=b$, the attainable $A$ interval is
+$[-f(-b),f(b)]$, where $f(q)=\cos(\arccos(q)/3)$: This concave inverse
+of $T$ on $[1/2,1]$ gives $X\le f(T(X))$, hence the upper endpoint by
+Jensen and the lower by symmetry. Both endpoints are attained by
+atoms. For $s=\pm1$ the boundary $A=s f(sB)$ gives a one-dimensional
+cubic $-s a_i x-s b_i T(x)$ on the interval of $x=f(sB)$ with
+$|B-B_i^*|\le r$ and $|B|\le1$. Check endpoints and any interior
+maximum. Use $s_i(r)=\max(0,E_i-\text{sectional maximum})$ there.
+
+In both cases this subtracts an **upper used in the old sum**, not an
+assumed exact atom maximum. On an exceptional slab grant the old full
+price. With at most $k$ exceptions, the loss still charged is at least
+the sum of the $1256-k$ smallest certified lower endpoints of $s_i(r)$.
+This one sum bounds every support of size at most $k$: The refit can
+spend its exceptions on the largest savings, but nowhere better. If
+the sum exceeds $5.849\cdot10^{-9}$, nonnegative surplus is impossible.
+
+The [checker](check-refit-support-33.py) nominates rational $h_i$ by
+bisection on sampled atoms at $B_i^*$, then prices the tilted score on
+**all** $u\in[0,1]$. Neither an exact optimizing tilt nor a reliable
+grid maximum is required. It recombines the finite-slab terms with the
+certified upper $1.25112963\cdot10^{-7}$ for the three unchanged tail
+terms displayed above. The same sort on just the negative slabs gives the last column,
+with the entire nonnegative half-line allowed to compensate. Neither
+columns nor rows should be added. Localization is separate: At radius
+$1/2$ the checker's fixed pools of 8, 11, and 14 negative slabs already
+force 1, 2, and 3 departures, respectively. For replay with Sage Python and assertions enabled:
+
+```sh
+python .godel/bob/check-refit-support-33.py
+```
+
+For the next refit, allow a dense $B$ on these slabs. The counts can
+reject a proposed sparse repair without solving its quadratic program;
+they do not require imposing a combinatorial constraint on an already
+dense search. Retain the signed regional and packet tests: Counts do
+not say *which signs* can meet the caps. Use the full quadratic during
+the fit and check both first caps and the simultaneous completion on
+any returned law. The earlier rank-35 quadratic probe was not a full
+fit: It hit the iteration limit, and its returned field still had
+$Q(V_B)-d\approx0.01427$. This was a floating failure of one probe,
+not an infeasibility certificate. None of these counts applies to
+moving the knots or extending the left cutoff.
