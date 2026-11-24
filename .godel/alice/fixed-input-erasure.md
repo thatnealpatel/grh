@@ -210,6 +210,8 @@ to test whether the near-squarefree erased product and
 pivot-weight conditions above can coexist on the signed
 rows at the two radii. The conditions alone give no
 occupancy and no unrestricted bound for the complement.
+The [audit replay][audit] records which data complete each
+counting code and why the review prompt was left unchanged.
 No Alpöge input is used.
 
 Run `python3 .godel/alice/check-fixed-input-erasure.py` to
@@ -220,3 +222,4 @@ and capture ledger.
 [paired]: shared-erasure-radius-decision.md#next-worker-one-paired-gate-not-two-censuses
 [pivot]: global-pivot-row-price.md#single-rows-with-moving-and-with-fixed-inputs
 [exact]: joint-valuation-escape.md#two-recovery-facts
+[audit]: fixed-input-audit-decision.md
