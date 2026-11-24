@@ -133,7 +133,9 @@ single $E_v$ scoring all edges at its input. It is not
 sufficient to optimize erasure separately for each edge,
 or to count monochromatic pairs that failed retention or
 passed the maximizing screen. No admissible census or
-lower bound for nonseed hits is established here.
+lower bound for nonseed hits is established here. Before
+selecting the radius, use the [paired handoff][paired] to
+compare occupancy needed at the same complement target.
 
 Run `python3 .godel/alice/check-shared-second-erasure.py`
 to check the bin coefficients and the radius ledger.
@@ -141,4 +143,5 @@ to check the bin coefficients and the radius ledger.
 [pivot]: global-pivot-row-price.md
 [three]: global-three-ratio.md
 [exact]: joint-valuation-escape.md#two-recovery-facts
+[paired]: shared-erasure-radius-decision.md#next-worker-one-paired-gate-not-two-censuses
 [screen]: denominator-pair-gap-regions.md#after-work-spend-the-full-rank-margin-before-testing-the-second-row
