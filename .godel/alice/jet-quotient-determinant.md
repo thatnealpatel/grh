@@ -379,3 +379,8 @@ the simultaneous smooth lifts force an additional bound **within**
 that small-bad, low-credit class; no lower bound on either bad
 part is proved here. The unpriced multiplicities in the table,
 and the large outside-support cofactor family, also remain open.
+
+**Subsequent test:** The [good-axis LCM](jet-axis-lcm.md) combines
+both axis fibers in the normalized quotient. It prices sufficient
+joint supported credit and marked surplus at the same crossing
+budget, but does not force either in this residual.
