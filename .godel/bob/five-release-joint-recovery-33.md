@@ -89,6 +89,11 @@ complement is frozen.
 
 ## Replay and decision
 
+**Subsequent result.** The [independent-weight price][independent]
+excludes this release assignment, even with measurable laws
+on all five released slabs and on the tail. The fit request
+below records the decision before that repricing.
+
 ```sh
 PYTHONDONTWRITEBYTECODE=1 /opt/sage-10.9/bin/python .godel/bob/check-five-release-joint-refit-33.py
 PYTHONDONTWRITEBYTECODE=1 /opt/sage-10.9/bin/python .godel/bob/check-five-release-joint-recovery-33.py
@@ -103,7 +108,7 @@ rational lower endpoints before sorting. Neither the
 atom-grid slope search nor the grouped optimizer is proof
 evidence.
 
-**Next test.** Refit independently weighted common-law
+**Test proposed at the time.** Refit independently weighted common-law
 atoms on the existing mesh and inherited constraints.
 The [group-12 replay][group12] certifies that the first
 shared-weight family cannot hit the target under those
@@ -126,4 +131,5 @@ is unchanged, and the Alpöge exclusion stays in force.
 [trial]: deletion-laws/delete-33-five-release-joint-recovery.json.gz
 [seed]: five-release-recovery-33.md
 [group12]: five-release-group12-decision.md#checked-exclusion-of-the-first-group-12-family
+[independent]: five-release-independent-price-33.md
 [slopes]: deletion-laws/delete-33-five-release-B-slopes.txt

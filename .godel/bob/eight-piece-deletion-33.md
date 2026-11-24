@@ -275,6 +275,13 @@ than the whole finite partition, and reprice all seven with
 any new tangent. The prior local fits were sampled relaxations;
 no admissible law with nonnegative surplus is known here.
 
+**Subsequent result.** Reweighting inherited first rows
+[excludes the set with $k=16$][independent-price], with all
+five releases and the tail measurable. The other six sets
+are not decided by that certificate.
+
+[independent-price]: five-release-independent-price-33.md
+
 Replay with SageMath 10.9 and assertions enabled:
 
 ```sh
