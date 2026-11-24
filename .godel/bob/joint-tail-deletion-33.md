@@ -19,6 +19,8 @@ Use the [1,257-slab reference](deletion-laws/delete-33-tail-baseline.txt), not t
 
 In the first three rows the final tail law is constant from the last extra knot up to the stated remote cutoff. At and beyond the cutoff the laws need only be measurable. The moving windows are disjoint and preserve knot order. The moving-knot claim is for real knot locations, not just the grid used to check it. No row requires $A$ or $B$ to remain fixed in the regions marked $\eta>0$ or on the tail.
 
+After Work, the [fixed-field price and one-slab witness](tail-fiber-deletion-33.md) show that the necessary early score below is attainable with neither first field changed. A change on one further slab gives a positive surplus at $1.9500036$, not at $39/20$.
+
 ## Reference admissibility and the comparison
 
 Normalize the integer weights on each line of the table, with knot and atom units $1/400$ and $10^{-9}$. Write $X(u)=2u^2-1$, $T(X)=4X^3-3X$, $(A,B,U)=\mathbb E(X,T(X),u)$, and $M=\int_0^\infty ze^{-z}U(z)\,dz$. The tail mass at $z_*$ is $(1+z_*)e^{-z_*}=0.02058737226855554028\ldots$, and the reference tail mean of $u$ is exactly $8961144381869405791031/10^{22}$. The reference has
@@ -155,7 +157,9 @@ For the separate 426-knot seed, see the [post-Work motion and swept-band results
 
 ## Full negative replacement with a measurable tail
 
-At $c=39/20$, keep $X=0$ before $-144/25$, allow an independent arbitrary law on each of the 494 fixed negative reference slabs, keep the laws on $[0,29/5)$ unchanged, and allow arbitrary measurable laws from $29/5$ to infinity. Under the same two unfolded first caps and simultaneous second replies, the joint price gives **$M-8/9<-2.0215\cdot10^{-7}$**. This closes the full-negative experiment. It neither requires nor permits treating the old positive upper price as a realizable surplus.
+At $c=39/20$, keep $X=0$ before $-144/25$, allow an independent arbitrary law on each of the 494 fixed negative reference slabs, keep the laws on $[0,29/5)$ unchanged, and allow arbitrary measurable laws from $29/5$ to infinity. Under the same two unfolded first caps and simultaneous second replies, the joint price gives **$M-8/9<-2.0215\cdot10^{-7}$**. This closes the fixed-slab full-negative experiment. It neither requires nor permits treating the old positive upper price as a realizable surplus.
+
+The [measurable-negative extension](measurable-negative-deletion-33.md) uses the same cut list and allows independently measurable laws throughout $[-144/25,0)$, with no reference-slab restriction there. With the pre-tail unchanged and the same measurable tail, the certified bound is **$M-8/9<-4.13\cdot10^{-8}$**. The pre-tail replacement fractions below still refer to the fixed negative slabs.
 
 The [new cut list](deletion-laws/delete-33-full-negative-dual.json) has 120 first cuts on $A$, 71 on $B$, and one second cut with $\lambda=(.7264553101249,.9816283566088,1)$. The nomination allowed pre-tail refits as well: It added first cuts at peaks of the fields of trial laws, varied the first-cut phases at active frequencies, and combined directions at a common frequency by vector addition within each field. The search used sampled atoms and a finite tail. Neither its objective nor its feasibility tolerances enter the proof.
 
@@ -169,7 +173,7 @@ The tail bound maximizes over the real atom interval, not merely the reference s
 
 The missing gain cannot all be charged to late pre-tail slabs. In units of $10^{-8}$ the full gain on $[1,29/5)$ is below $18.21372$, leaving more than $2.00148$ to be paid on $[0,1)$ even when everything outside that early band is released on the stated mesh. Its own full gain is below $9.81531$. Thus if every early slab has replacement fraction at most $1/5$, even the priced sum with full replacement elsewhere is strictly negative. More generally a nonnegative surplus requires an actual integrated score in (1) greater than $2.00148\cdot10^{-8}$ on $[0,1)$, not merely a large change of its laws.
 
-**Next test.** On the fixed original knots with the measurable tail, enforce this necessary early-band score when seeking a full pre-tail refit. Apply the original quadratic second inequality $Q(V_B)\le d$ to the resulting trial field before adding more tangents. The present certificate uses only its tangent and discards the nonnegative $Q(V_B-V_*)$. A fitted trial profile still needs the continuous first caps and an exact three-site completion to count as a witness. None of these bounds releases the negative knots or the left cutoff, or settles the all-real comparison.
+**Next test.** On the fixed original knots with the measurable tail, enforce this necessary early-band score when seeking a full pre-tail refit. Apply the original quadratic second inequality $Q(V_B)\le d$ to the resulting trial field before adding more tangents. The present certificate uses only its tangent and discards the nonnegative $Q(V_B-V_*)$. A fitted trial profile still needs the continuous first caps and an exact three-site completion to count as a witness. These pre-tail bounds do not release the negative knots or the left cutoff, or settle the all-real comparison.
 
 Replay including the reference cap and Gram checks:
 

@@ -80,12 +80,13 @@ def second_tangent(z, b, lam, a):
 
 def tail_data(z, B, data, points, den, *, primitive=False):
     # First and tangent prices, or their integrals from each point to infinity.
+    assert den > 0 and den % 400 == 0
     h = QQ(1)/den
     k = [int(t/h) for t in z]
-    assert all(i*h == t for i,t in zip(k,z)) and den % 400 == 0
+    assert all(i*h == t for i,t in zip(k,z)) and all(i < j for i,j in zip(k,k[1:]))
     bstar = [v for v in jumps(z,B,C)]
     lo, hi = points[0], points[-1]
-    assert k[-1] <= lo
+    assert all(lo <= p <= hi for p in points)
     x = [F(j)*h for j in points]
     w = [(-t/2).exp() for t in x]
     aa, bb = [F(0) for _ in x], [F(0) for _ in x]
@@ -125,6 +126,9 @@ def tail_data(z, B, data, points, den, *, primitive=False):
             def g(j):
                 u = max(j,0)*h
                 return ((1+u if primitive else 0)+u*u/2)*E[abs(j)]
+            # In dp, a jump at k_i and Laurent mode m use exponents
+            # k_i-k[0], H-m*dh, and p-k_i+m*dh-dl. In kp they are
+            # k[-1]-k_i and p+k_i-kl. Neither argument has to be positive.
             dp = (bp*ap)*P([d(i) for i in range(dl,dr+1)])
             kp = br*P([sum(a*g(i+s) for s,a in zip(shifts,lam)) for i in range(kl,kr+1)])
             for i,p in enumerate(points):
