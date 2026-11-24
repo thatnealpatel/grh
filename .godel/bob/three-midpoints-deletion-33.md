@@ -4,6 +4,13 @@ At $c=39/20$, adding the three knots $1/400,3/400,5/400$ together gives
 $$M-8/9<-2.51350\cdot10^{-8}.$$
 In fact, **any three additional real knots** on the finite mesh give $M-8/9<-1.46808\cdot10^{-8}$. Keep $X=0$ left of $-144/25$, independent arbitrary probability laws on the intervening slabs of the [baseline mesh](deletion-laws/delete-33-tail-baseline.txt) so refined, and arbitrary measurable laws from $29/5$ to infinity. Here $X=2u^2-1$, $T(X)=4X^3-3X$, $(A,B,U)=\mathbb E(X,T(X),u)$, $0\le u\le1$, and $M=\int_0^\infty te^{-t}U(t)\,dt$. Both unfolded first caps and the simultaneous second constraint at sites $(-7,6,19)/25$ are retained. No regional conditions are used. This does not price unrestricted all-real profiles.
 
+**Subsequent result.** A [denser moved-center certificate](eight-piece-deletion-33.md)
+excludes the eight-piece mesh, releases any four finite slabs, and
+also releases all negative slabs with arbitrary constant laws on
+the remaining finite slabs. The older positive prices and the
+necessary contrast and response budgets below describe the
+previous certificate, not an open eight-piece fit.
+
 ## The center is not a law
 
 Use the [joint-price fields, second majorant, and kernel primitives](joint-tail-deletion-33.md#joint-price). The old tangent was at a feasible reference $V_*$. Instead, let $Z$ be the field of a bounded step function $B_c$ on the same lattice, zero before the first knot, constant after the last. Take the reference $B$ jumps and add the 105 signed corrections in the [certificate](deletion-laws/delete-33-three-midpoints.json), **before** multiplying each jump by $e^{-z_i/2}/C$. These are corrections to jumps, not slab values. The cumulative sum defining $B_c$ may leave the moment hull. This is allowed: Its field is in $L^2(\mu)$, and the certified Laurent majorant $q\ge |H|$ gives $Q(V_B-Z)\ge0$ even when neither $Z$ nor $V_B-Z$ is admissible. For every feasible law,

@@ -1,4 +1,4 @@
-"""Exclude three added delete-33 knots with a moved quadratic tangent."""
+"""Reprice refined finite delete-33 meshes with moved quadratic tangents."""
 import argparse
 from fractions import Fraction
 from hashlib import sha256
@@ -19,10 +19,11 @@ assert sha256(ref).hexdigest() == '7be0449af83f2b264894d0b0074108139ada0badc0c34
 z, _, B, _ = s['unfold']['lattice']['prime_rows'](ref.decode())
 assert len(z)==1257 and z[0]==-QQ(144)/25 and z[-1]==QQ(29)/5
 parser = argparse.ArgumentParser(description=__doc__)
-parser.add_argument('--certificate', choices=('three-midpoints', 'first-fit'), default='three-midpoints')
+parser.add_argument('--certificate', choices=('three-midpoints', 'first-fit', 'eight-piece'), default='three-midpoints')
 case = parser.parse_args().certificate
 hashes = {'three-midpoints': '2716981104b65b67c01c1b8e2306f43a6328145b3425dfaee040b18dd35a13ec',
-          'first-fit': 'ebb8ba76b9be482c9bf4b7c254891a16106c539b30e9c5069abf048c38f1db4e'}
+          'first-fit': 'ebb8ba76b9be482c9bf4b7c254891a16106c539b30e9c5069abf048c38f1db4e',
+          'eight-piece': '163e7c8da104a89855147b0a996b5968b26765d0596a24c70682f566b458890c'}
 raw = (laws/f'delete-33-{case}.json').read_bytes()
 assert sha256(raw).hexdigest() == hashes[case]
 cert = json.loads(raw,parse_float=str)
@@ -51,10 +52,13 @@ bc = s['jumps'](z,center,s['C'])
 d,v = s['second_tangent'](z,bc,lam,q)
 qc = sum(x*y for x,y in zip(bc,v))
 constant = -F(8)/9 + sum(F(r[-1]) for r in data if len(r)==5) + F(sigma)*(d+qc)
-mesh = sorted([int(400*t) for t in z]+[1,3,5])
-assert all(t*400==int(400*t) for t in z) and len(set(mesh))==1260
-ap,bp,*_ = s['tail_data'](z,center,data,mesh,400,primitive=True)
-W = [s['step'](QQ(k)/400,0) for k in mesh]
+finite_den = 1600 if case == 'eight-piece' else 400
+added = [j for j in range(1,24) if j % 8] if case == 'eight-piece' else [1,3,5]
+assert all(t*400==int(400*t) for t in z)
+mesh = sorted([int(finite_den*t) for t in z]+added)
+assert len(set(mesh))==len(z)+len(added)
+ap,bp,*_ = s['tail_data'](z,center,data,mesh,finite_den,primitive=True)
+W = [s['step'](QQ(k)/finite_den,0) for k in mesh]
 def upper(a,b,m):
     return s['bern_upper'](a,b,m,F('1e-14'))
 supports = [upper(a-b,c-d0,e-f) for a,b,c,d0,e,f in
@@ -82,21 +86,35 @@ err = 2*scale*((-F(z[-1])/2).exp()-F(-24).exp())
 remote = s['step'](QQ(48),0)+2*size*F(-24).exp()
 bound = constant+finite+tail+err+remote
 print('Integrated tail atom support, interpolation, remote:',tail,err,remote,flush=True)
-print('Three fixed midpoints, surplus upper:',bound,flush=True)
+print(case, 'fixed mesh, surplus upper:',bound,flush=True)
 if case == 'first-fit':
     assert bound < F('-1.43881e-8')
+    raise SystemExit(0)
+
+# Restore the actual unsplit atom bounds for measurable-release accounting.
+indices = dict(zip(mesh,range(len(mesh))))
+ends = [indices[int(t*finite_den)] for t in z]
+old = {t: (supports[i] if j==i+1 else upper(ap[i]-ap[j],bp[i]-bp[j],W[i]-W[j]))
+       for t,i,j in zip(z,ends,ends[1:])}
+original = constant+sum(old.values())+tail+err+remote
+extra = costs['release_costs'](z,center,data,old)
+rank = sorted(zip(extra,z[:-1]),reverse=True)
+print('Original price and top measurable increments:',original,rank[:5],flush=True)
+if case == 'eight-piece':
+    assert bound < F('-4.60062e-8')
+    early = original+sum(e for t,e in zip(z,extra) if QQ(0)<=t<QQ(3)/200)
+    four = original+sum(e for e,_ in rank[:4])
+    five = original+sum(e for e,_ in rank[:5])
+    negative = original+sum(e for t,e in zip(z,extra) if t<0)
+    print('Measurable on [0,3/200), surplus upper:',early,flush=True)
+    print('Best four and five finite releases, upper prices:',four,five,flush=True)
+    print('All negative and all finite releases, upper prices:',negative,original+sum(extra),flush=True)
+    assert early < F('-4.13718e-8') and four < F('-3.83838e-9')
+    assert negative < F('-4.68429e-8')
     raise SystemExit(0)
 assert bound < F('-2.51350e-8')
 
 # Price the best three real split positions, not merely these midpoints.
-old = dict(zip([QQ(k)/400 for k in mesh],supports))
-for j in (0,2,4):
-    i = mesh.index(j)
-    old[QQ(j)/400] = upper(ap[i]-ap[i+2],bp[i]-bp[i+2],W[i]-W[i+2])
-original = constant+sum(old[t] for t in z[:-1])+tail+err+remote
-extra = costs['release_costs'](z,center,data,old)
-print('Original price and top measurable increments:',original,
-      sorted(zip(extra,z[:-1]),reverse=True)[:5],flush=True)
 split = list(extra)
 h = QQ(1)/1600
 large = [i for i,y in enumerate(extra) if y > QQ(32)/10**9]
@@ -137,7 +155,6 @@ assert distinct < F('-1.46808e-8') and repeated < F('-3.83716e-8')
 
 # If there is no limit on the subdivisions in each of three chosen
 # slabs, which triples are not already excluded by the measurable price?
-rank = sorted(zip(extra,z[:-1]),reverse=True)
 unpaid = []
 for i,(e,t) in enumerate(rank[:-2]):
     if original+3*e < 0:
