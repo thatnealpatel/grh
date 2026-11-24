@@ -233,6 +233,24 @@ third = sum((weight_tail[j]-weight_tail[j+1])*(4*a[j]**3-3*a[j])
 assert F('-.90285') < third < F('-.90283')
 print('short third-harmonic price:', third, flush=True)
 
+# Test the original law against a translated order-one measurement at 3t.
+# Integral from t to infinity of exp(-z)*(z+s)_+ dz, with t a jump knot.
+cube = [4*v**3-3*v for v in a]
+jumps = [v-u for v, u in zip(cube, [QQ(0)]+cube)]
+
+def third_mask(h, b):
+    value, mass = F(0), F(0)
+    for l in range(-5, 6):
+        s, r = l*h+b, QQ(6-abs(l))/36
+        starts = [max(-s, t) for t in z]
+        value += r*sum(j*(k+s+1)*F(-k-s/2).exp() for j, k in zip(jumps, starts))
+        mass += r*F(-abs(l*h)/2).exp()
+    return value/mass
+
+ratio = third_mask(QQ(2)/5, QQ(0))
+assert ratio < -F('1.2329') < -F('1.95').cosh()/3
+print('third-harmonic first mask / trace mass:', ratio, flush=True)
+
 # Jhat(x) = sum b_j exp(-ix z_j)/(1/2+ix).
 b = [(v-u)*F(-t/2).exp() for t, v, u in zip(z, a, [QQ(0)]+a)]
 cap = F(QQ(61505322)/10**8)

@@ -47,3 +47,5 @@ The earlier price also rules out the order-twelve Fourier target $C_{12}=\cosh(c
 Use the signed test for available data; do not treat a feasible prefix as proof of shallowness or a small rounded measurement as an exact zero. To improve the decision on the zero-answer path below order twelve requires information beyond this fixed-translate relaxation, not another choice of eleven-order mask.
 
 One such datum now has a [certified joint price](short-third-price.md): Compare the order-eleven screen with the short third harmonic before extending the radial cutoff. The threshold that excludes this one step law does not by itself exclude every shallow law.
+
+With both radial families available, the [paired radial price](paired-radial-price.md) separates at depth $1.95$ in at least one of the two windows using maximum order ten.
