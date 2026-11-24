@@ -121,8 +121,11 @@ slab releases**, with arbitrary measurable laws on those
 slabs and on the entire tail. Fewer releases embed in this
 class by leaving the extra slabs constant. This does not
 exclude six releases, eight added knots, or arbitrary
-measurable laws on the whole line. No Alpöge input is used.
+measurable laws on the whole line. Before refitting for six
+releases, see the [signed-slab handoff][six-release]. No
+Alpöge input is used.
 
+[six-release]: shared-refit-decision.md#next-decision-six-releases
 [k8]: deletion-laws/delete-33-five-release-disk-price-k8.json
 [mesh-stop]: five-release-mesh-stop-decision.md
 [table]: deletion-laws/delete-33-five-release-disk-price.json
