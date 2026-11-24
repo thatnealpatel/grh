@@ -191,5 +191,7 @@ an independent reason that the seed credit in (4) must occur, or a
 sharper determinant estimate there. In (1) the precise unused local
 term is the pairwise parameter difference beyond the common prime
 power. A next test using actual references should price that
-pairwise credit before treating it as a common divisor. Unrestricted
-cofactors and the full denominator-pair complement remain open.
+pairwise credit before treating it as a common divisor. See the
+[fixed-reference handoff](jet-check-decision.md#next-worker) for
+that test's remaining quantitative deficit. Unrestricted cofactors
+and the full denominator-pair complement remain open.

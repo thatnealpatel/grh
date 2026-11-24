@@ -4,15 +4,20 @@ from fractions import Fraction as Q
 from math import comb
 
 
-def check():
-    m, r = 10000, 1200
-    a = 3 * m - r
-    b = ((m - 1) * (m - 2) - r * (r - 1)) // 2
-    S = (3 * m * m - 3 * m + 2 - r * r + r) // 2
-    L = r * m
+def cubic_exponent(m, r):
+    # Start with the quotient ranks and covolume counts of the two jet spaces.
+    b = comb(m - 1, 2) - comb(r, 2)
+    a = comb(m + 2, 2) - comb(r + 1, 2) - b
+    S = comb(m + 2, 3) - comb(m - 1, 3) - comb(r + 1, 3) + comb(r, 3)
+    L = comb(r + 1, 2) * (m - r + 1) - comb(r, 2) * (m - r - 1)
     V, R = comb(a, 2), r * a
-    tau = Q('.0207')
     K = Q('.2696') * S + Q('2.110') * L - Q('.7998') * R - Q('.4044') * b
+    return V, R, b, K
+
+
+def check():
+    V, R, b, K = cubic_exponent(10000, 1200)
+    tau = Q('.0207')
     T = K - tau * V
     assert T / b == Q(23533757663, 123164002500)
     assert T / V == Q(759153473, 33444000000) < Q('.023')
@@ -28,8 +33,17 @@ def check():
     cap = 2 * (Q(1121, 8125) - Q('.1276'))
     assert cap == Q(337, 16250)
     A, B, C = Q('.2022') - 9 * cap, -Q('.2894') + 3 * cap, Q('.8672')
+    linear, constant = Q('.0674') + cap, -Q('.1348')
+    # Both expressions have degree at most two: a is linear, and the
+    # cubic terms in S and L cancel. In (u,v) coordinates the three
+    # values on each axis determine its restriction, and (1,1) fixes uv.
+    for u, v in ((0, 0), (1, 0), (2, 0), (0, 1), (0, 2), (1, 1)):
+        m, r = 3 + u + v, 1 + v
+        V, R, _, K = cubic_exponent(m, r)
+        expanded = A * m * m + B * m * r + C * r * r + linear * (3 * m - r) + constant
+        assert K - cap * (2 * V + R) == expanded, (m, r)
     assert A > 0 and 4 * A * C - B * B > 0
-    assert (Q('.0674') + cap) * 8 - Q('.1348') > 0  # 3m-r >= 8.
+    assert 8 * linear + constant > 0  # 3m-r >= 8.
 
 
 if __name__ == '__main__':
