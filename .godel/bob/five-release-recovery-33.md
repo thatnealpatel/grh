@@ -96,8 +96,9 @@ its measurable fixed-field upper misses that target by
 more than $5.75\cdot10^{-8}$. Expand the available
 joint moment directions in the finite recovery, and check
 on the same rounded law how much raw price is reclaimed
-and what loss it pays. The adaptive two-endmember blend
-alone does not establish any upper bound for the
+and what loss it pays. See the [splice replay][splice] for
+why the historical two-endmember span misses the target
+and which finite refit to try. It does not bound the
 unrestricted fit. Defer a larger frequency search until
 there is a useful recovery margin; the off-list test here
 already disproves interpreting the finite checks as a
@@ -105,3 +106,5 @@ continuous-cap proof. Do not treat the accepted positive
 raw supremum as feasible surplus. Five-release and
 eight-knot frontiers remain open, the seven-knot exclusion
 is unchanged, and the Alpöge exclusion stays in force.
+
+[splice]: five-release-splice-decision.md
