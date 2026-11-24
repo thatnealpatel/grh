@@ -201,3 +201,82 @@ least $-10^{-10}$, not constructions of laws. An uncovered
 assignment need not attain its upper price. In particular, any
 further fit should distinguish spending two knot units in a
 single slab from buying two different one-knot increments.
+
+## Price exactly two knots and refine five releases
+
+The 1,289 unpaid eight-knot assignments spend all eight units.
+Thus every option encoded as two is now known to be exactly two:
+Three actual knots in any such slab would exceed the budget.
+A measurable release is still an upper bound for that option,
+but it ignores the shared coordinates of the two split points.
+
+Let $P(t)$ be the primitive coefficient vector for the atom
+score $U m-Aa-Bb$. Write $H(v)$ for the atom support in this sign
+convention. For fixed ordered knots $x\le y$ in $[l,r]$, the
+three constant laws give the upper price
+
+$$H(P(l)-P(x))+H(P(x)-P(y))+H(P(y)-P(r)).$$
+
+Interpolate each primitive on the $1/3200$ cells with the
+same quadratic interpolation as for one knot. Given $x\le y$,
+the two interpolated vectors are the marginals of a convex
+combination of **ordered** control pairs. For distinct cells
+all control pairs are already ordered. For a common cell with
+normalized positions $s\le t$, draw two independent uniform
+numbers on $[0,1]$, and let $I$ and $J$ count those at most $s$
+and at most $t$, respectively. Then $I\le J$, and their
+binomial laws give exactly the two Bernstein marginals. By
+convexity of the three-support expression, the maximum over
+ordered control pairs bounds the interpolated price. Add the
+one-knot interpolation allowance twice: Each primitive error
+pairs with the difference of its two neighboring laws. All
+kernel branches and the mass branch at zero are cell endpoints.
+For an increment over the stored base price, subtract a lower
+bound for the unsplit support. The Bernstein atom routine
+returns a certified sampled lower bound plus its tolerance,
+so subtracting that tolerance provides the needed lower bound.
+
+For a measurable release, use the pointwise atom support and
+its usual interpolation remainder, at $1/3200$ instead of
+$1/1600$ on the remaining release sites. In the
+`five-releases` tangent, the upper increment at slab $0$
+drops from about $56.9063\cdot10^{-9}$ to
+$56.2501\cdot10^{-9}$. The latter is an upper price, not
+an attained gain. All four new tangents also use the full
+original partition and include the complete measurable tail.
+Their labels describe the fit, not the inequality's domain.
+
+| Screen | Eight-knot unpaid | Five-release unpaid |
+|:--|--:|--:|
+| Original five tangents | 1,289 | 14 |
+| Same tangents, two-knot prices | 933 | 14 |
+| `five-releases` | 884 | 9 |
+| `five-release-minus-216` | 878 | 8 |
+| `five-release-minus-2304` | 812 | 7 |
+| `eight-knots` | 776 | 7 |
+
+Only 67 of the remaining eight-knot assignments have a
+slab with two knots, and none have two such slabs. The two
+assignments omitting slab $4/400$ are
+$(-2304,-216,0,2,6,8,10,12)/400$ and
+$(-216,0,2,6,8,10,12,14)/400$.
+
+The remaining five-release sets have exactly the following
+starts, in units of $1/400$:
+
+* $(0,2,4,6,k)$ for $k\in\{8,10,12,14,16\}$;
+* $(0,2,4,8,k)$ for $k\in\{10,12\}$.
+
+In particular, any five-release law reaching surplus at least
+$-10^{-10}$ is constant on every negative slab. Neither the
+five-release nor the eight-knot class is excluded in full.
+For a further five-release fit, target these seven sets rather
+than the whole finite partition, and reprice all seven with
+any new tangent. The prior local fits were sampled relaxations;
+no admissible law with nonnegative surplus is known here.
+
+Replay with SageMath 10.9 and assertions enabled:
+
+```sh
+/opt/sage-10.9/bin/python .godel/bob/check-refined-frontier-33.py --jobs 5
+```

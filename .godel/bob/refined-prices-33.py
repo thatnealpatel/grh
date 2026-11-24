@@ -26,7 +26,11 @@ hashes = {'three-midpoints': '2716981104b65b67c01c1b8e2306f43a6328145b3425dfaee0
           'seven-two-negative': '472b9f8f60de6a6799706829167ef977ba6500e0b06d7f1b6b5a29dd1c9edffa',
           'seven-minus-216': '9ef8f4fb733a4c16085a2e3825687942835da9843afbaabfcd48bf12b1c6d9cc',
           'seven-minus-2304': '8e9cbfdf62149fefda84be7a9ea06e38c62b631c7e5f3b9a197d6aeebda60340',
-          'seven-nonnegative': 'b6044feb1a430d6a5633df9afc18128b5547623af4198f8165a73ce9d668a568'}
+          'seven-nonnegative': 'b6044feb1a430d6a5633df9afc18128b5547623af4198f8165a73ce9d668a568',
+          'eight-knots': '4da6fbd4c8d4397ff4d7551b48d62fd19a91c4959da9a7cd629b192fb5991de3',
+          'five-releases': 'f0e020045301bf7a6bd5f4676fbdeff3eda98eade7d4c26b56d81ba710aa94c0',
+          'five-release-minus-216': '8c6466fdbb217ce9febd8848058f73b622fa5e2c130aaac07e0545ac908ee1a1',
+          'five-release-minus-2304': '90d9481622ccdd08678789110e46a52439d0170685b16654b03c4b67755586ea'}
 
 
 def load_certificate(case):
