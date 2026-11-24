@@ -132,7 +132,13 @@ class Price:
         else:
             self.fixed_cost=0.
 
-    def solve(self, s, nit, tol, warm=None):
+    def solve(self, s, nit, tol, warm=None, *, return_duals=False):
+        """Optionally return ((prime cuts, trace cuts), Clarabel solution) as a third item.
+
+        Cuts here are the sorted rows of the final *solved* model, not the
+        next warm sets. Solution.z is in equality, SOC, prime, trace order.
+        If the solve was rejected, use the payload for diagnostics only.
+        """
         k=self.k; P=self.P; Z=self.Zt
         l,n=len(self.v),len(self.wx); K=len(k); q2=2*K
         ns=len(s); nt=len(self.wt)
@@ -171,23 +177,24 @@ class Price:
             W={ (i,j*np.pi/4) for i in range(n) for j in range(8) }
         else: U,W=(a.copy() for a in warm)
         def cuts(U,W):
-            i,u=np.array(sorted(U)).T; i=i.astype(int); a=2*u*u-1; b=4*a**3-3*a
+            i,u=np.array(U).T; i=i.astype(int); a=2*u*u-1; b=4*a**3-3*a
             nu=len(i); sr=np.arange(nu); rhs=-self.v[i]*u
             if self.fixed_t: rhs+=a*self.fixed_f[i]
             wz=sp.csc_matrix((np.r_[-a,-b,np.ones(nu)],(np.tile(sr,3),np.r_[f+i,g+i,r+i])),shape=(nu,N))
-            i,u=np.array(sorted(W)).T; i=i.astype(int); nw=len(i); sr=np.arange(nw)
+            i,u=np.array(W).T; i=i.astype(int); nw=len(i); sr=np.arange(nw)
             wt=sp.csc_matrix((np.r_[np.cos(u),-np.sin(u),np.cos(2*u),-np.sin(2*u),-np.ones(nw)],(np.tile(sr,5),np.r_[br+i,bi+i,hr+i,hi+i,tr+i])),shape=(nw,N))
             return sp.vstack([wz,wt],format='csc'), np.r_[rhs,np.zeros(nw)]
         st=cl.DefaultSettings(); st.verbose=False; st.max_threads=1; st.max_iter=120
         st.direct_solve_method='faer'; st.tol_gap_abs=tol; st.tol_feas=tol; st.tol_gap_rel=tol
         for it in range(nit):
-            mat, b=cuts(U,W)
+            u_rows, w_rows = sorted(U), sorted(W)
+            mat, b=cuts(u_rows,w_rows)
             solver=cl.DefaultSolver(z0((N,N)),obj,sp.vstack([eq,soc,mat],format='csc'),np.r_[eqb,np.zeros(soc.shape[0]),b],
                                     [cl.ZeroConeT(ne)]+[cl.SecondOrderConeT(3)]*(soc.shape[0]//3)+[cl.NonnegativeConeT(len(b))],st)
             result=solver.solve()
             w=np.array(result.x)
             if not np.isfinite(result.obj_val) or result.status not in (cl.SolverStatus.Solved,cl.SolverStatus.AlmostSolved,cl.SolverStatus.MaxIterations,cl.SolverStatus.InsufficientProgress):
-                return None,None
+                return (None,None,((u_rows,w_rows),result)) if return_duals else (None,None)
             f0=w[f:f+l]+(self.fixed_f if self.fixed_t else 0)
             mm,i,u,vals=prime_min(f0,w[g:g+l],self.v)
             nn,j,t,vals2=trace_max(w[br:br+n]+1j*w[bi:bi+n],w[hr:hr+n]+1j*w[hi:hi+n])
@@ -201,7 +208,10 @@ class Price:
             if cut_obj-margin<max(2*tol,1e-9): break
         coeff=w[:K].copy()
         if self.fixed_t: coeff[np.searchsorted(np.rint(k/H).astype(int),np.rint(self.fixed_k/H).astype(int))]=self.fixed_a
-        return (margin,cut_obj,pr,price,coeff,w[K:2*K],w[q2:q2+ns],str(result.status),it+1,result.r_prim,result.r_dual),(U,W)
+        out = (margin,cut_obj,pr,price,coeff,w[K:2*K],w[q2:q2+ns],str(result.status),it+1,result.r_prim,result.r_dual),(U,W)
+        if return_duals:
+            return (*out, ((u_rows, w_rows), result))
+        return out
 
 
 def real_roots(coeffs):
