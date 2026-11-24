@@ -14,4 +14,4 @@ rev = "v4.36.0"
 [[lean_lib]]
 srcDir = "Proofs"
 name = "Proofs"
-globs = ["Props.+", "Theorems.+", "Lemmas.+"]
+globs = ["Props.+", "Theorems.+", "Lemmas.+", "Examples.+"]
