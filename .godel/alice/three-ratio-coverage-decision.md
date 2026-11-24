@@ -99,6 +99,13 @@ it with routine direct allocation.
 
 ## Next worker
 
+**Update:** The [pivot-row bound][pivot] caps the old $.530$
+fixed-space test at $q^{.9919333\ldots+o(1)}$ hits. The
+old $.030$ fraction therefore requires $C_{\rm off}\le
+q^{1.0219333\ldots+o(1)}$. The revised radii and fraction
+in that note give a less demanding occupancy test, not an
+occupancy theorem. The census requirements below still apply.
+
 **Exclude the zero space at radius $.530$.** Use the scope
 and notation of [the three-ratio price][three]. If $B=0$:
 
@@ -128,13 +135,12 @@ and notation of [the three-ratio price][three]. If $B=0$:
 
 Thus $B=0$ cannot supply a $q^{-.030-o(1)}$ fraction on
 an over-budget list. Do not repeat the zero-space test.
-For a nonzero seed span frozen across the actual list,
-seek a bound from the two signed row equations on
-**nonseed** hits. A sufficient analytic target is an
-expected count of at least $q^{-.030-o(1)}$ times the
-residual size for a specified distribution of seed sets
-of size at most $\lfloor(\log q)^{1.44}/3\rfloor$. No
-such lower bound is known here.
+The original nonzero-span experiment asked for an expected
+$q^{-.030-o(1)}$ fraction of **nonseed** hits from a seed
+set of size at most $\lfloor(\log q)^{1.44}/3\rfloor$.
+The [revised test][pivot] instead asks for a
+$q^{-.1185-o(1)}$ fraction at the type-dependent radii
+$(.658,1.300,.746)$. Neither lower bound is known.
 
 If using a numerical gate, first obtain an admissible
 pre-screen census for a specified $q,F_1,F_2$: Complete
@@ -143,11 +149,13 @@ provenance, enough to recreate the masks, radical cuts,
 and [maximizing screen][screen]. Fix tie handling in the
 screen without consulting the candidate space. Score a
 triple directly from the raw valuations and frozen $B$:
-For each eligible erasure with product at most $q^{.530}$,
+For each eligible erasure within the chosen radius,
 project the basis of $B$ and the three ratio columns.
-A hit means adjoining those columns adds rank less than
-three for at least one erasure. This is a finite exact
-criterion, not a claim that exhaustive scoring is cheap.
+At common radius a hit means the columns add rank less
+than three for some erasure. For type-dependent radii,
+test the resulting kernel for a nonzero coefficient
+vector of the relevant type at its radius. This is an
+exact criterion, not a claim that exhaustive scoring is cheap.
 Report seed and nonseed hits separately. A complete census
 would give a fraction for that list, not a uniform bound;
 without admissible data, do not substitute a toy fixture.
@@ -155,6 +163,7 @@ The unrestricted complement remains open. Keep the
 Alpöge exclusion.
 
 [three]: global-three-ratio.md
+[pivot]: global-pivot-row-price.md
 [screen]: denominator-pair-gap-regions.md#after-work-spend-the-full-rank-margin-before-testing-the-second-row
 [s]: joint-valuation-escape.md#two-recovery-facts
 [bob]: ../bob/five-release-batch-decision.md

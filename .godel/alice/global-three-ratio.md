@@ -1,5 +1,10 @@
 # Price punctured global relations among three common-input ratios
 
+The later [pivot-row count](global-pivot-row-price.md) improves
+the passing exponents below and replaces the $.530$ capture
+target. This note supplies the recovery and interpolation used
+in that refinement.
+
 Fix one actual constructed ordered two-label list in $g=R=j=1$ and
 count ordered distinct-denominator triples, including their complete
 input $v$. Use the notation and successive-row freshness of the
