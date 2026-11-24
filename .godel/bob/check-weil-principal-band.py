@@ -29,29 +29,35 @@ def poly(row):
     curvature = sum(m*m*abs(x) for m,x in enumerate(row,1))
     return I(peak)/K**2 + err + curvature*(pi/(2*N))**2/2
 
-def prices(X,tmax,tmin, free_phase=False):
+def base(X,tmax,tmin):
     D, R = X.log(), X.sqrt()
     assert 6 < D and D < 9 and X < 7000
     assert tmin >= 3000 and tmax <= 28*10**11
-    base = ((1-1/R)*(tmax/(2*pi)).log()+I(44)/2000)/R
-    out = [base,base]
-    free = base
+    return ((1-1/R)*(tmax/(2*pi)).log()+I(44)/2000)/R
+
+def prime_terms(X):
+    D, R = X.log(), X.sqrt()
     for p,l in logs:
         if p > R.upper(): break  # all higher powers absent; w=C for primes
         n, v, m = p, l, 1
-        rows = [[],[]]
+        terms_p = []
         while n <= X.upper():
             A = 2*l/R*(1/I(n)-1/R).max(Z)
             delta = (l/X*(D-2*v).max(Z) if m == 1 else
                      -l/X*v.min((D-v).max(Z)))
-            if free_phase:
-                free += abs(delta)+A
-            else:
-                for row, sign in zip(rows,(1,-1)):
-                    row.append(sign*delta-A)
+            terms_p.append((A,delta))
             n, v, m = n*p, v+l, m+1
-        if not free_phase:
-            for s,row in enumerate(rows): out[s] += poly(row)
+        yield p,l,terms_p
+
+def prices(X,tmax,tmin, free_phase=False):
+    free = base(X,tmax,tmin)
+    out = [free, free]
+    for _,_,row in prime_terms(X):
+        if free_phase:
+            free += sum(abs(delta)+A for A,delta in row)
+        else:
+            for i,s in enumerate((1,-1)):
+                out[i] += poly([s*delta-A for A,delta in row])
     return free if free_phase else out
 
 def Rof(k): return 9*log2*k/5
@@ -93,5 +99,6 @@ def frozen():
         gap = min(gap, margin)
     print('buffered dyadic node margin', gap)
 
-moving()
-frozen()
+if __name__ == "__main__":
+    moving()
+    frozen()
