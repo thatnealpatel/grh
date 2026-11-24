@@ -329,11 +329,12 @@ estimates, interpolation allowances, or floating-point
 optimizer claims enter this test. The smallest price is
 about $6.36057\cdot10^{-10}$, on $(0,2,4,6,16)/400$.
 These are not feasible witnesses: Each has $|V_A(1)|>4$.
-Test the effect of adding a nonzero-frequency cut against
-this response before exchanging the full frequency lists.
 
 ```sh
 /opt/sage-10.9/bin/python .godel/bob/check-five-release-linear-lower-33.py --jobs 5
 ```
 
-The eight-knot and five-release classes remain open in full.
+On $(0,2,4,6,16)/400$, a [checked common witness with the
+frequency-one cap](five-release-frequency-one-33.md) shows
+that adding this one cap still does not suffice. Both full
+frontiers remain open.
