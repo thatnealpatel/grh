@@ -45,3 +45,5 @@ The upper side is the phase-shifted test accepted at `9e976c723f57337aa2d4da0525
 The earlier price also rules out the order-twelve Fourier target $C_{12}=\cosh(c)/(6\cos(\pi/14))=.612948024\ldots$, not merely for this witness. For that test's first mask $H=H_6 e^{ix/25}$ with $H_6\ge0$ and $I=\int H_6\,d\mu$, its established floor and the first-price identity imply $P\le\int\Re(HG)\,d\mu\le I\|\widehat J\|_\infty$ for any admissible step law. The negative order-twelve price is precisely $P/I>C_{12}$. This does not identify the optimum Fourier cap.
 
 Use the signed test for available data; do not treat a feasible prefix as proof of shallowness or a small rounded measurement as an exact zero. To improve the decision on the zero-answer path below order twelve requires information beyond this fixed-translate relaxation, not another choice of eleven-order mask.
+
+One such datum now has a [certified joint price](short-third-price.md): Compare the order-eleven screen with the short third harmonic before extending the radial cutoff. The threshold that excludes this one step law does not by itself exclude every shallow law.

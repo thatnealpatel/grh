@@ -227,6 +227,12 @@ mean = sum((weight_tail[j]-weight_tail[j+1])*F((1+a[j])/2).sqrt()
 assert mean - F(QQ(8)/9) > F(QQ(1)/20000000)
 print('angular mean minus 8/9:', mean - F(QQ(8)/9), flush=True)
 
+# Same prime assignment, unshifted short cutoff at the third height.
+third = sum((weight_tail[j]-weight_tail[j+1])*(4*a[j]**3-3*a[j])
+            for j, t in enumerate(z) if t >= 0)
+assert F('-.90285') < third < F('-.90283')
+print('short third-harmonic price:', third, flush=True)
+
 # Jhat(x) = sum b_j exp(-ix z_j)/(1/2+ix).
 b = [(v-u)*F(-t/2).exp() for t, v, u in zip(z, a, [QQ(0)]+a)]
 cap = F(QQ(61505322)/10**8)
