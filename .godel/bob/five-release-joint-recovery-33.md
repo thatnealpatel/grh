@@ -105,6 +105,10 @@ evidence.
 
 **Next test.** Refit independently weighted common-law
 atoms on the existing mesh and inherited constraints.
+The [group-12 replay][group12] certifies that the first
+shared-weight family cannot hit the target under those
+constraints. Price the enlarged family before a target
+solve; the old bound does not apply to independent weights.
 Normalize the raw objective by subtracting local support
 values; on each ordinary slab the remaining nonnegative
 atom deficits have aggregate budget at most
@@ -121,4 +125,5 @@ is unchanged, and the Alpöge exclusion stays in force.
 [domain]: five-release-joint-refit-33.md
 [trial]: deletion-laws/delete-33-five-release-joint-recovery.json.gz
 [seed]: five-release-recovery-33.md
+[group12]: five-release-group12-decision.md#checked-exclusion-of-the-first-group-12-family
 [slopes]: deletion-laws/delete-33-five-release-B-slopes.txt
