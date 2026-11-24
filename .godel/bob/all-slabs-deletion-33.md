@@ -127,3 +127,67 @@ infeasibility result. For a full refit on these same knots, use
 the necessary pre-tail score above and test the original quadratic
 second constraint, not just the retained tangent. Do not transfer
 this price to a changed left cutoff or movable original knots.
+
+## The quadratic budget rules out damping the fitted third field
+
+The full price has not spent the curvature discarded by its single
+second tangent. Write $V=V_B$, $V_*=V_{B_*}$, and $\sigma=$
+$0.000703488828860649$ for that cut's multiplier. Keeping the same
+price on every slab and the measurable tail gives the stronger bound
+
+$$M-8/9+\sigma Q(V-V_*)\le P_{\rm full}.$$
+
+Indeed $Q(V)=Q(V_*)+2\mathcal B(V_*,V-V_*)+Q(V-V_*)\le d$,
+so one subtracts $Q(V-V_*)$ from the right-hand side of the tangent
+inequality. The remaining (linear) integrand and all its upper
+prices are unchanged. In particular **every** feasible contender of
+nonnegative surplus must satisfy $Q(V-V_*)<8.315\cdot10^{-6}$.
+This bounds the difference, not $Q(V)$, and does not assert that
+arbitrary fields in the quadratic budget admit a second completion.
+
+This already rules out a natural repair of the [early-score
+refit](early-refit-deletion-33.md). Take its rational profile $B_1$
+and allow $B=B_*+\theta(B_1-B_*)$ with any constant real $\theta$.
+Allow *all* changes of $A$ and $U$ compatible with this $B$; do not
+require them to follow the same interpolation. Since
+$Q(V_{B_1}-V_*)>0.428$, homogeneity forces $|\theta|<0.00441$.
+On $[24,30]$, however, $B_*<-0.819$ and $|B_1-B_*|\le2$, so
+$B<-0.810$ throughout. This contradicts the necessary excursion
+$B>-0.6828965$ on positive measure proved by the independent
+remote-band price. Thus **no refit anywhere on this third-field
+line can work**, even with the first field completely refitted.
+The two necessary conditions do not exclude independently moving
+this band. In fact, restore $B=B_*$ off $[24,30]$ and allow any
+law on the band. The integral formula for the field gives
+$\|V-V_*\|_\infty\le4(e^{-12}-e^{-15})/C<1.954\cdot10^{-5}$,
+since $|B-B_*|\le2$. As $\mu$ has mass one and
+$q+|H|\le2\sum_j|\lambda_j|+2\cdot10^{-7}$ by the checked Laurent
+residual, **every** such change has $Q(V-V_*)<2.069\cdot10^{-9}$.
+For example, the atom $u=1$ meets the required joint excursion on
+the whole band at this small curvature cost. This example does not
+certify the signed score, the first caps, or the original $Q(V)$
+inequality. The cross term with other profile changes must be
+retained in a combined fit. Release this band independently rather
+than using one damping parameter for the whole line.
+
+## Full-release exclusion just below the requested depth
+
+Use exactly the same knots, left cutoff, measurable tail, and
+unfolded constraints at $0\le c'\le 1.949999962$. In coordinates
+normalized at $c_0=39/20$, the first caps now have radius
+$r=\cosh(c')/\cosh(c_0)$, since both $C$ and $C_t$ scale with
+$\cosh c$. The second inequality at $c'$ becomes $Q(V)\le r^2 d$
+by homogeneity, so certainly the old second tangent is still
+necessary. Tighten just the first right-hand sides from $1$ to $r$.
+No price density or maximization changes. Summing the exact decimal
+first multipliers gives $W=0.1608365374660396137275050206$.
+At the largest $c'$ in the range, $r<0.9999999635078640$, hence
+
+$$M-8/9 < 5.849\cdot10^{-9}-(1-r)W < -2.02\cdot10^{-11}.$$
+
+For reproducibility, sum the last column of the length-five rows
+as decimal rationals, and evaluate the cosh ratio with 128-bit
+Sage `RealBallField` at the two decimal rational depths. The
+exclusion is for **full** independent replacement on the original
+slabs; it neither reaches $39/20$ nor gives an exclusion for
+the unrestricted all-real comparison.
