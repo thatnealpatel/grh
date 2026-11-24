@@ -1,4 +1,5 @@
 """SageMath 10.9: certify the delete-33 bilateral first-span law."""
+import argparse
 from functools import cache
 from pathlib import Path
 from sage.all import ComplexBallField, QQ, RealBallField
@@ -14,8 +15,15 @@ C = F(QQ(39)/20).cosh()/3
 Ct = C/(2*(pi/12).cos())
 unit = 10**9
 n = 512
-radius = 256
-indices = list(range(-radius, radius+1))
+ap = argparse.ArgumentParser(description=__doc__)
+ap.add_argument('--table', type=Path, default=Path(__file__).with_name('deletion-laws')/'delete-33-bilateral.txt')
+ap.add_argument('--left', type=int, default=-256)
+ap.add_argument('--min-surplus', type=QQ, default=QQ(3146)/10**8)
+ap.add_argument('--max-first-repair', type=QQ, help='bound needed by a subsequent fixed-trace test')
+args = ap.parse_args()
+right = 256
+assert args.left <= -256 and args.min_surplus >= 0
+indices = list(range(args.left, right+1))
 second = [-7, 6, 19]
 
 
@@ -42,7 +50,7 @@ def characters():
         assert mass > 0
         J = [K(mass), K(((1+r*r)*mass-(1-r*r)*(phi[i+1]-phi[i])/pi)/(2*r),
                         (1-r*r)*(D[i+1]/D[i]).log()/(2*r*pi))]
-        for k in range(1, radius):
+        for k in range(1, -args.left):
             flat = (edge[i+1]**k-edge[i]**k)/K(0, k)
             J.append(((1+r*r)*J[-1]-(1-r*r)*flat/pi)/r-J[-2])
         yield [J[k] if k >= 0 else J[-k].conjugate() for k in indices]
@@ -62,7 +70,7 @@ def repair_norm(v, sites):
 def prime_answers(prime):
     # Each ramp knot (and zero for the failure weight) is a slab boundary.
     starts = [row[0] for row in prime]
-    assert starts[0] == -16*radius and starts == sorted(set(starts))
+    assert starts[0] == -16*right and starts == sorted(set(starts))
     assert {-16*k for k in indices} <= set(starts)
     z = [QQ(a)/400 for a in starts]
     mass = [F(-a).exp() for a in z] + [F(0)]
@@ -95,7 +103,7 @@ def prime_answers(prime):
 
 
 def main():
-    table = Path(__file__).with_name('deletion-laws')/'delete-33-bilateral.txt'
+    table = args.table
     lines = [s for s in table.read_text().splitlines() if s and not s.startswith('#')]
     split = lines.index('trace')
     assert lines[0] == 'prime' and len(lines[split+1:]) == n
@@ -120,13 +128,15 @@ def main():
             At[j] -= Ct*(t0*J).real()
             B3[j] -= C*(m*J).real()
         for j, k in enumerate(second):
-            R2[j] -= (n2*cell[k+radius]).real()
+            R2[j] -= (n2*cell[k-args.left]).real()
     et = repair_norm(At, indices)/Ct
     e3 = repair_norm(B3, indices)/C
     e2 = repair_norm(R2, second)
 
     # Correct the exact residuals using the Gram right inverse, not by
     # treating their ball enclosures as zero. See bilateral-deletion-33.md.
+    if args.max_first_repair is not None:
+        assert max(et.upper(), e3.upper()) < args.max_first_repair
     delta = QQ(1)/10**6
     assert (1-delta)*et < delta
     assert 2*(1-delta)*(e3+e2) < delta
@@ -135,7 +145,7 @@ def main():
           *(max(abs(x).upper() for x in v) for v in (At, B3, R2)))
     print('correction norm bounds (t, 3t, second):', et, e3, e2)
     print('dilution:', delta, 'repaired failure surplus:', surplus)
-    assert surplus > QQ(3146)/10**8
+    assert surplus > args.min_surplus
 
 
 if __name__ == '__main__':

@@ -1,4 +1,5 @@
-"""SageMath 10.9: extend the bilateral delete-33 witness to all k >= -256."""
+"""SageMath 10.9: extend a delete-33 witness along the positive lattice tail."""
+import argparse
 from pathlib import Path
 from sage.all import ComplexBallField, QQ, RealBallField
 
@@ -11,7 +12,11 @@ cl, cr = h.exp()-1-h, (-h).exp()-1+h
 C = F(QQ(39)/20).cosh()/3
 Ct = C/(2*(pi/12).cos())
 N, end, unit = 512, 800, 10**9
-file = Path(__file__).with_name('deletion-laws')/'delete-33-bilateral.txt'
+ap = argparse.ArgumentParser(description=__doc__)
+ap.add_argument('--minus320', action='store_true', help='check the refit on [-320,256] instead')
+args = ap.parse_args()
+left = -320 if args.minus320 else -256
+file = Path(__file__).with_name('deletion-laws')/('delete-33-minus320.txt' if args.minus320 else 'delete-33-bilateral.txt')
 lines = [x for x in file.read_text().splitlines() if x and not x.startswith('#')]
 split = lines.index('trace')
 prime, trace = ([list(map(int, x.split())) for x in rows] for rows in
@@ -37,7 +42,7 @@ for i, row in enumerate(prime):
             inc[j] += (edges[i]-edges[i+1])*(w*y/total)
 inc = [v*r**257*h for v in inc]
 
-ks = [-257,-256,-255]+list(range(256,end+1))
+ks = [left-1,left,left+1]+list(range(256,end+1))
 mom = [{k:F(0) for k in ks} for _ in inc]
 phi = [pi*(QQ(i)/N)**2 for i in range(N+1)]
 e = [K(0,x).exp() for x in phi]
@@ -62,7 +67,7 @@ for i,row in enumerate(trace):
             M[k] += (x*t).real()
 
 solutions = []
-for M,D,v,neg_floor in zip(mom,[Ct,C],inc,[40,190]):
+for M,D,v,neg_floor in zip(mom,[Ct,C],inc,([41,39] if args.minus320 else [40,190])):
     # Gram endpoint correction is geometric on the positive tail.
     s = [(D*(M[257]-r*M[256])-v)*r**255/cl]
     for l in range(257,end):
@@ -73,12 +78,13 @@ for M,D,v,neg_floor in zip(mom,[Ct,C],inc,[40,190]):
     assert D*r**end*(1/r+2+r) < (cl-cr)/8
     # On the opposite side the Gram correction need not drop out. Price
     # its full possible error by the verified pre-dilution uniform bound.
-    neg = D*r**(-256)*(abs(M[-255]/r-2*M[-256]+r*M[-257])
-                         - F('2.1e-8')*(1/r+2+r))/(cl+cr)
+    neg = D*r**left*(abs(M[left+1]/r-2*M[left]+r*M[left-1])
+                         - F('4e-8' if args.minus320 else '2.1e-8')*(1/r+2+r))/(cl+cr)
     assert (1-QQ(1)/10**6)*neg > neg_floor
-    displacement = (neg_floor-1)*(cl+cr)/(D*r**(-256)*(1-r*r)/r)
-    assert displacement > (QQ(15)/1000 if neg_floor == 40 else QQ(37)/1000)
+    if not args.minus320:
+        displacement = (neg_floor-1)*(cl+cr)/(D*r**left*(1-r*r)/r)
+        assert displacement > (QQ(15)/1000 if neg_floor == 40 else QQ(37)/1000)
     print('lower estimate for absolute normalized negative curvature:',neg)
 gauge = max(((abs(2*a+b)+2*abs(a-b))/3).upper() for a,b in zip(*solutions))
-assert gauge < QQ(122)/1000
+assert gauge < (QQ(81)/10000 if args.minus320 else QQ(122)/1000)
 print('new slab gauge through index 800:',gauge)

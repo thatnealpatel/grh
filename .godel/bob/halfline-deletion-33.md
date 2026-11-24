@@ -44,3 +44,5 @@ Indeed the multiplier $e^{i\varphi}/r-2+r e^{-i\varphi}$ has modulus $|1-r e^{i\
 ```
 
 The second checker integrates the tabulated profiles on whole cells by the folded character recurrence at 1280 bits. The finite calculations feed the analytic tail induction; the infinite conclusion is not extrapolated from sampled slabs. The next finite comparison that tests a genuinely new coordinate is $[-257,256]$ with both traces and the prime law free. Start with the three-site necessary bound above; do not constrain the traces to small uniform repairs of this table. The unrestricted three-versus-four minimum and the signed arithmetic estimate are still open.
+
+**Update:** A [joint refit and positive-tail check](minus320-deletion-33.md) now covers all $k\ge-320$, including the proposed $-257$ test.
