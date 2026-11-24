@@ -75,13 +75,20 @@ assert mean > F(8)/9
 jumps = [(v-(a[j-1] if j else 0))*F(-z[j]/2).exp() for j, v in enumerate(a)]
 
 
+cap = F('.61655')  # Needed to distinguish order six from seven at depth 1.90.
+
+
 def spectrum(x):
     real = sum(y*(t*x).cos() for t, y in zip(z, jumps))
     imag = sum(y*(t*x).sin() for t, y in zip(z, jumps))
-    return real**2 + imag**2 < F('.6167')**2*(F(1)/4 + x**2)
+    return real**2 + imag**2 < cap**2*(F(1)/4 + x**2)
 
 
 assert F(26) > 8*F.pi()
 cover(QQ(0), QQ(26), spectrum)
-assert F('.6167') < F('1.226').cosh()/3
+assert cap < F('.6167') < F('1.226').cosh()/3
+# For all translated masks at once: cap <= cosh(c) b_n / 3.
+for depth, n in [('1.616', 2), ('1.90', 6), ('1.95', 10)]:
+    assert 6*cap*(F.pi()/(n+2)).cos() < F(depth).cosh()
+assert 6*cap < F('1.983').cosh()
 print('Full-strip positivity, witness mean, and all-frequency ceiling passed.')
