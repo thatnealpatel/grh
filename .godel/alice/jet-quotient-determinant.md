@@ -355,6 +355,13 @@ common compressed curve.
 
 ## What this removes, and what it does not
 
+Run `python3 .godel/alice/check-jet-cubic-price.py` from the repository
+root to reproduce the finite cubic constants, five margins, joint
+isotropic fallback, and total budget in exact arithmetic. This is
+an arithmetic baseline, not a check of either determinant estimate.
+See [the handoff decision](jet-price-handoff-decision.md) for the
+remaining modulus test.
+
 The new tests cost at most $.1276+.01035=.13795<1121/8125$ in
 column exponent at a fixed actual input, under the same joint
 cofactor and first-divisor rule. Add them to the earlier tests
