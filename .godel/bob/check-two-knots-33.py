@@ -33,8 +33,19 @@ for row in data:
         tuple(map(Fraction, row[1]))
 print('Dual SHA-256:',sha256(rows).hexdigest(),flush=True)
 old = {}
+# The half-width pilot left the small neighborhood of zero unrestricted.
+# Track the reference-subtracted support used elsewhere, by sign of t.
+idx = {t:i for i,t in enumerate(z)}
+outer_neg, outer_pos = F(0), F(0)
 def retain(t, upper, a, b, m, w):
+    global outer_neg, outer_pos
     old[t] = upper
+    i = idx[t]
+    gain = upper - (m*U[i]-a*A[i]-b*w)
+    if t < -QQ(2)/400:
+        outer_neg += gain
+    elif t >= QQ(6)/400:
+        outer_pos += gain
 
 off, gains, _ = s['price'](z,A,B,U,data,omit={z[-1]},slab_check=retain)
 P = off + sum(gains) + s['continuous_tail'](z,A,B,U,data,den=3600)
@@ -110,6 +121,12 @@ assert two < 0
 # Test how this price fails: Add all three early midpoints. A single
 # rational atom on each half lower-bounds the new local support scores.
 base3 = P-sum(old[z[first+i]] for i in range(3))
+# For contraction factors in [0,1] the upper is affine in both.
+# Leave the entire measurable tail, and all six half-slabs, unrestricted.
+free3 = base3+sum(half_bounds)
+print('Three-midpoint upper, outer negative and nonnegative gains:',
+      free3, outer_neg, outer_pos, flush=True)
+assert free3 < F('2.801e-8') and outer_neg > F('1.285e-7') and outer_pos > F('2.593e-7')
 price3 = base3
 for (a,b,m),n in zip(halves,(1403690,4138937,6760354,9255633,11619710,13853201)):
     u = QQ(n)/10**8

@@ -20,9 +20,15 @@ assert sha256(rows).hexdigest() == '5588f79dd45b98f4e50a8c38a0dd7103421c33691700
 z, A, B, U = s['unfold']['lattice']['prime_rows'](ref.decode())
 data = json.loads(rows, parse_float=str)
 old = {}
+idx = {t:i for i,t in enumerate(z)}
+outer_gain = F(0)
 
 def retain(t, upper, a, b, m, w):
+    global outer_gain
     old[t] = upper
+    if not -2 <= 400*t <= 4:
+        i = idx[t]
+        outer_gain += upper-(m*U[i]-a*A[i]-b*w)
 
 off, gains, _ = s['price'](z,A,B,U,data,omit={z[-1]},slab_check=retain)
 P = off + sum(gains) + s['continuous_tail'](z,A,B,U,data,den=4800)
@@ -57,6 +63,11 @@ assert P+score-old[0] > F('3.53e-8')
 (sigma,) = [F(row[-1]) for row in data if len(row)==3]
 untied = sum(s['bern_upper'](ai,bi,mi,F('1e-14')) for ai,bi,mi in zip(a,b,mass))
 assert sigma>0
+# The perturbation support, not the full score, scales with hull width.
+# Leave both halves and the entire measurable tail unrestricted.
+half_width = P+untied-old[0]-outer_gain/2
+print('Midpoint with outer finite hulls at half width:',half_width,flush=True)
+assert half_width < F('-1.6e-7')
 curvature_budget = (P+untied-old[0])/sigma
 print('Midpoint: difference curvature budget',curvature_budget)
 assert curvature_budget < F('5.027e-5')

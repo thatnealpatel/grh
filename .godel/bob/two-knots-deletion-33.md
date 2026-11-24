@@ -52,6 +52,16 @@ by restoring the positive curvature dropped in the tangent. To isolate a single 
 
 All three means must rise across **each** added knot. Neither the nine inequalities nor the joint score suffices for feasibility. A preliminary fixed-three-midpoint refit with three rounds of added first cuts reduced a discretized-tail search price to about $+1.19\cdot10^{-8}$; that search value has no certified sign on the measurable tail. Continue first-frequency exchange on this mesh before increasing the search to unknown knot locations. In a primal fit impose the full quadratic and exchange against both unfolded first caps. Before accepting a law, check the continuous caps and simultaneous second completion. Keep the cutoffs at both ends of the finite mesh; there is no exclusion here for unrestricted all-real profiles.
 
+## After Work: How much movement must the three-knot fit allow?
+
+Do not copy the one-knot pilot's half-width hulls into the three-knot fit. Keep the six half-slabs, the slab starting at $-2/400$, and the entire measurable tail unrestricted. On the other original finite slabs with left endpoint $t<-2/400$ or $t\ge6/400$, allow the refit to use, respectively, a fraction $\alpha_-$ or $\alpha_+$ of the full moment hull about the reference. A factor of one allows all laws. The factors are in $[0,1]$. A necessary condition for nonnegative surplus at $39/20$ is
+
+$$128.5(1-\alpha_-)+259.3(1-\alpha_+)<28.01.$$
+
+Indeed, write $K$ for the full moment hull and $v_*$ for the reference moment vector on a slab. For an integrated linear score $S$, the perturbation support on $v_*+\alpha(K-v_*)$ is $\alpha(\sup_K S-S(v_*))$. Thus multiply the **computed upper on the reference-subtracted gain** by $\alpha$, not the raw atom upper, the reference term, or the cap slack. In units of $10^{-9}$, the checker gives a free three-knot price below $28.01$. The sums of the allowances *used in that price* on the two outer groups exceed $128.5$ and $259.3$. Replacing them by their scaled values proves the inequality. It does not assume either group can attain its allowance. A smaller inner atom hull is included in the same test.
+
+In particular, a common width must exceed $0.9277$, even with a completely free tail. Half width on both groups gives $M-8/9<-1.6589\cdot10^{-7}$. Use uncontracted moment hulls and invertible variable scaling for the next full-$Q$ fit; a width above the threshold is not sufficient. Retain the nine jump checks, first-frequency exchange, both continuous cap checks, and simultaneous second completion. [Why this changes the handoff](hull-width-decision.md).
+
 ## Replay
 
 From the repository root with SageMath 10.9, leaving assertions enabled:
