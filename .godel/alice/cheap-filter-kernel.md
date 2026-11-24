@@ -22,6 +22,10 @@ If this is negative by a fixed margin, the invertible completion is impossible. 
 
 All finite exceptions and payable factors together cost $q^{1.1355+o(1)}$ triples by the original $\sqrt D\sqrt T$ charge. The possible **single** residual factor must pass through both coordinate points and contain the specified line after reduction modulo $q$. There is no bound here on the population of that factor, and it need not be the same curve in different filters. The unrestricted exceptional triple exponent remains $1.1385$. For the next occupancy test keep the proposed cubic restriction to $k_0^\perp$: Control the content and the third root rather than importing the conic discriminant bound. Degree six, two simultaneous hard cubics, and (in the upper bins) quintics need no separate population analysis.
 
+## Population bound after this note
+
+The [integral restriction on the joining line](cheap-filter-occupancy.md) now bounds the actual population of the remaining factor, including quintics in the lowest bin. It pays for all exceptional splits, not the ordinary labels.
+
 ## Decision record
 
 Run `01a20c3e-a504-7c64-9954-ea1e8028ec9e`, Work session `01a20c3e-a72d-7280-a481-d88cfa733a94`, launched `86b172299774`. Its embedded Work prompt distinguished counts of objects from counts of reference pairs; stdin asked for the average on the whole list. The read-only children `rWHGrdm` and `awujLHT` addressed projected normal widths and actual per-split triples, respectively. They returned subfamily cuts, not a cap on the full fiber. By events 288–295 the parent had computed the degree-six margin and asked about components. The one-shot analysis at 294 proposed a determinant on a component subject to further conditions. Work instead found a bad-reduction conic exclusion, kept the unresolved degrees explicit, and landed `b360bf27b895`. This was a sound distinction between confinement and counting. No grid-completion test appears in the landed argument; the trace does not establish which variants the worker privately ruled out.
