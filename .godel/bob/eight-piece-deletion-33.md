@@ -177,3 +177,27 @@ Replay all five tables with SageMath 10.9 and assertions enabled:
 ```
 
 Omit `--jobs 5` to check the tangents serially.
+
+## Locate the next gaps before fitting
+
+Add `--frontier` to the same command to screen the two next
+classes at the same cutoff. For five measurable releases,
+charge $D_i$ one unit and omit the split option. For eight
+knots keep the same two options as before. No new coefficient
+or atom enclosure is needed.
+
+* **Eight knots:** The five tangents leave 1,289 assignments.
+  Every one spends all eight units, uses the slabs starting
+  at $0$ and $2/400$, and spends at most two units on negative
+  slabs. All but three also use the slab starting at $4/400$.
+* **Five measurable releases:** The tangents leave 14
+  assignments. Every one releases five slabs including those
+  starting at $0$ and $2/400$; at most one start is negative.
+  The only assignment omitting $4/400$ has starts
+  $(0,2,6,8,10)/400$.
+
+These are necessary location tests for achieving surplus at
+least $-10^{-10}$, not constructions of laws. An uncovered
+assignment need not attain its upper price. In particular, any
+further fit should distinguish spending two knot units in a
+single slab from buying two different one-knot increments.
