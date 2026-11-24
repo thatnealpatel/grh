@@ -141,9 +141,10 @@ def half_step_price():
         assert gap > F(floor)
 
 
-def complete(z,b,lam):
+def complete(z,b,lam,*,transform=2048,degree=192,grid_size=16384,min_slack='.00001'):
     centers,R = kernels(z,b)
-    N, D = 2048, 192
+    N, D = transform, degree
+    assert D < N//2 and 2*D < grid_size
     # g = exp(-6ix/25) sum v_k exp(-ik theta). Nominate v by a
     # finite transform. There is no analytic truncation assumption.
     roots = [K(0,j*2*F.pi()/N).exp() for j in range(N)]
@@ -162,12 +163,12 @@ def complete(z,b,lam):
     print('Weighted Gram correction l1:',sum(abs(h) for h in corr),flush=True)
     for k,h in zip(sites,corr):
         v[k] += h
-    N = 16384
+    N = grid_size
     grid = lattice['eval_grid'](v,N)
     chord = (2*F.pi()/N)**2/8*sum(k*k*abs(h) for k,h in v.items())
     slack = 1-F(max(abs(h).upper() for h in grid))-chord
     print('Repaired multiplier slack:',slack,flush=True)
-    assert slack > F('.00001')
+    assert slack > F(min_slack)
 
 
 def polish_bound(z, A, B):
