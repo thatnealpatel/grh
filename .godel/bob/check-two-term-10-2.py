@@ -52,13 +52,13 @@ cap_B = QQ(119516)/10**5
 assert cap_A < C10 and cap_B < C1
 
 
-def jump_terms(profile):
-    return [(t, F(y-v)*F(-t/2).exp()) for t, y, v in zip(z, profile, [QQ(0)]+profile)
+def jump_terms(profile, knots=z):
+    return [(t, F(y-v)*F(-t/2).exp()) for t, y, v in zip(knots, profile, [QQ(0)]+profile)
             if y != v]
 
 
-def certify_cap(label, profile, cap):
-    points = jump_terms(profile)
+def certify_cap(label, profile, cap, knots=z):
+    points = jump_terms(profile, knots)
     cap = F(cap)
     # Center the numerator polynomial at -2, changing it by a unit phase only.
     times = [t+2 for t, _ in points]
@@ -73,7 +73,7 @@ def certify_cap(label, profile, cap):
     # Direct integration of the slabs and the original first representer.
     for x in (QQ(0), QQ(17)/4, QQ(13)):
         w = K(QQ(1)/2, x)
-        edges = [(-w*t).exp() for t in z]+[K(0)]
+        edges = [(-w*t).exp() for t in knots]+[K(0)]
         slab = sum(y*(l-r) for y, l, r in zip(profile, edges, edges[1:]))/w
         via_jumps = K(0, 2*x).exp()*sum(b*p for b, p in zip(jump, phases(x)))/w
         G = sum(b*K(0, t*x).exp() for t, b in points)/w
