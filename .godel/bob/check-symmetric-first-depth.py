@@ -75,11 +75,33 @@ def verify(cols, h, c, min_floor, max_t, max_3t, margin):
     print('priced upper bound and signed margin lower bound:', cap*(nt+n3), excess)
     assert floor > F(min_floor) and nt < F(max_t) and n3 < F(max_3t)
     assert excess > F(margin) > 0
+    return floor, nt, n3
+
+
+def verify_phase_bands(cols, h):
+    # Bound the signed multiplier along the whole real half-strip, then
+    # move by ix, |x| <= .01, with the same absolute derivative bound.
+    for col, sign, min_real, max_deriv in zip(
+            cols, (1, -1), ('.25', '.0028'), ('.081', '.0048')):
+        deriv = sum(F(abs(l*h*b))*F(max(0, l*h/2)).exp() for l, b in col.items())
+        assert deriv < F(max_deriv)
+        assert sign*sum(col.values())-deriv/2 > F(min_real)
+        move = deriv/100
+        assert move/(F(min_real)-move) < F('.018')
+    # Remaining phase errors: w^-2 and the signed smoothing factor.
+    assert F('.25')*F('.0025').sinh() < F('.001')
+    assert F('1.5')+F('.018')+F('.04')+F('.001') < F.pi()/2
 
 
 if __name__ in ('__main__', 'sage.all'):
     base = Path('.godel/bob')
     verify(first_masks(base/'paired-10-2.txt', 10**7), QQ(1)/25, '1.23627',
            '.16405890', '.25979062', '.00388180', '.0000013')
-    verify(first_masks(base/'symmetric-first-depth.txt', 10**10), QQ(1)/100, '1.23684',
-           '.16546278', '.26142997', '.004371324', '.0000009')
+    h = QQ(1)/100
+    cols = first_masks(base/'symmetric-first-depth.txt', 10**10)
+    floor, nt, n3 = verify(cols, h, '1.23684', '.16546278', '.26142997',
+                           '.004371324', '.00000099')
+    verify_phase_bands(cols, h)
+    asymmetric = floor-(nt*F('1.226').cosh()+n3*F('1.72').cosh())/3
+    assert asymmetric > F('.0000033')
+    print('Phase-band strip signs verified; asymmetric margin lower bound:', asymmetric)

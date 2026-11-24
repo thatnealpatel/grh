@@ -6,6 +6,8 @@ $$ |\gamma-t|\le (2/\epsilon)\log D,\qquad |\gamma-3t|\le (2/\epsilon)\log D $$
 
 contains a zeta zero with **$D(\beta-1/2)>1.23684$**. Both centers are included. Fix any sufficiently small $\epsilon>0$ and then take $q$ sufficiently large. This uses neither a long-measurement premise nor an external zero-free strip. Unlike the older [common-filter rows](common-filter-pair.md), it asserts existence, not a signed charge on an annulus. In particular, the first-height hole of those rows is not part of this result. The [depth-$1.95$ five-translate result](joint-refit-10-2.md) compares with a signed *higher*-measurement premise and does not give this unconditional disjunction.
 
+**After Work:** The [phase-band transfer](first-depth-bands.md) preserves the 1.23684 depth with the first-height central hole and removes additional opposite bands at the two heights. It also prices the asymmetric depths 1.226 and 1.72 with the same first masks. The proof controls the deep pairs in the omitted bands before using the ordinate limit; the all-shallow calculation below alone cannot justify deleting them.
+
 ## The common prime floor
 
 For each $y=t,3t$ fix real coefficients $b_{y,l}$ on a finite lattice of shifts $lh$. The [new table](symmetric-first-depth.txt) uses $h=1/100$ and records $l,10^{10}b_{t,l},10^{10}b_{3t,l}$; the [repriced table](paired-10-2.txt) uses $h=1/25$ and denominator $10^7$. Unlisted coefficients are zero. Both signs are carried by the coefficients. Put
