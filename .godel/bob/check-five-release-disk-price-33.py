@@ -14,6 +14,13 @@ p, s, F = (r[k] for k in ('p', 's', 'F'))
 TARGET = (0, 2, 4, 8, 10)
 LIMITS = {TARGET: '-3.0e-10', (0, 2, 4, 6, 14): '-1.5e-9',
           (0, 2, 4, 6, 16): '-3.8e-9', (0, 2, 4, 8, 12): '-3.6e-9'}
+K8_LIMITS = {(0, 2, 4, 6, 8): '-1.1e-9',
+             (0, 2, 4, 6, 10): '-5.2e-9',
+             (0, 2, 4, 6, 12): '-8.5e-9',
+             (0, 2, 4, 6, 14): '-1.13e-8',
+             (0, 2, 4, 6, 16): '-1.36e-8',
+             (0, 2, 4, 8, 10): '-1.01e-8',
+             (0, 2, 4, 8, 12): '-1.35e-8'}
 
 
 def tests_of(cert):
@@ -33,18 +40,30 @@ def tests_of(cert):
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument('--self-test', action='store_true')
+    ap.add_argument('--k8', action='store_true', help='Use the refit that prices all seven assignments.')
     args = ap.parse_args()
     r['j']['self_test']()
-    raw = (p['laws']/'delete-33-five-release-disk-price.json').read_bytes()
-    assert sha256(raw).hexdigest() == '47a17eb53b3ec4867e3a3953a713c6978887dc4fe2632907d86a241c012e3211'
+    if args.k8:
+        suffix, limits = '-k8', K8_LIMITS
+        digest = '4150ddbca857c6d79966354328bdb8791a3818a12e8506a9aafd844e8a9cc2ee'
+    else:
+        suffix, limits = '', LIMITS
+        digest = '47a17eb53b3ec4867e3a3953a713c6978887dc4fe2632907d86a241c012e3211'
+    raw = (p['laws']/f'delete-33-five-release-disk-price{suffix}.json').read_bytes()
+    assert sha256(raw).hexdigest() == digest
     cert = json.loads(raw)
     disks, quadratic = tests_of(cert)
     assert (disks, quadratic) == tests_of(p['load_certificate']('eight-knots'))
     assert sum(j == 0 for j, _ in disks) == 581
     assert sum(j == 1 for j, _ in disks) == 62
     assert len(cert['cuts']) == len(disks)+1
-    assert TARGET in r['ASSIGNMENTS']
-    assert r['release_spans'](12800)[10] == range(640, 769)
+    assert limits.keys() <= set(r['ASSIGNMENTS'])
+    if args.k8:
+        assert limits.keys() == set(r['ASSIGNMENTS'])
+        assert all(F(limit) < F('-1e-10') for limit in limits.values())
+    spans = r['release_spans'](12800)
+    assert spans[8] == range(512, 641) and spans[10] == range(640, 769)
+    assert spans[12] == range(768, 897)
     # A nonunit stored normal with a nonzero imaginary part. Test both
     # branches against the signed real values at t=0.
     z, center = [QQ(0), QQ(1)/400], [0, 0]
@@ -58,7 +77,7 @@ def main():
     bounds = r['measurable_uppers'](data, center, constant)
     for ks, bound in bounds.items():
         print('Full measurable upper', ks, bound, flush=True)
-    for ks, limit in LIMITS.items():
+    for ks, limit in limits.items():
         assert bounds[ks] < F(limit)
 
 

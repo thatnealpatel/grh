@@ -268,23 +268,16 @@ starts, in units of $1/400$:
 * $(0,2,4,8,k)$ for $k\in\{10,12\}$.
 
 In particular, any five-release law reaching surplus at least
-$-10^{-10}$ is constant on every negative slab. Neither the
-five-release nor the eight-knot class is excluded in full.
-For a further five-release fit, target the sets not excluded
-below rather than the whole finite partition, and reprice
-them with any new tangent. The prior local fits were
-sampled relaxations; no admissible law with nonnegative
-surplus is known here.
+$-10^{-10}$ is constant on every negative slab. The eight-knot class is not excluded in full. The prior
+local fits were sampled relaxations; no admissible law
+with nonnegative surplus is known here.
 
-**Subsequent result.** Two [reweighted prices][independent-price]
-exclude $(0,2,4,6,16)/400$, $(0,2,4,8,12)/400$, and
-$(0,2,4,6,14)/400$, with all five releases and the tail
-measurable. The [disk-normal price][disk-price] also excludes
-$(0,2,4,8,10)/400$ on that same domain. This leaves three
-sets: $(0,2,4,6,k)/400$ for $k\in\{8,10,12\}$.
+**Subsequent result.** One [refitted disk-normal price][disk-price]
+excludes all seven sets at surplus $-10^{-10}$, with all
+five releases and the tail measurable. This closes the
+five-release class, but not the eight-knot class.
 
-[independent-price]: five-release-independent-price-33.md
-[disk-price]: five-release-disk-price-33.md
+[disk-price]: five-release-disk-price-33.md#one-refit-prices-the-complete-five-release-frontier
 
 Replay with SageMath 10.9 and assertions enabled:
 
@@ -347,5 +340,6 @@ These are not feasible witnesses: Each has $|V_A(1)|>4$.
 
 On $(0,2,4,6,16)/400$, a [checked common witness with the
 frequency-one cap](five-release-frequency-one-33.md) shows
-that adding this one cap still does not suffice. Both full
-frontiers remain open.
+that adding this one cap still does not suffice. The
+[refitted disk-normal price][disk-price] uses the full
+inherited disk family and closes the five-release frontier.

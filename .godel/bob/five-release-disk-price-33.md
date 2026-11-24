@@ -1,4 +1,4 @@
-# Delete-33: Exclude the five releases at 0, 2, 4, 8, and 10
+# Delete-33: Price five measurable releases with disk normals
 
 At depth $39/20$, impose the 581 inherited $A$ disks, the
 62 inherited $B$ disks, and the inherited quadratic $Q\le d$.
@@ -77,13 +77,53 @@ three open sets with last start $8$, $10$, or $12$ in units
 of $1/400$, the same price gives uppers of approximately
 $8.7684\cdot10^{-9}$, $4.6632\cdot10^{-9}$, and
 $1.2828\cdot10^{-9}$, respectively. These are not lower
-bounds or feasible laws. Recenter and refit the inherited
-disks first for $(0,2,4,6,12)/400$, the smallest of those
-three prices, and reprice all three before freezing another
-certificate. No new frequency is required for this exclusion.
-Use the mesh stop to nominate a price for that replay; a fixed
-extra mesh margin [did not help][mesh-stop] on the last seed.
+bounds or feasible laws. The sampled mesh nominates a
+price for replay, but a fixed extra mesh margin
+[did not help][mesh-stop] on the earlier seed.
 
+## One refit prices the complete five-release frontier
+
+An initial exchange at $k=12$ gave a full-domain upper
+of about $-6.616\cdot10^{-10}$. Starting there, exchange for
+$k=8$ first nominated a table with a floating mesh price
+of about $3.495\cdot10^{-10}$ for $k=8$, but already
+$-3.755\cdot10^{-9}$ for $k=10$. A fresh exchange rebuilt
+the cell alternatives after a local update to the disk
+vectors and the tangent. It nominated the [final refit][k8],
+which repriced $k=8$ at about $-1.355\cdot10^{-9}$ on the
+floating mesh and also made the other six prices negative.
+No search law used to nominate the refit passed both the
+disk and quadratic tests.
+
+The replay uses one disk vector per inherited frequency
+and the updated quadratic center on the inherited knot
+lattice. It recomputes both the constant and the linear
+term at that center. The following are strict uppers for
+$M-8/9$ on the same measurable domain as in the first table:
+
+| Release starts in units of $1/400$ | Upper for $M-8/9$ |
+|:--|--:|
+| $(0,2,4,6,8)$ | $-1.1\cdot10^{-9}$ |
+| $(0,2,4,6,10)$ | $-5.2\cdot10^{-9}$ |
+| $(0,2,4,6,12)$ | $-8.5\cdot10^{-9}$ |
+| $(0,2,4,6,14)$ | $-1.13\cdot10^{-8}$ |
+| $(0,2,4,6,16)$ | $-1.36\cdot10^{-8}$ |
+| $(0,2,4,8,10)$ | $-1.01\cdot10^{-8}$ |
+| $(0,2,4,8,12)$ | $-1.35\cdot10^{-8}$ |
+
+```sh
+PYTHONDONTWRITEBYTECODE=1 /opt/sage-10.9/bin/python .godel/bob/check-five-release-disk-price-33.py --k8
+```
+
+Together with the prior [frontier census][frontier], this
+excludes surplus at least $-10^{-10}$ for **any five baseline
+slab releases**, with arbitrary measurable laws on those
+slabs and on the entire tail. Fewer releases embed in this
+class by leaving the extra slabs constant. This does not
+exclude six releases, eight added knots, or arbitrary
+measurable laws on the whole line. No Alpöge input is used.
+
+[k8]: deletion-laws/delete-33-five-release-disk-price-k8.json
 [mesh-stop]: five-release-mesh-stop-decision.md
 [table]: deletion-laws/delete-33-five-release-disk-price.json
 [previous]: five-release-independent-price-33.md
