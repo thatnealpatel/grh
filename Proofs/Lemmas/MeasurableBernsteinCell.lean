@@ -294,6 +294,21 @@ private theorem le_envelope {l r L M U R : ℝ} {f : ℝ → ℝ} (hlr : l < r)
   have herr := (le_abs_self _).trans (abs_quadratic_error_le hlr hf hR ht)
   exact (sub_le_iff_le_add'.mp herr).trans (add_le_add hquad le_rfl)
 
+/-- A common cap on the three midpoint Bernstein controls bounds the score up to the
+pointwise cubic interpolation remainder. -/
+public theorem le_cap_add_nodal_error {l r C R : ℝ} {f : ℝ → ℝ} (hlr : l < r)
+    (hf : ContDiffOn ℝ 3 f (Icc l r))
+    (hR : ∀ z ∈ Ioo l r, |iteratedDeriv 3 f z| ≤ R)
+    (hL : f l ≤ C) (hM : 2 * f ((l + r) / 2) - (f l + f r) / 2 ≤ C) (hU : f r ≤ C)
+    {t : ℝ} (ht : t ∈ Icc l r) :
+    f t ≤ C + (R / 6) * |(t - l) * (t - (l + r) / 2) * (t - r)| := by
+  have hconst : bernstein l r C C C t = C := by
+    unfold bernstein weightLeft weightMiddle weightRight
+    have hn : r - l ≠ 0 := sub_ne_zero.mpr hlr.ne'
+    field_simp
+    ring
+  simpa only [envelope, hconst, nodal, midpoint] using le_envelope hlr hf hR hL hM hU ht
+
 -- Compare with a function of time only, integrating against the probability law at that time.
 private theorem kernel_integral_le {l r : ℝ} (ν : Kernel (Icc l r) (Icc (-1 : ℝ) 1))
     [IsMarkovKernel ν] {F : Icc l r × Icc (-1 : ℝ) 1 → ℝ} (hF : Continuous F)
