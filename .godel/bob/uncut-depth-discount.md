@@ -1,0 +1,35 @@
+# Recovering the cost of deep pairs in the one-trace test
+
+Use the notation, error order, and prescribed heights of the [one-trace price](uncut-defect-price.md). Its majorant $Z$ for the uncut charge $X$ is sufficient but can discard more than the entire failure margin. There are two different issues: The size of this loss, and the conditioning of the measurement of $Z$ itself.
+
+## One extra scalar, without estimating phases
+
+For fixed $C>1$ put $d_C=[W_A(0)-(P_{A-Ca}*W_{Ca+})(0)]/R$, eventually $Ca<1/2$. Only a scalar from the second interior trace is needed. Then
+
+$$X\le Z_C^*+o_{C,\epsilon}(1),\qquad Z_C^*=Z-S(1-e^{1-C})d_C.$$
+
+Indeed the loss in $Z$ is $(S/R)\sum_{b>a}\delta_b[1-e^{1-bD}g_\epsilon\cos\phi]+o_\epsilon(1)d$. All terms in brackets are nonnegative; on $b>Ca$ they are at least $1-e^{1-C}$. By the [Poisson difference identity](deep-retained-excess.md), $Rd_C$ sums $k_{A-b}+k_{A+b-2Ca}$ over exactly $b>Ca$. This differs from the sum of $\delta_b$ on that set by $O_C(a)Rd$: The second widths are bounded away from zero, and $|\partial_h\log k_h|\le1/h$. The right limit excludes the upper supporting depth $b=Ca$ from this discount. One exterior budget gives $d\le1/6+o(1)$. Thus $Z_C^*\le0.0658$ is another sufficient test for large samples after fixing small enough smoothing. This is a discount for a measured tail, not a bound assuming that most mass is deep.
+
+**A model on which the decision changes.** In assignment A of the [depth transfer](interior-trace-depth-transfer.md), the line carries $.64 F_{16}(\phi)$ in units of $\lambda$, and all off-line mass is at $bD=40$. The assignment is positive and matches the finite Euler functional through $2V$ for each sample. For $1<C<40$, $d_C=d+o(1)=.36/6+o(1)$ at all samples by the full off-line Poisson cost there. Since the charge here is *uncut*, there is no gray-band error. Subtract the line charge from the full charge and then subtract $\alpha d+o(1)$. With $s=\Re S_V(t)$ this gives $X=s+.24 A_\epsilon-\alpha\cdot .06+O(\epsilon)+o_\epsilon(1)$, $A_\epsilon\to1/3$. On density-one samples the arithmetic part is $o(1)$ in density by the model's sampling estimate. In this typical calibration the iterated benchmark for $X$ is $.08-.06\alpha= .01483032\ldots$. The loss $Z-X$ is $.06 S$ up to $.06 S e^{-39}$ and vanishing errors, because $|g_\epsilon\cos\phi|\le1$. Thus the old sufficient screen reads about $.15585447$, above $.0658$, whereas $Z_5^*$ reads about $.01741327$, below it. Neither calculation concerns a failing conductor. At a hypothetical failure the common $s\ge47/81-o(1)$ cannot be set to zero, and even $X$ in this assignment is high.
+
+As a check at the *failure's* calibration, use the same note's all-deep variant, putting the whole density $\lambda Uv$ at $bD=40$, split equally on the two sides. Positivity follows from its phase-uniform $\|U(v-1)\|_\infty<10^{-7}$; moving $U$ onto a shifted test gives its finite Euler identity. Now $d=1/6+o(1)$, and there is no line charge. Hence $X=s-(m_D+\alpha)/6+O(\epsilon)+o_\epsilon(1)$ and $|Z-X-Sd|\le Sd e^{-39}+o_\epsilon(1)$. At the minimum required harmonic $s=47/81$, the iterated benchmarks are $.06588670\ldots$ for $X$ and $.45762043\ldots$ for $Z$ (uncertainty at most $Se^{-39}/6$ in the second benchmark). Even knowing the *whole* loss would not put this baseline below $.0658$. Calibration does not establish that such a harmonic occurs. Neither assignment has a global Euler product or the actual interior traces.
+
+## Move the Poisson smoothing before pricing trace error
+
+The following is a way to evaluate either screen, not an estimate of its arithmetic size. Write $B_0=S-\alpha$, $T_s=e^{-s|\partial|}$, $h=A-2a=1/2-a$, $W_*=T_aW_{a+}$, and $H=-\sum_\rho\Re F(x-ib)/(2R)$, now summing **all** zeros. The exact identity is
+
+$$Z=H+B_0 W_A(0)/R+\langle W_*,L\rangle/(2\pi R),\qquad L=T_{-2a}F-2\pi B_0P_h.$$
+
+In fact $Z=B_0\Delta(0)/R-\langle K,\Delta\rangle/(2\pi R)$ and $\Delta=W_A-T_hW_*$. For an outer pair the $K$ pairing is $\pi(T_{-b}+T_b)F(x)=2\pi\Re F(x-ib)$; a single line zero contributes $\pi F(x)$. Moving $T_h$ to $K$ leaves $T_{-2a}F$. Each summand of $W_*$ is $\operatorname{sgn}(a-b) k_{a+|a-b|}$ translated by $x$, with sign **positive** at equality by the right limit. For instance a supporting reflected pair has $W_*$ kernel $k_a+k_{3a}$; applying $T_h$ gives its exact outer kernel, hence zero defect. For fixed $D$ the smoothed widths are bounded above and below, so pairing each absolute kernel against $(1+y^2)^{-1}$ costs $O_D((1+x^2)^{-1})$. This and the unit-interval zero count justify the right limits and exchanges as in the one-trace proof.
+
+Conditional on exact exterior terms $H,W_A(0)$, the cost of a uniform error $\eta R$ in $W_*$ is at most $\eta\|L\|_1/(2\pi)$. In the iterated limit this coefficient is
+
+$$\operatorname{mean}_\theta|2/e+2e^2\cos\theta|=9.41970\ldots.$$
+
+To verify the limit use $T_{-2a}F=2\Re F(\cdot+2ia)-T_{2a}F$ (contour shift of the entire test). In the [two-half expansion](uncut-defect-price.md#the-signed-remainder), the denominators stay away from zero on this narrow strip. The endpoint errors are $O_\epsilon(e^{-D/4})$ in $L^1$ since the shifted carriers have size at most $e^2$. Shifting the envelopes costs $O_\epsilon(a)$ in $L^1$ by their derivative bound. In the positive Poisson convolution freeze each envelope $f$ at cost $O_\epsilon(a\log(1/a))$, by integrating $\min(|y|\|f'\|_1,2\|f\|_1)$ against $P_{2a}$. The low term is unchanged, and the main carrier gains $2\cosh 2-e^{-2}=e^2$. Since $2\pi P_h\to(1/4+x^2)^{-1}$ in $L^1$, the resulting kernel, up to $o_{L^1,\epsilon}(1)$, is
+
+$$\frac{2g_\epsilon(x)-B_0+2e^2 g_\epsilon(x)\cos(Dx-2\arctan(2x))}{1/4+x^2}.$$
+
+Average its absolute value at fixed smoothing by freezing the coefficients and the slow phase on compact subintervals, controlling the tails by the integrable denominator. Then take $\epsilon\downarrow0$ by dominated convergence and use $2-B_0=2/e$. This is a norm limit, not permission to replace $L$ by its leading term in a pairing without bounding the trace. A small fixed *fraction of $R$* in absolute trace units now suffices for a fixed scalar error allowance, compared with a small fixed absolute error for the strongly smoothed defect. The two input errors are different; neither condition is necessary for structured arithmetic errors. This argument uses the full translated trace and does not inherit an ordinate cut. Errors in the exterior terms or in $d_C$ must be paid separately if those inputs are approximated.
+
+**Next test.** If the original screen misses, try $Z_5^*$ using the second signed trace smoothed at zero, or price the remaining depth-damped cosine moment using information on actual zeros. For the first screen alone the weaker-smoothed trace can be tested against the single signed $L$, with the full exterior charge kept at the sample's own cutoff. The finite Euler baseline cannot supply the needed exceptional-height upper bound for either screen. No failing sample or uniform arithmetic estimate is known from this calculation.
