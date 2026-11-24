@@ -28,7 +28,10 @@ multipliers, are the evidence.
 /opt/sage-10.9/bin/python .godel/bob/check-five-release-frequency-one-33.py --jobs 5
 ```
 
-**Next experiment.** The law fails both continuous caps:
+**Follow-up.** A [five-disk witness and curvature check](five-release-curvature-33.md)
+now carry out the test below on this same release set.
+
+**Experiment posed at the handoff.** The law fails both continuous caps:
 $|V_A(611/10)|>3.88$ and $|V_B(2/5)|>2.3$, verified at
 those exact points. They were nominated by a grid search,
 not proved to be maxima. On this release set keep the three

@@ -19,13 +19,14 @@ def primitives(case):
     return p['primitives'](case)
 
 
-def profile():
+def profile(name='frequency-one'):
     # Store the atoms so the check need not reproduce floating nomination.
-    with gzip.open(base/'deletion-laws/delete-33-five-release-frequency-one.json.gz', 'rt') as f:
+    counts = {'frequency-one': 4, 'five-caps': 7}
+    with gzip.open(base/f'deletion-laws/delete-33-five-release-{name}.json.gz', 'rt') as f:
         law = json.load(f)
     nodes = sorted(p['BASE_FINE'] + [j for k in SET for j in p['SPANS'][k] if j % 2 == 0])
     assert len(set(nodes)) == len(nodes)
-    assert len(law['weights']) == len(law['atoms']) == 4
+    assert len(law['weights']) == len(law['atoms']) == counts[name]
     assert sum(law['weights']) == SCALE
     assert all(type(w) is int and 0 < w <= SCALE for w in law['weights'])
     weights = [QQ(w)/SCALE for w in law['weights']]
