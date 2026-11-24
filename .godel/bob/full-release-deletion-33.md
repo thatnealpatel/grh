@@ -45,3 +45,29 @@ From the repository root, with SageMath 10.9 and assertions enabled:
 ```
 
 Do not refit on the original knots. The single midpoint above is a small change for which the present exclusion fails. Test it with the full quadratic during the fit and an exchange against violated first frequencies. Keep the old regional scores and curvature budgets only if repriced for the split. Any primal nominee must still pass both continuous caps and simultaneous second completion; a positive dual price by itself is not evidence of feasibility.
+
+## After Work: Which moments must jump at the midpoint?
+
+Keep exactly the one new knot at $1/400$ and the original scope elsewhere, including the arbitrary measurable tail. Let $\Delta Y=Y_R-Y_L$ be the difference of the law means on the right and left halves of $[0,1/200)$. At $39/20$, satisfying the caps and simultaneous second replies with $M\ge8/9$ requires **all three** strict inequalities:
+
+| Moment | Lower bound for $\Delta Y$ | Upper bound for $\Delta Y$ |
+|---|---:|---:|
+| $U$ | 0.00226 | 0.05243 |
+| $A$ | 0.000249 | 0.00666 |
+| $B$ | 0.00223 | 0.05937 |
+
+In particular it does not suffice to split the first moment $A$ while tying the expensive quadratic field $B$ across the midpoint, even if $B$ can change on every other slab. The bounds refer to moment differences, not to changes in the individual atom sites, and do not require either half to equal the old reference law.
+
+To see this, retain the old computed price $P$ and the atom upper $E$ **used** there for the whole slab at zero. On each half $i$ put $S_i=m_i U_i-a_i A_i-b_i B_i$, using the exact mass and the differences of the two signed-price primitives at its endpoints. The reference is unchanged, so substitution in the old sum gives
+
+$$ M-8/9\le P-E+S_L+S_R. $$
+
+This uses the actual two laws here and retains the old allowances everywhere else. For a moment function $y(u)\in\{u,X,T(X)\}$ and signed multiplier $k$, bound $S_L+kY_L$ and $S_R-kY_R$ separately by maximizing their atom polynomials over **all** $u\in[0,1]$. Write $H(k)$ for the sum of the two Bernstein uppers. Then $M-8/9\le P-E+H(k)+k\Delta Y$. To prove a lower cutoff $l$ use $k>0$ and check $P-E+H(k)+kl<0$; for an upper cutoff use $k<0$. No dual optimizer, clipping of the admissible atoms, or assumption that the two maxima are compatible with the other constraints is needed. The six signed multipliers and tests are in [the release checker](check-released-slabs-33.py); its replay command above is unchanged.
+
+**Curvature budget for the split.** The [quadratic expansion](joint-tail-deletion-33.md#joint-price) of the sole second cut gives the tangent inequality with the additional term $Q(V_B-V_*)$ on its left. No local coefficient or reference integral changes. With $\sigma$ the multiplier in the new cut list, the stronger joint row is therefore
+
+$$ M-8/9+\sigma Q(V_B-V_*)\le P-E+S_L+S_R. $$
+
+In particular, maximizing the two *untilted* half scores separately gives $Q(V_B-V_*)<5.027\cdot 10^{-5}$ whenever $M\ge8/9$. This reprices the difference curvature for the split; it is not the older original-knot budget and does not replace $Q(V_B)\le d$.
+
+**Next fit.** Keep the full quadratic and first-frequency exchange. Allow all three moments to jump in the indicated direction; do not lock either field across the split. The linear row $S_L+S_R\ge E-P$ underlies all six cutoffs. Use conservative endpoints if representing the row numerically. These are necessary tests, not evidence for a feasible split. The older regional scores still need their own repricing before reuse.

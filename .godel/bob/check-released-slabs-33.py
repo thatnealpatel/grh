@@ -71,13 +71,44 @@ assert QQ(1)/2 in z and P+late < F('-3.985e-9') and P+rest < F('-2.34e-10')
 # test just one rational atom on each. This is NOT a primal witness.
 aa,bb,*_ = s['tail_data'](z,B,data,[0,1,2],400,primitive=True)
 assert z[z.index(0)+1] == QQ(2)/400
+mass = [s['step'](QQ(i)/400,0)-s['step'](QQ(i+1)/400,0) for i in (0,1)]
+a = [x-y for x,y in zip(aa,aa[1:])]
+b = [x-y for x,y in zip(bb,bb[1:])]
 score = F(0)
 for i,u in enumerate((QQ(14)/1000,QQ(41)/1000)):
     x = 2*u*u-1
-    mass = s['step'](QQ(i)/400,0)-s['step'](QQ(i+1)/400,0)
-    score += mass*u-(aa[i]-aa[i+1])*x-(bb[i]-bb[i+1])*(4*x**3-3*x)
+    score += mass[i]*u-a[i]*x-b[i]*(4*x**3-3*x)
 print('Midpoint: two-atom increment over old upper',score-old[0])
 assert P+score-old[0] > F('3.53e-8')
+
+# Keep the quadratic remainder of the single second cut. It must be
+# paid out of this same local budget, even for a non-step tail.
+(sigma,) = [F(row[-1]) for row in data if len(row)==3]
+untied = sum(s['bern_upper'](ai,bi,mi,F('1e-14')) for ai,bi,mi in zip(a,b,mass))
+assert sigma>0
+curvature_budget = (P+untied-old[0])/sigma
+print('Midpoint: difference curvature budget',curvature_budget)
+assert curvature_budget < F('5.027e-5')
+
+# S_L+S_R <= H(k) + k*(Y_R-Y_L), where H(k) prices the left
+# atom with +kY and the right with -kY. For nonnegative surplus
+# the old cap P then requires k*(Y_R-Y_L) >= old[0]-P-H(k).
+for field, plus, minus, low, high in (
+    ('U','2.818e-6','-2.823e-6','.00226','.05243'),
+    ('A','2.5804e-5','-1.6844e-5','.000249','.00666'),
+    ('B','2.878e-6','-1.9064e-6','.00223','.05937'),
+):
+    for weight, limit in ((plus,low),(minus,high)):
+        k = F(weight)
+        price = F(0)
+        for i,tilt in enumerate((k,-k)):
+            price += s['bern_upper'](a[i]-(tilt if field=='A' else 0),
+                                     b[i]-(tilt if field=='B' else 0),
+                                     mass[i]+(tilt if field=='U' else 0), F('1e-14'))
+        # Test the cutoff without dividing by the signed multiplier.
+        bound = P+price-old[0]+k*F(limit)
+        print('Excluded jump boundary:',field,limit,'surplus upper',bound)
+        assert bound < 0
 
 # Change only the first and quadratic right hand sides, in fixed c0 units.
 r = F(QQ(1950000042)/10**9).cosh()/F(QQ(39)/20).cosh()
