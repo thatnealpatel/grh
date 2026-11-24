@@ -130,6 +130,21 @@ private theorem fourier_poissonC {a : ℝ} (ha : 0 < a) : 𝓕 (poissonC a) = pr
   funext t
   simpa only [Real.fourierInv_eq_fourier_neg, neg_neg, profile, abs_neg] using congrFun hinv (-t)
 
+/-- The Poisson transform in angular frequency, with the negative Fourier phase. -/
+public theorem integral_poisson_exp {v : ℝ} (hv : 0 < v) (ω : ℝ) :
+    (∫ y : ℝ, (poisson v y : ℂ) * Complex.exp (↑(-ω * y) * Complex.I)) =
+      (Real.exp (-v * |ω|) : ℂ) := by
+  have hπ : 0 < 2 * Real.pi := by positivity
+  have h := congrFun (fourier_poissonC hv) (ω / (2 * Real.pi))
+  rw [Real.fourier_real_eq_integral_exp_smul] at h
+  have hphase (y : ℝ) : -2 * Real.pi * y * (ω / (2 * Real.pi)) = -ω * y := by
+    field_simp
+  have hdecay : -(2 * Real.pi * v) * |ω / (2 * Real.pi)| = -v * |ω| := by
+    rw [abs_div, abs_of_pos hπ]
+    field_simp
+  simp only [hphase, smul_eq_mul, poissonC, profile, hdecay] at h
+  simpa only [mul_comm] using h
+
 private theorem poissonC_convolution {h d : ℝ} (hh : 0 < h) (hd : 0 < d) :
     (poissonC h ⋆[ContinuousLinearMap.mul ℂ ℂ] poissonC d) = poissonC (h + d) := by
   let B := ContinuousLinearMap.mul ℂ ℂ
