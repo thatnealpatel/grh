@@ -14,8 +14,7 @@ Ct = C/(2*(F.pi()/12).cos())
 ORIGINAL = base/'deletion-laws/delete-33-full.txt'
 
 
-def read(table):
-    prime, second = table.read_text().split('# Second:')
+def prime_rows(prime):
     rows = [list(map(int, line.split())) for line in prime.splitlines() if not line.startswith('#')]
     z, A, B, U = [], [], [], []
     for start, *pairs in rows:
@@ -28,6 +27,12 @@ def read(table):
         for out, values in [(A,x), (B,[4*t**3-3*t for t in x]), (U,u)]:
             out.append(sum(w*v for w,v in zip(p,values))/sum(p))
     assert all(a < b for a,b in zip(z,z[1:])) and 0 in z
+    return z, A, B, U
+
+
+def read(table):
+    prime, second = table.read_text().split('# Second:')
+    z, A, B, U = prime_rows(prime)
     j0, den, *vals = map(int, ' '.join(second.splitlines()[1:]).split())
     assert den > 0
     return z, A, B, U, {j:F(v)/den for j,v in enumerate(vals,j0)}

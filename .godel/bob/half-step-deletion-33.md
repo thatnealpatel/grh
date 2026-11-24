@@ -21,3 +21,5 @@ Keep these primes and ask about the full $k/100$ first lattice. At $t$, the same
 $$v_t(x)=\frac{\sum_z \Delta A(z)\exp(-z/2+ixz)}{C_t(1/2+ix)}.$$
 
 Its modulus exceeds $1.00251$ at $x=200\pi(1901/131072)$. Both point evaluations are in the checker above. Next try a joint refit with this unfolded representer, imposing the actual three second constraints against the unfolded measure. Test a serialized law on all real frequencies, including its tail. This targets arbitrary first translates rather than another dyadic refinement. A failure of the fit or of one fixed-law cap would not give a separator.
+
+**Later result:** A [joint refit](unfolded-deletion-33.md) keeps the half-step first lattice at $t$ but matches every real first translate at $3t$ at the same depth. Both first spans can be unfolded at the nearby depth $1.95005$, not yet at $1.95$.
