@@ -269,3 +269,5 @@ subpower number of hits. Count additional hits with the simultaneous
 lifts before inferring a fraction bound; neither the three passing
 prices nor the selection argument provides one. Check the exponent
 comparisons with `python3 .godel/alice/check-global-three-ratio.py`.
+See the [coverage handoff](three-ratio-coverage-decision.md#next-worker)
+for the zero-space exclusion and the data required to score nonseed hits.
