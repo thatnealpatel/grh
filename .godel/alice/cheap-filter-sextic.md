@@ -2,6 +2,8 @@
 
 Keep one actual two-label list, the bins and transformed normals of [the two-minor count](normal-factor-minors.md), and its cheap filter $d=f_A f_B$ with $D=Yq^{.161}$. There is a single rational projective curve of degree six per filter and bin containing **all** represented normals in the coordinates below. The argument uses the omitted factors in each row, even if their prime supports are disjoint across rows. Lines, conics, and components missing either of two specified points together contribute only $q^{o(1)}$ distinct image indices per filter. The remaining components have degree three through six, pass through both points, and contain a specified line **upon reduction modulo $q$**. This does not bound the number of represented indices on such a component.
 
+**Stronger handoff:** [Complete the evaluation matrix with non-represented rows](cheap-filter-kernel.md). At most one degree-three through degree-five component per filter still needs a population bound; for $\sigma\ge .455-o(1)$ the quintic case is payable too.
+
 **Coordinates and uniform prices.** Use $T=RJ=q^\sigma$, $s=(F,a)$ fixed, $a'=a/s$, $F'=F/s$. Write the integral coordinates as
 
 $$w=(K,C,B_0)=((qa'+F'(b+c))/d,\ c/f_A,\ b/f_B).$$
