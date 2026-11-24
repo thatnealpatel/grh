@@ -139,4 +139,165 @@ public theorem harmonic_extension_nonneg (n : ℕ) (b₀ : ℝ) (b : ℕ → ℝ
     re_nonneg_of_periodic_strip F hF hc.le (mul_pos two_pos Real.pi_pos) hperiod hboundary
       (z := ⟨φ, d⟩) hd
 
+/-!
+## Mixed coefficients and the quadratic support bound
+
+Source: `5ab1b80f:.godel/bob/sparse-10-2.md`, lines 29–41 (unchanged at `0648ae05`).
+Use: apply the quadratic support bound at each fixed spatial point at `3t`, before integration.
+The normalized harmonic factors are `cosh (j*d) / cosh (j*c)` for modes `1 ≤ j ≤ n`.
+The argument allows any complex coefficients, including those from joint refits; it is a
+pointwise transfer, not a certificate for the sparse choice or its integrated budget.
+
+Owning check session: `01a20ce0-1582-79d6-b657-1b3239837bf7`.
+-/
+
+private theorem sin_re (z : ℂ) :
+    (Complex.sin z).re = Real.cosh z.im * Real.sin z.re := by
+  rw [Complex.sin_eq, ← Complex.ofReal_sin, ← Complex.ofReal_cosh,
+    ← Complex.ofReal_cos, ← Complex.ofReal_sinh]
+  simp only [← Complex.ofReal_mul, Complex.add_re, Complex.mul_I_re, Complex.ofReal_re,
+    Complex.ofReal_im, neg_zero, add_zero]
+  rw [mul_comm]
+
+private theorem phase_re (a : ℂ) (θ : ℝ) :
+    (a * Complex.exp (Complex.I * (θ : ℂ))).re = a.re * Real.cos θ - a.im * Real.sin θ := by
+  rw [mul_comm Complex.I, Complex.exp_mul_I, Complex.mul_re]
+  simp only [Complex.add_re, Complex.add_im, Complex.mul_I_re,
+    Complex.mul_I_im, Complex.cos_ofReal_re, Complex.sin_ofReal_re, Complex.cos_ofReal_im,
+    Complex.sin_ofReal_im, neg_zero, add_zero, zero_add]
+
+private theorem exp_phase_periodic :
+    Function.Periodic (fun θ : ℝ ↦ Complex.exp (Complex.I * (θ : ℂ))) (2 * Real.pi) := by
+  intro θ
+  change Complex.exp (Complex.I * (↑(θ + 2 * Real.pi) : ℂ)) = _
+  rw [Complex.ofReal_add, mul_add]
+  simpa only [Complex.ofReal_mul, Complex.ofReal_ofNat, mul_comm Complex.I] using
+    Complex.exp_periodic ((θ : ℂ) * Complex.I)
+
+private theorem exp_nat_phase_periodic (j : ℕ) :
+    Function.Periodic (fun θ : ℝ ↦ Complex.exp (Complex.I * ↑((j : ℝ) * θ)))
+      (2 * Real.pi) := by
+  intro θ
+  change Complex.exp (Complex.I * ↑((j : ℝ) * (θ + 2 * Real.pi))) = _
+  rw [mul_add, ← nsmul_eq_mul j (2 * Real.pi)]
+  exact (exp_phase_periodic.nsmul j) ((j : ℝ) * θ)
+
+/-- The harmonic extension of a nonnegative trigonometric polynomial with arbitrary complex
+coefficients is nonnegative on the closed strip. The same data are prescribed at both edges;
+the sum is over modes `1` through `n` and is empty for `n = 0`. -/
+public theorem harmonic_extension_complex_nonneg (n : ℕ) (a₀ : ℝ) (a : ℕ → ℂ)
+    {c : ℝ} (hc : 0 < c)
+    (h : ∀ θ : ℝ, 0 ≤ a₀ + (∑ j ∈ Finset.Icc 1 n,
+      a j * Complex.exp (Complex.I * ↑((j : ℝ) * θ))).re)
+    (φ d : ℝ) (hd : |d| ≤ c) :
+    0 ≤ a₀ + (∑ j ∈ Finset.Icc 1 n,
+      a j * ↑(Real.cosh ((j : ℝ) * d) / Real.cosh ((j : ℝ) * c)) *
+        Complex.exp (Complex.I * ↑((j : ℝ) * φ))).re := by
+  let F (z : ℂ) : ℂ := a₀ + ∑ j ∈ Finset.Icc 1 n,
+    ↑((Real.cosh ((j : ℝ) * c))⁻¹) *
+      (↑(a j).re * Complex.cos ((j : ℂ) * z) - ↑(a j).im * Complex.sin ((j : ℂ) * z))
+  have hF : Differentiable ℂ F := by
+    refine Differentiable.add (differentiable_const _) ?_
+    apply Differentiable.fun_sum
+    intro j _
+    exact (((Complex.differentiable_cos.comp (differentiable_id.const_mul (j : ℂ))).const_mul _).sub
+      ((Complex.differentiable_sin.comp (differentiable_id.const_mul (j : ℂ))).const_mul _)).const_mul _
+  have hRe (z : ℂ) : (F z).re = a₀ + (∑ j ∈ Finset.Icc 1 n,
+      a j * ↑(Real.cosh ((j : ℝ) * z.im) / Real.cosh ((j : ℝ) * c)) *
+        Complex.exp (Complex.I * ↑((j : ℝ) * z.re))).re := by
+    simp only [F, Complex.add_re, Complex.ofReal_re, Complex.re_sum]
+    congr 1
+    refine Finset.sum_congr rfl fun j _ ↦ ?_
+    rw [mul_right_comm (a j), Complex.re_mul_ofReal, phase_re, Complex.re_ofReal_mul,
+      Complex.sub_re, Complex.re_ofReal_mul, Complex.re_ofReal_mul, cos_re, sin_re]
+    simp only [Complex.mul_re, Complex.mul_im, Complex.natCast_re, Complex.natCast_im,
+      zero_mul, sub_zero, add_zero, div_eq_mul_inv]
+    ring
+  have hperiod (y : ℝ) : Function.Periodic (fun x : ℝ ↦ (F ⟨x, y⟩).re) (2 * Real.pi) := by
+    intro x
+    change (F ⟨x + 2 * Real.pi, y⟩).re = (F ⟨x, y⟩).re
+    rw [hRe, hRe]
+    congr 2
+    refine Finset.sum_congr rfl fun j _ ↦ ?_
+    exact congrArg (fun e ↦ a j * ↑(Real.cosh ((j : ℝ) * y) / Real.cosh ((j : ℝ) * c)) * e)
+      (exp_nat_phase_periodic j x)
+  have hboundary (x y : ℝ) (hy : |y| = c) : 0 ≤ (F ⟨x, y⟩).re := by
+    rw [hRe]
+    have hcosh (j : ℕ) : Real.cosh ((j : ℝ) * y) = Real.cosh ((j : ℝ) * c) := by
+      rcases le_total 0 y with hpos | hneg
+      · rw [abs_of_nonneg hpos] at hy
+        rw [hy]
+      · rw [abs_of_nonpos hneg] at hy
+        rw [← hy, mul_neg, Real.cosh_neg]
+    simpa only [hcosh, div_self (Real.cosh_pos _).ne', Complex.ofReal_one, mul_one] using h x
+  simpa only [hRe] using
+    re_nonneg_of_periodic_strip F hF hc.le (mul_pos two_pos Real.pi_pos) hperiod hboundary
+      (z := ⟨φ, d⟩) hd
+
+/-- The support value `S(H,h)` of the first and second harmonics with coefficients `H,h`. -/
+public noncomputable def quadraticSupport (H h : ℂ) : ℝ :=
+  sSup (Set.range fun θ : ℝ ↦ (H * Complex.exp (Complex.I * (θ : ℂ)) +
+    h * Complex.exp (Complex.I * ↑(2 * θ))).re)
+
+/-- The support value is a maximum over all real phases. -/
+public theorem isGreatest_quadraticSupport (H h : ℂ) :
+    IsGreatest (Set.range fun θ : ℝ ↦ (H * Complex.exp (Complex.I * (θ : ℂ)) +
+      h * Complex.exp (Complex.I * ↑(2 * θ))).re) (quadraticSupport H h) := by
+  let f (θ : ℝ) : ℝ := (H * Complex.exp (Complex.I * (θ : ℂ)) +
+    h * Complex.exp (Complex.I * ↑(2 * θ))).re
+  change IsGreatest (Set.range f) (sSup (Set.range f))
+  have hf : Continuous f := by
+    dsimp only [f]
+    fun_prop
+  have hp : 0 < 2 * Real.pi := mul_pos two_pos Real.pi_pos
+  have hperiod : Function.Periodic f (2 * Real.pi) := by
+    intro θ
+    exact congrArg₂ (fun e₁ e₂ ↦ (H * e₁ + h * e₂).re)
+      (exp_phase_periodic θ) (exp_nat_phase_periodic 2 θ)
+  obtain ⟨m, _, hmax⟩ := isCompact_Icc.exists_isMaxOn
+    (show (Icc (0 : ℝ) (2 * Real.pi)).Nonempty from ⟨0, le_rfl, hp.le⟩) hf.continuousOn
+  have hm : IsGreatest (Set.range f) (f m) := by
+    refine ⟨⟨m, rfl⟩, ?_⟩
+    rintro _ ⟨θ, rfl⟩
+    obtain ⟨x, hx, heq⟩ := hperiod.exists_mem_Ico hp θ 0
+    rw [heq]
+    exact (isMaxOn_iff.mp hmax) x (Ico_subset_Icc_self (by simpa only [zero_add] using hx))
+  rwa [hm.csSup_eq]
+
+/-- The degree-two strip transfer used at `3t`: the support of `(H,h)` supplies the boundary
+constant for `(H,-h)`, by a phase shift of `π`. -/
+public theorem harmonic_extension_quadratic_support_nonneg (H h : ℂ)
+    {c : ℝ} (hc : 0 < c) (φ d : ℝ) (hd : |d| ≤ c) :
+    0 ≤ quadraticSupport H h +
+      (H * ↑(Real.cosh d / Real.cosh c) * Complex.exp (Complex.I * (φ : ℂ)) -
+        h * ↑(Real.cosh (2 * d) / Real.cosh (2 * c)) * Complex.exp (Complex.I * ↑(2 * φ))).re := by
+  let a : ℕ → ℂ := fun
+    | 1 => H
+    | 2 => -h
+    | _ => 0
+  have ha₁ : a 1 = H := rfl
+  have ha₂ : a 2 = -h := rfl
+  have hIcc : Finset.Icc 1 2 = ({1, 2} : Finset ℕ) := by decide
+  have hne : (1 : ℕ) ≠ 2 := by decide
+  have hboundary (θ : ℝ) : 0 ≤ quadraticSupport H h + (∑ j ∈ Finset.Icc 1 2,
+      a j * Complex.exp (Complex.I * ↑((j : ℝ) * θ))).re := by
+    have hfirst : Complex.exp (Complex.I * ↑(θ + Real.pi)) =
+        -Complex.exp (Complex.I * (θ : ℂ)) := by
+      rw [Complex.ofReal_add, mul_add, Complex.exp_add, mul_comm Complex.I (Real.pi : ℂ),
+        Complex.exp_pi_mul_I, mul_neg_one]
+    have hsecond : Complex.exp (Complex.I * ↑(2 * (θ + Real.pi))) =
+        Complex.exp (Complex.I * ↑(2 * θ)) := by
+      rw [mul_add]
+      exact exp_phase_periodic (2 * θ)
+    have hbound : (H * Complex.exp (Complex.I * ↑(θ + Real.pi)) +
+        h * Complex.exp (Complex.I * ↑(2 * (θ + Real.pi)))).re ≤ quadraticSupport H h :=
+      (isGreatest_quadraticSupport H h).2 ⟨θ + Real.pi, rfl⟩
+    rw [hfirst, hsecond, mul_neg, Complex.add_re, Complex.neg_re] at hbound
+    simp only [hIcc, Finset.sum_pair hne, ha₁, ha₂, Nat.cast_one, Nat.cast_ofNat, one_mul,
+      Complex.add_re, neg_mul, Complex.neg_re]
+    linarith only [hbound]
+  simpa only [hIcc, Finset.sum_pair hne, ha₁, ha₂, Nat.cast_one, Nat.cast_ofNat, one_mul,
+    neg_mul, sub_eq_add_neg] using
+    harmonic_extension_complex_nonneg 2 (quadraticSupport H h) a hc hboundary φ d hd
+
 end Masullo.ShallowStripPositivity
