@@ -51,7 +51,8 @@ def first_and_probe():
     return fields, cost, q
 
 
-def quadratic(q):
+def majorant():
+    """Return the checked Laurent coefficients, disk direction, and majorant integral."""
     # Positive majorant of |L|: This makes the test quadratic positive
     # semidefinite, and preserves necessity since the first disk holds.
     lam = [F(73)/100,F(98)/100,F(1)]
@@ -64,6 +65,11 @@ def quadratic(q):
     assert err < F('1e-14') and p(F(1))>0
     cs[0] += F('1e-12')  # |p-|L|| = |p^2-|L|^2|/(p+|L|) < 1e-13
     rhs = cs[0]+2*sum(c*e(208*j) for j,c in enumerate(cs[1:],1))
+    return cs, lam, rhs
+
+
+def quadratic(q):
+    cs, lam, rhs = majorant()
 
     @cache
     def kd(i):
@@ -82,16 +88,27 @@ def quadratic(q):
     return lin, (rhs*sum(a*b for a,b in zip(q,lin))).sqrt()
 
 
-def maximum(w,a,b):
-    """Upper bound for max_u w*u + a*X + b*T(X) on the full unit interval."""
-    power = [-a-b,w,2*a+18*b,0,-48*b,0,32*b]
-    bez = [sum(F(v)*comb(k,j)/comb(6,j) for j,v in enumerate(power[:k+1])) for k in range(7)]
+# Convert the three atom basis functions from power to Bernstein coordinates.
+def controls(power):
+    return [sum(QQ(v)*comb(k,j)/comb(6,j) for j,v in enumerate(power[:k+1])) for k in range(7)]
+
+
+basis = list(zip(controls([0,1]), controls([-1,0,2]), controls([-1,0,18,0,-48,0,32])))
+
+
+def maximum(w,a,b,offset=0,incumbent=None,*,lower=False):
+    """Bound offset + max_u w*u + a*X + b*T(X) (jointly with incumbent if given)."""
+    assert not lower or incumbent is None
+    bez = [offset+w*x+a*y+b*z for x,y,z in basis]
     best = max(bez[0].lower(),bez[-1].lower())
     stack = [bez]
     tol = F('1e-13')
+    cutoff = (F(best)+tol).lower()
+    if incumbent is not None:
+        cutoff = max(incumbent,cutoff)
     while stack:
         row = stack.pop()
-        if max(x.upper() for x in row) <= (F(best)+tol).lower():
+        if max(x.upper() for x in row) <= cutoff:
             continue
         left, right = [], []
         while row:
@@ -99,8 +116,12 @@ def maximum(w,a,b):
             right.append(row[-1])
             row = [(x+y)/2 for x,y in zip(row,row[1:])]
         best = max(best,left[-1].lower())
+        cutoff = max(cutoff,(F(best)+tol).lower())
         stack.extend([left,right[::-1]])
-    return F(best)+tol
+    if lower:
+        return F(best)
+    upper = F(best)+tol
+    return upper if incumbent is None else F(max(incumbent,upper.upper()))
 
 
 if __name__=='__main__':

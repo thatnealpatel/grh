@@ -1,6 +1,6 @@
 # Arbitrary slab laws on two fixed meshes at depth 39/20
 
-In the [unfolded comparison](unfolded-deletion-33.md), fix $X=0$ on the exterior left ray and allow an independent, arbitrary law on $0\le u\le1$ on each slab, including the infinite last slab. Impose both normalized pointwise first caps and the three simultaneous zero second replies at $3t$. On the 426 seed slabs, $M-8/9<-1.83\cdot10^{-6}$. On the following 3,547 slabs, $M-8/9<-2.1\cdot10^{-7}$: Keep the seed knots and add all multiples of $1/400$ in $[-4.48,0]\cup[.02,4.4]$. No knots are inserted in $(0,.02)$, before the first seed knot, or after the last. This also excludes all coarsenings with the same exterior. This is not a bound for continuously moving knots.
+In the [unfolded comparison](unfolded-deletion-33.md), fix $X=0$ on the exterior left ray and allow an independent, arbitrary law on $0\le u\le1$ on each slab, including the infinite last slab. Impose both normalized pointwise first caps and the three simultaneous zero second replies at $3t$. On the 426 seed slabs, $M-8/9<-1.83\cdot10^{-6}$. On the following 3,547 slabs, $M-8/9<-2.1\cdot10^{-7}$: Keep the seed knots and add all multiples of $1/400$ in $[-4.48,0]\cup[.02,4.4]$. No knots are inserted in $(0,.02)$, before the first seed knot, or after the last. This also excludes all coarsenings with the same exterior. This is not a bound for continuously moving knots. See the [moving seed-slab certificate](mobile-mesh-deletion-33.md) for the off-grid extension on the 426-slab family.
 
 Here is the dual calculation. Use the unfolded notation $b_k=e^{-z_k/2}\Delta B_k/C$, $s=(-7,6,19)/25$, $h=13/25$, and $H(x)=\sum_j\lambda_j e^{is_jx}$ with $\lambda=(.73,.98,1)$. The simultaneous disk condition and the first cap imply
 
@@ -17,3 +17,5 @@ sage -python .godel/bob/check-mesh-deletion-33.py
 ```
 
 The test only uses necessary conditions. It requires neither sufficiency of a directional second price nor an arithmetic realization.
+
+**Post-Work extension.** The [shared-boundary proof](mobile-mesh-deletion-33.md) now covers full slab refits under simultaneous real seed-knot motion. The [swept-band proof](swept-bands-deletion-33.md) permits arbitrary measurable laws throughout narrower windows. Neither uses a different law on the two copies of a shared endpoint to price a single move. See the [decision and remaining scope](swept-bands-decision.md) before repeating the moving-knot test.
