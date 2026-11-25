@@ -225,10 +225,12 @@ same complement and tag seed certificates separately.
 For upper diagnostics one may first audit singleton
 signature hits on the full actual list for each fixed
 separating mask: Repeated-signature hits cannot supply a
-near-target count at either new stated loss. The remaining
-premise is a uniform lower capture bound or a direct bound
-for the unrestricted survivors. No RH or GRH conclusion
-and no Alpöge input is used.
+near-target count at either new stated loss. Without an export, the
+[handoff replay][handoff] identifies a projected short-seed subspace
+threshold to test at $1.475$. It is not a compression or capture result.
+The remaining premise is a uniform lower capture bound or a direct
+bound for the unrestricted survivors. No RH or GRH conclusion and no
+Alpöge input is used.
 
 Run `python3 .godel/alice/check-singleton-erasure.py` for
 exact coefficient, crossover, and radius checks.
@@ -238,3 +240,4 @@ exact coefficient, crossover, and radius checks.
 [exact]: joint-valuation-escape.md#two-recovery-facts
 [pivot]: global-pivot-row-price.md#single-rows-with-moving-and-with-fixed-inputs
 [seed]: shared-second-erasure.md
+[handoff]: singleton-handoff-decision.md#next-worker
