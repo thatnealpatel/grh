@@ -7,7 +7,10 @@ radical of weight $1.475-o(1)$. The same erased factors now let
 us count the heavier erased endpoint **at the actual input**.
 This eliminates the previous large-radius capture rate on a
 target-sized complement, even with unrestricted certificates.
-It leaves the previous small-radius price unchanged.
+It leaves the previous small-radius price unchanged. The
+[projected-factor refinement][projected] improves the larger
+radius further on a checked reduced-height stratum, and
+prices an optional deletion to reach that stratum.
 
 ## Count on a fixed mask
 
@@ -188,6 +191,7 @@ The [decoder review][review] separates the local recovery
 check from these arithmetic checks and from any capture claim.
 
 [singleton]: singleton-erasure.md
+[projected]: projected-erasure.md
 [prefix]: shared-complement-count.md
 [review]: input-first-decoder-review.md
 [pivot]: global-pivot-row-price.md#single-rows-with-moving-and-with-fixed-inputs
