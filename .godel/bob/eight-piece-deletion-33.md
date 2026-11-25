@@ -406,6 +406,18 @@ PYTHONDONTWRITEBYTECODE=1 /opt/sage-10.9/bin/python .godel/bob/check-eight-knots
 
 [radial]: deletion-laws/delete-33-k8-radial-deltas.json
 
+## Eight knots: Restore the local quadratic loss
+
+The [first-slab quadratic price](eight-knot-local-q-33.md)
+removes 57 more masks at depth $39/20$, with the same disks,
+quadratic constraint, independent piece laws, and measurable
+tail. It excludes all 21 masks with negative starts
+$(-2304)/400$ and 36 of the 41 with $(-2304,-216)/400$.
+The other 75 masks are untouched. The resulting 80
+upper-price survivors are not shown feasible. The linked
+certificate gives the real knot-cell proof and replays the
+deletion from the canonical radial export.
+
 ## Five releases: Recombining the fixed linear prices cannot suffice
 
 For each of the seven unpaid release sets there is **one**
