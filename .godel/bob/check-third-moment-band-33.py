@@ -160,7 +160,9 @@ def check_b_only_witness(sites, cuts):
     return y
 
 
-def main():
+def main(*, capture=()):
+    # Return selected panel controls for downstream fixed-field comparisons.
+    captured = defaultdict(list)
     assert all(-1 < b < 1 for b in B)
     sites = [int(400*t) for t in z]
     assert z == [QQ(t)/400 for t in sites] and (sites[0], sites[-1]) == (-2304, 2320)
@@ -192,6 +194,8 @@ def main():
         key, b, d = sites[j], F(B[j]), QQ(h-l)/400
         for v, w in zip(controls(*a[2*i:2*i+3]), controls(*mass[2*i:2*i+3]), strict=True):
             intercept, slope = priced_control(v, w, b)
+            if key in capture:
+                captured[key].append((l, d, v, w, b, intercept, slope))
             price[key] += d/3*intercept
             slopes[key] += d/3*abs(slope)
             signal[key] += d/3*slope*F(y[j]-B[j])
@@ -205,9 +209,11 @@ def main():
     remote = s['step'](QQ(60), 0)+2*sum(F(row[-1]) for row in cuts)/Ct*F(-30).exp()
     fixed = constant+sum(price.values())+error+remote
     assert error < F('4e-9') and remote < F('1e-12')
-    assert fixed < F('-2.30e-7') and sum(slopes.values()) < F('.0057')
+    total_slope = sum(slopes.values())
+    assert fixed < F('-2.30e-7') and total_slope < F('.0057')
     print('A-only measurable fixed-B upper, interpolation, remote, band slope:',
-          fixed, error, remote, sum(slopes.values()), flush=True)
+          fixed, error, remote, total_slope, flush=True)
+    gaps = {}
     for releases, eps, target, required_signal in CASES:
         released = sum(free[k]-price[k] for k in sorted(releases))
         penalty = eps*sum(v for k, v in slopes.items() if k not in releases)
@@ -220,8 +226,11 @@ def main():
         repriced = constant+error+remote+sum(free[k] if k in releases else v
                                              for k, v in witness_price.items())
         print('B-witness signal, affine threshold, repriced upper:', sig, gap, repriced, flush=True)
-        assert gap > required_signal and sig > gap and sig > F('2.65e-7')
+        assert required_signal < gap < sig and sig > F('2.65e-7')
         assert repriced < F('-9e-8')
+        gaps[releases] = gap
+    assert captured.keys() == set(capture)
+    return captured, gaps, total_slope
 
 
 if __name__ == '__main__':

@@ -19,6 +19,8 @@ ROOTS = dict(zip((*range(6, 36, 2), *range(38, 54, 2)),
 EXEMPT = {FIRST, -2288, -322, -216, 0, 2, 4, 36, 184}
 CHANGED = (6, 8, 10, 12)
 HALF_JUMP = QQ(1)/40
+DIP_SITE, DIP = 36, QQ(3)/1000
+DILUTION = QQ(1)/200000
 # Maximal passing grid numerators with zero or one arbitrary free slab.
 CAPS = {(-216,): (412, 368), (-2304, -216): (462, 429),
         (-2288, -216): (480, 458), (-322, -216): (485, 465)}
@@ -158,23 +160,28 @@ def reference():
           flush=True)
 
 
-def b_completion(data, center, sigma, jump, base, raw, masks):
+def b_completion(data, center, sigma, jump, base, raw, masks, *, restored=False):
     # Restore the B disks and the full B loss, without requiring a matching A.
     mask = prior['FLAT']
     changed = set(CHANGED)
     assert mask in masks and changed == dict(mask).keys()-EXEMPT
     assert all(dict(mask)[k] == 1 for k in changed)
+    assert DIP_SITE not in dict(mask)
+    scale = 1-DILUTION if restored else QQ(1)
     zz, yy, cc = [], [], []
     for i, (t, b, c) in enumerate(zip(z, p['B'], center, strict=True)):
         zz.append(t)
         cc.append(c)
+        if restored and t == QQ(DIP_SITE)/400:
+            assert z[i+1] == QQ(DIP_SITE+2)/400
+            b -= DIP
         if int(400*t) in changed:
             assert 400*t == int(400*t) and z[i+1]-t == QQ(1)/200
             zz.append(t+QQ(1)/400)
             cc.append(c)
-            yy.extend([b-HALF_JUMP, b+HALF_JUMP])
+            yy.extend([scale*(b-HALF_JUMP), scale*(b+HALF_JUMP)])
         else:
-            yy.append(b)
+            yy.append(scale*b)
     assert all(-1 < b < 1 for b in yy)
     K, C = s['K'], s['C']
     J = s['jumps'](zz, yy, C)
@@ -203,38 +210,49 @@ def b_completion(data, center, sigma, jump, base, raw, masks):
     for k, n in mask:
         cost = raw[k, n]
         if k in changed:
-            cost = min(cost, int((2*HALF_JUMP*jump[k][0]).ceil()))
+            cost = min(cost, int((2*scale*HALF_JUMP*jump[k][0]).ceil()))
         allowance += cost
-    assert len(norms) == 62 and all(v < F('.999976') for v in norms)
+    norm_cap = F('.999980') if restored else F('.999976')
+    assert len(norms) == 62 and all(v < norm_cap for v in norms)
+    assert 2*scale*HALF_JUMP > QQ(CAPS[(-216,)][0])/10000
     assert d-q > F('4.8e-6') and F(0) < loss < F('1.04e-8')
-    assert loss < QQ(allowance)/UNIT, (loss, allowance)
-    print('B-only completion: max disk, Q slack, total B loss, allowance units:',
-          max(v.upper() for v in norms), d-q, loss, allowance, flush=True)
+    assert loss < F('1.36e-8') < QQ(allowance)/UNIT
+    if restored:
+        s['cap'](zz, J, F('.999999'))
+    print('B-only completion: restored, max disk, Q slack, total B loss, allowance units:',
+          restored, max(v.upper() for v in norms), d-q, loss, allowance, flush=True)
 
 
 def a_screen():
-    # Restore the accepted A-only affine test for negative slabs plus 0 free.
-    # Its global baseline deficit is already certified in third-moment-band-33.
+    # Compare both fields to the accepted A-only controls on the changed panels.
     band = run_path(str(Path(__file__).resolve().with_name('check-third-moment-band-33.py')))
-    releases, _, _, gap = band['CASES'][1]
-    assert releases == band['NEGATIVE'] | {0} and not releases.intersection(CHANGED)
-    pts = sorted({j for k in CHANGED for j in range(2*k, 2*k+5)})
-    prices, *_ = s['tail_data'](z, p['B'], band['disk_rows'](), pts, 800)
-    prices = dict(zip(pts, (-v for v in prices), strict=True))
-    mass = {j: F(j)/800*(-F(j)/800).exp() for j in pts}
-    signal = F(0)
-    for k in CHANGED:
-        i = z.index(QQ(k)/400)
-        assert z[i+1] == QQ(k+2)/400
-        b = F(p['B'][i])
-        for panel, change in ((k, -HALF_JUMP), (k+1, HALF_JUMP)):
-            j = 2*panel
-            ajs, mjs = (prior['controls'](*(p[j+q] for q in range(3))) for p in (prices, mass))
-            for a, m in zip(ajs, mjs, strict=True):
-                _, slope = band['priced_control'](a, m, b)
-                signal += slope*change/1200  # (panel width)/3
-    assert F('9.13e-8') < signal < F('9.14e-8') < gap
-    print('A-only witness signal, certified necessary signal:', signal, gap, flush=True)
+    releases, _, _, necessary = band['CASES'][1]
+    sites = (*CHANGED, DIP_SITE)
+    assert releases == band['NEGATIVE'] | {0} and not band['TAGS'].intersection(sites)
+    captured, gaps, total_slope = band['main'](capture=sites)
+    gap = gaps[releases]
+    original, restored, repriced = F(0), F(0), F(0)
+    for k, rows in captured.items():
+        assert sorted(l for l, *_ in rows) == [k]*3+[k+1]*3
+        for l, d, a, m, b, base, slope in rows:
+            assert d == QQ(1)/400
+            change = 0 if k == DIP_SITE else (-HALF_JUMP if l == k else HALF_JUMP)
+            moved = -DIP if k == DIP_SITE else change
+            new_b = (1-DILUTION)*(b+moved)
+            fresh, _ = band['priced_control'](a, m, new_b)
+            original += d/3*slope*change
+            restored += d/3*slope*(new_b-b)
+            repriced += d/3*(fresh-base)
+    assert F('9.13e-8') < original < F('9.14e-8') < necessary < gap
+    # Elsewhere the only change is the dilution of B0. Pay for all
+    # baseline slopes, even the slopes on the panels repriced above.
+    debit = DILUTION*total_slope
+    assert restored > F('2.73e-7') and debit < F('2.81e-8')
+    assert restored-debit > F('2.43e-7') > gap
+    upper = -F('1e-10')-gap+repriced+debit
+    assert upper < F('-6.7e-8')
+    print('A-only original signal, gap, restored local signal, dilution debit, repriced upper:',
+          original, gap, restored, debit, upper, flush=True)
 
 
 def main(path):
@@ -266,6 +284,7 @@ def main(path):
             print('Best grid cap: group, free, cap, passing/failing maxima:',
                   key, free, QQ(i)/10000, lo, hi, flush=True)
     b_completion(data, center, sigma, jump, base, raw, masks)
+    b_completion(data, center, sigma, jump, base, raw, masks, restored=True)
     a_screen()
 
 

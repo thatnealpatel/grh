@@ -164,13 +164,54 @@ not addition of bounds from two tangent certificates.
 It keeps $B$ fixed to the witness on the rest of the
 domain through $60$, including the tail before $60$.
 
-**Next test:** Allow the freely variable tail and the $B$
-levels on the tested slabs to change while preserving
-the oriented jumps. Use the accepted signed $A$-only
-functional to price those changes before refitting the
-rest of the frontier. In particular, the witness rejection
-above cannot be carried to the full frontier without
-pricing changes at $2,4$ and on the measurable tail.
+## A diluted dip passes the affine test, not the repriced test
+
+The preceding affine rejection does not survive even a
+simple change of the unsplit levels. Starting from the four-jump
+field, subtract $3/1000$ on $[36/400,38/400)$, then multiply
+the whole field, including its tail, by $1-1/200000$.
+This uses the same eight-knot mask: The dip changes an
+original slab level and consumes no knot. All four jumps
+are now $0.04999975$. The resulting field passes **all
+real-frequency $B$ caps** with modulus below $0.999999$,
+and the 62 disk moduli are below $0.999980$. It has
+$d-Q(V_B)>4.8\cdot10^{-6}$, and its full $B$ loss remains
+below $1.04\cdot10^{-8}$ with over $3.20\cdot10^{-9}$
+left in the raw-budget allowance at its own jump sizes.
+The cap checker uses interval Taylor bounds on a bounded
+frequency range and a total-variation estimate beyond it.
+
+Release the same four negative slabs and the slab at $0$
+in the $A$-only test. The exact gap for the baseline
+support upper bound with those releases is approximately
+$1.5104\cdot10^{-7}$. The dip and four jump slabs give
+signed affine signal greater than $2.73\cdot10^{-7}$,
+including dilution there. On the complement through $60$,
+the slope sum from the baseline checker bounds the
+absolute effect of dilution by $2.81\cdot10^{-8}$, since
+$|B_0|\le1$. The full signed signal is thus greater than
+$2.43\cdot10^{-7}$: The affine test no longer rejects,
+even with continuous $B$ caps and the scalar $B$ loss
+screen both included.
+
+However, evaluating the $B$-fixed common-atom support
+upper bound with fresh tilts on just the ten changed
+half-panels, and keeping the baseline tilts and the
+same dilution debit everywhere else, gives
+$M-8/9<-6.7\cdot10^{-8}$. This retains the original
+interpolation and remote debits, and uses no prescribed
+values on the five released slabs or after $60$. Thus
+this second witness also has no attaining completion
+under the $A$ disks. The calculation does not combine
+prices from separate tangent certificates or establish
+an exclusion on all fields with the four jumps.
+
+**Next test:** Use the repriced common-atom controls,
+rather than a baseline affine threshold by itself, when
+varying the $B$ levels and the measurable tail. To price
+the whole frontier, the test must still handle changes
+at $2,4$ and on the tail, not just dilution or the dip
+on $[36/400,38/400)$.
 
 ## Replay
 
@@ -188,9 +229,11 @@ sagepy=/opt/sage-10.9/bin/python
 
 The checker pins the export digest, and checks the mask
 counts and split multiplicities. The reference checks the
-exact atom factor and signed integration by parts, plus
-integer rounding, the reverse charge, and selection of
-the most expensive free slab.
+exact atom factor, signed integration by parts, integer
+rounding, the reverse charge, and free-slab selection.
+The full checker also replays
+the $A$-only band computation to obtain the panel
+controls and the baseline release gap for repricing.
 
 [front]: eight-knot-local-q-33.md
 [drop]: eight-knot-a-drop-33.md
