@@ -333,6 +333,158 @@ theorem abs_symmetricForm_le {D L : ℝ} {m f : ℝ → ℂ}
     _ = M * (2 * √a * √b) := by ring
     _ ≤ M := mul_le_of_le_one_right (Real.sqrt_nonneg _) hyoung
 
+private theorem integrable_weighted_shift {k f : ℝ → ℂ} (hk : Integrable k)
+    (hf : MemLp f 2 volume) :
+    Integrable (fun p : ℝ × ℝ ↦ k p.1 * (star (f p.2) * f (p.1 + p.2)))
+      ((volume : Measure ℝ).prod volume) := by
+  let μ := (volume : Measure ℝ).prod (volume : Measure ℝ)
+  have hS : MeasurePreserving shear μ μ := measurePreserving_prod_add volume volume
+  have hk₁ : AEStronglyMeasurable (fun p : ℝ × ℝ ↦ k p.1) μ :=
+    hk.aestronglyMeasurable.comp_quasiMeasurePreserving Measure.quasiMeasurePreserving_fst
+  have hf₂ : AEStronglyMeasurable (fun p : ℝ × ℝ ↦ f p.2) μ :=
+    hf.aestronglyMeasurable.comp_quasiMeasurePreserving Measure.quasiMeasurePreserving_snd
+  have hfshift : AEStronglyMeasurable (fun p : ℝ × ℝ ↦ f (p.1 + p.2)) μ :=
+    hf₂.comp_measurePreserving hS
+  have ha := hk.norm.mul_prod (hf.integrable_norm_pow (by decide : (2 : ℕ) ≠ 0))
+  have hb := (hS.integrable_comp_emb shear.measurableEmbedding).2 ha
+  -- Use the average of the two squared norms as an absolute majorant.
+  refine ((ha.add hb).div_const 2).mono (hk₁.mul (hf₂.star.mul hfshift)) ?_
+  refine ae_of_all _ fun p ↦ ?_
+  change ‖k p.1 * (star (f p.2) * f (p.1 + p.2))‖ ≤
+    ‖(‖k p.1‖ * ‖f p.2‖ ^ 2 + ‖k p.1‖ * ‖f (p.1 + p.2)‖ ^ 2) / 2‖
+  rw [norm_mul, norm_mul, norm_star, Real.norm_eq_abs, abs_of_nonneg (by positivity)]
+  nlinarith only [mul_nonneg (norm_nonneg (k p.1))
+    (sq_nonneg (‖f p.2‖ - ‖f (p.1 + p.2)‖))]
+
+/-- The continuous crossing form is the forward shift correlation plus its
+adjoint. The input is zero-extended from `[0,D]`; no unit-norm condition is needed.
+An integrable complex cell coefficient suffices, in particular a bounded
+measurable coefficient on the finite interval. Both the rectangle pairing
+and the weighted correlation on the original variable interval are integrable.
+
+Source: `8058479edd84:.godel/bob/short-cell-weil-list.md:41–47`, used at line 53
+(scan pin `082a89e67352a18e3f534bc75a2d45807b145771`). This is only the
+continuous geometric identity, not the discrete-to-continuous replacement.
+Owning check session: `01a2102d-ae00-70d1-a793-4b136b9edf79`. -/
+theorem symmetricForm_eq_shiftCorrelation {D L : ℝ} {m f : ℝ → ℂ}
+    (_hD : 0 < D) (hL : 0 < L) (hhalf : D / 2 ≤ Real.log L) (_hupper : Real.log L ≤ D)
+    (hm : IntegrableOn m (Icc L (Real.exp D)))
+    (hf : MemLp f 2 (volume.restrict (Icc 0 D)))
+    (hzero : ∀ x ∉ Icc 0 D, f x = 0) :
+    Integrable (pairingIntegrand D L m f) (crossMeasure D) ∧
+    IntegrableOn (fun v ↦ (m v / (√v : ℂ)) *
+      (∫ x : ℝ, star (f x) * f (x + Real.log v))) (Icc L (Real.exp D)) ∧
+    symmetricForm D L m f = 2 * (∫ v in Icc L (Real.exp D),
+      (m v / (√v : ℂ)) * (∫ x : ℝ, star (f x) * f (x + Real.log v))).re := by
+  let w := fun v : ℝ ↦ m v / (√v : ℂ)
+  let c := fun t : ℝ ↦ ∫ x : ℝ, star (f x) * f (x + t)
+  let g := fun v : ℝ ↦ w v * c (Real.log v)
+  let J := Icc (Real.log L) D
+  let K := fun t : ℝ ↦ Real.exp (t / 2) • m (Real.exp t)
+  let k := J.indicator K
+  have hw : IntegrableOn w (Icc L (Real.exp D)) := by
+    have hmeas : Measurable (fun v : ℝ ↦ ((√v : ℝ) : ℂ)⁻¹) :=
+      (Complex.continuous_ofReal.comp Real.continuous_sqrt).measurable.inv
+    refine (hm.bdd_mul (c := (√L)⁻¹) hmeas.aestronglyMeasurable ?_).congr ?_
+    · filter_upwards [ae_restrict_mem (μ := (volume : Measure ℝ))
+        (measurableSet_Icc (a := L) (b := Real.exp D))] with v hv
+      rw [norm_inv, Complex.norm_real, Real.norm_eq_abs, abs_of_nonneg (Real.sqrt_nonneg _)]
+      exact (inv_le_inv₀ (Real.sqrt_pos_of_pos (hL.trans_le hv.1))
+        (Real.sqrt_pos_of_pos hL)).2 (Real.sqrt_le_sqrt hv.1)
+    · exact ae_of_all _ fun v ↦ by simp only [w, div_eq_mul_inv, mul_comm]
+  -- Under `v = exp t`, the density `dv / √v` becomes `exp (t / 2) dt`.
+  have hJ (t : ℝ) : Real.exp t • w (Real.exp t) = K t := by
+    simp only [w, K, RCLike.real_smul_eq_coe_mul, ← Real.exp_half]
+    have he : Complex.ofReal (Real.exp t) = Complex.ofReal (Real.exp (t / 2)) ^ 2 := by
+      rw [← Complex.ofReal_pow, pow_two, ← Real.exp_add, add_halves]
+    have hn : Complex.ofReal (Real.exp (t / 2)) ≠ 0 :=
+      Complex.ofReal_ne_zero.2 (Real.exp_ne_zero _)
+    change Complex.ofReal (Real.exp t) * (m (Real.exp t) / Complex.ofReal (Real.exp (t / 2))) =
+      Complex.ofReal (Real.exp (t / 2)) * m (Real.exp t)
+    rw [he]
+    field_simp [hn]
+  have hk : Integrable k := (integrable_indicator_iff measurableSet_Icc).2 (by
+    simpa only [hJ] using (integrableOn_exp_iff hL w).1 hw)
+  have hfvol : MemLp f 2 volume := by
+    have heq : (Icc 0 D).indicator f = f := by
+      funext x
+      by_cases hx : x ∈ Icc 0 D
+      · exact indicator_of_mem hx f
+      · rw [indicator_of_notMem hx, hzero x hx]
+    simpa only [heq] using (memLp_indicator_iff_restrict measurableSet_Icc.nullMeasurableSet).2 hf
+  let μ := (volume : Measure ℝ).prod (volume : Measure ℝ)
+  let A := leftHalf D ×ˢ rightHalf D
+  let F := A.indicator (pairingIntegrand D L m f)
+  let G := fun p : ℝ × ℝ ↦ k p.1 * (star (f p.2) * f (p.1 + p.2))
+  have hA : MeasurableSet A := measurableSet_Icc.prod measurableSet_Icc
+  have hS : MeasurePreserving shear μ μ := measurePreserving_prod_add volume volume
+  have hG : Integrable G μ := integrable_weighted_shift hk hfvol
+  -- The rectangular indicator becomes redundant on the band: if both input
+  -- values can be nonzero, their difference forces them into opposite halves.
+  have hFG : F ∘ shear = G ∘ Prod.swap := by
+    funext p
+    obtain ⟨x, t⟩ := p
+    change A.indicator (pairingIntegrand D L m f) (x, x + t) =
+      k t * (star (f x) * f (t + x))
+    rw [add_comm t x]
+    by_cases hp : (x, x + t) ∈ A
+    · rw [indicator_of_mem hp]
+      have hsub : x + t - x = t := by ring
+      simp only [pairingIntegrand, kernel, hsub, k, J, K]
+    rw [indicator_of_notMem hp]
+    by_cases ht : t ∈ J
+    · by_cases hx : x ∈ Icc 0 D
+      · have hy : x + t ∉ Icc 0 D := by
+          intro hy
+          apply hp
+          change x ∈ {x | (x, x + t) ∈ leftHalf D ×ˢ rightHalf D}
+          rw [fiber_eq hhalf ht]
+          exact ⟨hx.1, by linarith only [hy.2]⟩
+        rw [hzero _ hy, mul_zero, mul_zero]
+      · rw [hzero _ hx, star_zero, zero_mul, mul_zero]
+    · simp only [k, indicator_of_notMem ht, zero_mul]
+  have hF : Integrable F μ := (hS.integrable_comp_emb shear.measurableEmbedding).1 (by
+    rw [hFG]
+    exact hG.swap)
+  have hPair : Integrable (pairingIntegrand D L m f) (crossMeasure D) := by
+    rw [crossMeasure, Measure.prod_restrict]
+    exact (integrable_indicator_iff hA).1 hF
+  have hinner (t : ℝ) : (∫ x : ℝ, G (t, x)) = J.indicator (fun t ↦ K t * c t) t := by
+    change (∫ x : ℝ, k t * (star (f x) * f (t + x))) = _
+    simp_rw [add_comm t, integral_const_mul]
+    by_cases ht : t ∈ J
+    · simp only [k, indicator_of_mem ht, c]
+    · simp only [k, indicator_of_notMem ht, zero_mul]
+  have hlog : IntegrableOn (fun t ↦ K t * c t) J :=
+    (integrable_indicator_iff measurableSet_Icc).1 (by
+      simpa only [hinner] using hG.integral_prod_left)
+  have hchange (t : ℝ) : Real.exp t • g (Real.exp t) = K t * c t := by
+    dsimp only [g]
+    rw [Real.log_exp, ← smul_mul_assoc, hJ]
+  have hg : IntegrableOn g (Icc L (Real.exp D)) :=
+    (integrableOn_exp_iff hL g).2 (by simpa only [hchange] using hlog)
+  have hsubst : (∫ v in Icc L (Real.exp D), g v) = ∫ t in J, K t * c t := by
+    simpa only [J, Real.image_exp_Icc, Real.exp_log hL, abs_of_pos (Real.exp_pos _), hchange] using
+      integral_image_eq_integral_abs_deriv_smul (s := J) measurableSet_Icc
+        (fun t _ ↦ (Real.hasDerivAt_exp t).hasDerivWithinAt) Real.exp_injective.injOn g
+  have heq : (∫ p, pairingIntegrand D L m f p ∂crossMeasure D) = ∫ v in Icc L (Real.exp D), g v :=
+    calc
+      (∫ p, pairingIntegrand D L m f p ∂crossMeasure D) = ∫ p, F p ∂μ := by
+        rw [crossMeasure, Measure.prod_restrict, ← integral_indicator hA]
+      _ = ∫ p, F (shear p) ∂μ := (hS.integral_comp shear.measurableEmbedding F).symm
+      _ = ∫ p, G p ∂μ := by
+        change (∫ p, (F ∘ shear) p ∂μ) = _
+        rw [hFG]
+        exact integral_prod_swap G
+      _ = ∫ t : ℝ, ∫ x : ℝ, G (t, x) := integral_prod G hG
+      _ = ∫ t in J, K t * c t := by simp_rw [hinner]; exact integral_indicator measurableSet_Icc
+      _ = _ := hsubst.symm
+  refine ⟨hPair, hg, ?_⟩
+  rw [symmetricForm, ← integral_prod _ hPair]
+  change 2 * (∫ p, pairingIntegrand D L m f p ∂crossMeasure D).re =
+    2 * (∫ v in Icc L (Real.exp D), g v).re
+  rw [heq]
+
 end
 
 end ShortCellCrossing
