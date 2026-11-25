@@ -70,8 +70,8 @@ premise. But the printed $\chi|_{G^1}=\omega$ label in the plus-Mellin
 sum gives zero angular average: The compact factor on translation is
 $\eta(h)\chi(h)$, nontrivial for this restriction. The correction used
 here is to select $\chi|_{G^1}=\bar\omega$, agreeing with the actual
-output block and with the jets. This character check does not decide
-whether the corrected scalar is nonzero.
+output block and with the jets. This character check fixes the block,
+not the sign of the trace.
 
 The [trace-class proof](trace-spectral-singleton-qi.md) gives
 $PA=PAP\in\mathcal S_1$ for the uncut operator, and the completed
@@ -165,20 +165,23 @@ The larger bump class is a scope of the ambient operator identity,
 not a relaxation of the manuscript's support hypotheses in its other
 trace comparisons. There is no positive-width claim.
 
-**Next bounded check:** Turn the Gaussian–Poisson/Jensen count in the
-[trace-class proof](trace-spectral-singleton-qi.md#gaussian-tails-and-jensens-bound)
-into a numerical tail bound for the real-zero sum for one specified
-positive-log bump. For example, use $L_0=\log 2$ and
-$b_0(x)=\exp(-1/(1-u^2))$ for $|u|<1$, zero elsewhere, with
-$u=4x/L_0-2$. Combine an explicit upper bound for the Gaussian tail
-and lower bound at the Jensen center with an integration-by-parts
-bound for $\mathcal F_+ b_0$. This would supply an error budget for a
-finite zero calculation, not a nonvanishing proof by itself.
+**Nonzero test on the prescribed support.** For $b=b_0$, with
+$b_0(x)=\exp(-1/(1-u^2))$ on $|u|<1$ and zero elsewhere,
+$u=4x/\log 2-2$, the [closed Gaussian scalar card](../conjectures/closed/effective-capped-tail-bound-singleton-gaussian.md)
+certifies that the actual trace above is real and strictly negative.
+The normalized inclusive head through $8192$ lies in $(-0.160,-0.078)$.
+The [signed-head certificate](../adhoc/gaussian-singleton-head/certificate.md)
+accounts for all omitted real ordinates and extra capped copies. The
+checked normalized absolute tail is at most $425984/10^{12}$. Both
+bounds are after division by the positive Haar mass $\mu_1(G^1)$.
+The tail is in Lean; the signed head and nonvanishing of the actual
+operator trace are not.
 
-**Separate open premises:** A certified nonzero scalar for a test on
-the prescribed support, convergence and identification of the printed
-kernel, the local-to-global diagonal comparison, and positive-width
-density. The [circle cancellation](trace-spectral-angular-qi.md#what-the-boxes-omit-and-what-remains)
-is still a statement about averaging the actual operator's kernel;
-the present result supplies its omitted scalar, not its nonvanishing
-or an identification with the named printed kernel.
+**Separate open premises:** Convergence of every printed coordinate
+prefix and identification of the printed kernel, the local-to-global
+diagonal comparison, and positive-width density. The
+[circle cancellation](trace-spectral-angular-qi.md#what-the-boxes-omit-and-what-remains)
+applied to the correct kernel of the actual singleton operator gives
+zero for the literal box compression, omitting the strictly negative
+trace just computed. This does not identify that kernel with the named
+printed kernel.
