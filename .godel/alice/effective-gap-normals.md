@@ -277,16 +277,17 @@ list and fixed forms. Among the empty-support outside
 triples, count how many pass the supported screen or move
 inside onto a piece with certified price. The remaining
 triples, both supported outside and uncertified supported
-interior, still need a count. Without an admissible export,
-an analytic next test on the latter population is to use
-the mask congruences to bound the required large overlap
-$(a',D/G)$, not just large $D$. Exact second-output ratio
-recovery on any unpriced population still needs a census
-of occupied ratios. There is no radius comparison here.
+interior, still need a count. The [directional-index
+extension][directional] removes all known-prime overlap at
+no extra power of $q$ and identifies the remaining alignment
+at new primes. Exact second-output ratio recovery on any
+unpriced population still needs a census of occupied ratios.
+There is no radius comparison here.
 The [fixed-plane replay][fixed-plane] rules out a uniform
 price on arbitrary unmasked planes, not on the retained
 named pieces above.
 
+[directional]: directional-gap-overlap.md
 [fixed-plane]: fixed-plane-price-decision.md
 [minors]: normal-factor-minors.md
 [screen]: denominator-pair-gap-regions.md
