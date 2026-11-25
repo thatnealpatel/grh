@@ -283,7 +283,11 @@ the mask congruences to bound the required large overlap
 $(a',D/G)$, not just large $D$. Exact second-output ratio
 recovery on any unpriced population still needs a census
 of occupied ratios. There is no radius comparison here.
+The [fixed-plane replay][fixed-plane] rules out a uniform
+price on arbitrary unmasked planes, not on the retained
+named pieces above.
 
+[fixed-plane]: fixed-plane-price-decision.md
 [minors]: normal-factor-minors.md
 [screen]: denominator-pair-gap-regions.md
 [smooth]: shared-complement-count.md
