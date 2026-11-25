@@ -230,9 +230,13 @@ The union of the three first-gap and three second-row
 cuts costs $q^{1.135+o(1)}$ in actual triples.
 They may be discarded after the normalized second-row
 cut and the widened screen, with no change to the
-$1.1354$ target. This removes specified arithmetic
-classes, not a certified fraction of that population. No
-comparison of hit rates at radii $1.300$ and $1.475$ follows.
+$1.1354$ target. The next count is on the retained
+widened-screen complement: The gap-plane sieve uses the
+inherited reciprocal cuts, not a new deletion priced here.
+See the [scope and replay decision][scope]. The cuts remove
+specified arithmetic classes, not a certified fraction of
+that population. No comparison of hit rates at radii $1.300$
+and $1.475$ follows.
 For a future hit-rate comparison, either leave these cuts
 out of both populations or use the same deletion at both
 radii. The direct count still needs a bound on the
@@ -256,3 +260,4 @@ price.
 [list]: same-input-second-bracket.md
 [planes]: denominator-pair-gap-regions.md
 [exact]: joint-valuation-escape.md
+[scope]: first-gap-power-kernels-decision.md
