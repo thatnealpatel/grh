@@ -305,6 +305,107 @@ cover leaves at most 774 assignments, 67 with a double slab.
 /opt/sage-10.9/bin/python .godel/bob/check-eight-knots-omit-slab-33.py
 ```
 
+## Eight knots: Cross-price with the five-release refit
+
+Use the accepted [five-release refit][disk-price]
+`five-release-disk-price-k8` on the 774 assignments surviving
+the preceding screens. Its disk keys and quadratic parameters
+match those of `eight-knots`: 581 $A$ disks, 62 $B$ disks, and
+$Q\le d$ at depth $39/20$. The domains of the earlier screens
+are unchanged. In particular, only the chosen finite slabs
+are split, each resulting piece has its own constant common
+law, and the whole tail remains measurable. No Alpöge input
+is used.
+
+Recompute the unsplit price with $1/800$ tail cells through
+$60$ and a remote allowance. On the finite slabs in the
+remaining assignments, first price a measurable release on
+$1/1600$ cells with the signed routine (the mass density on
+negative slabs is zero). For one knot, use the lesser of this
+release price and the shared-coordinate bound on $1/6400$
+cells, taking only the release price when its increment is at
+most $5\cdot10^{-9}$. For two knots, use the lesser of the
+release price and the ordered-control bound on $1/3200$ cells.
+Round the base and increments separately upward to multiples
+of $10^{-16}$. An assignment is removed only when the sum is
+strictly below $-10^{-10}$.
+
+The cross-price removes 619 of the 774 assignments. The 155
+unpaid assignments spend all eight units, split the slabs
+starting at $0$, $2/400$, and $4/400$, and only 14 have a
+double slab. Of the 155, exactly 109 spend one unit on a
+negative slab, and 45 spend two. Each of those 154 uses at
+least one of the slabs starting at $-216/400$ and $-2304/400$.
+The sole all-nonnegative assignment makes one split in each
+of the eight slabs starting at $(0,2,4,6,8,10,12,14)/400$.
+These are surviving *upper-price* assignments, not feasible
+laws. The cross-price does not exclude eight knots or six
+measurable releases.
+
+The refined-frontier checker now replays both omissions and
+this cross-price. To export the residual masks for a refit,
+use `--write-eight` with a scratch destination:
+
+```sh
+PYTHONDONTWRITEBYTECODE=1 /opt/sage-10.9/bin/python .godel/bob/check-refined-frontier-33.py --jobs 6 --write-eight /tmp/delete-33-eight.json
+```
+
+## Eight knots: Exclude the all-nonnegative class
+
+Change only 42 individual disk weights in the cross-price,
+using the [rational deltas][radial] indexed from zero among
+its five-entry disk rows. Each integer delta is divided by
+$10^{20}$. The modified weights are strictly positive; the
+center, disk directions, and quadratic row are unchanged.
+Redo the base and measurable tail with the same meshes, then
+use direct shared-coordinate bounds at $1/12800$ for one
+knot and ordered-control bounds at $1/3200$ for two. The
+one-knot calculation uses the signed mass primitive, constant
+on negative slabs. Do not carry forward any slab price or
+base price from the unmodified tangent.
+
+The all-nonnegative assignment has rounded upper price
+$-1.885403\cdot10^{-10}$. Together with the preceding screens,
+this excludes **any** insertion of up to eight interior knots
+confined to nonnegative finite slabs, at the same cutoff.
+The refit also excludes 17 signed assignments; the least
+negative integer upper among the 18 exclusions is
+$-1.139268\cdot10^{-10}$. A direct $1/6400$ single-knot mesh
+with these weights does not pay for the all-nonnegative case;
+the finer shared-coordinate bound is needed for this replay.
+
+The remaining 137 assignments still spend all eight knots
+and split the slabs starting at $0$, $2/400$, and $4/400$;
+13 have a double slab. Their negative slab starts, counted
+with knot multiplicity and in units of $1/400$, are:
+
+| Negative starts | Assignments |
+|:--|--:|
+| $(-2304)$ | 21 |
+| $(-216)$ | 71 |
+| $(-2304,-216)$ | 41 |
+| $(-2288,-216)$ | 2 |
+| $(-322,-216)$ | 2 |
+
+Thus every surviving assignment spends at least one knot
+on a negative slab. Neither the signed eight-knot class nor
+the separate [six-release class](six-release-support-33.md)
+is excluded. These are upper-price survivors, not feasible
+laws.
+
+Replay the two stages in order with SageMath 10.9 and
+assertions enabled. The radial checker pins the canonical
+cross-price export by digest, so the input can be reproduced
+without a stored copy of the 155 masks:
+
+```sh
+work=$(mktemp -d)
+PYTHONDONTWRITEBYTECODE=1 /opt/sage-10.9/bin/python .godel/bob/check-refined-frontier-33.py --jobs 6 --write-eight "$work/cross.json" &&
+PYTHONDONTWRITEBYTECODE=1 /opt/sage-10.9/bin/python .godel/bob/check-eight-knots-radial-33.py "$work/cross.json" --write-eight "$work/radial.json"
+```
+
+[radial]: deletion-laws/delete-33-k8-radial-deltas.json
+
 ## Five releases: Recombining the fixed linear prices cannot suffice
 
 For each of the seven unpaid release sets there is **one**

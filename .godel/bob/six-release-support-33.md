@@ -105,11 +105,13 @@ neither a feasible witness nor a dual certificate. A separate
 smoothed dual fit with the reference-center return direction
 only reduced the floating mesh support from about
 $2.92\cdot10^{-8}$ to $2.59\cdot10^{-8}$. Before another
-unfocused exchange, identify which of the remaining eight-knot
-masks are unpaid after cross-pricing with the accepted five-release
-refit, or solve this case with disks and the full quadratic kept
-as constraints on a conditioned mesh. Six releases, eight
-knots, and unrestricted measurable profiles remain open.
+unfocused exchange, start from the [cross-priced eight-knot
+frontier][cross] or solve this case with disks and the full
+quadratic kept as constraints on a conditioned mesh. Six
+releases, eight knots, and unrestricted measurable profiles
+remain open.
+
+[cross]: eight-piece-deletion-33.md#eight-knots-cross-price-with-the-five-release-refit
 
 [five]: five-release-disk-price-33.md#one-refit-prices-the-complete-five-release-frontier
 [form]: five-release-curvature-33.md#identity-and-uniform-localization

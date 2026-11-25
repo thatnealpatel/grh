@@ -1,7 +1,9 @@
-"""Reprice double knots and localize five measurable delete-33 releases."""
+"""Price the eight-knot frontier and localize five measurable delete-33 releases."""
 import argparse
 from concurrent.futures import ProcessPoolExecutor
+from hashlib import sha256
 from itertools import combinations_with_replacement
+import json
 from pathlib import Path
 from runpy import run_path
 
@@ -85,6 +87,55 @@ def original_case_price(case):
     return prior['case_price'](case)
 
 
+def omission_price(job):
+    script = run_path(str(base/'check-eight-knots-omit-slab-33.py'))
+    return script['price'](job)
+
+
+def refit_prices(single_sites, double_sites):
+    disk = run_path(str(base/'check-five-release-disk-price-33.py'))
+    raw = (p['laws']/'delete-33-five-release-disk-price-k8.json').read_bytes()
+    assert sha256(raw).hexdigest() == '4150ddbca857c6d79966354328bdb8791a3818a12e8506a9aafd844e8a9cc2ee'
+    cert = json.loads(raw, parse_float=str)
+    assert disk['tests_of'](cert) == disk['tests_of'](p['load_certificate']('eight-knots'))
+    data, center, _, constant = p['tangent_data'](cert)
+    _, original, old, _ = p['mesh_prices'](data, center, constant, 400, [], 60, tail_den=800)
+    sites = single_sites | double_sites
+    values = p['costs']['release_costs'](z, center, data, old, 1600, {QQ(k)/400 for k in sites})
+    release = dict(zip(sorted(sites), values, strict=True))
+    extra = [release.get(int(400*t), 0) for t in z[:-1]]
+    split, _ = p['single_knot_costs'](z, center, data, old, extra, QQ(5)/10**9, 6400)
+    costs = {(int(400*t), 1): int((v*UNIT).ceil()) for t, v in zip(z[:-1], split, strict=True)
+             if int(400*t) in single_sites}
+    costs.update({(k, 2): min(v, int((release[k]*UNIT).ceil()))
+                  for k, v in double_costs(center, data, double_sites).items()})
+    return rounded(original), costs
+
+
+def cross_check(eight, omit_third, map_jobs):
+    omit = run_path(str(base/'check-eight-knots-omit-slab-33.py'))['CASES']
+    assert {sites for _, sites, _ in omit} == omit_third
+    for (_, sites, _), value in zip(omit, map_jobs(omission_price, omit), strict=True):
+        print('Omitting slab 4:', sites, value, flush=True)
+        assert value < QQ(CUTOFF)/UNIT
+    eight = [row for row in eight if 4 in dict(row)]
+    assert len(eight) == 774
+    single_sites, double_sites = ({k for row in eight for k, c in row if c == n} for n in (1, 2))
+    base_price, costs = refit_prices(single_sites, double_sites)
+    eight = screen(eight, base_price, costs)
+    doubles = sum(any(c == 2 for _, c in row) for row in eight)
+    assert (len(eight), doubles) == (155, 14)
+    assert all(sum(dict(row).values()) == 8 and {0, 2, 4} <= dict(row).keys() for row in eight)
+    negative = [[k for k, c in row if k < 0 for _ in range(c)] for row in eight]
+    assert [sum(len(ks) == n for ks in negative) for n in range(3)] == [1, 109, 45]
+    assert all(not ks or {-216, -2304}.intersection(ks) for ks in negative)
+    assert [sorted(row) for row, ks in zip(eight, negative, strict=True) if not ks] == [
+        [(k, 1) for k in range(0, 16, 2)]]
+    print('k8 cross-price:', len(eight), 'unpaid;', doubles, 'with a double slab;',
+          'negative units 0/1/2: 1/109/45', flush=True)
+    return sorted(sorted(row) for row in eight)
+
+
 def check(map_jobs):
     tables = list(map_jobs(original_case_price,CASES))
     prior['check'](tables,False)
@@ -122,20 +173,26 @@ def check(map_jobs):
         print(case, 'unpaid eight-knot / five-release:',len(eight),len(five),flush=True)
         assert (len(eight),len(five)) == (n8,n5)
     assert sum(any(c==2 for _,c in row) for row in eight) == 67
+    assert all(all(c == 1 for _, c in row) for row in eight if 4 not in dict(row))
     omit_third = {tuple(sorted(k for k,_ in row)) for row in eight if 4 not in dict(row)}
     assert omit_third == {(-2304,-216,0,2,6,8,10,12), (-216,0,2,6,8,10,12,14)}
     print('Eight knots: 67 unpaid with a double slab; omitting slab 4:',sorted(omit_third),flush=True)
     sites = {tuple(sorted(k for k,_ in row)) for row in five}
     assert sites == {(0,2,4,6,k) for k in range(8,17,2)} | {(0,2,4,8,10),(0,2,4,8,12)}
     print('Five measurable releases: unpaid slab starts in /400 units:',sorted(sites),flush=True)
+    return cross_check(eight, omit_third, map_jobs)
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--jobs',type=int,default=1)
+    parser.add_argument('--write-eight', type=Path,
+                        help='write the checked residual assignments as JSON pairs [400*start, count]')
     args = parser.parse_args()
     if args.jobs == 1:
-        check(map)
+        eight = check(map)
     else:
         with ProcessPoolExecutor(max_workers=args.jobs) as pool:
-            check(pool.map)
+            eight = check(pool.map)
+    if args.write_eight:
+        args.write_eight.write_text(json.dumps(eight, separators=(',', ':'))+'\n')
