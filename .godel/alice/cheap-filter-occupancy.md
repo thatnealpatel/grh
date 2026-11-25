@@ -1,5 +1,9 @@
 # Count the normals on the common component
 
+For the $1.1354$ parent budget, use the
+[smaller-filter upgrade](exceptional-visible-filters.md): It pays all
+exceptional splits at $q^{1.1345+o(1)}$, not just those in a sub-bin.
+
 On one actual two-label list, the residual ordered triples on **all exceptional visible splits** of the [two-minor count](normal-factor-minors.md) cost at most $q^{1.1355+o(1)}$, below the $q^{1.136}$ budget. On the cheap filters where a population bound was missing, each filter represents only $q^{o(1)}$ distinct image indices, counting all pairing layers together. This is a pointwise upper bound, not a density hypothesis on filters.
 
 The [two independent sextics](cheap-filter-kernel.md) matter: Their common factor has degree at most five. We show that an irreducible factor of degree $2\le e\le5$ through both specified points contains at most $9e$ distinct actual projective points. The two known roots on the joining line give an integral divisor of the **first nonzero coefficient** of the restriction, even if its other roots and its content are unknown. To make this useful for a quintic we first bound the size of its equation in the metric of the normal box.

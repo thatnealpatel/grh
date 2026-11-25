@@ -72,6 +72,11 @@ routinely spend more time pricing without improving a decision.
 
 ## Next useful test on the same retained list
 
+The [smaller-filter count](exceptional-visible-filters.md) now pays
+all exceptional visible splits at $q^{1.1345+o(1)}$ on the retained
+list in the scope of the global double ratio. This does not remove
+the ordinary-label occupancy obligation or change the screen.
+
 Keep the forms, support, and outer width fixed per ordered
 pair. Let $R$ be the residual after the existing screen and
 certified interior charges. For known-pool masks it is the
