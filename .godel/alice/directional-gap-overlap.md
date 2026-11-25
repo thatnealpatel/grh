@@ -223,12 +223,14 @@ To use this route on the remaining supported interior,
 recover aligned factors from other already charged data,
 or count their occupation by the actual smooth lifts.
 For a known-pool support, the interior price is settled;
-address the outside screen separately, and compare
-additional certified hits on the same retained list if an
-admissible export becomes available.
+address the outside screen separately. The [priced handoff][exterior]
+gives the second-row test and its target at each denominator-gcd
+scale. Compare additional certified hits on the same retained
+list if an admissible export becomes available.
 
 Run `python3 .godel/alice/check-directional-gap-overlap.py`
 for the finite local-index and exact exponent checks.
 
 [normals]: effective-gap-normals.md
 [screen]: denominator-pair-gap-regions.md
+[exterior]: exterior-count-handoff.md#next-useful-test-on-the-same-retained-list
