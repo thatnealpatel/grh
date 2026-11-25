@@ -16,23 +16,36 @@ step = unfold['step']
 knots = [2340,2360,2400,2480,2560,2720,2880,3200,4000,4800]
 
 
-def bern_upper(a, b, mass, eps):
+def bern_upper(a, b, mass, eps, *, witness=False):
     # Upper-bound max_{0<=u<=1} mass*u - a*(2u^2-1) - b*(32u^6-48u^4+18u^2-1).
+    # On request also return the exact atom whose value is at least best.
     q = [a+b,mass,-2*a-18*b,F(0),48*b,F(0),-32*b]
     beta = [sum(q[j]*QQ(comb(k,j))/comb(6,j) for j in range(k+1)) for k in range(7)]
     best = max(beta[0].lower(),beta[-1].lower())
     stack = [beta]
+    if witness:
+        atom = QQ(int(beta[-1].lower() > beta[0].lower()))
+        intervals = [(QQ(0), QQ(1))]
     while stack:
         beta = stack.pop()
+        if witness:
+            l, r = intervals.pop()
         if all(v < F(best)+eps for v in beta):
             continue
         le, ri = [], []
         while beta:
             le.append(beta[0]); ri.append(beta[-1])
             beta = [(x+y)/2 for x,y in zip(beta,beta[1:])]
-        best = max(best,le[-1].lower())
+        trial = le[-1].lower()
+        if witness:
+            mid = (l+r)/2
+            if trial > best:
+                atom = mid
+            intervals.extend([(l, mid), (mid, r)])
+        best = max(best,trial)
         stack.extend([le,ri[::-1]])
-    return F(best)+F(eps)
+    upper = F(best)+F(eps)
+    return (upper, atom) if witness else upper
 
 
 def second_majorant(lam):
