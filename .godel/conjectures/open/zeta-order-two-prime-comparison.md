@@ -16,119 +16,124 @@ real $X\ge A$,
 
 $$\sqrt2 B_2(X)-B_2(2X)\le S_2(X).$$
 
-**Source and payoff:** This is an operator sharpening of the
-linear case of the [Dedekind root-count comparison](../closed/dedekind-prime-root-critical-dilation.md)
-at the evidence revision. The landing allows a choice of
-order $m\ge2$ in its forward proof. Its fixed-order converse
-already applies at $m=2$. A forward proof at order two would
-give the exact log-tent criterion, with unchanged centering
-and square allowance.
+This fixes the spline order in the linear case of the
+[Dedekind root-count comparison](../closed/dedekind-prime-root-critical-dilation.md),
+whose forward proof allows the order to vary.
 
-**Discriminating test:** Under RH, write $D(s)=\sqrt2-2^s$,
-$\Phi(s)=(2^s-1)/s$, and $k=\Phi(1/2)$. Compare the
-absolute zero sum $\sum_\rho |D(\rho)\Phi(\rho)^2|$, with
-both signs and multiplicities, against $k^2/2$. First try
-the bound $|D|\le2\sqrt2$ with the exact weighted sum of
-$|2^\rho-1|^2/|\rho|^2$. If needed, use a trigonometric
-majorant and explicit-formula cosine sums, or certified
-low-zero savings from the exact inverse-square total. A
-strict margin suffices by the landing's asymptotic; failure
-of a sufficient bound does not refute the proposition.
+## Adjudication
 
-## Adjudication of the fixed-order test
+Write $E_2$ for the eventual inequality. **$E_2$ is unconditionally
+false:** RH gives arbitrarily large violations by the signed sum below,
+and the fixed-order converse $E_2\Rightarrow\mathrm{RH}$ excludes $E_2$
+off RH. The literal $\mathrm{RH}\iff E_2$ is therefore equivalent to
+$\neg\mathrm{RH}$ and remains open. The choice-of-order result is unaffected.
 
-Write $E_2$ for the eventual inequality above. **$E_2$ is false,
-including under RH.** Under RH there are violations for arbitrarily
-large real $X$, with a positive margin on the $\sqrt X$ scale. Without
-RH the landing's fixed-order converse rules out $E_2$. Thus order two
-does not give the proposed criterion. The card stays open as worded:
-The literal proposition $\mathrm{RH}\iff E_2$ is now equivalent to
-$\neg\mathrm{RH}$, not proved false. Deciding that truth value would
-require deciding RH; no further zero-budget estimate can do it.
-The landing's existential choice of order is unaffected.
+### The recurring excess on RH
 
-### A signed test at a recurrent phase
-
-Put $a=\log 2$, $r=\sqrt2$, and $K=k^2/2=6-4r$. Under RH define
-
-$$F(t)=-\sum_\rho D(\rho)\Phi(\rho)^2 e^{it\Im\rho},$$
-
-including conjugates and multiplicities. Lines 72–93 of the linked
-landing give, for linear $f$ and $m=2$,
+Put $a=\log 2$, $r=\sqrt2$, $D(s)=r-2^s$, and
+$\Phi(s)=(2^s-1)/s$ with its removable value at zero. On RH put
+$F(t)=-\sum_\rho D(\rho)\Phi(\rho)^2 e^{it\Im\rho}$ over the nontrivial
+zeros with multiplicities.
+Since $h_2=\mathbf 1_{[0,a]}^{*2}$, the linked shift (lines 72–91)
+gives the full Euler sum as $X-\sum_\rho X^\rho\Phi(\rho)^2+O(X^{1/4})$;
+$\Phi(1)^2=1$ gives the exact centering. Removing exponents $j\ge3$ costs
+$O(X^{1/3}\log^2(2X))$. By partial summation with PNT,
+$S_2(X)/\sqrt X\to \tfrac12\int h_2(t)e^{t/2}\,dt=6-4r=:K$.
+The removed square sum cancels to leading order under dilation; the
+undilated allowance does not. Thus as real $X\to\infty$,
 
 $$\frac{rB_2(X)-B_2(2X)-S_2(X)}{\sqrt X}=F(\log X)-K+o(1).$$
 
-All primes are good. The square term removed from the full Euler sum
-is $K\sqrt X+o(\sqrt X)$ and cancels in the dilation. The allowance
-on the right is not dilated and still costs $K$. The pole at one has
-already supplied exactly the subtracted $X$.
+The conjugate-paired series converges uniformly absolutely by the
+inverse-square zero sum. For any finite truncation and any fine partition
+of its phase torus, infinitely many integer times land in one box.
+Differences from its first visit give unbounded positive shifts with all
+retained phases near one.
+The uniformly small tail then gives $\limsup_{t\to\infty}F(t)\ge F(-2a)$.
+The certificate below and $K<0.343146$ give excess greater than
+$0.04996\sqrt X$ for arbitrarily large real $X$.
 
-The certificate below gives $F(-2a)>0.4516$. This is not an
-application of the asymptotic at $X=1/4$. The series is real and
-uniformly absolutely convergent by the inverse-square zero sum. For
-any finite set of ordinates there are unbounded positive shifts
-$q$ with all $e^{iq\Im\rho}$ arbitrarily near one, by simultaneous
-Dirichlet approximation (multiples suffice in the exact-period case).
-Truncate with uniformly small tail and recur on that finite set.
-Thus $\limsup_{t\to\infty}F(t)\ge F(-2a)$, with no independence
-assumption. The normalized excess has limsup greater than $0.1084$.
-Lines 95–110 of the landing apply to this very order for the converse.
+### A 32-term certificate, without zero locations
 
-### Reproducible bound without zero locations
+Set $G(s)=4^{-s}D(s)\Phi(s)^2=\int_{\mathbb R} g(t)e^{st}\,dt$,
+where $g(t)=r h_2(t+2a)-h_2(t+a)$. On RH, $4^{-\rho}=e^{-2ia\Im\rho}/2$,
+so $F(-2a)=-2\sum_\rho G(\rho)$. Put $w(t)=g(t)+e^{-t}g(-t)$ and
+$C=\log\pi+\gamma_E$. Then
 
-Use $G(s)=4^{-s}D(s)\Phi(s)^2=\int g(u)e^{su}\,du$ and
-$w(t)=g(t)+e^{-t}g(-t)$. Then $F(-2a)=-2\sum_\rho G(\rho)$ under
-RH. For $C=\log\pi+\gamma_E$, the completed-zeta explicit formula is
+$$\sum_\rho G(\rho)=E-\tfrac12 Cw(0)+J-P,\quad
+E=\int_0^\infty e^tw(t)\,dt,\quad
+J=\int_0^\infty\frac{w(0)-w(t)}{e^{2t}-1}\,dt,\quad
+P=\sum_n\Lambda(n)w(\log n).$$
 
-$$\sum_\rho G(\rho)=E-\tfrac12 Cw(0)+J-P,\qquad
- E=\int_0^\infty e^tw(t)\,dt,\quad P=\sum_n\Lambda(n)w(\log n),
- \quad J=\int_0^\infty\frac{w(0)-w(t)}{e^{2t}-1}\,dt.$$
+Indeed, shift the $G\xi'/\xi$ integral from $\Re s=2$ to $-1$ and
+reflect by the completed-zeta functional equation. The horizontal edges
+vanish by the linked zero-avoiding height bound (and reflection) and
+$G=O(|\Im s|^{-2})$ on the strip. The resulting right-line kernel
+$G(s)+G(1-s)$ is the transform of $w$. Use
+$\xi'/\xi(s)=(s-1)^{-1}-C/2+\int_0^\infty(1-e^{-st})/(e^{2t}-1)\,dt+
+\zeta'/\zeta(s)$ and invert. The absolute inner gamma integral is
+$O(\log(2+|s|))$ on that line, so the exchange is integrable.
 
-Indeed, shifting the $\xi'/\xi$ integral from $c>1$ to $1-c$ and
-reflecting gives the right-line kernel $G(s)+G(1-s)$, the transform
-of $w$. The horizontal integrals vanish on zero-avoiding heights as
-in the landing: The transform is $O((1+|\Im s|)^{-2})$ on the strip.
-Expand the completed logarithmic derivative on the right as
-$1/(s-1)-C/2+\int_0^\infty(1-e^{-st})/(e^{2t}-1)\,dt+\zeta'/\zeta(s)$
-by the digamma expansion. Fourier inversion gives the four terms in
-order. The inner absolute integral costs $O(\log(2+|s|))$ by splitting
-at $1/|s|$ and $1$, so the exchange with the vertical integral is valid.
+For $t\ge0$, $w(t)=t-a+e^{-t}((r+1)t-a)$ on $[0,a]$,
+$r(2a-t)e^{-t}$ on $[a,2a]$, and zero thereafter. Thus $w(0)=-2a$
+and $w(t)>w(0)$ for $t>0$ (on the first interval each summand is
+at least $-a$, with $t-a>-a$). Integration and the weights at $2,3$
+give $E=a-1+(2r-1)a^2/2$ and
+$P=ra^2/2+r(\log 3)(2a-\log 3)/3$; the weight at $4$ is zero.
+Truncating $(e^{2t}-1)^{-1}=\sum_{n\ge1} e^{-2nt}$ gives
+$J<\sum_{n=1}^{32}d_{2n}$, where $d_b$ integrates $(w(0)-w(t))e^{-bt}$
+over $t\ge0$. The factor $-2$ reverses the inequality. In the code,
+$I_b=\int_0^a e^{-bt}dt$ and $L_b=\int_0^a te^{-bt}dt$; splitting the
+integral at $a$ and $2a$ gives `d(b)`.
 
-Here $g(t)=r h_2(t+2a)-h_2(t+a)$, so $w(0)=-2a$. On $[0,a]$ one has
-$w(t)=t-a+e^{-t}((r+1)t-a)$, on $[a,2a]$ it is
-$r(2a-t)e^{-t}$, and beyond $2a$ it is zero. Consequently
+The finite lower bound lies in $(0.39310681495,0.39310681496)$,
+so $F(-2a)>0.39310681$. The real-ball calculations and exact-integer
+inputs avoid untracked rounding.
 
-$$E=a-1+(2r-1)a^2/2,\qquad
- P=ra^2/2+(r/3)(\log3)(2a-\log3).$$
+```python
+from sage.all import RealBallField
+R = RealBallField(160)
+a, r, l = R(2).log(), R(2).sqrt(), R(3).log()
+C = R.pi().log() + R.euler_constant()
+E, P = a-1+(2*r-1)*a*a/2, r*a*a/2+r*l*(2*a-l)/3
 
-Only $2$ and $3$ contribute; $4$ has zero weight. An independent
-one-sided calculation of $J$ uses $w(t)\ge w(0)$ for every $t\ge0$.
-Truncating $(e^{2t}-1)^{-1}=\sum_{n\ge1}e^{-2nt}$ therefore bounds
-$J$ **from above**, with no numerical tail estimate. For $b>0$ set
+def IL(b):
+    u = R(2)**(-b)
+    return (1-u)/b, (1-(1+b*a)*u)/b**2
 
-$$I_b=(1-2^{-b})/b,\qquad L_b=(1-(1+ba)2^{-b})/b^2.$$
+def d(b):
+    c = b+1
+    I, L = IL(b)
+    i, j = IL(c)
+    return -2*a/b-L+a*I-(r+1)*j+a*i-r*R(2)**(-c)*(a*i-j)
 
-These integrate $e^{-bt}$ and $te^{-bt}$ over $[0,a]$. With $c=b+1$,
-the integral of $(w(0)-w(t))e^{-bt}$ over the positive half-line is
+bound = -2*(E+C*a+sum(d(2*n) for n in range(1, 33))-P)
+assert R(39310681495)/10**11 < bound < R(39310681496)/10**11
+assert 6-4*r < R(343146)/10**6
+```
 
-$$d_b=-2a/b-(L_b-aI_b)-(r+1)L_c+aI_c-r2^{-c}(aI_c-L_c).$$
+### The fixed-order converse
 
-For reproduction, evaluate the following finite expression with
-160-bit real balls, initializing $a=\log(2)$, $r=\sqrt 2$, and $C$
-from real-ball constants and all indices as exact integers:
+If $E_2$ holds, the slack $H=S_2-rB_2+B_2(2\,\cdot)$ is nonnegative on
+$[A,\infty)$, $A\ge1$. In the linked argument (lines 95–110) set
+$Q(s)=\sum_p(\log p)p^{-s}$ and $R(s)=\sum_{j\ge2}Q(js)$, so that
+$Q=-\zeta'/\zeta-R$ on $\Re s>1$. The tail transform there is
 
-$$F(-2a)\ \ge\ -2\left(E+Ca+\sum_{n=1}^{512}d_{2n}-P\right)
- \ \in\ (0.45164364069,0.45164364070).$$
+$$\int_A^\infty H(X)X^{-s-1}dX=
+\Phi(s)^2[Q(2s)+D(s)(\zeta'/\zeta(s)+R(s))]
++D(1)A^{1-s}/(s-1)+E_A(s).$$
 
-The interval encloses the finite lower bound, not the full zero sum.
-In particular the **true** absolute budget is at least $F(-2a)>K$;
-no certified low-zero savings could make it small enough.
+The entire correction is $E_A=-I_{S_2}(A,s)+rI_U(A,s)-2^s I_U(2A,s)$,
+where $U=B_2+X$ and $I_V(b,s)=\int_0^b V(X)X^{-s-1}dX$;
+only the dilated prime sum changes endpoint. The Euler remainders are
+holomorphic for $\Re s>1/2$, and the centering tail cancels the pole at
+$1$ since $\Phi(1)=1$. Each zero $\rho$ in that half-plane gives a pole
+of residue $m_\rho D(\rho)\Phi(\rho)^2$ ($m_\rho$ its multiplicity):
+$D\Phi^2$ never vanishes there and is negative at real zeros.
 
-For the requested relaxed budget, apply the same formula to
-$G(s)=(2^s-1)(2^{1-s}-1)/(s(1-s))$. On RH its zero sum is exactly
-$Z_2=\sum_\rho |2^\rho-1|^2/|\rho|^2$. The product of the two
-interval transforms gives $w(t)=2(2e^{-t}-1)$ on $[0,a]$ and zero
-beyond, with no prime contribution even at $2$. Integration gives
-$Z_2=4\log(3/2)-\log(3/4)-C$. Thus $2rZ_2\in(0.53060,0.53061)$,
-whereas $K\in(0.34314,0.34315)$. The obstruction to the eventual
-sign is the recurring **signed** excess, not that failed upper bound.
+A convergence abscissa $b>1/2$ cannot be a pole (negative divergence
+contradicts $H\ge0$). Nor can it be regular: the Taylor series from
+$b+\epsilon$ would reach $b-\epsilon$ for small $\epsilon>0$, and its
+nonnegative log moments would give convergence there by monotone
+convergence. Thus the integral is holomorphic on $\Re s>1/2$, excluding
+the zero poles. Reflection gives RH.
