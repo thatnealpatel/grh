@@ -211,7 +211,9 @@ rather than a baseline affine threshold by itself, when
 varying the $B$ levels and the measurable tail. To price
 the whole frontier, the test must still handle changes
 at $2,4$ and on the tail, not just dilution or the dip
-on $[36/400,38/400)$.
+on $[36/400,38/400)$. The [fixed-section handoff][coupling]
+records the earlier release scout and specifies the first
+joint test, before allowing the tail $B$ to vary.
 
 ## Replay
 
@@ -239,3 +241,4 @@ controls and the baseline release gap for repricing.
 [drop]: eight-knot-a-drop-33.md
 [replay]: eight-knot-a-drop-33.md#replay
 [band]: third-moment-band-33.md
+[coupling]: eight-knot-coupling-decision.md
