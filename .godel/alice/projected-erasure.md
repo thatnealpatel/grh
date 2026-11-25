@@ -221,7 +221,10 @@ these passing prices alone.
 
 Run `python3 .godel/alice/check-projected-erasure.py` for
 exact checks of the two floors, thresholds, and budgets.
+The [review replay][review] records the crossing premises
+and separates that check from capture.
 
+[review]: projected-erasure-review.md
 [input]: input-first-erasure.md
 [list]: shared-row-labels.md
 [single]: singleton-erasure.md
