@@ -19,8 +19,14 @@ $$cF_2 h_d=dZ_d+q\beta_d,\qquad R_d=Z_d/h_d,\qquad S=R_d/R_e.$$
 
 Fix the space $B$ of dimension at most $(\log q)^{1.44}$ and
 one eligible erasure $E_v$ per actual $v$, with squarefree
-product at most $q^r$. The number of hits in **any subset** of
-the retained triples, uniformly for $0\le r\le1.475$, is at most
+product at most $q^r$. On this actual list, $c$ is the
+[prefix][prefix] of the complete input $v$, and the same
+rule applied to the full second output $dZ_d$ gives $d$.
+In both cases, factor the positive integer into nondecreasing
+primes with multiplicity, and take the product of the longest
+initial segment with product at most the list's fixed cutoff.
+The count of hits in **any subset** of the retained triples,
+uniformly for $0\le r\le1.475$, is at most
 
 $$q^{\max\{A,J(\min(r,u_*))\}+o(1)},\qquad
  A=(671/900)C,\quad C=1.055,\quad
@@ -80,9 +86,10 @@ $E_v$- and $P$-parts exceed $2UH_0$, there is a third code:
    require coprime filters. A determinant in the box has
    absolute value at most $2UH_0<f$, so any two qualifying
    vectors are collinear. Row primitiveness and $h_d>0$ give
-   at most one. Its full output $cF_2h_d-q\beta_d$ has a
-   deterministic sorted prefix $d$. Thus the filter gives
-   an actual endpoint, not a hypothetical choice of partner.
+   at most one. For an occupied code, apply the prefix rule
+   above to $cF_2h_d-q\beta_d=dZ_d$ to recover $d$, then
+   divide by $d$ to recover $Z_d$. Thus the filter gives an
+   actual endpoint, not a hypothetical choice of partner.
    Its partners at this mask cost subpower by singletonness.
 
 The local count is at most $q^{.22(C-b)_++o(1)}$ per actual
@@ -177,8 +184,12 @@ input is used.
 
 Run `python3 .godel/alice/check-input-first-erasure.py` for
 exact checks of the crossing, discarded bins, and thresholds.
+The [decoder review][review] separates the local recovery
+check from these arithmetic checks and from any capture claim.
 
 [singleton]: singleton-erasure.md
+[prefix]: shared-complement-count.md
+[review]: input-first-decoder-review.md
 [pivot]: global-pivot-row-price.md#single-rows-with-moving-and-with-fixed-inputs
 [paired]: shared-erasure-radius-decision.md#next-worker-one-paired-gate-not-two-censuses
 [seed]: singleton-handoff-decision.md#next-worker
